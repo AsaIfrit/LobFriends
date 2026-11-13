@@ -367,7 +367,7 @@ const EYE_SW=['#2a1c18','#000000','#6a3a2a','#5a3a8a','#2a5aa8','#2a7a5a','#a83a
 const BLUSH_SW=['#ff8ca0','#ff6f8f','#ffa070','#ff9ad8','#c8a0ff','#ff5a5a','#ffb84a'];
 const OPTS={species:[['lobster','龍蝦精靈'],['hamster','倉鼠精靈']],ears:[['round','圓耳'],['cat','貓耳'],['bunny','兔耳'],['bear','熊耳'],['sprout','嫩芽'],['none','沒有']],
   eyes:[['round','圓圓'],['big','閃亮大眼'],['star','星星眼'],['dot','豆豆眼'],['oval','長橢圓'],['heart','愛心眼'],['smile','笑瞇瞇'],['line','瞇瞇眼']],
-  tail:[['seg','一節節'],['pom','毛球']],
+  tail:[['seg','一節節'],['pom','毛球'],['none','無']],
   brow:[['none','無'],['thin','細眉'],['thick','粗眉'],['round','麻呂眉'],['angry','生氣眉'],['worried','八字眉']],
   lash:[['none','無'],['one','一根'],['two','兩根'],['three','三根']],
   mouth:[['zigzag','〰'],['smile','‿'],['w','ω'],['open','▽'],['v','▼'],['o','o'],['line','ー']],
@@ -380,7 +380,7 @@ const SLD={eye:[['eyeSize','大小',0.6,1.9,0.05],['eyeGap','距離',0.13,0.4,0.
   tail:[['tailSize','大小',0.6,1.8,0.05],['tailY','高低',-0.3,0.4,0.01],['tailZ','前後',-0.15,0.25,0.01]],
   blush:[['blushSize','大小',0.5,1.8,0.05],['blushGap','距離',0.25,0.6,0.01],['blushY','位置',0,0.3,0.01]]};
 function normLook(){look=Object.assign({},DEF_LOOK,look);look.hat=hatStyle();if(look.blush===true&&(!look.blushShape||look.blushShape==='none'))look.blushShape='oval';look.blush=false;
-  if(!['seg','pom'].includes(look.tail))look.tail=look.species==='lobster'?'seg':'pom';if(look.species!=='lobster')look.tail='pom';}
+  if(!['seg','pom','none'].includes(look.tail))look.tail=look.species==='lobster'?'seg':'pom';if(look.species!=='lobster'&&look.tail==='seg')look.tail='pom';}
 function swatches(el,list,key){el.innerHTML=list.map(c=>`<button data-v="${c}" style="background:${c}" class="${look[key]===c?'on':''}"></button>`).join('');}
 function chips(el,list,key){el.innerHTML=list.map(([v,t])=>`<button data-v="${v}" class="${look[key]===v?'on':''}">${t}</button>`).join('');}
 document.querySelectorAll('#creator .sl').forEach(el=>{el.innerHTML=SLD[el.dataset.g].map(([k,t,a,b,st])=>`<div class="clab">${t}</div><input type="range" data-k="${k}" min="${a}" max="${b}" step="${st}">`).join('');});
@@ -395,7 +395,7 @@ function renderCreator(){normLook();swatches($('swBody'),BODY_SW,'body');swatche
 document.querySelector('#creator .sheet').addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;look[k]=+e.target.value;rebuildPlayer();});
 $('cName').addEventListener('input',e=>{look.name=e.target.value||'小蝦';});
 $('cRand').addEventListener('click',()=>{const pick=a=>a[Math.floor(Math.random()*a.length)];look.body=pick(BODY_SW);look.accent=pick(ACC_SW);look.species=pick(OPTS.species)[0];look.ears=pick(OPTS.ears)[0];
-  look.mouth=pick(OPTS.mouth)[0];look.eyes=pick(OPTS.eyes)[0];look.tail=look.species==='lobster'?pick(OPTS.tail)[0]:'pom';look.eyeColor=pick(EYE_SW);look.mouthColor=pick(EYE_SW);look.brow=pick(OPTS.brow)[0];look.lash=pick(OPTS.lash)[0];
+  look.mouth=pick(OPTS.mouth)[0];look.eyes=pick(OPTS.eyes)[0];look.tail=pick(look.species==='lobster'?OPTS.tail:OPTS.tail.filter(t=>t[0]!=='seg'))[0];look.eyeColor=pick(EYE_SW);look.mouthColor=pick(EYE_SW);look.brow=pick(OPTS.brow)[0];look.lash=pick(OPTS.lash)[0];
   look.blushShape=pick(OPTS.blushShape)[0];look.blushColor=pick(BLUSH_SW);
   for(const g of Object.values(SLD))for(const[k,,a,b]of g)look[k]=+(a+(b-a)*R(0.25,0.75)).toFixed(2);renderCreator();rebuildPlayer();P.sqv+=8;SFX.craft();});
 function reveal(x,y,mid){const r=$('reveal');r.style.setProperty('--cx',x+'px');r.style.setProperty('--cy',y+'px');r.classList.add('on');SFX.open();setTimeout(()=>{mid();setTimeout(()=>r.classList.remove('on'),80);},560);}
