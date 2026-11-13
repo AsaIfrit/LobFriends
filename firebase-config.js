@@ -9,5 +9,5 @@ window.LOBSTER_FIREBASE = {
   appId: "1:110239045151:web:9f5de542f20be3f0f4a72a",
   measurementId: "G-N97T8MVNB5",
   // Google 登入用的「網頁用戶端 ID」（Firebase → Authentication → Google → 網頁 SDK 設定）
-  googleClientId: "242119341308-ueqbreik6mv47vjfq5ruciubni46r2vq.apps.googleusercontent.com"
+  googleClientId: "110239045151-lf87onsu2vkfl80nkfnd99e023a89qv9.apps.googleusercontent.com"
 };
