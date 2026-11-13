@@ -304,6 +304,10 @@ input[type=range]{width:100%;accent-color:#ff8f73;height:22px}
 .mbtn:hover{filter:brightness(1.05)}
 .mbtn.main{background:linear-gradient(#ffb0c8 0 50%,#ff8fb0 50%);color:#fff;text-shadow:0 2px 0 rgba(160,50,90,.6)}
 .mbtn.side{position:absolute;right:max(4vw,calc(env(safe-area-inset-right) + 14px));bottom:max(9vh,calc(env(safe-area-inset-bottom) + 50px));width:auto;padding:10px 18px;font-size:15px}
+.mbtn.side3{position:absolute;left:max(3vw,calc(env(safe-area-inset-left) + 12px));top:max(4vh,calc(env(safe-area-inset-top) + 14px));padding:9px 14px;font-size:14px}
+#cloudDlg{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(90,50,40,.3)}#cloudDlg.on{display:flex}
+#cloudDlg .card2{background:var(--cream);border:4px solid #fff;border-radius:24px;padding:16px 20px;max-width:min(88vw,380px);text-align:center;box-shadow:0 8px 0 rgba(200,140,110,.35);animation:popIn .45s var(--spring);color:#6b4a3e}
+#cloudDlg h3{margin:0 0 8px}#cloudDlg p{font-size:14px;line-height:1.7;margin:0 0 12px}#cloudDlg div{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .mbtn.side2{position:absolute;left:max(3vw,calc(env(safe-area-inset-left) + 12px));bottom:max(6vh,calc(env(safe-area-inset-bottom) + 34px));padding:9px 14px;font-size:14px}
 .tName{position:absolute;right:max(4vw,14px);bottom:calc(max(9vh,calc(env(safe-area-inset-bottom) + 50px)) + 54px);min-width:120px;text-align:center;color:#fff;font-weight:900;font-size:15px;text-shadow:0 2px 3px rgba(0,0,0,.6)}
 .tCopy,.tVer{position:absolute;bottom:max(8px,env(safe-area-inset-bottom));color:#fff;font-size:12px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.6)}
@@ -444,6 +448,7 @@ body.ingame #start{display:none!important}
   <div class="crow2"><button class="qb lav" id="cRand">🎲 隨機</button><button class="qb pink" id="cDone">出發！✨</button></div>
 </div></div>
 
+<div id="cloudDlg"><div class="card2"><h3 id="cdTitle"></h3><p id="cdMsg"></p><div><button class="qb pink" id="cdA"></button><button class="qb lav" id="cdB"></button></div></div></div>
 <div id="start">
   <div class="tLogo"><div class="tl1">龍蝦好友會</div><div class="splash" id="splash">Q彈Q彈！</div></div>
   <div class="tBtns">
@@ -453,6 +458,7 @@ body.ingame #start{display:none!important}
   <div class="tName" id="tName">小蝦</div>
   <button class="mbtn side" id="lookBtn">角色外型</button>
   <button class="mbtn side2" id="fsBtn">⛶ 全螢幕</button>
+  <button class="mbtn side3" id="cloudBtn" style="display:none">🔑 Google 登入</button>
   <div class="tCopy">© 龍蝦好友會</div><div class="tVer">v1.0</div>
 </div>
 
@@ -473,6 +479,7 @@ body.ingame #start{display:none!important}
   <div class="clab">背景音樂 <span id="vBv"></span></div><input type="range" id="vB" min="0" max="1" step="0.05">
   <div class="clab">音效 <span id="vSv"></span></div><input type="range" id="vS" min="0" max="1" step="0.05">
   <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此，每頻道最多 30 人）</div><div class="chips" id="chChips"></div></div>
+  <div id="cloudWrap" style="display:none"><div class="clab">☁️ 雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
   <div class="crow2"><button class="qb lav" id="setFs">⛶ 全螢幕</button><button class="qb" id="setSave">💾 立即存檔</button></div>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
   <button class="qb lav close" data-close="settings">關閉</button></div></div>
@@ -492,17 +499,19 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261114b"></script>
+<script src="config.js?v=20261114c"></script>
+<script src="firebase-config.js?v=20261114c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261114b"></script>
-<script src="js/audio.js?v=20261114b"></script>
-<script src="js/items.js?v=20261114b"></script>
-<script src="js/critter.js?v=20261114b"></script>
-<script src="js/world.js?v=20261114b"></script>
-<script src="js/game.js?v=20261114b"></script>
-<script src="js/ui.js?v=20261114b"></script>
-<script src="js/extra.js?v=20261114b"></script>
-<script src="js/net.js?v=20261114b"></script>
-<script src="js/party.js?v=20261114b"></script>
+<script src="js/engine.js?v=20261114c"></script>
+<script src="js/audio.js?v=20261114c"></script>
+<script src="js/items.js?v=20261114c"></script>
+<script src="js/critter.js?v=20261114c"></script>
+<script src="js/world.js?v=20261114c"></script>
+<script src="js/game.js?v=20261114c"></script>
+<script src="js/ui.js?v=20261114c"></script>
+<script src="js/extra.js?v=20261114c"></script>
+<script src="js/net.js?v=20261114c"></script>
+<script src="js/cloud.js?v=20261114c"></script>
+<script src="js/party.js?v=20261114c"></script>
 </body>
 </html>

@@ -382,7 +382,9 @@ const existing=loadSave();
 const SPLASH=['Q彈Q彈！','今天也要拔草！','果凍怪軟軟的！','和朋友一起玩！','拉麵最棒了！','角角是水滴型的！','記得早點睡！','蝴蝶好難抓！','倉鼠最會種田！','一起去釣魚吧！'];
 $('splash').textContent=SPLASH[(Math.random()*SPLASH.length)|0];$('tName').textContent=look.name;
 if(existing){$('startBtn').textContent=`開始遊戲（第 ${existing.day} 天）`;}
-$('resetBtn').addEventListener('click',()=>{try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem('lobster-look');}catch(e){}location.reload();});
+$('resetBtn').addEventListener('click',async()=>{const cu=typeof CLOUD!=='undefined'&&CLOUD.user;closePanel('settings');if(await cloudAsk('確定要重新開始嗎？',cu?'這台裝置<b>和 Google 帳號</b>裡的存檔都會被清除，無法復原！':'存檔會被清除，無法復原！','🗑️ 清除重來','取消')!=='a')return;
+  if(typeof CLOUD!=='undefined'&&CLOUD.user){try{await CLOUD.db.collection('saves').doc(CLOUD.user.uid).delete();}catch(e){}}
+  try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem('lobster-look');localStorage.removeItem('lobster-dex');localStorage.removeItem('lobster-cloud-sync');}catch(e){}location.reload();});
 function beginGame(){normLook();document.body.classList.add('ingame');if(existing)applySave(existing);else defaultInterior();$('start').style.display='none';started=true;paused=false;rebuildPlayer();renderHotbar();updateAtkIcon();updateHUD();snapCam=true;
   toast(existing?`歡迎回來，${look.name}！🌸`:`${look.name}，歡迎來到龍蝦好友會！`);if(!existing)setTimeout(()=>toast('旁邊的薩薩子有話想跟你說 💬'),2800);}
 $('startBtn').addEventListener('click',e=>{initAudio();if(existing)reveal(e.clientX,e.clientY,beginGame);else openCreator(beginGame,e);});
