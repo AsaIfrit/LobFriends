@@ -19,7 +19,7 @@ function onPath(x,z){for(const p of PATHS)if(segDist(x,z,...p)<1.7)return true;r
 
 // ---------- 遊戲狀態（共用） ----------
 let day=1,tmin=7*60,paused=true,started=false;
-const MIN_PER_SEC=4;
+const MIN_PER_SEC=2;
 const hour=()=>tmin/60;
 function isNight(){const h=hour();return h>=19||h<5;}
 const ply={x:2,z:5,y:0,vy:0,ground:true,face:Math.PI,hp:10,max:10,en:100,coins:0,lv:1,xp:0,sp:0,ifr:0,walk:0,kx:0,kz:0,lastStep:0,

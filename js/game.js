@@ -218,7 +218,7 @@ function context(){
   if(decoMode){const t=blockTarget();if(t)return'unblock';}
   const fr=nearestUse(1.3);
   if(ply.fishing)return ply.fishing.phase==='bite'?'reel':'wait';
-  if(ply.cave){if(Math.hypot(ply.x-CAVE_EXIT.x,ply.z-CAVE_EXIT.z)<2.6)return'leave';return'none';}
+  if(ply.cave){if(Math.hypot(ply.x-CAVE_EXIT.x,ply.z-CAVE_EXIT.z)<4)return'leave';return'none';}
   if(Math.hypot(ply.x-BOARD.x,ply.z-BOARD.z)<3.3)return'board';
   if(GACHAS.some(g=>Math.hypot(ply.x-g.front.x,ply.z-g.front.z)<2.2))return'gacha';
   if(Math.hypot(ply.x-PARKV.ferris.board.x,ply.z-PARKV.ferris.board.z)<2.6)return'ferris';
@@ -452,10 +452,6 @@ function loop(){
   uiFrame(rawDt);
 }
 // 繞開障礙物移動（不穿模）
-function toLocal(o,x,z){const c=Math.cos(o.box.ry),s=Math.sin(o.box.ry),dx=x-o.x,dz=z-o.z;return[dx*c-dz*s,dx*s+dz*c];}
-function toWorld(o,lx,lz){const c=Math.cos(o.box.ry),s=Math.sin(o.box.ry);return[o.x+lx*c+lz*s,o.z-lx*s+lz*c];}
-function segHitsBox(ax,az,bx,bz,o,pad){const[a1,a2]=toLocal(o,ax,az),[b1,b2]=toLocal(o,bx,bz);const hw=o.box.hw+pad,hd=o.box.hd+pad;let t0=0,t1=1;const d1=b1-a1,d2=b2-a2;
-  for(const[p,d,h]of[[a1,d1,hw],[a2,d2,hd]]){if(Math.abs(d)<1e-6){if(p<-h||p>h)return false;continue;}let u=(-h-p)/d,v=(h-p)/d;if(u>v)[u,v]=[v,u];t0=Math.max(t0,u);t1=Math.min(t1,v);if(t0>t1)return false;}return true;}
 function steer(n,tx,tz,spd,dt,arrive=0.3){
   if(n.detour){n.detT-=dt;if(n.detT<=0||Math.hypot(n.detour.x-n.x,n.detour.z-n.z)<0.5)n.detour=null;}
   const fx=tx,fz=tz;if(Math.hypot(fx-n.x,fz-n.z)<=arrive){n.stuckN=0;return false;}
@@ -547,7 +543,7 @@ function step(dt,T){
   const mult=ply.sleeping?5:1;
   const gmin=dt*MIN_PER_SEC*mult;tmin+=gmin;if(tmin>=1440){tmin-=1440;day++;}
   const gh=gmin/60;
-  if(ply.sleeping){ply.en=Math.min(100,ply.en+gh*22);ply.hp=Math.min(ply.max,ply.hp+gh*3);
+  if(ply.sleeping){ply.en=Math.min(100,ply.en+gh*44);ply.hp=Math.min(ply.max,ply.hp+gh*6);
     zzT-=dt;if(zzT<=0){zzT=0.9;const d=document.createElement('div');d.className='zz';d.textContent='Z';d.style.fontSize=R(18,30)+'px';d.style.left=(innerWidth/2+R(-20,30))+'px';d.style.top=(innerHeight*0.42)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),2200);}}
   else if(ply.sitting&&ply.sitting.kind==='bath'){ply.en=Math.min(100,ply.en+gh*12);ply.hp=Math.min(ply.max,ply.hp+gh*4);if(Math.random()<dt*3)SFX.bubble();
     if(Math.random()<dt*6)puff(ply.x+R(-0.5,0.5),ply.y+0.6,ply.z+R(-0.4,0.4),0xffffff,0.6);}

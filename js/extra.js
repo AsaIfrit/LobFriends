@@ -35,15 +35,20 @@ function placeBlock(){const t=buildTarget();if(!t||!t.ok||!(inv.plank>0)){SFX.de
   burst(t.i*BLK,t.j*BLK+BLK,t.k*BLK,[0xe2b07c,0xffffff,0xf3d3b8],7,2.5,cubeG);if(!(inv.plank>0)){ply.held=null;refreshHeld();toast('木塊用完了～用木材在合成選單做更多吧');}renderHotbar();save();}
 function removeBlock(){const t=blockTarget();if(!t)return;delBlock(t.i,t.j,t.k);inv.plank=(inv.plank||0)+1;renderHotbar('plank');SFX.chop();
   burst(t.i*BLK,t.j*BLK+BLK/2,t.k*BLK,[0xe2b07c,0xc98d58,0xffffff],10,3.5,cubeG);save();}
+$('btnDel').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!paused&&!ply.act)removeBlock();});
+addEventListener('keydown',e=>{if(e.code==='KeyX'&&!paused&&started&&ply.held==='plank'&&e.target.tagName!=='INPUT')removeBlock();});
+addEventListener('contextmenu',e=>{if(fpMode&&ply.held==='plank'){e.preventDefault();removeBlock();}});
 // 方塊預覽外框
 const bGhost=(()=>{const g=new THREE.Group();const m=new THREE.Mesh(new THREE.BoxGeometry(BLK*1.02,BLK*1.02,BLK*1.02),basic(0x8fdcb4,{transparent:true,opacity:0.35,depthWrite:false}));g.add(m);
   const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(BLK*1.04,BLK*1.04,BLK*1.04)),new THREE.LineBasicMaterial({color:0xffffff}));g.add(e);g.visible=false;scene.add(g);g.userData={m,e};return g;})();
+const bGhostDel=(()=>{const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(BLK*1.06,BLK*1.06,BLK*1.06)),new THREE.LineBasicMaterial({color:0xff7a5a}));e.visible=false;scene.add(e);return e;})();
 function updateBuildGhost(T){
   fpHit=fpMode?castRay():null;
   if(fpMode&&!fpAllowed())setFP(false);
   document.body.classList.toggle('canfp',fpAllowed()&&!ply.sitting&&!ply.sleeping&&!ply.riding);document.body.classList.toggle('building',ply.held==='plank');
   let t=null,mode=null;
   if(ply.held==='plank'){t=buildTarget();mode='build';}else if(decoMode&&!carry&&!nearestFurn(null,1.3)){t=blockTarget();mode='del';}
+  {const dt2=ply.held==='plank'?blockTarget():null;bGhostDel.visible=!!dt2;if(dt2)bGhostDel.position.set(dt2.i*BLK,dt2.j*BLK+BLK/2,dt2.k*BLK);$('btnDel').classList.toggle('dim',!dt2);}
   if(!t){bGhost.visible=false;return;}
   bGhost.visible=true;bGhost.position.set(t.i*BLK,t.j*BLK+BLK/2,t.k*BLK);const ok=mode==='del'||t.ok;
   bGhost.userData.m.material.color.setHex(mode==='del'?0xff9e6f:ok?0x8fdcb4:0xff6f6f);bGhost.userData.m.material.opacity=0.28+Math.sin(T*6)*0.08;bGhost.userData.e.material.color.setHex(mode==='del'?0xffd0b0:0xffffff);}
@@ -90,11 +95,17 @@ $('gBtn').addEventListener('click',()=>{if(gBusy||ply.coins<100){SFX.deny();retu
   setTimeout(()=>{m.classList.remove('shake');void e.offsetWidth;e.className='drop';SFX.pickup(3);},1000);
   setTimeout(()=>{e.className='drop crack';SFX.thud();},1750);
   setTimeout(()=>{e.className='';e.style.opacity=0;const r=$('gEgg').getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,24);SFX.levelup();
-    const p=hatchPet(type);$('gRes').innerHTML=`<span class="pet">${PET_TYPES[type].i}</span>孵出了「${p.d.name}」！好感度 💗100`;gBusy=false;renderGacha();save();},2800);});
-function hatchPet(type,name,silent){const base=PET_TYPES[type];const cnt=pets.filter(p=>p.d.type===type).length;
+    const p=hatchPet(type,null,false,true);gBusy=false;closePanel('gacha');setTimeout(()=>showPetReveal(p),250);save();},2800);});
+let prT=null;
+function showPetReveal(p){const R2=$('petReveal');$('prE').textContent=PET_TYPES[p.d.type].i;$('prN').textContent=`孵出了「${p.d.name}」！`;
+  $('prM').innerHTML=(p.follow?'好感度 💗100，現在就跟著你走囉！🐾':'好感度 💗100<br>你已經有夥伴了，牠會先回家等你 🏠')+'<br><small>想換夥伴的話，到牠身邊按「邀請」</small>';
+  R2.classList.add('on');SFX.levelup();const r=$('prE').getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,28);paused=true;clearTimeout(prT);prT=setTimeout(hidePetReveal,4500);}
+function hidePetReveal(){const R2=$('petReveal');if(!R2.classList.contains('on'))return;R2.classList.remove('on');paused=false;SFX.close();}
+$('prOk').addEventListener('click',hidePetReveal);$('petReveal').addEventListener('pointerdown',e=>{if(e.target.id==='petReveal')hidePetReveal();});
+function hatchPet(type,name,silent,quiet){const base=PET_TYPES[type];const cnt=pets.filter(p=>p.d.type===type).length;
   const d={type,name:name||(base.n+(cnt?(cnt+1):'')),fav:base.fav,x:ply.x+Math.sin(ply.face)*1.6,z:ply.z+Math.cos(ply.face)*1.6,gacha:true};
   const p=makePet(d,100);p.happy=2;p.cave=!!ply.cave;
-  if(!silent){if(pets.some(o=>o!==p&&o.follow)){sendHome(p);toast(`${d.name} 已經有夥伴陪你了，牠先自己回家等你 🏠`);}else{p.follow=true;toast(`${d.name} 成為你的夥伴了！🐾`);}
+  if(!silent){if(pets.some(o=>o!==p&&o.follow)){sendHome(p);if(!quiet)toast(`${d.name} 已經有夥伴陪你了，牠先自己回家等你 🏠`);}else{p.follow=true;if(!quiet)toast(`${d.name} 成為你的夥伴了！🐾`);}
     burst(d.x,H(d.x,d.z)+0.6,d.z,PAST.map(c=>parseInt(c.slice(1),16)),20,4);ring(d.x,H(d.x,d.z)+0.1,d.z,0xff9ec7,0.3,3,0.6);}
   return p;}
 

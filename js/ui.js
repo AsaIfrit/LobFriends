@@ -239,12 +239,11 @@ function uiFrame(dt){
 }
 
 // ---------- 升級（Circle Reveal） ----------
-function levelUpFX(){const sp=worldToScreen(ply.x,ply.y+1,ply.z);const L=$('lvUp');L.style.setProperty('--cx',sp.x+'px');L.style.setProperty('--cy',sp.y+'px');
-  $('lvNum').textContent='Lv.'+ply.lv;L.classList.add('on');SFX.levelup();P.setFace('happy');P.sqv+=8;
+function levelUpFX(){const L=$('lvPop');$('lvPopN').textContent='Lv.'+ply.lv;L.classList.remove('on','out');void L.offsetWidth;L.classList.add('on');SFX.levelup();P.setFace('happy');P.sqv+=8;
   ring(ply.x,ply.y+0.1,ply.z,0xffd36e,0.4,5,0.7);ring(ply.x,ply.y+0.2,ply.z,0xff9ec7,0.3,3.5,0.6);burst(ply.x,ply.y+1,ply.z,PAST.map(c=>parseInt(c.slice(1),16)),30,7);
-  for(let i=0;i<46;i++){const c=document.createElement('div');c.className='conf';c.style.left=R(0,innerWidth)+'px';c.style.background=PAST[i%PAST.length];document.body.appendChild(c);
-    const dur=R(1.4,2.4),rot=R(-720,720),dx=R(-80,80);c.animate([{transform:'translate(0,0) rotate(0)'},{transform:`translate(${dx}px,${innerHeight+40}px) rotate(${rot}deg)`}],{duration:dur*1000,delay:R(150,500),easing:'cubic-bezier(.3,.6,.6,1)',fill:'forwards'});setTimeout(()=>c.remove(),dur*1000+600);}
-  setTimeout(()=>{L.classList.remove('on');P.setFace('open');},1900);bump($('lvBadge'));$('fab').classList.add('dot');}
+  const t0=performance.now();let k=0;const follow=()=>{const t=performance.now()-t0;const sp=worldToScreen(ply.x,ply.y+2.5,ply.z);L.style.left=sp.x+'px';L.style.top=(sp.y-Math.min(t/400,1)*14)+'px';
+    if(t<300&&k++%3===0)sparkle(sp.x,sp.y-20,4);if(t>2100)L.classList.add('out');if(t<2500)requestAnimationFrame(follow);else{L.classList.remove('on','out');P.setFace('open');}};follow();
+  bump($('lvBadge'));$('fab').classList.add('dot');}
 
 // ---------- HUD ----------
 let lastHp=10;
