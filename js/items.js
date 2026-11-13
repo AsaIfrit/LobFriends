@@ -39,6 +39,11 @@ const ITEMS={
   skin_thunder:{n:'雷電長槍',i:'⚡',k:'skin',for:'spear',model:'thunder',d:'長槍的外觀・紫色雷電'},
   skin_wind:{n:'旋風之弓',i:'🍃',k:'skin',for:'bow',model:'windbow',d:'弓的外觀・淺綠光束箭'},
   skin_ice:{n:'冰凍之杖',i:'❄️',k:'skin',for:'staff',model:'icestaff',d:'法杖的外觀・冰晶法球'},
+  hat_bow:{n:'粉紅大蝴蝶結',i:'🎀',k:'hat',hat:'bigbow',d:'時裝・軟綿綿的粉紅大蝴蝶結'},
+  hat_sprout:{n:'嫩芽小黃帽',i:'👒',k:'hat',hat:'sprout',d:'時裝・頭頂冒出小嫩芽、繡了紅蘋果的小黃帽'},
+  hat_jelly:{n:'果凍怪貝雷帽',i:'🍮',k:'hat',hat:'jellyberet',d:'時裝・酒紅貝雷帽，上面趴著一隻小果凍怪'},
+  hat_party:{n:'派對三角帽',i:'🥳',k:'hat',hat:'party',d:'時裝・圓點點派對帽，頂端有粉紅毛球'},
+  hat_bucket:{n:'黑色漁夫帽',i:'🎩',k:'hat',hat:'bucket',d:'時裝・很酷的黑色漁夫帽'},
   plush:{n:'龍蝦精靈娃娃',i:'🦞',k:'furn',d:'軟綿綿的龍蝦精靈布偶擺設',r:0.45},
   crystal:{n:'水晶',i:'🔮',k:'mat',price:30,d:'洞窟深處的閃亮礦物，可以賣錢'},
   plank:{n:'木塊',i:'🟫',k:'block',d:'拿在手上可以蓋木方塊，會自動對齊'}
