@@ -26,16 +26,19 @@ const TG=(()=>{
   const sph=new THREE.SphereGeometry(1,18,14);
   const flares=(r,h)=>[0,1,2,3].map(i=>{const a=i*Math.PI/2+0.4;return[new THREE.ConeGeometry(0.2*r,0.75*r,6),M4(Math.cos(a)*0.36*r,0.2,Math.sin(a)*0.36*r,0,-a,-2.0)];});
   const trunk=mergeGeos([[new THREE.CylinderGeometry(0.3,0.46,2.0,12),M4(0,1.0,0)],...flares(1)]);
-  const clump=(cx,cy,cz,r,seed0)=>{const g=new THREE.IcosahedronGeometry(1,2);const p=g.attributes.position;let sd=seed0;const rr=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};
-    const offs=[];for(let k=0;k<7;k++)offs.push([rr()*6.28,rr()*3.14,0.1+rr()*0.18]);
-    for(let k=0;k<p.count;k++){const x=p.getX(k),y=p.getY(k),z=p.getZ(k);let d=1;for(const[a,b,amp]of offs){d+=amp*Math.max(0,Math.sin(x*3.1+a)*Math.cos(z*2.7+b)*Math.sin(y*2.3+a+b));}
-      p.setXYZ(k,x*r*d,y*r*d*0.86,z*r*d);}g.computeVertexNormals();return[g,M4(cx,cy,cz)];};
+  const clump=(cx,cy,cz,r,seed0)=>{const g=new THREE.SphereGeometry(1,22,16);const p=g.attributes.position;let sd=seed0;const rr=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};
+    const offs=[];for(let k=0;k<3;k++)offs.push([rr()*6.28,rr()*6.28,0.04+rr()*0.05]);
+    for(let k=0;k<p.count;k++){const x=p.getX(k),y=p.getY(k),z=p.getZ(k);let d=1;for(const[a,b,amp]of offs){d+=amp*Math.sin(x*1.7+a)*Math.cos(z*1.5+b)*Math.cos(y*1.3+a);}
+      p.setXYZ(k,x*r*d,y*r*d*0.88,z*r*d);}g.computeVertexNormals();return[g,M4(cx,cy,cz)];};
   const canopy=mergeGeos([clump(0,3.55,0,1.25,3),clump(-0.95,2.85,0.35,0.95,7),clump(0.95,2.9,0.3,0.95,11),clump(0.1,2.75,-0.85,0.95,17),clump(-0.4,3.0,0.9,0.8,23),clump(0.55,3.9,0.45,0.7,29),clump(-0.6,3.85,-0.35,0.72,31)]);
-  {const p=canopy.attributes.position,n=canopy.attributes.normal,col=[];for(let k=0;k<p.count;k++){const y=p.getY(k),ny=n.getY(k);const v=clamp(0.62+(y-2.2)*0.17+ny*0.12,0.55,1.0);col.push(v,v,Math.min(1,v*0.96+0.04));}
+  {// 法線往樹冠中心球面混合 → 整團像一顆柔軟的大球，卡通光影更圓滑
+   const p=canopy.attributes.position,n=canopy.attributes.normal,col=[],v3=new THREE.Vector3(),w3=new THREE.Vector3();
+   for(let k=0;k<p.count;k++){v3.set(p.getX(k),(p.getY(k)-3.2)*1.25,p.getZ(k)).normalize();w3.set(n.getX(k),n.getY(k),n.getZ(k)).lerp(v3,0.7).normalize();n.setXYZ(k,w3.x,w3.y,w3.z);
+     const y=p.getY(k),ny=w3.y;const v=clamp(0.66+(y-2.2)*0.14+ny*0.1,0.6,1.0);col.push(v,v,Math.min(1,v*0.96+0.04));}
    canopy.setAttribute('color',new THREE.Float32BufferAttribute(col,3));}
   const ptrunk=mergeGeos([[new THREE.CylinderGeometry(0.2,0.32,1.6,10),M4(0,0.8,0)],...flares(0.75)]);
-  const tiers=[];for(let i=0;i<5;i++){const r=1.6-i*0.27,h=1.25;const c=new THREE.ConeGeometry(r,h,18,1,true);const p=c.attributes.position;
-    for(let k=0;k<p.count;k++){if(p.getY(k)<-h/2+0.01){const idx=Math.round(Math.atan2(p.getZ(k),p.getX(k))/(Math.PI*2)*18);if(idx%2===0){p.setY(k,p.getY(k)-0.2);p.setX(k,p.getX(k)*1.06);p.setZ(k,p.getZ(k)*1.06);}}}
+  const tiers=[];for(let i=0;i<5;i++){const r=1.6-i*0.27,h=1.25;const c=new THREE.ConeGeometry(r,h,36,1,true);const p=c.attributes.position;
+    for(let k=0;k<p.count;k++){if(p.getY(k)<-h/2+0.01){const ang=Math.atan2(p.getZ(k),p.getX(k)),w=0.5+0.5*Math.cos(ang*9);p.setY(k,p.getY(k)-0.2*w);p.setX(k,p.getX(k)*(1+0.06*w));p.setZ(k,p.getZ(k)*(1+0.06*w));}}
     c.computeVertexNormals();tiers.push([c,M4(0,1.75+i*0.68,0)]);}
   tiers.push([new THREE.ConeGeometry(0.3,0.7,10),M4(0,1.75+5*0.68,0)]);
   const pine=mergeGeos(tiers);
@@ -200,7 +203,7 @@ for(let i=0;i<6;i++){const a=SR(0,6.28);const x=Math.cos(a)*13,z=Math.sin(a)*13+
    const sc=SR(0.8,1.6);q.setFromEuler(e.set(0,SR(0,6.28),0));m.compose(new THREE.Vector3(x,H(x,z)-0.05,z),q,new THREE.Vector3(sc,sc,sc));im.setMatrixAt(k,m);
    col.setHex(pal[(rnd()*4)|0]);if(x>45)col.lerp(new THREE.Color(0x4f9a74),0.6);im.setColorAt(k,col);k++;}
  im.count=k;im.receiveShadow=true;scene.add(im);}
-{const bushG=mergeGeos([[new THREE.IcosahedronGeometry(0.7,1),M4(0,0.45,0,0,0,0,1.1,0.8,1)],[new THREE.IcosahedronGeometry(0.5,1),M4(0.6,0.35,0.2)],[new THREE.IcosahedronGeometry(0.5,1),M4(-0.55,0.32,-0.1)]]);
+{const bushG=mergeGeos([[new THREE.SphereGeometry(0.7,20,14),M4(0,0.45,0,0,0,0,1.1,0.8,1)],[new THREE.SphereGeometry(0.5,16,12),M4(0.6,0.35,0.2)],[new THREE.SphereGeometry(0.5,16,12),M4(-0.55,0.32,-0.1)]]);
  const N=170,im=new THREE.InstancedMesh(bushG,toon(0xffffff),N),m=new THREE.Matrix4(),col=new THREE.Color(),q=new THREE.Quaternion(),e=new THREE.Euler();let k=0;const pal=[0x5fae4c,0x6fbc56,0x4f9e48];
  for(let t=0;t<N*4&&k<N;t++){const x=SR(-110,110),z=SR(-110,110);if(!okSpot(x,z,12)||!farFrom(x,z,1.2))continue;const sc=SR(0.7,1.4);q.setFromEuler(e.set(0,SR(0,6.28),0));
    m.compose(new THREE.Vector3(x,H(x,z),z),q,new THREE.Vector3(sc,sc,sc));im.setMatrixAt(k,m);col.setHex(pal[(rnd()*3)|0]);im.setColorAt(k,col);k++;}
