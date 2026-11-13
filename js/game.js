@@ -779,7 +779,7 @@ let lastCtx='';
 // ---------- 效能：遠處的樹隱藏、依幀率自動調整解析度 ----------
 let cullT=0;function cullFar(dt){cullT-=dt;if(cullT>0)return;cullT=0.4;const cx=ply.x,cz=ply.z;
   for(const t of trees){const d=Math.hypot(t.x-cx,t.z-cz);t.root.visible=ply.cave?false:d<135;}for(const im of TREE_INST)im.visible=!ply.cave;
-  for(const r of rocks)r.m.visible=!ply.cave&&Math.hypot(r.x-cx,r.z-cz)<110;}
+  for(const r of rocks)r.m.visible=r.state!=='gone'&&!ply.cave&&Math.hypot(r.x-cx,r.z-cz)<110;}
 const PERF={acc:0,n:0,dpr:Math.min(devicePixelRatio,1.25),t:0};
 function perfTune(rawDt){PERF.acc+=rawDt;PERF.n++;PERF.t+=rawDt;if(PERF.t<2.5)return;const avg=PERF.acc/PERF.n;PERF.acc=0;PERF.n=0;PERF.t=0;
   let d=PERF.dpr;if(avg>0.019&&d>0.75)d=Math.max(0.75,d-0.25);else if(avg<0.0125&&d<Math.min(devicePixelRatio,1.25))d=Math.min(Math.min(devicePixelRatio,1.25),d+0.25);
