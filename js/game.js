@@ -31,7 +31,7 @@ rebuildPlayer();
 // ---------- NPC ----------
 const NPCS=[
   {name:'龍蝦村長',voice:0.8,home:{x:V2.x+3,z:V2.z+2},house:0,look:{body:'#e9773e',accent:'#6e3428',eyeSize:1.0,glasses:true,scarf:'#fff3a8'},
-   lines:['歡迎來到龍蝦村～我是村長。','我們龍蝦精靈最喜歡圓滾滾的東西、熱拉麵，還有午睡。','舞台上那四個孩子每天都在練舞，去看看吧！','東邊野外的粉紅史萊姆晚上會變兇，要小心喔。']},
+   lines:['歡迎來到龍蝦村～我是村長。','我們龍蝦精靈最喜歡圓滾滾的東西、熱拉麵，還有午睡。','舞台上那四個孩子每天都在練舞，去看看吧！','東邊野外的粉紅果凍怪晚上會變兇，要小心喔。']},
   {name:'小栗',voice:1.0,stall:'store',shop:'store',look:{body:'#c98a5a',accent:'#5a3022',patch:'#ffd9a0',hat:'beret',hatColor:'#ff8f73',apron:'#fff3ea'},
    lines:['歡迎光臨小栗雜貨店！種子、蛋糕、工具都有，也收購各種東西喔～']},
   {name:'木木',voice:0.9,stall:'furn',shop:'furn',look:{body:'#f2c49a',accent:'#7a4a2a',scarf:'#a894e8',mouth:'smile'},
@@ -43,11 +43,11 @@ const NPCS=[
   {name:'嚕嚕',voice:0.9,home:{x:V2.x-7,z:V2.z+6},house:2,look:{body:'#c4b2f0',accent:'#5a4690',patch:'#ffc4dc',sleepy:true,mouth:'o',hat:'nightcap',hatColor:'#8fb0f0'},
    lines:['呼啊…我最喜歡睡覺了…','躺在床上時間會變快 5 倍喔…zzz','累了也可以泡澡…家具店有賣浴缸…']},
   {name:'薩薩子',voice:1.35,home:{x:8,z:2},house:-1,look:{body:'#ffb3a0',accent:'#8a3a3a',patch:'#fff0a0',eyeSize:1.3,lash:'one',lashSize:1.3,lashY:0.45,mouth:'open',hat:'bow',hatColor:'#ff9ec7',blush:true},
-   lines:['嗨嗨！我是薩薩子～你是新來的嗎？先徒手砍棵樹吧！','木材拿去做 🧰 工作台，放下後就能做武器跟工具喔！','打倒史萊姆會掉金幣跟經驗值，升級可以點天賦 ⭐','西南邊的龍蝦村有拉麵店跟舞台，順著小路走就到了～']},
+   lines:['嗨嗨！我是薩薩子～你是新來的嗎？先徒手砍棵樹吧！','木材拿去做 🧰 工作台，放下後就能做武器跟工具喔！','打倒果凍怪會掉金幣跟經驗值，升級可以點天賦 ⭐','西南邊的龍蝦村有拉麵店跟舞台，順著小路走就到了～']},
   {name:'糰糰長老',voice:0.75,home:{x:V3.x+3,z:V3.z+3},door:V3HOUSES[0].door,look:{species:'hamster',body:'#fff3e2',accent:'#e8c49a',ears:'round',eyeSize:0.9,mouth:'smile',glasses:true,hat:'straw',hatColor:'#ff9ec4'},
    lines:['歡迎來到倉鼠精靈村，我是長老糰糰。','我們倉鼠精靈最喜歡葵花籽，還有在大滾輪上跑步！','龍蝦精靈是我們的老朋友，常常一起吃拉麵喔。']},
   {name:'米米',voice:1.25,home:{x:V3.x-6,z:V3.z-3},door:V3HOUSES[1].door,look:{species:'hamster',body:'#ffe6b8',accent:'#ffb38a',ears:'bear',eyeSize:1.3,mouth:'open',blush:true,hat:'bow',hatColor:'#ff8fb0'},
-   lines:['嘿嘿～你看到廣場的大滾輪了嗎？超好玩的！','把種子塞在臉頰裡可以帶好多好多走喔！','東邊的史萊姆軟軟的，可是撞到很痛…']},
+   lines:['嘿嘿～你看到廣場的大滾輪了嗎？超好玩的！','把種子塞在臉頰裡可以帶好多好多走喔！','東邊的果凍怪軟軟的，可是撞到很痛…']},
   {name:'豆豆',voice:1.05,home:{x:V3.x+7,z:V3.z+5},door:V3HOUSES[3].door,look:{species:'hamster',body:'#d9d4e8',accent:'#9a90b8',ears:'round',eyeSize:1.0,mouth:'w',scarf:'#8fc8f0'},
    lines:['我在研究怎麼讓南瓜長得更大…','聽說學了「綠手指」天賦，作物會長得更快！','雜貨店的小栗是我的好朋友～']},
   {name:'嘟嘟',voice:1.15,home:{x:V3.x-5,z:V3.z+7},door:V3HOUSES[2].door,look:{species:'hamster',body:'#c9a07a',accent:'#f2dcc0',ears:'cat',eyeSize:1.1,mouth:'v',blush:true,hat:'beret',hatColor:'#7cc49a'},
@@ -88,7 +88,7 @@ const DANCE_COL=[['#ff8fa3','#8a2a4a'],['#8fc8ff','#2a4a8a'],['#ffd36e','#8a5a1a
 const dancers=DANCE_COL.map(([b,a],i)=>{const c=makeCritter({species:'lobster',body:b,accent:a,eyeSize:1.1,mouth:i%2?'open':'smile',blush:true});c.setFace('happy');
   const lx=-2.7+i*1.8,x=STAGE.x-lx,z=STAGE.z-0.3;c.g.position.set(x,H(STAGE.x,STAGE.z)+0.68,z);c.g.rotation.y=Math.PI;scene.add(c.g);return{c,i,x,z,pose:newPose()};});
 
-// ---------- 史萊姆 ----------
+// ---------- 果凍怪 ----------
 const monsters=[];
 const hpBgM=basic(0x5a4070,{depthTest:false}),hpFgM=basic(0xff6f9f,{depthTest:false});
 const CAVE_SLIMES=[{c:'#7ab8ff',hp:10,dmg:2,sp:1.0,coin:5,xp:5,w:4},{c:'#7fe08a',hp:12,dmg:2,sp:1.25,coin:5,xp:6,w:3},{c:'#b98aff',hp:16,dmg:3,sp:1.0,coin:7,xp:8,w:2},{c:'#ff6a6a',hp:14,dmg:3,sp:1.4,coin:7,xp:8,w:2},{c:'#ffd24a',hp:22,dmg:3,sp:1.1,coin:20,xp:12,w:0.6}];
@@ -322,7 +322,7 @@ function sitOn(p,kind){if(fpMode)setFP(false);const it=ITEMS[p.id];ply.sitting={
 function standUp(){const s=ply.sitting;if(!s)return;const p=s.p;ply.sitting=null;setTimeout(refreshHeld,0);const off=ITEMS[p.id].r*fsOf(p.id)+0.9;ply.x=p.x+Math.sin(p.ry)*off;ply.z=p.z+Math.cos(p.ry)*off;ply.y=furnBase(p);ply.face=p.ry;P.setFace('open');SFX.jump();}
 function quickFade(mid){const f=$('fade');f.style.transition='opacity .28s';f.textContent='';f.style.opacity=1;paused=true;
   setTimeout(()=>{mid();setTimeout(()=>{f.style.opacity=0;paused=false;setTimeout(()=>f.style.transition='',300);},120);},300);}
-function enterCave(){SFX.door();if(carry)carryCancel();quickFade(()=>{ply.cave=true;ply.x=CAVE_EXIT.x;ply.z=CAVE_EXIT.z-2;ply.y=0;ply.vy=0;ply.face=Math.PI;camYaw=0;snapCam=true;toast('⛰️ 史萊姆洞窟…小心兇猛的史萊姆！');});}
+function enterCave(){SFX.door();if(carry)carryCancel();quickFade(()=>{ply.cave=true;ply.x=CAVE_EXIT.x;ply.z=CAVE_EXIT.z-2;ply.y=0;ply.vy=0;ply.face=Math.PI;camYaw=0;snapCam=true;toast('⛰️ 果凍怪洞窟…小心兇猛的果凍怪！');});}
 function leaveCave(){SFX.door();quickFade(()=>{ply.cave=false;ply.x=CAVE_FRONT.x+Math.sin(CAVE_FRONT.ry)*1.5;ply.z=CAVE_FRONT.z+Math.cos(CAVE_FRONT.ry)*1.5;ply.y=H(ply.x,ply.z);ply.vy=0;ply.face=CAVE_FRONT.ry;camYaw=CAVE_FRONT.ry+Math.PI;snapCam=true;});}
 let zzT=0;
 function lieDown(p){if(fpMode)setFP(false);ply.sleeping={p};setTimeout(refreshHeld,0);ply.act=null;ply.atkT=-1;holdAtk=holdAct=false;document.body.classList.add('sleeping');SFX.lie();P.setFace('sleep');
@@ -553,7 +553,7 @@ function step(dt,T){
     if(ply.en<12&&warnLv<2){warnLv=2;toast('💤 快撐不住了！精神用光會昏倒');}
     if(ply.en<=0){faint('撐不住了… 倒頭就睡 💫');return;}}
   if(ply.en>40)warnLv=0;
-  if(isNight()&&!ply.nightWarned&&!ply.indoor){ply.nightWarned=true;toast('🌙 天黑了，史萊姆變兇了！');}if(!isNight())ply.nightWarned=false;
+  if(isNight()&&!ply.nightWarned&&!ply.indoor){ply.nightWarned=true;toast('🌙 天黑了，果凍怪變兇了！');}if(!isNight())ply.nightWarned=false;
   const sleepy=ply.sleeping?0:clamp((30-ply.en)/30,0,1);
   $('vig').style.opacity=ply.sleeping?0.5:sleepy*(0.7+Math.sin(T*2)*0.25);
   updateSky();npcUpdate(dt,T);danceUpdate(dt,T);
@@ -651,7 +651,7 @@ function step(dt,T){
   if(ghost){const[x,z]=ghostSpot();const gy=supportY(x,z);ghost.position.set(x,gy+Math.sin(T*5)*0.05+0.05,z);ghost.rotation.y=carry.ry;
     const r=ITEMS[carry.id].r*fsOf(carry.id),rr=Math.max(r*0.8,0.3);ghostOK=(r===0||!obstacles.some(o=>o.r>0&&(o.y===undefined||Math.abs(o.y-gy)<0.9)&&Math.hypot(o.x-x,o.z-z)<o.r+r*0.9))&&!hitsWall(x-rr,x+rr,z-rr,z+rr)&&Math.hypot(x-BOARD.x,z-BOARD.z)>2&&Math.hypot(x-ply.x,z-ply.z)<9;
     const mat=ghostOK?ghostOkM:ghostNoM;ghost.traverse(o=>{if(o.isMesh)o.material=mat;});}
-  // ---- 史萊姆 ----
+  // ---- 果凍怪 ----
   const night=isNight(),zmin=night?36:52,cap=night?14:8;
   if(ply.cave){if(monsters.filter(m=>m.dead<0&&m.cave).length<10&&Math.random()<dt*1.2)spawnCaveSlime();}
   else if(monsters.filter(m=>m.dead<0&&!m.cave).length<cap&&Math.random()<dt*0.8)spawnMonster();
@@ -680,7 +680,7 @@ function step(dt,T){
       if(ply.sleeping){wakeUp();toast('被吵醒了！😾');}
       m.cool=1;ply.ifr=0.9;ply.hp-=m.dmg||(night?2:1);ply.kx=dx/d*10;ply.kz=dz/d*10;ply.vy=4;ply.ground=false;SFX.hurt();P.sqv-=5;
       burst(ply.x,ply.y+0.8,ply.z,[0xff9ec7,0xffffff],8,3);hurtFX();updateHUD();
-      if(ply.hp<=0){ply.hp=0;faint('被史萊姆打倒了… 💫');return;}}
+      if(ply.hp<=0){ply.hp=0;faint('被果凍怪打倒了… 💫');return;}}
     if(m.cave&&!ply.cave&&Math.random()<dt*0.02){scene.remove(m.g);monsters.splice(i,1);}
   }
   // ---- 投射物 ----

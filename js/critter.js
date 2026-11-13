@@ -1,4 +1,4 @@
-// ===================== critter.js：龍蝦精靈／倉鼠精靈／史萊姆，臉部貼圖與骨架 =====================
+// ===================== critter.js：龍蝦精靈／倉鼠精靈／果凍怪，臉部貼圖與骨架 =====================
 const FACE={phiS:Math.PI/2-0.95,phiL:1.9,thS:0.2*Math.PI,thL:0.52*Math.PI,W:512,H:384};
 const faceGeo=new THREE.SphereGeometry(1,36,26,FACE.phiS,FACE.phiL,FACE.thS,FACE.thL);
 function faceUV(X,Y){const th=Math.acos(clamp(Y,-1,1)),s=Math.max(0.25,Math.sin(th));const ph=Math.acos(clamp(-X/s,-1,1));
@@ -165,7 +165,7 @@ function makeSlime(night,size=1,color=null,angry=false){
   const fc=document.createElement('canvas');fc.width=FACE.W;fc.height=FACE.H;const ftex=new THREE.CanvasTexture(fc);
   const face=mk(faceGeo,new THREE.MeshToonMaterial({map:ftex,gradientMap:gradMap,transparent:true,depthWrite:false,alphaTest:0.02}),0,0.5,0);
   face.scale.set(0.8*1.012,0.8*0.78*1.012,0.8*1.012);face.renderOrder=2;m.add(face);
-  const o={eyeSize:1.15,eyeGap:0.22,eyeY:0.62,mouth:(night||angry)?'zigzag':'w',mouthSize:0.9,mouthY:0.15,blush:true,brows:night||angry,shine:true};
+  const o={eyeSize:1.15,eyeGap:0.22,eyeY:0.62,mouth:(night||angry)?'zigzag':'w',mouthSize:0.9,mouthY:0.15,blush:true,brows:night||angry,shine:false};
   const dims={sx:1,sy:0.78,cy:0.5,RR:0.8};
   const setFace=mode=>{drawFace(fc.getContext('2d'),o,mode,dims);ftex.needsUpdate=true;};setFace('open');
   g.scale.setScalar(size);shadowAll(g);

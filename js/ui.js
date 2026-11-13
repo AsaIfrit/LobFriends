@@ -25,7 +25,7 @@ function dismissNote(e){if(e.classList.contains('out'))return;e.classList.add('o
 // ---------- 委託 ----------
 const Q={
   weed:{icon:'🌿',name:'拔草委託',desc:'到北邊草原拔 10 株雜草。',need:10,reward:30,xp:20,state:'none',prog:0,times:0},
-  hunt:{icon:'⚔️',name:'史萊姆討伐',desc:'到東邊野外打倒 3 隻粉紅史萊姆。晚上牠們會更兇！',need:3,reward:80,xp:40,state:'none',prog:0,times:0},
+  hunt:{icon:'⚔️',name:'果凍怪討伐',desc:'到東邊野外打倒 3 隻粉紅果凍怪。晚上牠們會更兇！',need:3,reward:80,xp:40,state:'none',prog:0,times:0},
   farm:{icon:'🌾',name:'收成委託',desc:'收成 5 個任何作物。',need:5,reward:60,xp:30,state:'none',prog:0,times:0}
 };
 function renderBoard(){$('qlist').innerHTML=Object.entries(Q).map(([k,q],i)=>{let btn;
@@ -368,7 +368,7 @@ function openCreator(then,ev){reveal(ev?ev.clientX:innerWidth/2,ev?ev.clientY:in
 
 // ---------- 開始 ----------
 const existing=loadSave();
-const SPLASH=['Q彈Q彈！','今天也要拔草！','史萊姆軟軟的！','和朋友一起玩！','拉麵最棒了！','角角是水滴型的！','記得早點睡！','蝴蝶好難抓！','倉鼠最會種田！','一起去釣魚吧！'];
+const SPLASH=['Q彈Q彈！','今天也要拔草！','果凍怪軟軟的！','和朋友一起玩！','拉麵最棒了！','角角是水滴型的！','記得早點睡！','蝴蝶好難抓！','倉鼠最會種田！','一起去釣魚吧！'];
 $('splash').textContent=SPLASH[(Math.random()*SPLASH.length)|0];$('tName').textContent=look.name;
 if(existing){$('startBtn').textContent=`開始遊戲（第 ${existing.day} 天）`;}
 $('resetBtn').addEventListener('click',()=>{try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem('lobster-look');}catch(e){}location.reload();});

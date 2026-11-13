@@ -152,7 +152,7 @@ const HOUSE={x:HOME.x,z:HOME.z},DOOR=DOOR_OUT,BOARD={x:5,z:-6};
 const TG=(()=>{
   const sph=new THREE.SphereGeometry(1,18,14);
   const flares=(r,h)=>[0,1,2,3].map(i=>{const a=i*Math.PI/2+0.4;return[new THREE.ConeGeometry(0.2*r,0.75*r,6),M4(Math.cos(a)*0.36*r,0.2,Math.sin(a)*0.36*r,0,-a,-2.0)];});
-  const trunk=mergeGeos([[new THREE.CylinderGeometry(0.3,0.46,2.0,12),M4(0,1.0,0)],...flares(1)]);
+  const trunk=mergeGeos([[new THREE.CylinderGeometry(0.24,0.46,3.1,12),M4(0,1.55,0)],[new THREE.CylinderGeometry(0.08,0.16,1.3,8),M4(0.35,2.6,0.1,0,0,-0.7)],[new THREE.CylinderGeometry(0.08,0.16,1.3,8),M4(-0.3,2.55,-0.2,0.3,0,0.7)],...flares(1)]);
   const clump=(cx,cy,cz,r,seed0)=>{const g=new THREE.SphereGeometry(1,22,16);const p=g.attributes.position;let sd=seed0;const rr=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};
     const offs=[];for(let k=0;k<3;k++)offs.push([rr()*6.28,rr()*6.28,0.04+rr()*0.05]);
     for(let k=0;k<p.count;k++){const x=p.getX(k),y=p.getY(k),z=p.getZ(k);let d=1;for(const[a,b,amp]of offs){d+=amp*Math.sin(x*1.7+a)*Math.cos(z*1.5+b)*Math.cos(y*1.3+a);}
@@ -163,7 +163,7 @@ const TG=(()=>{
    for(let k=0;k<p.count;k++){v3.set(p.getX(k),(p.getY(k)-3.2)*1.25,p.getZ(k)).normalize();w3.set(n.getX(k),n.getY(k),n.getZ(k)).lerp(v3,0.7).normalize();n.setXYZ(k,w3.x,w3.y,w3.z);
      const y=p.getY(k),ny=w3.y;const v=clamp(0.66+(y-2.2)*0.14+ny*0.1,0.6,1.0);col.push(v,v,Math.min(1,v*0.96+0.04));}
    canopy.setAttribute('color',new THREE.Float32BufferAttribute(col,3));}
-  const ptrunk=mergeGeos([[new THREE.CylinderGeometry(0.2,0.32,1.6,10),M4(0,0.8,0)],...flares(0.75)]);
+  const ptrunk=mergeGeos([[new THREE.CylinderGeometry(0.16,0.32,2.4,10),M4(0,1.2,0)],...flares(0.75)]);
   const tiers=[];for(let i=0;i<5;i++){const r=1.6-i*0.27,h=1.25;const c=new THREE.ConeGeometry(r,h,36,1,true);const p=c.attributes.position;
     for(let k=0;k<p.count;k++){if(p.getY(k)<-h/2+0.01){const ang=Math.atan2(p.getZ(k),p.getX(k)),w=0.5+0.5*Math.cos(ang*9);p.setY(k,p.getY(k)-0.2*w);p.setX(k,p.getX(k)*(1+0.06*w));p.setZ(k,p.getZ(k)*(1+0.06*w));}}
     c.computeVertexNormals();tiers.push([c,M4(0,1.75+i*0.68,0)]);}
@@ -211,7 +211,7 @@ function sign(x,z,ry,lines){const g=new THREE.Group(),wood=toon(0xc89a70,{map:TE
   const t=textTex(lines),side=toon(0xf3c8a0);
   g.add(mk(new THREE.BoxGeometry(1.8,0.9,0.1),[side,side,side,side,toon(0xffffff,{map:t}),side],0,1.55,0));
   g.position.set(x,H(x,z),z);g.rotation.y=ry;shadowAll(g);scene.add(g);obstacles.push({x,z,r:0.5});}
-sign(46,3,-Math.PI/2,['⚠ 東邊野外','史萊姆出沒']);sign(2.5,-17,0,['↑ 北邊草原','雜草很多']);sign(-14,12,Math.PI*0.75,['↙ 龍蝦村','大家的家']);
+sign(46,3,-Math.PI/2,['⚠ 東邊野外','果凍怪出沒']);sign(2.5,-17,0,['↑ 北邊草原','雜草很多']);sign(-14,12,Math.PI*0.75,['↙ 龍蝦村','大家的家']);
 sign(-47,35,Math.PI*0.75,['歡迎來到','龍蝦村 🦞']);
 
 // ---------- 龍蝦村 ----------
@@ -298,7 +298,7 @@ const STAGE={x:V2.x,z:V2.z+18};
 
 // 城鎮路燈與石板路
 {const pt=canvasTex(128,128,(g)=>{g.fillStyle='#d8c8b0';g.fillRect(0,0,128,128);const cs=['#e4d6bf','#cdbba0','#dccdb4','#c4b296'];for(let r=0;r<6;r++)for(let c=-1;c<6;c++){g.fillStyle=cs[(r*2+c+6)%4];g.beginPath();g.ellipse(c*24+(r%2)*12+12,r*22+11,10,9,0,0,7);g.fill();}},[1,1]);
- const m=toon(0xffffff,{map:pt});
+ const m=toon(0xe8c99a);
  const boxes=obstacles.filter(o=>Math.hypot(o.x-V2.x,o.z-V2.z)<60&&(o.box||o.r>=0.7)&&Math.hypot(o.x-V2.x,o.z-V2.z)>6).map(o=>o.box?o:{x:o.x,z:o.z,r:o.r,box:{ry:0,hw:o.r*0.8,hd:o.r*0.8}});
  const clear=(ax,az,bx,bz,skip)=>!boxes.some(o=>o!==skip&&segHitsBox(ax,az,bx,bz,o,1.0));
  const road=(ax,az,bx,bz)=>{const L=Math.hypot(bx-ax,bz-az);if(L<0.3)return;const geo=scaleUV(new THREE.PlaneGeometry(2.6,L+1.2),1,(L+1.2)/2.6);geo.rotateX(-Math.PI/2);const mm=new THREE.Mesh(geo,m);mm.position.set((ax+bx)/2,0.04,(az+bz)/2);mm.rotation.y=Math.atan2(bx-ax,bz-az);mm.receiveShadow=true;scene.add(mm);};
@@ -362,7 +362,7 @@ const CAVE_FRONT=(()=>{const ry=Math.atan2(-CAVE_DOOR.x,-CAVE_DOOR.z);return{x:C
  g.position.set(CAVE_DOOR.x,H(CAVE_DOOR.x,CAVE_DOOR.z)-0.1,CAVE_DOOR.z);g.rotation.y=CAVE_FRONT.ry;shadowAll(g);scene.add(g);
  const toW=(lx,lz)=>({x:CAVE_DOOR.x+Math.cos(CAVE_FRONT.ry)*lx+Math.sin(CAVE_FRONT.ry)*lz,z:CAVE_DOOR.z-Math.sin(CAVE_FRONT.ry)*lx+Math.cos(CAVE_FRONT.ry)*lz});
  for(const[lx,lz,r]of[[0,-8.6,6.2],[-7,-5.6,4.8],[7,-5.6,4.8],[-11,-3.5,3],[11,-3.5,3],[0,-15,6],[-4.3,0.2,0.9],[4.3,0.2,0.9],[0,-2.2,2.0]]){const p=toW(lx,lz);obstacles.push({x:p.x,z:p.z,r});}}
-{const p={x:CAVE_FRONT.x+Math.cos(CAVE_FRONT.ry)*8,z:CAVE_FRONT.z-Math.sin(CAVE_FRONT.ry)*8};sign(p.x,p.z,CAVE_FRONT.ry,['⛰️ 史萊姆洞窟','⚠ 非常危險']);}
+{const p={x:CAVE_FRONT.x+Math.cos(CAVE_FRONT.ry)*8,z:CAVE_FRONT.z-Math.sin(CAVE_FRONT.ry)*8};sign(p.x,p.z,CAVE_FRONT.ry,['⛰️ 果凍怪洞窟','⚠ 非常危險']);}
 // ---------- 洞窟內部 ----------
 const caveObs=[];const CAVE_EXIT={x:CAVE.x,z:CAVE.z+CAVE.r-3.5};
 {const g=new THREE.Group();g.position.set(CAVE.x,0,CAVE.z);
