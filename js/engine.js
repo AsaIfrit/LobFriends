@@ -101,6 +101,21 @@ function mergeGeos(parts){let n=0;const gs=parts.map(([g0,m])=>{const g=g0.index
   const pos=new Float32Array(n*3),nor=new Float32Array(n*3),uv=new Float32Array(n*2);let o=0;
   for(const g of gs){const c=g.attributes.position.count;pos.set(g.attributes.position.array,o*3);nor.set(g.attributes.normal.array,o*3);if(g.attributes.uv)uv.set(g.attributes.uv.array,o*2);o+=c;g.dispose();}
   const out=new THREE.BufferGeometry();out.setAttribute('position',new THREE.BufferAttribute(pos,3));out.setAttribute('normal',new THREE.BufferAttribute(nor,3));out.setAttribute('uv',new THREE.BufferAttribute(uv,2));return out;}
+// 靜態物件合併：同材質的 mesh 合成一個，大幅減少繪製次數
+function matKey(m){return[m.type,m.color?m.color.getHex():'',m.map?m.map.uuid:'',m.vertexColors?1:0,m.transparent?1:0,m.opacity,m.side,m.emissive?m.emissive.getHex():'',m.depthWrite?1:0,m.fog?1:0].join('|');}
+function batchStatic(root){root.updateMatrixWorld(true);const inv=new THREE.Matrix4().copy(root.matrixWorld).invert();const buckets=new Map();const kill=[];
+  (function walk(o){if(o!==root&&o.userData&&o.userData.dyn)return;if(!o.visible)return;
+    if(o.isMesh&&!o.isInstancedMesh&&!Array.isArray(o.material)&&o.geometry&&o.geometry.attributes.position){const k=matKey(o.material);let b=buckets.get(k);if(!b){b={mat:o.material,list:[],cast:false,recv:false,order:o.renderOrder};buckets.set(k,b);}
+      b.list.push(o);b.cast=b.cast||o.castShadow;b.recv=b.recv||o.receiveShadow;}
+    for(const c of o.children.slice())walk(c);})(root);
+  const m4=new THREE.Matrix4();
+  for(const b of buckets.values()){if(b.list.length<2)continue;let n=0;const gs=[];const hasCol=!!b.list[0].geometry.attributes.color;
+    for(const o of b.list){let g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();m4.multiplyMatrices(inv,o.matrixWorld);g.applyMatrix4(m4);if(!g.attributes.normal)g.computeVertexNormals();if(hasCol&&!g.attributes.color)continue;gs.push(g);n+=g.attributes.position.count;kill.push(o);}
+    const pos=new Float32Array(n*3),nor=new Float32Array(n*3),uv=new Float32Array(n*2),col=hasCol?new Float32Array(n*3):null;let off=0;
+    for(const g of gs){const c=g.attributes.position.count;pos.set(g.attributes.position.array,off*3);nor.set(g.attributes.normal.array,off*3);if(g.attributes.uv)uv.set(g.attributes.uv.array,off*2);if(col)col.set(g.attributes.color.array,off*3);off+=c;g.dispose();}
+    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('normal',new THREE.BufferAttribute(nor,3));geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));if(col)geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+    const me=new THREE.Mesh(geo,b.mat);me.castShadow=b.cast;me.receiveShadow=b.recv;me.renderOrder=b.order;root.add(me);}
+  for(const o of kill)if(o.parent)o.parent.remove(o);return root;}
 const M4=(x=0,y=0,z=0,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1)=>new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),new THREE.Quaternion().setFromEuler(new THREE.Euler(rx,ry,rz)),new THREE.Vector3(sx,sy,sz));
 
 // ---------- 天空、光源（柔和） ----------

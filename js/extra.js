@@ -65,14 +65,14 @@ const _wp=new THREE.Vector3();
 function seatPos(kind,i,off=-0.75){if(kind==='coaster'){const car=PARKV.coaster.cars[i];const v=new THREE.Vector3(0,0.38,-0.2);car.localToWorld(v);return{x:v.x,y:v.y,z:v.z,ry:car.rotation.y,q:car.quaternion};}if(kind==='ferris'){const F=PARKV.ferris;F.cars[i].getWorldPosition(_wp);const c=Math.cos(F.yaw),s=Math.sin(F.yaw);return{x:_wp.x+c*off,y:_wp.y-F.drop,z:_wp.z-s*off,ry:F.yaw};}
   const K=PARKV.carousel,h=K.horses[i];h.h.getWorldPosition(_wp);return{x:_wp.x,y:_wp.y+0.12,z:_wp.z,ry:K.ang-h.a};}
 function sitPoseOn(p,kind,T){p.legs=kind==='ferris'?[-0.2,0.2]:[-0.5,-0.5];p.sq=Math.sin(T*2.2)*0.04;p.arms=kind==='ferris'?[[-0.3+Math.sin(T*1.7)*0.2,0,-0.5],[-2.4+Math.sin(T*3)*0.3,0,0.4]]:[[-1.0,0,-0.3],[-1.0,0,0.3]];p.k=10;return p;}
-function updatePark(dt,T){const F=PARKV.ferris,K=PARKV.carousel,TC=PARKV.teacups;const near=Math.hypot(ply.x-PARK.x,ply.z-PARK.z)<150;
+function updatePark(dt,T){const F=PARKV.ferris,K=PARKV.carousel,TC=PARKV.teacups;const near=Math.hypot(ply.x-PARK.x,ply.z-PARK.z)<95;
   F.ang+=dt*0.1;F.wheel.rotation.z=F.ang;for(let i=0;i<F.n;i++){const a=F.ang+i/F.n*Math.PI*2;F.cars[i].position.set(Math.cos(a)*F.R,F.cy+Math.sin(a)*F.R,0);F.cars[i].rotation.z=Math.sin(T*1.3+i)*0.04;}
   K.ang-=dt*0.45;K.rot.rotation.y=K.ang;K.horses.forEach((h,i)=>{h.h.position.y=1.6+Math.sin(T*2.4+i*1.3)*0.28;});
   // 雲霄飛車
   {const CO=PARKV.coaster;const i0=Math.floor(CO.s*CO.N)%CO.N;const v=CO.v[i0];const ds=v*dt/CO.L;CO.s=(CO.s+ds)%1;CO.lap=(CO.lap||0)+ds;
    for(let k=0;k<CO.cars.length;k++){const u=((CO.s-k*3.0/CO.L)%1+1)%1;const p=CO.curve.getPointAt(u),q=CO.curve.getPointAt((u+0.004)%1);const car=CO.cars[k];car.position.copy(p);car.position.y+=0.15;car.lookAt(q.x,q.y+0.15,q.z);}}
   // 城堡餐廳
-  {const CV=PARKV.castle;const nearC=Math.hypot(ply.x-PARKV.KC.x,ply.z-PARKV.KC.z)<45;
+  {const CV=PARKV.castle;const nearC=CV.interior.visible;
    if(nearC){for(const d of CV.diners){const p=d.pose;const ph=(T*1.6+d.ph)%(Math.PI*2);p.sq=Math.sin(T*3+d.ph)*0.05;p.k=12;const bite=Math.sin(ph)>0.2;
       p.arms=[[bite?-2.0:-0.9,0,-0.5],[-0.6-Math.sin(T*2+d.ph)*0.3,0,0.5]];p.legs=[-1.2,-1.2];p.y=Math.abs(Math.sin(T*2.2+d.ph))*0.05;applyPose(d.c,p,dt);if(Math.random()<dt*0.08)burst(d.x,1.9,d.z,[0xff9ec7,0xffd36e],2,1.2);}
     for(const w of CV.waiters){const r=w.route,tg=r[w.k];const dx=tg[0]-w.x,dz=tg[1]-w.z,dd=Math.hypot(dx,dz);if(dd<0.3){w.k=(w.k+1)%r.length;}else{w.x+=dx/dd*1.4*dt;w.z+=dz/dd*1.4*dt;w.face+=angDiff(w.face,Math.atan2(dx,dz))*Math.min(1,dt*6);w.walk+=dt*8;}
@@ -125,5 +125,7 @@ function hatchPet(type,name,silent,quiet){const base=PET_TYPES[type];const cnt=p
 
 loop();
 
-function castleFrame(cam){const CV=PARKV.castle;const inside=CV.inside(ply.x,ply.z,-0.3);CV.roof.visible=!inside;CV.light.intensity=inside?0.35:0;
+function castleFrame(cam){const CV=PARKV.castle;const inside=CV.inside(ply.x,ply.z,-0.3);CV.roof.visible=!inside;const L=HOMEV.light;
+  if(inside){L.position.set(CV.lightPos.x,5.5,CV.lightPos.z);L.intensity=0.35;L.distance=30;}else{L.position.set(HOME.x,3.4,HOME.z);L.distance=16;}
+  CV.interior.visible=inside||Math.hypot(ply.x-(PARKV.KC.x+PARKV.KC.w),ply.z-PARKV.KC.z)<16;
   for(const w of CV.walls){const c=w.alongX?cam.z:cam.x;const cut=inside&&(c-w.pos)*w.innerSign<0;w.full.visible=!cut;if(w.stub)w.stub.visible=cut;for(const d of w.deco)d.visible=!cut;}}

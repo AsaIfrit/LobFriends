@@ -46,9 +46,9 @@ body.sleeping #spdTag{display:inline-block}
 #qlistMini div{font-size:12.5px;padding:3px 0;opacity:0;transform:translateX(-14px);transition:opacity .25s,transform .35s var(--spring)}
 #qdrop.open #qlistMini div{opacity:1;transform:none}
 /* ---------- 右上：小地圖 + FAB 扇形選單 ---------- */
-#topR{position:fixed;right:10px;top:10px;z-index:6;width:104px;height:170px}
-#mini{width:104px;height:104px;border-radius:50%;border:3px solid #fff;box-shadow:0 4px 0 rgba(200,140,110,.4),0 6px 14px rgba(0,0,0,.1);pointer-events:none;background:#bfe6b0;box-sizing:border-box}
-#fab{position:absolute;right:26px;top:112px;width:52px;height:52px;border-radius:50%;border:3px solid #fff;background:var(--cream);box-shadow:0 4px 0 rgba(200,140,110,.45);padding:0;z-index:2;transition:background .35s,transform .15s}
+#topR{position:fixed;right:10px;top:10px;z-index:6;width:208px;height:274px}
+#mini{width:208px;height:208px;border-radius:50%;border:3px solid #fff;box-shadow:0 4px 0 rgba(200,140,110,.4),0 6px 14px rgba(0,0,0,.1);pointer-events:none;background:#bfe6b0;box-sizing:border-box}
+#fab{position:absolute;right:78px;top:216px;width:52px;height:52px;border-radius:50%;border:3px solid #fff;background:var(--cream);box-shadow:0 4px 0 rgba(200,140,110,.45);padding:0;z-index:2;transition:background .35s,transform .15s}
 #fab span{position:absolute;left:14px;width:18px;height:3.5px;border-radius:3px;background:var(--ink);transition:transform .45s var(--spring),opacity .25s,top .3s var(--soft),background .3s}
 #fab span:nth-child(1){top:16px}#fab span:nth-child(2){top:22.5px}#fab span:nth-child(3){top:29px}
 #fab.open{background:linear-gradient(140deg,#ff9ec7,#b9a6f2);transform:rotate(180deg)}
@@ -56,7 +56,7 @@ body.sleeping #spdTag{display:inline-block}
 #fab.open span:nth-child(1){transform:rotate(45deg)}#fab.open span:nth-child(2){opacity:0;transform:scaleX(0)}#fab.open span:nth-child(3){transform:rotate(-45deg)}
 #fab i{position:absolute;right:-3px;top:-3px;width:14px;height:14px;border-radius:50%;background:#ff6f8f;border:2px solid #fff;display:none}
 #fab.dot i{display:block;animation:beat 1s infinite}
-.fan{position:absolute;right:20px;top:106px;width:64px;height:64px;border-radius:50%;border:3px solid #fff;background:var(--cream);font-size:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;padding:0;box-shadow:0 4px 0 rgba(200,140,110,.4);
+.fan{position:absolute;right:72px;top:210px;width:64px;height:64px;border-radius:50%;border:3px solid #fff;background:var(--cream);font-size:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;padding:0;box-shadow:0 4px 0 rgba(200,140,110,.4);
   transform:translate(0,0) scale(0);opacity:0;transition:transform .5s var(--spring),opacity .2s;transition-delay:calc(var(--i)*35ms)}
 .fan b{font-size:10.5px;white-space:nowrap;margin-top:3px;opacity:0;transition:opacity .2s .25s}
 #topR.open .fan{opacity:1;transform:translate(var(--tx),var(--ty)) scale(1)}
@@ -315,6 +315,8 @@ body.ingame #start{display:none!important}
 #hud{left:max(10px,env(safe-area-inset-left));top:max(10px,env(safe-area-inset-top))}
 #topR{right:max(10px,env(safe-area-inset-right));top:max(10px,env(safe-area-inset-top))}
 #topR.open .fan{transform:translate(var(--tx),var(--ty)) scale(1)}
+/* 矮螢幕（手機橫放）維持小地圖原本大小 */
+@media (max-height:620px) and (min-width:561px){#topR{width:104px;height:170px}#mini{width:104px;height:104px}#fab{right:26px;top:112px}.fan{right:20px;top:106px}}
 /* ===== 手機直式 ===== */
 @media (max-width:560px){
   .card{padding:4px 9px;border-radius:15px}
@@ -357,7 +359,7 @@ body.ingame #start{display:none!important}
   <div style="display:flex;gap:6px;align-self:flex-start"><div class="card" id="coinPill">🪙 <b id="coins">0</b></div><div class="card" id="netBadge"><i></i><span id="netTxt">連線中…</span></div></div>
   <div class="card" id="qdrop"><div class="qh">📜 委託 <span id="qCount"></span><span class="chev">▾</span></div><div id="qlistMini"></div></div>
 </div>
-<div id="topR"><canvas id="mini" width="208" height="208"></canvas>
+<div id="topR"><canvas id="mini" width="416" height="416"></canvas>
   <button id="fab"><span></span><span></span><span></span><i></i></button>
   <button class="fan" data-f="craft" style="--i:0">🔨<b>合成</b></button>
   <button class="fan" data-f="tal" style="--i:1">⭐<b>天賦</b><em class="dotS" id="spDot">0</em></button>
@@ -444,7 +446,7 @@ body.ingame #start{display:none!important}
   <div class="clab">主音量 <span id="vMv"></span></div><input type="range" id="vM" min="0" max="1" step="0.05">
   <div class="clab">背景音樂 <span id="vBv"></span></div><input type="range" id="vB" min="0" max="1" step="0.05">
   <div class="clab">音效 <span id="vSv"></span></div><input type="range" id="vS" min="0" max="1" step="0.05">
-  <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此，每頻道最多 8 人）</div><div class="chips" id="chChips"></div></div>
+  <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此，每頻道最多 30 人）</div><div class="chips" id="chChips"></div></div>
   <div class="crow2"><button class="qb lav" id="setFs">⛶ 全螢幕</button><button class="qb" id="setSave">💾 立即存檔</button></div>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
   <button class="qb lav close" data-close="settings">關閉</button></div></div>

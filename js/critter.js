@@ -158,7 +158,7 @@ function makeCritter(o,withTools){
   if(o.glasses){const gm=basic(0x3a2a22);for(const s of[-1,1]){const r=mk(new THREE.TorusGeometry(0.13*o.eyeSize,0.02,6,16),gm,s*o.eyeGap,o.eyeY,fz(s*o.eyeGap,o.eyeY)+0.03);m.add(r);}
     m.add(mk(new THREE.BoxGeometry(Math.max(0.02,o.eyeGap*2-0.26*o.eyeSize),0.02,0.02),gm,0,o.eyeY+0.02,fz(0,o.eyeY)+0.03));}
   const T=withTools?buildTools(hold):{};
-  shadowAll(g);
+  shadowAll(g);g.traverse(o=>{if(o.isMesh&&o!==body)o.castShadow=false;});
   return{g,m,face,setFace,legs,arms,hold,T,tail,bodyM,o,lob,sq:0,sqv:0,topY};
 }
 function makeSlime(night,size=1,color=null,angry=false){

@@ -455,7 +455,7 @@ function loop(){
     if(!ply.cave)camPos.y=Math.max(camPos.y,H(camPos.x,camPos.z)+0.8);
     if(snapCam){camera.position.copy(camPos);snapCam=false;}else camera.position.lerp(camPos,1-Math.pow(0.0001,rawDt));camera.lookAt(camTgt);}
   }
-  skyDome.position.copy(camera.position);if(started)homeFrame(camera.position,rawDt);
+  skyDome.position.copy(camera.position);if(started){homeFrame(camera.position,rawDt);cullFar(rawDt);perfTune(rawDt);}
   for(const m of monsters)if(m.bar.visible)m.bar.quaternion.copy(camera.quaternion);
   if(typeof netFrame==='function')netFrame(rawDt,T);
   renderer.setRenderTarget(rt);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(postScene,postCam);
@@ -495,9 +495,10 @@ function separateChars(){const B=[];
   for(const b of B)if(b.moved&&!b.me){collideObs(b.o,b.r*0.6);pushWalls(b.o,b.r*0.6);if(b.npc)b.o.c.g.position.set(b.o.x,b.o.c.g.position.y,b.o.z);}}
 function bodyCollide(n,r=0.5){collideObs(n,r);pushWalls(n,r);}
 function npcNight(n,h){return h>=n.sleepH||h<n.wakeH;}
-function npcUpdate(dt,T){
+function npcUpdate(dtAll,T){
   const h=hour();
-  for(const n of npcs){const g=n.c.g;let moving=false;const night=npcNight(n,h);if(!n.init){n.init=1;if(night&&n.door)n.away=true;}
+  for(const n of npcs){const g=n.c.g;let moving=false;let dt=dtAll;const far=Math.hypot(n.x-ply.x,n.z-ply.z)>75&&!n.talking;
+    if(far){n.acc=(n.acc||0)+dtAll;if(n.acc<0.3){g.visible=false;continue;}dt=Math.min(n.acc,0.5);n.acc=0;}const night=npcNight(n,h);if(!n.init){n.init=1;if(night&&n.door)n.away=true;}
     if(n.stall&&!night&&n.onPost){n.away=false;const d=angDiff(n.face,n.talking?Math.atan2(ply.x-n.x,ply.z-n.z):STALLS[n.stall].ry);n.face+=d*Math.min(1,dt*6);}
     else if(n.talking){n.face+=angDiff(n.face,Math.atan2(ply.x-n.x,ply.z-n.z))*Math.min(1,dt*8);}
     else if(night&&n.door){n.working=false;n.onPost=false;if(!n.away){moving=steer(n,n.door.x,n.door.z,1.7,dt,0.5);n.homeT=(n.homeT||0)+dt;if(!moving||(n.homeT>20&&Math.hypot(ply.x-n.x,ply.z-n.z)>30&&Math.hypot(ply.x-n.door.x,ply.z-n.door.z)>30)){n.away=true;n.homeT=0;}}}
@@ -509,7 +510,7 @@ function npcUpdate(dt,T){
       else{n.wait-=dt;if(n.wait<=0){n.wait=R(2,5);const a=R(0,6.28),r=R(0.5,4);n.tx=n.hx+Math.cos(a)*r;n.tz=n.hz+Math.sin(a)*r;if(!farFrom(n.tx,n.tz,0.6)){n.tx=n.hx;n.tz=n.hz;}}}}
       if(Math.hypot(ply.x-n.x,ply.z-n.z)<3.5&&!moving&&!n.working)n.face+=angDiff(n.face,Math.atan2(ply.x-n.x,ply.z-n.z))*Math.min(1,dt*4);}
     if(moving&&!(n.stall&&Math.hypot(n.x-n.hx,n.z-n.hz)<2.2))bodyCollide(n);
-    g.visible=!n.away;if(n.away)continue;
+    g.visible=!n.away&&!far;if(n.away||far)continue;
     g.position.set(n.x,H(n.x,n.z)+(n.stall&&n.onPost?0.84:0),n.z);g.rotation.y=n.face;
     if(n.job){for(const t in n.c.T)n.c.T[t].visible=false;const tl={farm:'can',chop:'axe1',fish:'rod',net:'net'}[n.job];if(tl&&n.c.T[tl]&&!n.talking)n.c.T[tl].visible=n.working||n.job==='net';}
     const p=walkPose(n.pose,n.walk,moving,T,n.hx);if(n.working&&!n.talking&&!moving)workPose(n,p,T);if(n.talking){p.sq=Math.abs(Math.sin(T*7))*0.06;p.arms[1]=[-0.5-Math.abs(Math.sin(T*4))*0.8,0,0.5];}
@@ -739,6 +740,14 @@ function step(dt,T){
   saveT-=dt;if(saveT<=0){saveT=15;save();}
 }
 let lastCtx='';
+// ---------- 效能：遠處的樹隱藏、依幀率自動調整解析度 ----------
+let cullT=0;function cullFar(dt){cullT-=dt;if(cullT>0)return;cullT=0.4;const cx=ply.x,cz=ply.z;
+  for(const t of trees){const d=Math.hypot(t.x-cx,t.z-cz);t.root.visible=ply.cave?false:d<135;}
+  for(const r of rocks)r.m.visible=!ply.cave&&Math.hypot(r.x-cx,r.z-cz)<110;}
+const PERF={acc:0,n:0,dpr:Math.min(devicePixelRatio,1.5),t:0};
+function perfTune(rawDt){PERF.acc+=rawDt;PERF.n++;PERF.t+=rawDt;if(PERF.t<2.5)return;const avg=PERF.acc/PERF.n;PERF.acc=0;PERF.n=0;PERF.t=0;
+  let d=PERF.dpr;if(avg>0.024&&d>0.75)d=Math.max(0.75,d-0.25);else if(avg<0.013&&d<Math.min(devicePixelRatio,1.5))d=Math.min(Math.min(devicePixelRatio,1.5),d+0.25);
+  if(d!==PERF.dpr){PERF.dpr=d;renderer.setPixelRatio(d);resize();}}
 const _v3=new THREE.Vector3();
 function worldToScreen(x,y,z){_v3.set(x,y,z).project(camera);return{x:(_v3.x*0.5+0.5)*innerWidth,y:(-_v3.y*0.5+0.5)*innerHeight};}
 
@@ -804,7 +813,7 @@ function updatePets(dt,T){
     const gy=p.rideY!==undefined&&ply.riding?p.rideY:p.cave?0:Math.max(H(p.x,p.z),inHouse(p.x,p.z)?0.02:-9);let hop=moving?Math.abs(Math.sin(p.t*11))*0.18:0;if(p.happy>0){p.happy-=dt;hop=Math.abs(Math.sin(p.t*14))*0.35;}
     g.position.set(p.x,gy+hop,p.z);g.rotation.y=p.face;const sq=moving||p.happy>0?1+Math.sin(p.t*22)*0.06:1+Math.sin(p.t*3)*0.03;p.a.m.scale.set(1/Math.sqrt(sq),sq,1/Math.sqrt(sq));
     if(p.a.m.userData.tail)p.a.m.userData.tail.rotation.z=Math.sin(p.t*(p.follow||p.happy>0?14:3))*0.45;
-    g.visible=!!p.cave===!!ply.cave;p.sp.visible=g.visible&&!p.follow&&Math.hypot(ply.x-p.x,ply.z-p.z)<6;}
+    g.visible=!!p.cave===!!ply.cave&&(p.follow||Math.hypot(p.x-ply.x,p.z-ply.z)<80);p.sp.visible=g.visible&&!p.follow&&Math.hypot(ply.x-p.x,ply.z-p.z)<6;}
 }
 
 // ---------- 釣魚 ----------

@@ -24,7 +24,7 @@ function sbConfigured(){const c=window.LOBSTER_CONFIG;return c&&c.SUPABASE_URL&&
 const sbState=new Map();let sbCh=null,sbLastSend=0,sbLastKey='';
 const myNetId=(()=>{try{let v=sessionStorage.getItem('lobster-netid');if(!v){v='p'+Math.random().toString(36).slice(2,10);sessionStorage.setItem('lobster-netid',v);}return v;}catch(e){return'p'+Math.random().toString(36).slice(2,10);}})();
 function sbRebuild(){netPeers=[...sbState].map(([id,st])=>({peer:id,isMe:false,kind:'viewer',presence:st}));updNetBadge();}
-let sbClient=null,sbShard=0,sbErr='';const SHARD_MAX=8,SHARD_N=8;
+let sbClient=null,sbShard=0,sbErr='';const SHARD_MAX=Math.max(2,+((window.LOBSTER_CONFIG||{}).CHANNEL_MAX)||30),SHARD_N=8;
 function sbPref(){try{return+(localStorage.getItem('lobster-ch')||0);}catch(e){return 0;}}
 function sbClearRemotes(){for(const[k,r]of remotes){scene.remove(r.c.g);}remotes.clear();sbState.clear();sbRebuild();}
 function sbInit(){const c=window.LOBSTER_CONFIG;
@@ -33,7 +33,7 @@ function sbInit(){const c=window.LOBSTER_CONFIG;
   room={presence:async p=>{if(!sbCh||!netConn)return;const now=performance.now();const key=JSON.stringify([p.x,p.z,p.y,p.f,p.an,p.ar,p.w,p.em,p.ch,p.sx]);
       if(p.lk||p.n!==sbState._n){sbCh.track({n:p.n,lk:compactLook()}).catch(()=>{});sbState._n=p.n;}
       const urgent=(p.em&&p.em!==sbState._em)||(p.ch&&p.ch!==sbState._ch);
-      if(key===sbLastKey&&now-sbLastSend<4000)return;if(!urgent&&now-sbLastSend<330)return;
+      const np=sbState.size+1,iv=Math.min(6000,Math.max(330,np*np/80*1000));if(key===sbLastKey&&now-sbLastSend<Math.max(4000,iv))return;if(!urgent&&now-sbLastSend<iv)return;
       sbState._em=p.em;sbState._ch=p.ch;sbLastKey=key;sbLastSend=now;const q=Object.assign({},p);delete q.lk;sbCh.send({type:'broadcast',event:'s',payload:Object.assign(q,{id:myNetId})}).catch(()=>{});}};
   setInterval(()=>{const now=performance.now();let ch=false;for(const[id,st]of sbState)if(now-(st._t||0)>20000){const r=remotes.get(id);if(r){scene.remove(r.c.g);remotes.delete(id);}sbState.delete(id);ch=true;}if(ch)sbRebuild();},5000);
   const pref=sbPref();sbJoin(pref||1,!pref);}
