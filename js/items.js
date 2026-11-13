@@ -70,6 +70,6 @@ const tal={};for(const k in TALENTS)tal[k]=0;
 const TL=(k,n)=>tal[k]>=n;
 const xpNeed=lv=>30+(lv-1)*25;
 function weaponAtk(){const w=ply.weapon;let a=w==='stick'?1:ITEMS[w].atk;a+=Math.floor((ply.lv-1)/3);
-  if(w==='sword'&&TL('sword',1))a++;if(w==='spear'&&TL('spear',1))a++;if(w==='bow'&&TL('bow',1))a++;if(w==='staff'&&TL('staff',1))a++;return a;}
+  if(w==='sword'&&TL('sword',1))a++;if(w==='spear'&&TL('spear',1))a++;if(w==='bow'&&TL('bow',1))a++;if(w==='staff'&&TL('staff',1))a++;if(ply.en<=0)a=Math.max(1,Math.round(a*0.5));return a;}
 function chopPow(){let p=has('axe2')?4:has('axe1')?2:1;if(TL('wood',1))p++;if(TL('wood',2))p*=2;return p;}
 function minePow(){let p=has('pick2')?2:has('pick1')?1:(TL('mine',2)?1:0);if(p===0)return 0;if(TL('mine',1))p++;if(TL('mine',2))p*=2;return p;}

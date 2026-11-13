@@ -278,7 +278,8 @@ const ACT_HIT={pull:0.5,chop:0.6,mine:0.6,till:0.62,water:0.5,plant:0.55,catch:0
 function faceTo(x,z){ply.face=Math.atan2(x-ply.x,z-ply.z);}
 const EN_COST={pull:0.6,chop:1.2,mine:1.2,till:1,water:0.4,plant:0.3,catch:0.5,harvest:0.4};
 function useEn(v){ply.en=Math.max(0,ply.en-v);}
-function startAct(a,target,tool){useEn(EN_COST[a]||0.3);ply.act=a;ply.actT=0;ply.hit=0;ply.target=target;toolShow=tool||null;refreshHeld();}
+function tiredBlock(){if(ply.en>0)return false;SFX.deny();P.sqv-=3;const n=performance.now();if(!ply.tiredT||n-ply.tiredT>2500){ply.tiredT=n;toast('😵 精神用光了，沒力氣採集…去睡覺或吃點東西吧');}return true;}
+function startAct(a,target,tool){if(tiredBlock())return;useEn(EN_COST[a]||0.3);ply.act=a;ply.actT=0;ply.hit=0;ply.target=target;toolShow=tool||null;refreshHeld();}
 function doAction(){
   if(ply.act||ply.atkT>=0||ply.sleeping)return;
   const c=context();
@@ -308,7 +309,7 @@ function doAction(){
     case'cave':enterCave();break;
     case'leave':leaveCave();break;
     case'deeper':goDeeper();break;
-    case'ore':{const o=nearestOre();faceTo(o.x,o.z);startAct('mine',o,has('pick2')?'pick2':has('pick1')?'pick1':'stick');break;}
+    case'ore':{const o=nearestOre();faceTo(o.x,o.z);if(tiredBlock())break;startAct('mine',o,has('pick2')?'pick2':has('pick1')?'pick1':'stick');break;}
     case'fish':startFishing();break;
     case'wait':endFishing('收竿了');break;
     case'reel':catchFish();break;
@@ -600,8 +601,8 @@ function step(dt,T){
 
   if(!ply.sleeping){
     if(ply.en<30&&warnLv<1){warnLv=1;toast('😪 好睏…找張床躺一下吧');}
-    if(ply.en<12&&warnLv<2){warnLv=2;toast('💤 快撐不住了！精神用光會昏倒');}
-    if(ply.en<=0){faint('撐不住了… 倒頭就睡 💫');return;}}
+    if(ply.en<12&&warnLv<2){warnLv=2;toast('💤 快撐不住了！精神用光就不能採集，攻擊力也會減半');}
+    if(ply.en<=0&&warnLv<3){warnLv=3;toast('😵 精神用光了！不能採集，攻擊力減半…快去睡覺或吃東西');}}
   if(ply.en>40)warnLv=0;
   if(isNight()&&!ply.nightWarned&&!ply.indoor){ply.nightWarned=true;toast('🌙 天黑了，果凍怪變兇了！');}if(!isNight())ply.nightWarned=false;
   const sleepy=ply.sleeping?0:clamp((30-ply.en)/30,0,1);
@@ -854,7 +855,7 @@ function updatePets(dt,T){
 
 // ---------- 釣魚 ----------
 let fishLine=null,bobber=null;
-function startFishing(){useEn(0.5);faceTo(POND.x,POND.z);const d=Math.hypot(POND.x-ply.x,POND.z-ply.z);const into=Math.min(d-1.5,(d-POND.r)+3.0);
+function startFishing(){if(tiredBlock())return;useEn(0.5);faceTo(POND.x,POND.z);const d=Math.hypot(POND.x-ply.x,POND.z-ply.z);const into=Math.min(d-1.5,(d-POND.r)+3.0);
   const bx=ply.x+(POND.x-ply.x)/d*into,bz=ply.z+(POND.z-ply.z)/d*into;
   if(!bobber){bobber=new THREE.Group();bobber.add(mk(new THREE.SphereGeometry(0.13,10,8,0,Math.PI*2,0,Math.PI/2),toon(0xff5a5a)));const lo=mk(new THREE.SphereGeometry(0.13,10,8,0,Math.PI*2,Math.PI/2,Math.PI/2),toon(0xffffff));bobber.add(lo);scene.add(bobber);
     fishLine=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3()]),new THREE.LineBasicMaterial({color:0xffffff}));scene.add(fishLine);}
