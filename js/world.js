@@ -644,7 +644,7 @@ const clouds=[];{const cm=toon(0xffffff,{emissive:0x5a6878,fog:false}),cm2=toon(
   const flat=mk(new THREE.CylinderGeometry(n*2.2*big,n*2.2*big,0.6,16),cm2,0,-1.5*big,0);flat.scale.z=0.45;g.add(flat);
   const a=SR(0,6.28),d=SR(60,280);g.position.set(Math.cos(a)*d,SR(52,95),Math.sin(a)*d);g.rotation.y=SR(0,3);scene.add(g);batchStatic(g);clouds.push(g);}}
 // 遠方的地面與山（空氣感淡化）
-{const og=mk(new THREE.RingGeometry(112,900,64,1),toon(0x7fbd52),0,-6,0);og.rotation.x=-Math.PI/2;og.receiveShadow=false;scene.add(og);
+{const og=mk(new THREE.RingGeometry(112,900,64,1),toon(0x7fbd52),0,-6,0);og.rotation.x=-Math.PI/2;og.receiveShadow=false;scene.add(og);var OUTERG=og;
  const mtn=new THREE.Group();const mc=[0x9cc4e2,0x8db8dc,0xa8cde8];
  for(let i=0;i<40;i++){const a=i/40*Math.PI*2+SR(-0.05,0.05),d=SR(330,420),h=SR(40,110),r=SR(45,90);const m=mk(new THREE.ConeGeometry(r,h,7),new THREE.MeshBasicMaterial({color:mc[i%3],fog:false}),Math.cos(a)*d,h/2-6,Math.sin(a)*d);m.rotation.y=SR(0,3);mtn.add(m);
    const cap=mk(new THREE.ConeGeometry(r*0.32,h*0.32,7),new THREE.MeshBasicMaterial({color:0xdbeaf6,fog:false}),Math.cos(a)*d,h-6-h*0.16+0.5,Math.sin(a)*d);cap.rotation.y=m.rotation.y;if(h>80)mtn.add(cap);}

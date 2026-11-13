@@ -290,7 +290,7 @@ function drawMini(){
 const SKY={dT:new THREE.Color(0x3d92d8),dB:new THREE.Color(0xbfe6fb),sT:new THREE.Color(0xb9a2f0),sB:new THREE.Color(0xffc8b4),nT:new THREE.Color(0x232a5a),nB:new THREE.Color(0x5d5a9a),
   iT:new THREE.Color(0x6a4a52),iB:new THREE.Color(0xa07a78),winOff:new THREE.Color(0xa8c8d8),winOn:new THREE.Color(0xffe2a8),hemiN:new THREE.Color(0xa8a0f0),sunC:new THREE.Color(0xfff4e6),dusk:new THREE.Color(0xffb8a0)};
 let dayF=1;
-function updateSky(){
+function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUNTAINS.visible=out;OUTERG.visible=out;for(const c of clouds)c.visible=out;}
   const a=(tmin/1440)*Math.PI*2-Math.PI/2,sh=Math.sin(a),sc=Math.cos(a);
   dayF=clamp(sh*2.5+0.35,0,1);const dusk=clamp(1-Math.abs(sh)/0.3,0,1)*0.65;
   if(ply.indoor){skyU.top.value.copy(SKY.iT);skyU.bot.value.copy(SKY.iB);scene.fog.far=1000;scene.fog.near=900;}
