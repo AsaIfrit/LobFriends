@@ -6,19 +6,79 @@ function textTex(lines,bg='#fff1e0',fg='#7a4a34',w=256,h=128,font=40){return can
   lines.forEach((l,i)=>c.fillText(l,w/2,h/(lines.length+1)*(i+1)));});}
 // ---------- 房屋 ----------
 const windowMats=[];
-function makeHouse(x,z,ry,wall,roof,s=1){
-  const g=new THREE.Group();
-  const wm=toon(wall,{map:TEX.wood});
-  g.add(mk(new THREE.BoxGeometry(6,3.4,5.4),wm,0,1.7,0));
-  const rf=mk(new THREE.ConeGeometry(5.1,2.6,4),toon(roof),0,4.7,0);rf.rotation.y=Math.PI/4;rf.scale.set(1,1,0.92);g.add(rf);
-  g.add(mk(new THREE.BoxGeometry(0.7,1.6,0.7),toon(0xe0c8b0),-1.4,5,1.2));
-  g.add(mk(new THREE.BoxGeometry(0.15,2.1,1.3),toon(0xc89a78),3.03,1.05,0));
-  g.add(mk(new THREE.SphereGeometry(0.09,8,6),toon(0xffd36e),3.12,1.05,0.45));
-  for(const[px,pz,r2]of[[3.03,-1.7,0],[3.03,1.7,0],[0,2.72,Math.PI/2],[0,-2.72,Math.PI/2]]){const m=basic(0xa8c8d8);windowMats.push(m);const w=mk(new THREE.BoxGeometry(0.12,0.9,0.9),m,px,2.1,pz);w.rotation.y=r2;g.add(w);
-    const f=mk(new THREE.BoxGeometry(0.1,1.05,1.05),toon(0xffffff),px*0.995,2.1,pz*0.995);f.rotation.y=r2;g.add(f);}
-  g.add(mk(new THREE.BoxGeometry(1,0.2,1.6),toon(0xe8d0b0),3.5,0.1,0));
-  g.position.set(x,H(x,z),z);g.rotation.y=ry;g.scale.setScalar(s);shadowAll(g);scene.add(g);obstacles.push({x,z,r:3.5*s});return g;
-}
+// ---------- 中世紀房屋（半木造、紅瓦屋頂、尖塔） ----------
+function scaleUV(g,su,sv){const uv=g.attributes.uv;if(!uv)return g;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*su,uv.getY(i)*sv);uv.needsUpdate=true;return g;}
+const MTEX={};
+MTEX.timberA=canvasTex(256,256,(g)=>{g.fillStyle='#f7f0e2';g.fillRect(0,0,256,256);g.fillStyle='#ece2cf';for(let i=0;i<40;i++){g.fillRect(Math.random()*256,Math.random()*256,10+Math.random()*20,3);}
+  g.fillStyle='#7a4a2e';g.fillRect(0,0,256,14);g.fillRect(0,242,256,14);for(const x of[0,124,242])g.fillRect(x,0,14,256);g.fillRect(0,120,256,10);
+  g.strokeStyle='#7a4a2e';g.lineWidth=11;g.beginPath();g.moveTo(14,120);g.lineTo(70,14);g.moveTo(242,120);g.lineTo(186,14);g.stroke();});
+MTEX.timberB=canvasTex(256,256,(g)=>{g.fillStyle='#f7f0e2';g.fillRect(0,0,256,256);g.fillStyle='#7a4a2e';g.fillRect(0,0,256,14);g.fillRect(0,242,256,14);for(const x of[0,124,242])g.fillRect(x,0,14,256);
+  g.strokeStyle='#7a4a2e';g.lineWidth=10;g.beginPath();for(const x0 of[14,138]){g.moveTo(x0,14);g.lineTo(x0+104,242);g.moveTo(x0+104,14);g.lineTo(x0,242);}g.stroke();});
+MTEX.tile=canvasTex(128,128,(g)=>{g.fillStyle='#d9614a';g.fillRect(0,0,128,128);for(let c=0;c<4;c++){g.fillStyle=c%2?'#cf5641':'#e06c52';g.fillRect(c*32,0,30,128);g.fillStyle='#b8452f';g.fillRect(c*32+29,0,3,128);
+  for(let r=0;r<4;r++){g.fillStyle='rgba(255,220,200,.18)';g.fillRect(c*32+2,r*32+((c%2)*16)+4,8,22);g.fillStyle='#b8452f';g.fillRect(c*32,r*32+((c%2)*16),32,2);}}});
+MTEX.slate=canvasTex(128,128,(g)=>{g.fillStyle='#5a78b0';g.fillRect(0,0,128,128);for(let c=0;c<4;c++){g.fillStyle=c%2?'#5270a8':'#6584bc';g.fillRect(c*32,0,30,128);g.fillStyle='#3e5a90';g.fillRect(c*32+29,0,3,128);
+  for(let r=0;r<4;r++){g.fillStyle='#3e5a90';g.fillRect(c*32,r*32+((c%2)*16),32,2);}}});
+MTEX.stone=canvasTex(128,128,(g)=>{g.fillStyle='#b8ab9a';g.fillRect(0,0,128,128);const cs=['#c9bca8','#bfb19c','#d2c6b2','#ad9f8c'];for(let r=0;r<4;r++)for(let c=-1;c<4;c++){g.fillStyle=cs[(r*3+c+4)%4];g.fillRect(c*36+(r%2)*18+2,r*32+2,32,28);}});
+const HM={timberA:toon(0xffffff,{map:MTEX.timberA}),timberB:toon(0xffffff,{map:MTEX.timberB}),tile:toon(0xffffff,{map:MTEX.tile}),slate:toon(0xffffff,{map:MTEX.slate}),stone:toon(0xffffff,{map:MTEX.stone}),
+  plaster:toon(0xf7f0e2),wood:toon(0x7a4a2e),door:toon(0x9a6440),shutter:toon(0x5aa07a),shutterB:toon(0x5a84b0),vine:toon(0x6cb656),vine2:toon(0x88c868),flower:toon(0xff8fb0),flower2:toon(0xffd36e),glass:basic(0xa8c8d8),gold:toon(0xffd36e)};
+windowMats.push(HM.glass);
+// 收集器：同材質合併成一個 mesh
+function MB(){const parts={};return{add(k,geo,m){(parts[k]=parts[k]||[]).push([geo,m]);},build(){const g=new THREE.Group();for(const k in parts){const me=new THREE.Mesh(mergeGeos(parts[k]),HM[k]);me.castShadow=k!=='glass';me.receiveShadow=true;g.add(me);}return g;}};}
+const M4s=(x,y,z,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1)=>M4(x,y,z,rx,ry,rz,sx,sy,sz);
+function gableRoof(b,mat,cx,cz,y0,span,len,rh,ov=0.55,axis='z',gableMat='timberB'){// span=寬度(垂直於屋脊)，len=屋脊長
+  const a=span/2,th=Math.atan2(rh,a),L=Math.hypot(a+ov,rh+ov*Math.tan(th));
+  for(const s of[-1,1]){const geo=scaleUV(new THREE.BoxGeometry(L,0.24,len+ov*2),L/2,(len+ov*2)/2);const mx=s*(a+ov)/2+0,my=y0+(rh-ov*Math.tan(th))/2;
+    if(axis==='z')b.add(mat,geo,M4(cx+mx,my,cz,0,0,-s*th));else b.add(mat,geo,M4(cx,my,cz+mx,0,-Math.PI/2,-s*th));}
+  const sh=new THREE.Shape();sh.moveTo(-a,0);sh.lineTo(a,0);sh.lineTo(0,rh);sh.closePath();
+  for(const s of[-1,1]){const geo=new THREE.ExtrudeGeometry(sh,{depth:0.2,bevelEnabled:false});scaleUV(geo,1/(2*a),1/rh);geo.translate(0,0,-0.1);
+    if(axis==='z')b.add(gableMat,geo,M4(cx,y0,cz+s*(len/2-0.1)));else b.add(gableMat,geo,M4(cx+s*(len/2-0.1),y0,cz,0,Math.PI/2,0));}
+  b.add('wood',new THREE.BoxGeometry(axis==='z'?0.3:len+ov*2,0.3,axis==='z'?len+ov*2:0.3),M4(cx,y0+rh+0.05,cz));}
+function windowAt(b,x,y,z,ry,o={}){const w=o.w||1.0,h=o.h||1.3;const T=(lx,ly,lz)=>{const c=Math.cos(ry),s=Math.sin(ry);return[x+lx*c+lz*s,y+ly,z-lx*s+lz*c];};
+  const put=(k,geo,lx,ly,lz)=>{const[px,py,pz]=T(lx,ly,lz);b.add(k,geo,M4(px,py,pz,0,ry,0));};
+  put('wood',new THREE.BoxGeometry(w+0.24,h+0.24,0.14),0,0,0.04);put('glass',new THREE.PlaneGeometry(w,h),0,0,0.12);put('wood',new THREE.BoxGeometry(0.08,h,0.06),0,0,0.14);put('wood',new THREE.BoxGeometry(w,0.08,0.06),0,0.1,0.14);
+  if(o.arch){const ag=new THREE.CircleGeometry(w/2+0.12,14,0,Math.PI);put('wood',ag,0,h/2+0.1,0.1);const gg=new THREE.CircleGeometry(w/2,14,0,Math.PI);put('glass',gg,0,h/2+0.1,0.12);}
+  if(o.shutter){for(const s of[-1,1])put(o.shutter,new THREE.BoxGeometry(w/2,h+0.1,0.08),s*(w*0.75+0.18),0,0.08);}
+  if(o.box){put('wood',new THREE.BoxGeometry(w+0.4,0.28,0.4),0,-h/2-0.2,0.25);for(let i=0;i<5;i++)put(i%2?'flower':'flower2',new THREE.SphereGeometry(0.14,8,6),(i-2)*0.25,-h/2-0.02,0.3);
+    for(let i=0;i<4;i++)put('vine',new THREE.SphereGeometry(0.17,8,6),(i-1.5)*0.3,-h/2-0.1,0.38);}}
+// 一般村民的屋子：正面朝本地 +x，寬(沿 z)=W，深(沿 x)=D
+function medievalHouse(x,z,ry,o={}){const W=o.W||7.4,D=o.D||6.2,h1=3.1,h2=o.floors===1?0:2.9,roofK=o.roof==='slate'?'slate':'tile',shut=o.roof==='slate'?'shutterB':'shutter';
+  const b=MB();const s0=(o.seed||1)*7.13;const rr=k=>((Math.sin(s0*(k+1)*12.9898)*43758.5453)%1+1)%1;
+  b.add('stone',scaleUV(new THREE.BoxGeometry(D+0.25,0.7,W+0.25),D/2,0.35),M4(0,0.35,0));
+  b.add('timberA',new THREE.BoxGeometry(D,h1,W),M4(0,0.7+h1/2,0));
+  let top=0.7+h1;
+  if(h2){b.add('wood',new THREE.BoxGeometry(D+0.75,0.26,W+0.75),M4(0,top+0.13,0));top+=0.26;b.add('timberB',new THREE.BoxGeometry(D+0.6,h2,W+0.6),M4(0,top+h2/2,0));top+=h2;}
+  const span=D+(h2?0.6:0),len=W+(h2?0.6:0),rh=span*0.62;gableRoof(b,roofK,0,0,top,span,len,rh);const a2=span/2;
+  // 門
+  b.add('door',new THREE.BoxGeometry(0.16,2.1,1.3),M4(D/2+0.02,0.7+1.05,0));{const ag=new THREE.CylinderGeometry(0.65,0.65,0.16,16,1,false,0,Math.PI);b.add('door',ag,M4(D/2+0.02,0.7+2.1,0,0,0,Math.PI/2));}
+  b.add('gold',new THREE.SphereGeometry(0.08,8,6),M4(D/2+0.14,1.75,0.4));b.add('stone',new THREE.BoxGeometry(1.0,0.2,1.8),M4(D/2+0.5,0.1,0));
+  // 窗戶
+  for(const zz of[-W/3.2,W/3.2])windowAt(b,D/2,0.7+1.6,zz,Math.PI/2,{shutter:shut,box:rr(1)>0.4});
+  for(const zz of[-W/3,0,W/3])if(h2)windowAt(b,D/2+0.3,0.7+h1+0.26+1.45,zz,Math.PI/2,{shutter:zz?shut:null,arch:!zz,box:rr(2)>0.5&&!zz});
+  for(const s of[-1,1]){windowAt(b,0,0.7+1.6,s*W/2,s>0?0:Math.PI,{shutter:shut});if(h2)windowAt(b,0,0.7+h1+0.26+1.45,s*(W/2+0.3),s>0?0:Math.PI,{});}
+  windowAt(b,-D/2,0.7+1.6,0,-Math.PI/2,{});
+  // 煙囪
+  b.add('stone',scaleUV(new THREE.BoxGeometry(0.8,rh+1.4,0.8),1,2),M4(-span/4,top+(rh+1.4)/2,len/4));b.add('wood',new THREE.BoxGeometry(1.0,0.2,1.0),M4(-span/4,top+rh+1.45,len/4));
+  // 老虎窗
+  if(o.dormer!==false){const dx=a2/2,dy=top+rh*(1-(dx+0.9)/a2)+0.65;b.add('timberB',new THREE.BoxGeometry(1.8,1.3,1.4),M4(dx,dy,0));windowAt(b,dx+0.9,dy,0,Math.PI/2,{w:0.7,h:0.8});
+    const cn=new THREE.ConeGeometry(1.05,0.9,4);b.add(roofK,cn,M4(dx,dy+1.1,0,0,Math.PI/4,0,1.25,1,1.05));}
+  // 尖塔
+  if(o.turret){const tx=D/2+0.1,tz=(o.turret>0?1:-1)*(W/2+0.1),ty0=0.7+h1*0.55,th=top+rh*0.6-ty0;
+    b.add('timberA',scaleUV(new THREE.CylinderGeometry(1.05,1.05,th,14),3,1.5),M4(tx,ty0+th/2,tz));b.add('wood',new THREE.CylinderGeometry(1.15,0.7,0.6,14),M4(tx,ty0-0.3,tz));
+    b.add('wood',new THREE.CylinderGeometry(1.25,1.25,0.22,14),M4(tx,ty0+th,tz));b.add(roofK,scaleUV(new THREE.ConeGeometry(1.45,3.4,10),3,2),M4(tx,ty0+th+1.75,tz));
+    b.add('gold',new THREE.SphereGeometry(0.16,8,6),M4(tx,ty0+th+3.55,tz));b.add('wood',new THREE.CylinderGeometry(0.03,0.03,0.6,4),M4(tx,ty0+th+3.8,tz));
+    windowAt(b,tx+Math.cos(0.6)*1.02,ty0+th*0.6,tz+(o.turret>0?Math.sin(0.6):-Math.sin(0.6))*1.02,Math.PI/2-(o.turret>0?0.6:-0.6),{w:0.55,h:0.8,arch:true});}
+  // 藤蔓
+  if(o.vines!==false){const n=6+((rr(3)*6)|0);for(let i=0;i<n;i++){const zz=(rr(i+10)-0.5)*W*0.9,yy=0.7+h1+(rr(i+20)-0.6)*1.6;b.add(i%3?'vine':'vine2',new THREE.SphereGeometry(0.22+rr(i+30)*0.18,8,6),M4(D/2+0.18+(yy>0.7+h1?0.3:0),yy,zz,0,0,0,0.7,1,1.2));}}
+  const g=b.build();g.position.set(x,H(x,z),z);g.rotation.y=ry;g.scale.setScalar(o.s||1);scene.add(g);
+  const sc=o.s||1;obstacles.push({x,z,r:Math.hypot(D/2+0.3,W/2+0.3)*sc,box:{ry,hw:(D/2+0.45)*sc,hd:(W/2+0.45+(o.turret?0.6:0))*sc}});
+  return{x,z,ry,g,door:{x:x+Math.cos(ry)*(D/2+1.2)*sc,z:z-Math.sin(ry)*(D/2+1.2)*sc}};}
+// 盒子碰撞（推出）
+function pushBox(o,b,r){const c=Math.cos(b.box.ry),s=Math.sin(b.box.ry),dx=o.x-b.x,dz=o.z-b.z;let lx=dx*c-dz*s,lz=dx*s+dz*c;const hw=b.box.hw,hd=b.box.hd;
+  const cx=clamp(lx,-hw,hw),cz=clamp(lz,-hd,hd);let ex=lx-cx,ez=lz-cz,d=Math.hypot(ex,ez);if(d>=r)return false;
+  if(d>1e-4){lx=cx+ex/d*r;lz=cz+ez/d*r;}else{const px=hw-Math.abs(lx),pz=hd-Math.abs(lz);if(px<pz)lx=Math.sign(lx||1)*(hw+r);else lz=Math.sign(lz||1)*(hd+r);}
+  o.x=b.x+lx*c+lz*s;o.z=b.z-lx*s+lz*c;return true;}
+function collideObs(o,r,list=obstacles,y){for(const b of list){if(b.r<=0)continue;if(y!==undefined&&b.y!==undefined&&Math.abs(b.y-y)>0.9)continue;const dx=o.x-b.x,dz=o.z-b.z;if(Math.abs(dx)>b.r+r+0.5||Math.abs(dz)>b.r+r+0.5)continue;
+  if(b.box){pushBox(o,b,r);continue;}const d=Math.hypot(dx,dz),R=b.r+r;if(d<R&&d>1e-3){o.x=b.x+dx/d*R;o.z=b.z+dz/d*R;}}}
 // ---------- 自己的家（無接縫：直接走進去） ----------
 const WALLS=[];const inHouse=(x,z,m=0)=>Math.abs(x-HOME.x)<HOME.w-m&&Math.abs(z-HOME.z)<HOME.d-m;
 const DOOR_OUT={x:HOME.x+HOME.w+1.4,z:HOME.z},DOOR_IN={x:HOME.x+HOME.w-1.4,z:HOME.z};
@@ -28,43 +88,59 @@ function hitsWall(x0,x1,z0,z1){return WALLS.some(w=>x1>w.x0&&x0<w.x1&&z1>w.z0&&z
 const HOMEV={walls:[],roof:null,door:null,doorA:0,light:null};
 const indoorWin=[],indoorObs=[];
 {const g=new THREE.Group(),{x:HX,z:HZ,w:W,d:D,h:WH}=HOME,T=0.3;
- const out=toon(0xfff3ea,{map:TEX.wood}),top=toon(0xf2dccc);
- const wp=canvasTex(128,128,(c)=>{c.fillStyle='#fff6ee';c.fillRect(0,0,128,128);c.fillStyle='#ffe2d6';for(let y=0;y<128;y+=32)for(let x=0;x<128;x+=32){c.beginPath();c.arc(x+(y%64?16:0),y+16,5,0,7);c.fill();}},[4,2]);
- const inn=toon(0xffffff,{map:wp}),wain=toon(0xf2c4b4);
+ const top=toon(0xd8c8b8);
+ const wp=canvasTex(128,128,(c)=>{c.fillStyle='#fff6ee';c.fillRect(0,0,128,128);c.fillStyle='#ffe2d6';for(let y=0;y<128;y+=32)for(let x=0;x<128;x+=32){c.beginPath();c.arc(x+(y%64?16:0),y+16,5,0,7);c.fill();}},[1,1]);
+ const inn=toon(0xffffff,{map:wp}),wain=toon(0xf2c4b4);const out=HM.timberA;
  const fl=mk(new THREE.BoxGeometry(W*2+0.4,0.24,D*2+0.4),toon(0xf0c8a4,{map:TEX.wood}),HX,-0.1,HZ);fl.material.map=TEX.wood.clone();fl.material.map.repeat.set(5,4);fl.material.map.needsUpdate=true;fl.receiveShadow=true;g.add(fl);
- // 牆：a=軸向('x'沿 x 方向延伸)；inner 面的方向
- function wall(cx,cz,len,alongX,innerSign,y0=0,h=WH){const sx=alongX?len:T,sz=alongX?T:len;
+ g.add(mk(scaleUV(new THREE.BoxGeometry(W*2+0.7,0.5,D*2+0.7),6,0.3),HM.stone,HX,0.0,HZ)).position.y=-0.02;
+ function wall(cx,cz,len,alongX,innerSign){const sx=alongX?len:T,sz=alongX?T:len;
+   const geo=scaleUV(new THREE.BoxGeometry(sx,WH,sz),Math.max(1,Math.round(len/4.5)),1);
    const mats=[out,out,top,top,out,out];const idx=alongX?(innerSign>0?4:5):(innerSign>0?0:1);mats[idx]=inn;
-   const full=mk(new THREE.BoxGeometry(sx,h,sz),mats,cx,y0+h/2,cz);
-   const sh=Math.min(h,0.7);const stub=y0>0.01?null:mk(new THREE.BoxGeometry(sx,sh,sz),mats.map(m=>m===inn?wain:m),cx,sh/2,cz);
-   g.add(full);if(stub){stub.visible=false;g.add(stub);}
-   // 室內下半段腰板
-   if(y0<0.01){const wb=mk(new THREE.BoxGeometry(alongX?len-0.02:0.02,0.9,alongX?0.02:len-0.02),wain,cx+(alongX?0:innerSign*(T/2+0.012)),0.45,cz+(alongX?innerSign*(T/2+0.012):0));g.add(wb);HOMEV.walls[HOMEV.walls.length]={full,stub,wb,alongX,pos:alongX?cz:cx,innerSign};}
-   else HOMEV.walls[HOMEV.walls.length]={full,stub:null,alongX,pos:alongX?cz:cx,innerSign};
-   WALLS.push({x0:cx-sx/2,x1:cx+sx/2,z0:cz-sz/2,z1:cz+sz/2,y1:y0+h});}
+   const full=mk(geo,mats,cx,WH/2+0.02,cz);const sh=0.7;const stub=mk(new THREE.BoxGeometry(sx,sh,sz),mats.map(m=>m===inn?wain:m===out?HM.stone:m),cx,sh/2,cz);
+   g.add(full);stub.visible=false;g.add(stub);
+   const wb=mk(new THREE.BoxGeometry(alongX?len-0.02:0.02,0.9,alongX?0.02:len-0.02),wain,cx+(alongX?0:innerSign*(T/2+0.012)),0.45,cz+(alongX?innerSign*(T/2+0.012):0));g.add(wb);
+   HOMEV.walls.push({full,stub,wb,alongX,pos:alongX?cz:cx,innerSign,deco:[]});
+   WALLS.push({x0:cx-sx/2,x1:cx+sx/2,z0:cz-sz/2,z1:cz+sz/2,y1:WH});}
  wall(HX,HZ-D,W*2+T,true,1);wall(HX,HZ+D,W*2+T,true,-1);wall(HX-W,HZ,D*2,false,1);
  const dw=1.15,seg=(D-dw);wall(HX+W,HZ-dw-seg/2,seg,false,-1);wall(HX+W,HZ+dw+seg/2,seg,false,-1);
- {const lh=WH-3.0;const m=mk(new THREE.BoxGeometry(T,lh,dw*2),[out,inn,top,top,out,out],HX+W,3.0+lh/2,HZ);g.add(m);HOMEV.walls.push({full:m,stub:null,alongX:false,pos:HX+W,innerSign:-1,lintel:true});}
+ {const lh=WH-3.0;const m=mk(new THREE.BoxGeometry(T,lh,dw*2),[out,inn,top,top,out,out],HX+W,3.0+lh/2,HZ);g.add(m);HOMEV.walls.push({full:m,stub:null,alongX:false,pos:HX+W,innerSign:-1,deco:[]});}
+ const wallOf=(x,z)=>HOMEV.walls.filter(w=>w.alongX?Math.abs(z-w.pos)<0.5&&w.stub:Math.abs(x-w.pos)<0.5&&w.stub);
  // 門（會自動打開）
- {const hinge=new THREE.Group();hinge.position.set(HX+W,0,HZ-dw);const leaf=mk(new THREE.BoxGeometry(0.12,2.95,dw*2-0.06),toon(0xc89a78),0,1.5,dw-0.03);hinge.add(leaf);
-  hinge.add(mk(new THREE.SphereGeometry(0.1,8,6),toon(0xffd36e),0.12,1.45,dw*2-0.35));const wn=mk(new THREE.CircleGeometry(0.3,18),basic(0x9fd6ff),0.07,2.3,dw);wn.rotation.y=Math.PI/2;hinge.add(wn);g.add(hinge);HOMEV.door=hinge;}
- g.add(mk(new THREE.BoxGeometry(1.4,0.18,2.6),toon(0xe8d0b0),HX+W+0.8,0.05,HZ));
+ {const hinge=new THREE.Group();hinge.position.set(HX+W,0,HZ-dw);const leaf=mk(new THREE.BoxGeometry(0.12,2.95,dw*2-0.06),HM.door,0,1.5,dw-0.03);hinge.add(leaf);
+  hinge.add(mk(new THREE.SphereGeometry(0.1,8,6),HM.gold,0.12,1.45,dw*2-0.35));const wn=mk(new THREE.CircleGeometry(0.3,18),basic(0x9fd6ff),0.07,2.3,dw);wn.rotation.y=Math.PI/2;hinge.add(wn);g.add(hinge);HOMEV.door=hinge;
+  const arch=mk(new THREE.BoxGeometry(0.5,0.3,dw*2+0.6),HM.wood,HX+W,3.05,HZ);g.add(arch);for(const s of[-1,1])g.add(mk(new THREE.BoxGeometry(0.45,3.0,0.3),HM.wood,HX+W,1.5,HZ+s*(dw+0.15)));
+  const lamp=mk(new THREE.SphereGeometry(0.22,10,8),basic(0xfff0c8),HX+W+0.5,3.5,HZ+dw+0.9);g.add(lamp);}
+ g.add(mk(new THREE.BoxGeometry(1.4,0.18,2.6),HM.stone,HX+W+0.8,0.05,HZ));
  const mat=mk(new THREE.PlaneGeometry(1.4,2.0),toon(0xb9a6f2),HX+W-1.0,0.03,HZ);mat.rotation.x=-Math.PI/2;g.add(mat);
- // 窗戶（內外兩面）
- const winAt=(x,z,ry)=>{for(const side of[1,-1]){const o=new THREE.Group();o.position.set(x,2.3,z);o.rotation.y=ry+(side<0?Math.PI:0);
-   const gm=side>0?basic(0xa8c8d8):basic(0x9fd6ff);if(side>0)windowMats.push(gm);else indoorWin.push(gm);
-   o.add(mk(new THREE.BoxGeometry(1.5,1.3,0.06),toon(0xffffff),0,0,T/2+0.03));o.add(mk(new THREE.PlaneGeometry(1.25,1.05),gm,0,0,T/2+0.07));o.add(mk(new THREE.BoxGeometry(1.25,0.07,0.04),toon(0xffffff),0,0,T/2+0.09));g.add(o);}};
- winAt(HX-3,HZ+D,0);winAt(HX+3,HZ+D,0);winAt(HX-3,HZ-D,Math.PI);winAt(HX+3,HZ-D,Math.PI);winAt(HX-W,HZ-2.5,-Math.PI/2);winAt(HX-W,HZ+2.5,-Math.PI/2);
- // 屋頂
- const roof=new THREE.Group();const rf=mk(new THREE.ConeGeometry(Math.hypot(W+1,D+1),3.6,4),toon(0xff8f7a),0,WH+1.8,0);rf.rotation.y=Math.PI/4;rf.scale.set(1,1,(D+1)/(W+1));roof.add(rf);
- roof.add(mk(new THREE.BoxGeometry(W*2+0.3,0.2,D*2+0.3),toon(0xf2dccc),0,WH+0.1,0));roof.add(mk(new THREE.BoxGeometry(1.0,2.2,1.0),toon(0xe0c8b0),-2.5,WH+2.6,1.5));
- roof.position.set(HX,0,HZ);g.add(roof);HOMEV.roof=roof;
- g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});scene.add(g);
+ // 窗戶（內外兩面），跟著牆一起隱藏
+ const winAt=(x,z,ry)=>{const list=wallOf(x,z);for(const side of[1,-1]){const o=new THREE.Group();o.position.set(x,2.3,z);o.rotation.y=ry+(side<0?Math.PI:0);
+   const gm=side>0?HM.glass:basic(0x9fd6ff);if(side<0)indoorWin.push(gm);
+   o.add(mk(new THREE.BoxGeometry(1.5,1.4,0.08),side>0?HM.wood:toon(0xffffff),0,0,T/2+0.03));o.add(mk(new THREE.PlaneGeometry(1.25,1.15),gm,0,0,T/2+0.08));o.add(mk(new THREE.BoxGeometry(1.25,0.07,0.04),side>0?HM.wood:toon(0xffffff),0,0.1,T/2+0.1));
+   if(side>0){for(const s of[-1,1])o.add(mk(new THREE.BoxGeometry(0.62,1.4,0.08),HM.shutter,s*1.06,0,T/2+0.06));o.add(mk(new THREE.BoxGeometry(1.7,0.28,0.4),HM.wood,0,-0.85,T/2+0.22));for(let i=0;i<5;i++)o.add(mk(new THREE.SphereGeometry(0.15,8,6),i%2?HM.flower:HM.vine,(i-2)*0.3,-0.65,T/2+0.3));}
+   g.add(o);for(const w of list)w.deco.push(o);}};
+ winAt(HX-3.5,HZ+D,0);winAt(HX+3,HZ+D,0);winAt(HX-3.5,HZ-D,Math.PI);winAt(HX+3,HZ-D,Math.PI);winAt(HX-W,HZ-2.5,-Math.PI/2);winAt(HX-W,HZ+2.5,-Math.PI/2);winAt(HX+W,HZ-3.6,Math.PI/2);winAt(HX+W,HZ+3.6,Math.PI/2);
+ // 屋頂群組（二樓外觀、紅瓦、尖塔、煙囪）— 進屋時隱藏
+ const roof=new THREE.Group();{const b=MB();const W2=W*2+0.8,D2=D*2+0.8,h2=3.0,y1=WH+0.02;
+  b.add('wood',new THREE.BoxGeometry(W*2+1.0,0.3,D*2+1.0),M4(0,y1+0.15,0));b.add('timberB',scaleUV(new THREE.BoxGeometry(W2,h2,D2),3,1),M4(0,y1+0.3+h2/2,0));
+  const y2=y1+0.3+h2;gableRoof(b,'tile',0,0,y2,D2,W2,D2*0.55,0.6,'x');
+  for(const xx of[-4.5,0,4.5])for(const s of[-1,1])windowAt(b,xx,y1+1.8,s*D2/2,s>0?0:Math.PI,{shutter:'shutter',box:xx===0,arch:xx===0});
+  for(const zz of[-3,3])windowAt(b,W2/2,y1+1.8,zz,Math.PI/2,{shutter:'shutter'});
+  // 尖塔（前右角）
+  {const tx=W2/2-0.3,tz=D2/2-0.3,ty0=1.2,th=y2+D2*0.3-ty0;b.add('timberA',scaleUV(new THREE.CylinderGeometry(1.5,1.5,th,16),4,2),M4(tx,ty0+th/2,tz));b.add('stone',new THREE.CylinderGeometry(1.6,1.7,1.2,16),M4(tx,0.6,tz));
+   b.add('wood',new THREE.CylinderGeometry(1.75,1.75,0.3,16),M4(tx,ty0+th,tz));b.add('tile',scaleUV(new THREE.ConeGeometry(2.0,4.6,12),4,2),M4(tx,ty0+th+2.4,tz));b.add('gold',new THREE.SphereGeometry(0.22,8,6),M4(tx,ty0+th+4.8,tz));
+   windowAt(b,tx+1.5*Math.cos(0.78),ty0+th*0.75,tz+1.5*Math.sin(0.78),0.78,{w:0.6,h:0.9,arch:true});}
+  // 老虎窗＋煙囪
+  for(const xx of[-3.5,1.5]){const a2=D2/2,dz=a2/2,dy=y2+D2*0.55*(1-(dz+0.9)/a2)+0.65;b.add('timberB',new THREE.BoxGeometry(1.4,1.3,1.8),M4(xx,dy,dz));windowAt(b,xx,dy,dz+0.9,0,{w:0.7,h:0.8});b.add('tile',new THREE.ConeGeometry(1.05,0.9,4),M4(xx,dy+1.1,dz,0,Math.PI/4,0,1.05,1,1.25));}
+  b.add('stone',scaleUV(new THREE.BoxGeometry(1.0,4.5,1.0),1,3),M4(-3,y2+3.5,-2.2));b.add('wood',new THREE.BoxGeometry(1.25,0.25,1.25),M4(-3,y2+5.8,-2.2));
+  for(let i=0;i<12;i++)b.add(i%3?'vine':'vine2',new THREE.SphereGeometry(0.25+(i%4)*0.06,8,6),M4(W2/2+0.15,y1+0.4+(i%5)*0.35,-D2/2+1+i*0.9,0,0,0,0.6,1,1.2));
+  const rg=b.build();roof.add(rg);}
+ roof.position.set(HX,0,HZ);g.add(roof);HOMEV.roof=roof;obstacles.push({x:HX+W+0.7,z:HZ+D+0.7,r:1.1});
+ g.traverse(o=>{if(o.isMesh&&o.material!==HM.glass){o.castShadow=true;o.receiveShadow=true;}});scene.add(g);
  const L=new THREE.PointLight(0xffe0c0,0,16,1.6);L.position.set(HX,3.4,HZ);scene.add(L);HOMEV.light=L;}
 // 牆的剖面顯示：在屋內時，擋住鏡頭的那面牆會降低
 function homeFrame(cam,dt){const inside=inHouse(ply.x,ply.z,-0.2);HOMEV.roof.visible=!inside;
   for(const w of HOMEV.walls){const c=w.alongX?cam.z:cam.x;const outerSide=(c-w.pos)*w.innerSign<0;const cut=inside&&outerSide;
-    w.full.visible=!cut;if(w.stub)w.stub.visible=cut;}
+    w.full.visible=!cut;if(w.stub)w.stub.visible=cut;if(w.wb)w.wb.visible=!cut;for(const d of w.deco)d.visible=!cut;}
   const near=[ply,...npcsNearDoor()].some(o=>Math.hypot(o.x-(HOME.x+HOME.w),o.z-HOME.z)<2.6);HOMEV.doorA+=((near?-1.75:0)-HOMEV.doorA)*Math.min(1,dt*8);HOMEV.door.rotation.y=HOMEV.doorA;}
 function npcsNearDoor(){return typeof pets!=='undefined'?pets:[];}
 const HOUSE={x:HOME.x,z:HOME.z},DOOR=DOOR_OUT,BOARD={x:5,z:-6};
@@ -135,12 +211,53 @@ sign(46,3,-Math.PI/2,['⚠ 東邊野外','史萊姆出沒']);sign(2.5,-17,0,['�
 sign(-47,35,Math.PI*0.75,['歡迎來到','龍蝦村 🦞']);
 
 // ---------- 龍蝦村 ----------
-const V2HOUSES=[[-24,-14,0xfff0e0,0xf2a25e],[24,-15,0xf4f0ff,0xa894e8],[-26,8,0xf0fff4,0x7cc49a],[26,8,0xfff4f8,0xff8fb0],[-13,-26,0xfffbea,0xffc94a],[12,-27,0xf0f8ff,0x8fb8e8],[-19,23,0xfff6f0,0xd98a7a],[20,23,0xf8fff0,0x9ad878]].map(([dx,dz,w,r])=>{
-  const x=V2.x+dx,z=V2.z+dz,ry=Math.atan2(V2.x-x,V2.z-z)-Math.PI/2;makeHouse(x,z,ry,w,r,1.15);
-  return{x,z,door:{x:x+Math.cos(ry)*(3.03*1.15+0.6),z:z-Math.sin(ry)*(3.03*1.15+0.6)}};});
-{const g=new THREE.Group();g.add(mk(new THREE.CylinderGeometry(1.1,1.2,0.9,16),toon(0xd9b8a0,{map:TEX.wood}),0,0.45,0));const wt=mk(new THREE.CircleGeometry(0.95,16),toon(0x7cc8f0),0,0.91,0);wt.rotation.x=-Math.PI/2;g.add(wt);
- for(const s of[-1,1])g.add(mk(new THREE.BoxGeometry(0.14,1.8,0.14),toon(0xc89a70),s*1,1.3,0));const rf=mk(new THREE.ConeGeometry(1.5,0.8,4),toon(0xff8f7a),0,2.5,0);rf.rotation.y=Math.PI/4;g.add(rf);
- g.position.set(V2.x,H(V2.x,V2.z),V2.z);shadowAll(g);scene.add(g);obstacles.push({x:V2.x,z:V2.z,r:1.4});}
+const V2HOUSES=[[-24,-14],[24,-15],[-26,8],[26,8],[-13,-26],[12,-27],[-19,23],[20,23]].map(([dx,dz],i)=>{
+  const x=V2.x+dx,z=V2.z+dz,ry=Math.atan2(V2.x-x,V2.z-z)-Math.PI/2;return medievalHouse(x,z,ry,{seed:i+1,turret:i%3===0?1:i%3===1?-1:0,s:1.0});});
+// 外圈更多房子（中世紀城鎮）
+const V2EXTRA=[[-38,12],[-37,-14],[-22,-35],[22,-33],[36,-6],[37,18],[27,34],[4,40],[-20,37],[-38,31]].map(([dx,dz],i)=>{
+  const x=V2.x+dx,z=V2.z+dz,ry=Math.atan2(V2.x-x,V2.z-z)-Math.PI/2;return medievalHouse(x,z,ry,{seed:i+20,turret:i%2?1:0,roof:i%4===3?'slate':'tile',W:7+(i%3)*0.8,D:6+(i%2)*0.6});});
+// 中央噴水池
+const FOUNTAINS=[];
+function fountain(x,z,s=1){const b=MB();const y=H(x,z);
+  const oct=(r,h,yy)=>{b.add('stone',scaleUV(new THREE.CylinderGeometry(r,r*1.04,h,8),r*2,0.5),M4(0,yy+h/2,0,0,Math.PI/8,0));};
+  oct(4.2,0.8,0);oct(1.0,1.8,0.8);oct(2.0,0.35,2.4);oct(0.5,1.4,2.75);oct(1.1,0.3,4.0);b.add('gold',new THREE.SphereGeometry(0.35,10,8),M4(0,4.6,0));
+  const g=b.build();const wm=toon(0x8fd8f8,{transparent:true,opacity:0.85});
+  const w1=mk(new THREE.CircleGeometry(3.8,8),wm,0,0.72,0);w1.rotation.x=-Math.PI/2;w1.rotation.z=Math.PI/8;g.add(w1);const w2=mk(new THREE.CircleGeometry(1.8,8),wm,0,2.7,0);w2.rotation.x=-Math.PI/2;g.add(w2);
+  const sp=new THREE.Group();const spm=basic(0xe8f8ff,{transparent:true,opacity:0.55,depthWrite:false});
+  sp.add(mk(new THREE.CylinderGeometry(0.12,0.2,1.2,8,1,true),spm,0,5.2,0));const c1=mk(new THREE.CylinderGeometry(1.9,0.4,1.7,16,1,true),spm,0,3.4,0);sp.add(c1);const c2=mk(new THREE.CylinderGeometry(3.9,1.7,1.9,20,1,true),spm,0,1.6,0);sp.add(c2);g.add(sp);
+  for(let i=0;i<8;i++){const a=i/8*Math.PI*2+Math.PI/8;const pot=mk(new THREE.SphereGeometry(0.32,8,6),HM[i%2?'flower':'flower2'],Math.cos(a)*4.1,1.0,Math.sin(a)*4.1);g.add(pot);}
+  g.position.set(x,y,z);g.scale.setScalar(s);scene.add(g);obstacles.push({x,z,r:4.4*s});FOUNTAINS.push({sp,t:Math.random()*5});}
+fountain(V2.x,V2.z);
+// 鎮公所（大鐘塔）
+{const x=V2.x+0,z=V2.z-37,ry=Math.atan2(V2.x-x,V2.z-z)-Math.PI/2;const b=MB();
+ b.add('stone',scaleUV(new THREE.BoxGeometry(9,1.0,14),5,0.5),M4(0,0.5,0));b.add('timberA',scaleUV(new THREE.BoxGeometry(8.6,3.6,13.6),2,1),M4(0,2.8,0));b.add('wood',new THREE.BoxGeometry(9.4,0.3,14.4),M4(0,4.75,0));
+ b.add('timberB',scaleUV(new THREE.BoxGeometry(9.2,3.2,14.2),2,1),M4(0,6.5,0));gableRoof(b,'slate',0,0,8.1,9.2,14.2,6,0.6);
+ for(const zz of[-4.5,-1.5,1.5,4.5]){windowAt(b,4.3,2.9,zz,Math.PI/2,{shutter:'shutterB',arch:true,box:true});windowAt(b,4.6,6.5,zz,Math.PI/2,{shutter:'shutterB'});}
+ b.add('door',new THREE.BoxGeometry(0.2,2.6,2.2),M4(4.35,2.3,0));
+ // 鐘塔
+ b.add('stone',scaleUV(new THREE.BoxGeometry(4,14,4),2,6),M4(-1,7,0));b.add('wood',new THREE.BoxGeometry(4.6,0.4,4.6),M4(-1,14.2,0));b.add('timberB',new THREE.BoxGeometry(4.2,3,4.2),M4(-1,15.9,0));
+ b.add('slate',scaleUV(new THREE.ConeGeometry(3.4,6,4),3,2),M4(-1,20.4,0,0,Math.PI/4,0));b.add('gold',new THREE.SphereGeometry(0.35,10,8),M4(-1,23.5,0));
+ for(const s of[-1,1]){b.add('slate',scaleUV(new THREE.ConeGeometry(1.4,4,10),2,2),M4(3.8,10.5,s*6.6));b.add('timberA',new THREE.CylinderGeometry(1.1,1.1,5,12),M4(3.8,6.5,s*6.6));}
+ const g=b.build();const cf=canvasTex(128,128,(c)=>{c.fillStyle='#fff8e8';c.beginPath();c.arc(64,64,60,0,7);c.fill();c.strokeStyle='#7a4a2e';c.lineWidth=6;c.stroke();c.lineWidth=7;c.beginPath();c.moveTo(64,64);c.lineTo(64,22);c.moveTo(64,64);c.lineTo(94,70);c.stroke();});
+ const clk=mk(new THREE.CircleGeometry(1.3,24),toon(0xffffff,{map:cf}),1.12,15.9,0);clk.rotation.y=Math.PI/2;g.add(clk);
+ g.position.set(x,H(x,z),z);g.rotation.y=ry;scene.add(g);obstacles.push({x,z,r:8.4,box:{ry,hw:4.9,hd:7.8}});}
+// 風車
+const WINDMILLS=[];
+function windmill(x,z,ry,roofK='slate'){const b=MB();b.add('stone',scaleUV(new THREE.CylinderGeometry(2.2,3.0,11,14),5,4),M4(0,5.5,0));b.add('wood',new THREE.CylinderGeometry(3.3,3.3,0.4,14),M4(0,6,0));
+  b.add('timberB',new THREE.CylinderGeometry(2.4,2.3,2.4,14),M4(0,12.2,0));b.add(roofK,scaleUV(new THREE.ConeGeometry(3.0,4.2,14),4,2),M4(0,15.5,0));b.add('door',new THREE.BoxGeometry(0.3,2.2,1.4),M4(2.9,1.3,0,0,0,0.07));
+  for(const yy of[3.5,8])windowAt(b,2.65-yy*0.07,yy,0,Math.PI/2,{w:0.7,h:1.0,arch:true});
+  const g=b.build();const sails=new THREE.Group();sails.position.set(2.8,12.3,0);
+  const sm=toon(0xf6ecd8),wd=HM.wood;sails.add(mk(new THREE.CylinderGeometry(0.4,0.4,0.8,10),wd,0,0,0)).rotation.z=Math.PI/2;
+  for(let i=0;i<4;i++){const arm=new THREE.Group();arm.rotation.x=i*Math.PI/2;arm.add(mk(new THREE.BoxGeometry(0.2,8.5,0.25),wd,0.35,4.3,0));const sl=mk(new THREE.BoxGeometry(0.08,6.6,1.7),sm,0.4,5.1,0.95);arm.add(sl);
+    for(let k=0;k<5;k++)arm.add(mk(new THREE.BoxGeometry(0.12,0.1,1.8),wd,0.42,2.2+k*1.5,0.95));sails.add(arm);}
+  g.add(sails);g.position.set(x,H(x,z),z);g.rotation.y=ry;shadowAll(g);scene.add(g);obstacles.push({x,z,r:3.2});WINDMILLS.push(sails);}
+windmill(V2.x-44,V2.z-22,Math.atan2(30,30));windmill(V2.x+45,V2.z-24,-Math.PI*0.75,'tile');windmill(V2.x-30,V2.z+48,Math.PI*0.25,'tile');
+// 城鎮路燈與石板路
+{const pt=canvasTex(128,128,(g)=>{g.fillStyle='#d8c8b0';g.fillRect(0,0,128,128);const cs=['#e4d6bf','#cdbba0','#dccdb4','#c4b296'];for(let r=0;r<6;r++)for(let c=-1;c<6;c++){g.fillStyle=cs[(r*2+c+6)%4];g.beginPath();g.ellipse(c*24+(r%2)*12+12,r*22+11,10,9,0,0,7);g.fill();}},[1,1]);
+ const m=toon(0xffffff,{map:pt});
+ for(const h of[...V2HOUSES,...V2EXTRA]){const dx=h.door.x-V2.x,dz=h.door.z-V2.z,L=Math.hypot(dx,dz);const st=14;if(L<st+1)continue;const len=L-st;
+   const geo=scaleUV(new THREE.PlaneGeometry(2.6,len),1,len/2.6);geo.rotateX(-Math.PI/2);const mm=new THREE.Mesh(geo,m);const mx=V2.x+dx/L*(st+len/2),mz=V2.z+dz/L*(st+len/2);mm.position.set(mx,0.04,mz);mm.rotation.y=Math.atan2(dx,dz);mm.receiveShadow=true;scene.add(mm);}
+ for(let i=0;i<10;i++){const a=i/10*Math.PI*2+0.3;lampPost(V2.x+Math.cos(a)*15.5,V2.z+Math.sin(a)*15.5,false);}}
 // 攤位（拉麵店、雜貨店、家具店）
 const STALLS={};
 function makeStall(key,dx,dz,ry,o){
@@ -180,12 +297,11 @@ const STAGE={x:V2.x,z:V2.z+18};
  for(let i=0;i<4;i++){const d=mk(new THREE.CircleGeometry(0.75,20),basic([0xffc4dc,0xbfe0ff,0xfff0a0,0xc8f0dc][i],{transparent:true,opacity:0.6,depthWrite:false}),-2.7+i*1.8,0.69,0.3);d.rotation.x=-Math.PI/2;g.add(d);}
  g.position.set(STAGE.x,H(STAGE.x,STAGE.z),STAGE.z);g.rotation.y=Math.PI;shadowAll(g);scene.add(g);
  obstacles.push({x:STAGE.x,z:STAGE.z,r:2.5},{x:STAGE.x-2.8,z:STAGE.z,r:2.2},{x:STAGE.x+2.8,z:STAGE.z,r:2.2});}
-lampPost(V2.x+5,V2.z+4,false);lampPost(V2.x-5,V2.z-4,false);
 
 // ---------- 倉鼠精靈村 ----------
-const V3HOUSES=[[-18,-10,0xfffbea,0xffc94a],[18,-10,0xfff6f0,0xd9a07a],[-19,9,0xf8fff0,0xa8d878],[19,8,0xfff8fb,0xffa8c8],[0,-21,0xfff0f8,0xe8a0c8],[-9,21,0xf0fff8,0x8fd0b8]].map(([dx,dz,w,r])=>{
-  const x=V3.x+dx,z=V3.z+dz,ry=Math.atan2(V3.x-x,V3.z-z)-Math.PI/2;makeHouse(x,z,ry,w,r,1.05);
-  return{x,z,door:{x:x+Math.cos(ry)*(3.03*1.05+0.6),z:z-Math.sin(ry)*(3.03*1.05+0.6)}};});
+const V3HOUSES=[[-18,-10],[18,-10],[-19,9],[19,8],[0,-21],[-9,21]].map(([dx,dz],i)=>{
+  const x=V3.x+dx,z=V3.z+dz,ry=Math.atan2(V3.x-x,V3.z-z)-Math.PI/2;return medievalHouse(x,z,ry,{seed:i+40,roof:'slate',turret:i%2?-1:0,W:6.8,D:5.8,s:0.95});});
+windmill(V3.x-30,V3.z+12,Math.PI*0.4);
 {const g=new THREE.Group(),pk=toon(0xffb3c8),wd=toon(0xd8a880,{map:TEX.wood});
  const wheel=new THREE.Group();wheel.add(mk(new THREE.TorusGeometry(2.0,0.16,10,40),pk));wheel.add(mk(new THREE.TorusGeometry(2.0,0.16,10,40),pk,0,0,1.4));
  for(let i=0;i<14;i++){const a=i/14*Math.PI*2;const b=mk(new THREE.CylinderGeometry(0.06,0.06,1.4,6),toon(0xfff3c0),Math.cos(a)*2,Math.sin(a)*2,0.7);b.rotation.x=Math.PI/2;wheel.add(b);}
@@ -264,31 +380,33 @@ const PARKV={};
   for(const s of[1,-1]){const sg=mk(new THREE.PlaneGeometry(7.2,1.15),toon(0xffffff,{map:t}),0,5.6,s*0.27);if(s<0)sg.rotation.y=Math.PI;g.add(sg);}
   g.position.set(PARKV.gate.x,0,PARKV.gate.z);g.rotation.y=dir;shadowAll(g);scene.add(g);
   for(const s of[-1,1])obstacles.push({x:PARKV.gate.x+Math.cos(dir)*s*3.6,z:PARKV.gate.z-Math.sin(dir)*s*3.6,r:0.6});}
- // 摩天輪
- {const F={x:C.x-7,z:C.z-5,R:9,n:10,ang:0,yaw:dir};F.cy=F.R+2.2;PARKV.ferris=F;
+ // 摩天輪（大包廂，角色和寵物可以一起坐）
+ {const F={x:C.x-6,z:C.z-6,R:14,n:12,ang:0,yaw:dir,zr:2.7};F.cy=F.R+3.6;PARKV.ferris=F;
   const g=new THREE.Group();g.position.set(F.x,0,F.z);g.rotation.y=F.yaw;
   const wh=new THREE.Group();wh.position.y=F.cy;g.add(wh);F.wheel=wh;
   const pk=toon(0xff9ec4),wt=toon(0xffffff),yl=toon(0xffd36e);
-  for(const zz of[-1.1,1.1]){wh.add(mk(new THREE.TorusGeometry(F.R,0.16,8,64),pk,0,0,zz));wh.add(mk(new THREE.TorusGeometry(F.R*0.55,0.1,8,48),wt,0,0,zz));}
-  for(let i=0;i<F.n*2;i++){const a=i/(F.n*2)*Math.PI*2;const sp=mk(new THREE.CylinderGeometry(0.06,0.06,F.R,6),i%2?wt:pk,Math.cos(a)*F.R/2,Math.sin(a)*F.R/2,0);sp.rotation.z=a-Math.PI/2;wh.add(sp);}
-  for(let i=0;i<F.n;i++){const a=i/F.n*Math.PI*2;const b=mk(new THREE.CylinderGeometry(0.07,0.07,2.3,6),yl,Math.cos(a)*F.R,Math.sin(a)*F.R,0);b.rotation.x=Math.PI/2;wh.add(b);
-    const bulb=mk(new THREE.SphereGeometry(0.18,8,6),basic(0xfff3c0),Math.cos(a+0.31)*F.R,Math.sin(a+0.31)*F.R,1.25);wh.add(bulb);}
-  {const hub=mk(new THREE.CylinderGeometry(0.7,0.7,1.6,16),yl,0,0,0);hub.rotation.x=Math.PI/2;wh.add(hub);}
-  for(const zz of[-1.8,1.8])for(const s of[-1,1]){const L=Math.hypot(F.cy,F.R*0.55);const leg=mk(new THREE.CylinderGeometry(0.22,0.32,L,10),toon(0xb9a6f2),s*F.R*0.275,F.cy/2,zz);leg.rotation.z=s*Math.atan2(F.R*0.55,F.cy);g.add(leg);}
-  {const ax=mk(new THREE.CylinderGeometry(0.25,0.25,4.0,10),toon(0xb9a6f2),0,F.cy,0);ax.rotation.x=Math.PI/2;g.add(ax);}
-  // 車廂
-  F.cars=[];const cc=[0xff9ec4,0x8fd0ff,0xffd36e,0x8fdcb4,0xb9a6f2];
-  for(let i=0;i<F.n;i++){const car=new THREE.Group();const c=toon(cc[i%5]);
-    const body=mk(new THREE.CylinderGeometry(0.85,0.75,1.0,14),c,0,-1.25,0);car.add(body);car.add(mk(new THREE.CylinderGeometry(0.9,0.9,0.12,14),wt,0,-0.72,0));
-    const top=mk(new THREE.SphereGeometry(0.95,14,8,0,Math.PI*2,0,Math.PI/2),c,0,0.15,0);top.scale.y=0.55;car.add(top);
-    for(let k=0;k<3;k++){const a=k/3*Math.PI*2;car.add(mk(new THREE.CylinderGeometry(0.04,0.04,0.95,5),wt,Math.cos(a)*0.75,-0.3,Math.sin(a)*0.75));}
-    car.add(mk(new THREE.CylinderGeometry(0.05,0.05,0.5,5),yl,0,0.55,0));g.add(car);F.cars.push(car);}
+  for(const zz of[-F.zr,F.zr]){wh.add(mk(new THREE.TorusGeometry(F.R,0.22,8,80),pk,0,0,zz));wh.add(mk(new THREE.TorusGeometry(F.R*0.55,0.14,8,56),wt,0,0,zz));
+    for(let i=0;i<F.n*2;i++){const a=i/(F.n*2)*Math.PI*2;const sp=mk(new THREE.CylinderGeometry(0.08,0.08,F.R,6),i%2?wt:pk,Math.cos(a)*F.R/2,Math.sin(a)*F.R/2,zz);sp.rotation.z=a-Math.PI/2;wh.add(sp);}
+    for(let i=0;i<F.n*2;i++){const a=(i+0.5)/(F.n*2)*Math.PI*2;wh.add(mk(new THREE.SphereGeometry(0.22,8,6),basic(0xfff3c0),Math.cos(a)*F.R,Math.sin(a)*F.R,zz*1.06));}}
+  for(let i=0;i<F.n;i++){const a=i/F.n*Math.PI*2;const b=mk(new THREE.CylinderGeometry(0.1,0.1,F.zr*2,6),yl,Math.cos(a)*F.R,Math.sin(a)*F.R,0);b.rotation.x=Math.PI/2;wh.add(b);}
+  {const hub=mk(new THREE.CylinderGeometry(1.0,1.0,F.zr*2+0.6,18),yl,0,0,0);hub.rotation.x=Math.PI/2;wh.add(hub);}
+  for(const zz of[-F.zr-0.8,F.zr+0.8])for(const s of[-1,1]){const L=Math.hypot(F.cy,F.R*0.5);const leg=mk(new THREE.CylinderGeometry(0.3,0.45,L,10),toon(0xb9a6f2),s*F.R*0.25,F.cy/2,zz);leg.rotation.z=s*Math.atan2(F.R*0.5,F.cy);g.add(leg);}
+  {const ax=mk(new THREE.CylinderGeometry(0.35,0.35,F.zr*2+2.2,10),toon(0xb9a6f2),0,F.cy,0);ax.rotation.x=Math.PI/2;g.add(ax);}
+  // 包廂：半徑 2.1，地板在吊點下方 3.3
+  F.cars=[];const cc=[0xff9ec4,0x8fd0ff,0xffd36e,0x8fdcb4,0xb9a6f2,0xffb38a];F.drop=3.3;
+  for(let i=0;i<F.n;i++){const car=new THREE.Group();const c=toon(cc[i%6]),cd=toon(cc[i%6],{side:THREE.DoubleSide});
+    car.add(mk(new THREE.CylinderGeometry(2.1,1.9,0.25,20),c,0,-F.drop-0.12,0));
+    car.add(mk(new THREE.CylinderGeometry(2.1,2.1,1.0,24,1,true),cd,0,-F.drop+0.5,0));car.add(mk(new THREE.TorusGeometry(2.1,0.1,6,24),wt,0,-F.drop+1.0,0)).rotation&&0;car.children[car.children.length-1].rotation.x=Math.PI/2;
+    const top=mk(new THREE.SphereGeometry(2.25,20,10,0,Math.PI*2,0,Math.PI/2),c,0,-0.9,0);top.scale.y=0.42;car.add(top);car.add(mk(new THREE.CylinderGeometry(2.3,2.3,0.12,24),wt,0,-0.9,0));
+    for(let k=0;k<4;k++){const a=k/4*Math.PI*2+Math.PI/4;car.add(mk(new THREE.CylinderGeometry(0.06,0.06,F.drop-1.9,6),wt,Math.cos(a)*2.0,-F.drop+1.0+(F.drop-1.9)/2,Math.sin(a)*2.0));}
+    car.add(mk(new THREE.CylinderGeometry(0.08,0.08,0.5,6),yl,0,-0.3,0));car.add(mk(new THREE.SphereGeometry(0.18,8,6),yl,0,-0.05,0));
+    g.add(car);F.cars.push(car);}
   // 月台
-  {const pf=mk(new THREE.BoxGeometry(3.2,0.3,3.4),toon(0xffe0ea),0,0.15,2.6);g.add(pf);for(let k=0;k<3;k++)g.add(mk(new THREE.BoxGeometry(1.6,0.15,0.5),toon(0xffffff),0,0.07,4.5+k*0.0));
-   const t=textTex(['🎡 摩天輪','按互動搭乘'],'#fff6ea','#7a4a34',256,128,36);const sg=mk(new THREE.BoxGeometry(1.8,0.9,0.1),[wt,wt,wt,wt,toon(0xffffff,{map:t}),wt],2.3,1.5,4.6);g.add(sg);g.add(mk(new THREE.CylinderGeometry(0.06,0.06,1.1,6),wt,2.3,0.55,4.6));}
+  {const pf=mk(new THREE.BoxGeometry(5.2,0.3,5.2),toon(0xffe0ea),0,0.15,F.R*0+0);g.add(pf);
+   const t=textTex(['🎡 摩天輪','按互動搭乘'],'#fff6ea','#7a4a34',256,128,36);const sg=mk(new THREE.BoxGeometry(1.8,0.9,0.1),[wt,wt,wt,wt,toon(0xffffff,{map:t}),wt],3.6,1.5,4.2);g.add(sg);g.add(mk(new THREE.CylinderGeometry(0.06,0.06,1.1,6),wt,3.6,0.55,4.2));}
   shadowAll(g);scene.add(g);
-  const toW=(lx,lz)=>({x:F.x+Math.cos(F.yaw)*lx+Math.sin(F.yaw)*lz,z:F.z-Math.sin(F.yaw)*lx+Math.cos(F.yaw)*lz});F.toW=toW;F.board=toW(0,4.6);F.exit=toW(1.8,5.4);
-  for(const s of[-1,1])for(const zz of[-1.8,1.8]){const p=toW(s*F.R*0.55,zz);obstacles.push({x:p.x,z:p.z,r:0.6});}}
+  const toW=(lx,lz)=>({x:F.x+Math.cos(F.yaw)*lx+Math.sin(F.yaw)*lz,z:F.z-Math.sin(F.yaw)*lx+Math.cos(F.yaw)*lz});F.toW=toW;F.board=toW(0,4.4);F.exit=toW(2.6,5.0);
+  for(const s of[-1,1])for(const zz of[-F.zr-0.8,F.zr+0.8]){const p=toW(s*F.R*0.5,zz);obstacles.push({x:p.x,z:p.z,r:0.7});}}
  // 旋轉木馬
  {const K={x:C.x+7,z:C.z+7,r:5,ang:0,n:8};PARKV.carousel=K;const g=new THREE.Group();g.position.set(K.x,0,K.z);
   g.add(mk(new THREE.CylinderGeometry(K.r+0.3,K.r+0.5,0.5,32),toon(0xffe0ea),0,0.25,0));
@@ -330,7 +448,7 @@ const PARKV={};
   for(let i=0;i<5;i++){const a=dir+0.9+i*1.05,p=at(a,C.r-6.5);const fb=mk(new THREE.CylinderGeometry(1.1,1.2,0.4,16),toon(0xd8a880),p.x,0.2,p.z);g.add(fb);
     for(let k=0;k<7;k++){const aa=k/7*6.28;g.add(mk(new THREE.SphereGeometry(0.18,8,6),toon(bal[(k+i)%6]),p.x+Math.cos(aa)*0.6,0.55,p.z+Math.sin(aa)*0.6));}g.add(mk(new THREE.SphereGeometry(0.45,10,8),toon(0x7fcc5e),p.x,0.7,p.z));obstacles.push({x:p.x,z:p.z,r:1.2});}
   // 彩旗：從拱門到中央
-  for(let i=0;i<3;i++){const a=dir+(i-1)*0.9,p0=at(a,C.r-1),p1=at(a,3);const N=14;for(let k=0;k<=N;k++){const t=k/N;const x=lerp(p0.x,p1.x,t),z=lerp(p0.z,p1.z,t),y=5.2-Math.sin(t*Math.PI)*1.0;
+  for(let i=0;i<3;i++){if(i===1)continue;const a=dir+(i-1)*0.9,p0=at(a,C.r-1),p1=at(a,3);const N=14;for(let k=0;k<=N;k++){const t=k/N;const x=lerp(p0.x,p1.x,t),z=lerp(p0.z,p1.z,t),y=5.2-Math.sin(t*Math.PI)*1.0;
      const f=mk(new THREE.ConeGeometry(0.22,0.45,3),toon(bal[k%6]),x,y,z);f.rotation.x=Math.PI;g.add(f);}
     g.add(mk(new THREE.CylinderGeometry(0.1,0.12,5.4,8),toon(0xffffff),p0.x,2.7,p0.z));}
   {const p=at(0,0);g.add(mk(new THREE.CylinderGeometry(0.16,0.2,6,10),toon(0xffffff),p.x,3,p.z));g.add(mk(new THREE.SphereGeometry(0.5,12,10),toon(0xffd36e),p.x,6.2,p.z));obstacles.push({x:p.x,z:p.z,r:0.4});}
@@ -353,14 +471,14 @@ function gachaMachine(x,z,ry){const g=new THREE.Group();const pk=toon(0xff9ec4);
 gachaMachine(-3,-7,0.3);
 {const p={x:PARKV.gateIn.x+Math.cos(PARKV.gateYaw)*4,z:PARKV.gateIn.z-Math.sin(PARKV.gateYaw)*4};gachaMachine(p.x,p.z,PARKV.gateYaw+Math.PI);}
 // ---------- 種樹、石頭 ----------
-const okSpot=(x,z,r)=>Math.hypot(x,z)>=r&&Math.hypot(x-HOME.x,z-HOME.z)>=12&&Math.hypot(x-PARK.x,z-PARK.z)>=PARK.r+5&&Math.hypot(x-POND.x,z-POND.z)>=POND.r+5&&Math.hypot(x-CAVE_DOOR.x,z-CAVE_DOOR.z)>=18&&Math.hypot(x-V2.x,z-V2.z)>=r+18&&Math.hypot(x-V3.x,z-V3.z)>=r+14&&!PATHS.some(p=>segDist(x,z,...p)<4);
+const okSpot=(x,z,r)=>Math.hypot(x,z)>=r&&Math.hypot(x-HOME.x,z-HOME.z)>=12&&Math.hypot(x-PARK.x,z-PARK.z)>=PARK.r+5&&Math.hypot(x-POND.x,z-POND.z)>=POND.r+5&&Math.hypot(x-CAVE_DOOR.x,z-CAVE_DOOR.z)>=18&&Math.hypot(x-V2.x,z-V2.z)>=r+30&&Math.hypot(x-V3.x,z-V3.z)>=r+14&&!PATHS.some(p=>segDist(x,z,...p)<4);
 for(let i=0;i<26;i++){const a=SR(0,6.28),d=SR(17,24);const x=Math.cos(a)*d,z=Math.sin(a)*d;if(okSpot(x,z,16)&&farFrom(x,z,2.2))tree(x,z,SR(0.85,1.2),rnd()<0.35?'cherry':rnd()<0.3?'fruit':'broad');}
 for(let i=0;i<22;i++){const a=SR(0,6.28),d=SR(39,45);const x=V2.x+Math.cos(a)*d,z=V2.z+Math.sin(a)*d;if(farFrom(x,z,2.2)&&!onPath(x,z))tree(x,z,SR(0.85,1.2),rnd()<0.5?'cherry':'fruit');}
 for(let i=0;i<300;i++){const x=SR(-112,112),z=SR(-112,112);if(!okSpot(x,z,22))continue;
   if(ZONE.meadow(x,z)&&rnd()<0.88)continue;const wild=x>50;if(!wild&&rnd()<0.45)continue;if(!farFrom(x,z,2.6))continue;
   tree(x,z,SR(0.8,1.3),wild?(rnd()<0.7?'pineW':'pine'):(rnd()<0.25?'cherry':rnd()<0.25?'pine':rnd()<0.2?'fruit':'broad'));}
 for(let i=0;i<70;i++){const x=SR(-110,110),z=SR(-110,110);if(!okSpot(x,z,16)||!farFrom(x,z,1.5))continue;rock(x,z,SR(0.6,1.4));}
-for(let i=0;i<6;i++){const a=SR(0,6.28);const x=Math.cos(a)*13,z=Math.sin(a)*13+3;if(farFrom(x,z,1.5)&&!onPath(x,z))rock(x,z,SR(0.6,0.9));}
+for(let i=0;i<6;i++){const a=SR(0,6.28);const x=Math.cos(a)*13,z=Math.sin(a)*13+3;if(farFrom(x,z,1.5)&&!onPath(x,z)&&!inHouse(x,z,-2))rock(x,z,SR(0.6,0.9));}
 // ---------- 草叢、灌木、小花（色塊細節） ----------
 {const blade=mergeGeos([0,1,2,3,4].map(i=>{const a=i*1.26;return[new THREE.ConeGeometry(0.06,0.55,3),M4(Math.cos(a)*0.08,0.26,Math.sin(a)*0.08,Math.sin(a)*0.35,0,-Math.cos(a)*0.35,1,0.7+((i*37)%5)*0.12,1)];}));
  const N=2600,im=new THREE.InstancedMesh(blade,toon(0xffffff),N),m=new THREE.Matrix4(),col=new THREE.Color(),q=new THREE.Quaternion(),e=new THREE.Euler();let k=0;

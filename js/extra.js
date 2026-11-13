@@ -57,25 +57,26 @@ const parkRiders=[];
   {species:'hamster',body:'#f5f5f5',accent:'#c8c0b8',ears:'bunny',eyes:'dot'},{body:'#ffd36e',accent:'#8a5a1a',eyes:'star',mouth:'open'},{body:'#c4b2f0',accent:'#4a3268',mouth:'w'},{species:'hamster',body:'#c98a5a',accent:'#7a4a2a',ears:'bear'}];
  [['ferris',1],['ferris',4],['ferris',7],['carousel',0],['carousel',3],['carousel',5],['ferris',9]].forEach(([kind,i],n)=>{const c=makeCritter(Object.assign({species:'lobster',blush:true},looks[n]),false);c.setFace('happy');c.g.scale.setScalar(0.85);scene.add(c.g);parkRiders.push({kind,i,c,pose:newPose()});});}
 const _wp=new THREE.Vector3();
-function seatPos(kind,i){if(kind==='ferris'){PARKV.ferris.cars[i].getWorldPosition(_wp);return{x:_wp.x,y:_wp.y-1.68,z:_wp.z,ry:PARKV.ferris.yaw};}
+function seatPos(kind,i,off=-0.75){if(kind==='ferris'){const F=PARKV.ferris;F.cars[i].getWorldPosition(_wp);const c=Math.cos(F.yaw),s=Math.sin(F.yaw);return{x:_wp.x+c*off,y:_wp.y-F.drop,z:_wp.z-s*off,ry:F.yaw};}
   const K=PARKV.carousel,h=K.horses[i];h.h.getWorldPosition(_wp);return{x:_wp.x,y:_wp.y+0.12,z:_wp.z,ry:K.ang-h.a};}
-function sitPoseOn(p,kind,T){p.legs=kind==='ferris'?[-1.45,-1.45]:[-0.5,-0.5];p.sq=Math.sin(T*2.2)*0.04;p.arms=kind==='ferris'?[[-0.4,0,-0.6],[-0.4,0,0.6]]:[[-1.0,0,-0.3],[-1.0,0,0.3]];p.k=10;return p;}
+function sitPoseOn(p,kind,T){p.legs=kind==='ferris'?[-0.2,0.2]:[-0.5,-0.5];p.sq=Math.sin(T*2.2)*0.04;p.arms=kind==='ferris'?[[-0.3+Math.sin(T*1.7)*0.2,0,-0.5],[-2.4+Math.sin(T*3)*0.3,0,0.4]]:[[-1.0,0,-0.3],[-1.0,0,0.3]];p.k=10;return p;}
 function updatePark(dt,T){const F=PARKV.ferris,K=PARKV.carousel,TC=PARKV.teacups;const near=Math.hypot(ply.x-PARK.x,ply.z-PARK.z)<140;
   F.ang+=dt*0.1;F.wheel.rotation.z=F.ang;for(let i=0;i<F.n;i++){const a=F.ang+i/F.n*Math.PI*2;F.cars[i].position.set(Math.cos(a)*F.R,F.cy+Math.sin(a)*F.R,0);F.cars[i].rotation.z=Math.sin(T*1.3+i)*0.04;}
-  K.ang+=dt*0.45;K.rot.rotation.y=K.ang;K.horses.forEach((h,i)=>{h.h.position.y=1.6+Math.sin(T*2.4+i*1.3)*0.28;});
+  K.ang-=dt*0.45;K.rot.rotation.y=K.ang;K.horses.forEach((h,i)=>{h.h.position.y=1.6+Math.sin(T*2.4+i*1.3)*0.28;});
   TC.plate.rotation.y+=dt*0.5;TC.cups.forEach((c,i)=>c.rotation.y+=dt*(1.2+i*0.3));
   const h=hour(),open=h>=7&&h<21;
   for(const r of parkRiders){r.c.g.visible=open&&near&&!(ply.riding&&ply.riding.kind===r.kind&&ply.riding.i===r.i);if(!r.c.g.visible)continue;const s=seatPos(r.kind,r.i);
-    r.c.g.position.set(s.x,s.y+(r.kind==='ferris'?0.18:0),s.z);r.c.g.rotation.y=s.ry;applyPose(r.c,sitPoseOn(r.pose,r.kind,T+r.i),dt);}
+    r.c.g.position.set(s.x,s.y,s.z);r.c.g.rotation.y=s.ry;applyPose(r.c,sitPoseOn(r.pose,r.kind,T+r.i),dt);}
 }
 function rideFerris(){const F=PARKV.ferris;let bi=0,bd=1e9;for(let i=0;i<F.n;i++){const a=F.ang+i/F.n*Math.PI*2;const d=Math.abs(angDiff(a,-Math.PI/2));if(d<bd){bd=d;bi=i;}}
-  if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'ferris',i:bi,a0:F.ang};ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;toast('🎡 摩天輪出發！轉一圈會自動下車，也可以按「下來」');}
+  if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'ferris',i:bi,a0:F.ang};const pt=pets.find(p=>p.follow);if(pt)pt.happy=1.5;ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;toast('🎡 摩天輪出發！轉一圈會自動下車，也可以按「下來」');}
 function rideCarousel(){const K=PARKV.carousel;let bi=0,bd=1e9;K.horses.forEach((h,i)=>{h.h.getWorldPosition(_wp);const d=Math.hypot(_wp.x-ply.x,_wp.z-ply.z);if(d<bd){bd=d;bi=i;}});
   if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'carousel',i:bi};ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;toast('🎠 騎上木馬了！');}
-function getOff(){const r=ply.riding;if(!r)return;ply.riding=null;refreshHeld();
+function getOff(){const r=ply.riding;if(!r)return;ply.riding=null;refreshHeld();for(const p of pets)p.rideY=undefined;
   if(r.kind==='ferris'){const e=PARKV.ferris.exit;ply.x=e.x;ply.z=e.z;}else{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);ply.x=K.x+Math.cos(a)*(K.r+1.4);ply.z=K.z+Math.sin(a)*(K.r+1.4);}
   ply.y=H(ply.x,ply.z)+0.4;ply.vy=4;ply.ground=false;P.m.rotation.set(0,0,0);P.m.position.set(0,0,0);SFX.jump();}
-function updateRide(dt,T){const r=ply.riding;const s=seatPos(r.kind,r.i);ply.x=s.x;ply.z=s.z;ply.y=s.y;ply.vy=0;ply.face=s.ry;
+function updateRide(dt,T){const r=ply.riding;const s=seatPos(r.kind,r.i);
+  if(r.kind==='ferris'){const pt=pets.find(p=>p.follow);if(pt){const q=seatPos('ferris',r.i,0.95);pt.x=q.x;pt.z=q.z;pt.ry=q.y;pt.rideY=q.y;pt.face=q.ry+0.4;}}ply.x=s.x;ply.z=s.z;ply.y=s.y;ply.vy=0;ply.face=s.ry;
   P.g.position.set(s.x,s.y,s.z);P.g.rotation.y=s.ry;applyPose(P,sitPoseOn(newPose(),r.kind,T),dt);if(P.tail)P.tail.rotation.y=Math.sin(T*3)*0.3;
   if(r.kind==='ferris'&&PARKV.ferris.ang-r.a0>Math.PI*2+0.05){getOff();toast('🎡 繞了一圈～風景好美！');}}
 

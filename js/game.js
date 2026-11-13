@@ -80,7 +80,8 @@ const npcs=NPCS.map(d=>{const c=makeCritter(Object.assign({species:'lobster'},d.
   let hx,hz,face=0;if(d.stall){const s=STALLS[d.stall];hx=s.keeper.x;hz=s.keeper.z;face=s.ry;}else{hx=d.home.x;hz=d.home.z;}
   c.g.position.set(hx,H(hx,hz)+(d.stall?0.84:0),hz);scene.add(c.g);
   let door=d.door||(d.house>=0?V2HOUSES[d.house].door:null);if(!door){let bd=1e9;for(const h of[...V2HOUSES,...V3HOUSES]){const dd=Math.hypot(h.door.x-hx,h.door.z-hz);if(dd<bd){bd=dd;door=h.door;}}}
-  return Object.assign({},d,{c,tag,x:hx,z:hz,hx,hz,face,tx:hx,tz:hz,wait:R(1,3),walk:0,talking:false,away:false,pose:newPose(),door,onPost:true});});
+  const k=NPCS.indexOf(d)%5;
+  return Object.assign({},d,{c,tag,x:hx,z:hz,hx,hz,face,tx:hx,tz:hz,wait:R(1,3),walk:0,talking:false,away:false,pose:newPose(),door,onPost:true,sleepH:20+k*0.5,wakeH:5.5+k*0.5});});
 function nearestNpc(){if(ply.indoor||ply.cave)return null;let best=null,bd=1e9;for(const n of npcs){if(n.away)continue;const d=Math.hypot(n.x-ply.x,n.z-ply.z);if(d<(n.stall?3.4:2.6)&&d<bd){bd=d;best=n;}}return best;}
 // 舞台上的四隻龍蝦精靈
 const DANCE_COL=[['#ff8fa3','#8a2a4a'],['#8fc8ff','#2a4a8a'],['#ffd36e','#8a5a1a'],['#8fdcb4','#2a6a4a']];
@@ -438,7 +439,7 @@ function loop(){
     P.g.visible=!fpMode;
     if(fpMode){camera.position.set(ply.x,ply.y+1.15,ply.z);const cp=Math.cos(fpPitch);camTgt.set(ply.x-Math.sin(camYaw)*cp,ply.y+1.15-Math.sin(fpPitch),ply.z-Math.cos(camYaw)*cp);camera.lookAt(camTgt);snapCam=true;}
     else{
-    const dist=rideF?15:ins?Math.min(camDist,10):sl?6:camDist,pit=rideF?0.3:ins?clamp(camPitch+0.15,0.45,1.2):sl?0.75:camPitch;
+    const dist=rideF?22:ins?Math.min(camDist,10):sl?6:camDist,pit=rideF?0.3:ins?clamp(camPitch+0.15,0.45,1.2):sl?0.75:camPitch;
     camTgt.set(ply.x,ply.y+(sl?0.6:1.3),ply.z);const cp=Math.cos(pit);
     camPos.set(camTgt.x+Math.sin(camYaw)*cp*dist,camTgt.y+Math.sin(pit)*dist,camTgt.z+Math.cos(camYaw)*cp*dist);
     if(!ply.cave)camPos.y=Math.max(camPos.y,H(camPos.x,camPos.z)+0.8);
@@ -450,19 +451,49 @@ function loop(){
   renderer.setRenderTarget(rt);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(postScene,postCam);
   uiFrame(rawDt);
 }
+// 繞開障礙物移動（不穿模）
+function toLocal(o,x,z){const c=Math.cos(o.box.ry),s=Math.sin(o.box.ry),dx=x-o.x,dz=z-o.z;return[dx*c-dz*s,dx*s+dz*c];}
+function toWorld(o,lx,lz){const c=Math.cos(o.box.ry),s=Math.sin(o.box.ry);return[o.x+lx*c+lz*s,o.z-lx*s+lz*c];}
+function segHitsBox(ax,az,bx,bz,o,pad){const[a1,a2]=toLocal(o,ax,az),[b1,b2]=toLocal(o,bx,bz);const hw=o.box.hw+pad,hd=o.box.hd+pad;let t0=0,t1=1;const d1=b1-a1,d2=b2-a2;
+  for(const[p,d,h]of[[a1,d1,hw],[a2,d2,hd]]){if(Math.abs(d)<1e-6){if(p<-h||p>h)return false;continue;}let u=(-h-p)/d,v=(h-p)/d;if(u>v)[u,v]=[v,u];t0=Math.max(t0,u);t1=Math.min(t1,v);if(t0>t1)return false;}return true;}
+function steer(n,tx,tz,spd,dt,arrive=0.3){
+  if(n.detour){n.detT-=dt;if(n.detT<=0||Math.hypot(n.detour.x-n.x,n.detour.z-n.z)<0.5)n.detour=null;}
+  const fx=tx,fz=tz;if(Math.hypot(fx-n.x,fz-n.z)<=arrive){n.stuckN=0;return false;}
+  if(n.detour){tx=n.detour.x;tz=n.detour.z;}
+  // 房子（方形）：繞到轉角
+  for(const o of obstacles){if(!o.box)continue;if(Math.abs(o.x-n.x)>o.r+9||Math.abs(o.z-n.z)>o.r+9)continue;
+    if(!segHitsBox(n.x,n.z,tx,tz,o,0.55))continue;let best=null,bc=1e9;
+    for(const[sx,sz]of[[1,1],[1,-1],[-1,1],[-1,-1]]){const[cx,cz]=toWorld(o,sx*(o.box.hw+1.1),sz*(o.box.hd+1.1));if(Math.hypot(cx-n.x,cz-n.z)<0.9)continue;const vis=!segHitsBox(n.x,n.z,cx,cz,o,0.5);const cost=Math.hypot(cx-n.x,cz-n.z)+Math.hypot(tx-cx,tz-cz)+(vis?0:50)+(segHitsBox(cx,cz,tx,tz,o,0.5)?12:0);if(cost<bc){bc=cost;best=[cx,cz];}}
+    if(best){tx=best[0];tz=best[1];}break;}
+  const dx=tx-n.x,dz=tz-n.z,d=Math.hypot(dx,dz)||1e-3;let ux=dx/d,uz=dz/d,best=null,bA=1e9;
+  for(const o of obstacles){if(o.r<=0.2||o.box)continue;const ox=o.x-n.x,oz=o.z-n.z;if(Math.abs(ox)>o.r+6||Math.abs(oz)>o.r+6)continue;const R=o.r+0.6;
+    if(Math.hypot(fx-o.x,fz-o.z)<R)continue;const along=ox*ux+oz*uz;if(along<-0.5||along>Math.min(d,5)+o.r)continue;const perp=ox*uz-oz*ux;if(Math.abs(perp)<R&&along<bA){bA=along;best={o,perp,ox,oz,R};}}
+  let vx=ux,vz=uz;
+  if(best){const dd=Math.hypot(best.ox,best.oz)||1;let side;if(n.avO===best.o)side=n.avS;else{side=best.perp>=0?1:-1;n.avO=best.o;n.avS=side;}
+    const t1=-best.oz/dd*side,t2=best.ox/dd*side;const w=dd<best.R+1.2?0.1:0.45;vx=ux*w+t1*(1-w);vz=uz*w+t2*(1-w);if(dd<best.R+0.2){vx-=best.ox/dd*0.5;vz-=best.oz/dd*0.5;}const l=Math.hypot(vx,vz)||1;vx/=l;vz/=l;}
+  else n.avO=null;
+  const v=Math.min(spd,Math.hypot(fx-n.x,fz-n.z)*4);n.x+=vx*v*dt;n.z+=vz*v*dt;n.face+=angDiff(n.face,Math.atan2(vx,vz))*Math.min(1,dt*7);n.walk=(n.walk||0)+dt*8*(spd/1.4);
+  // 卡住偵測：先換邊，再隨機繞道
+  n.stT=(n.stT||0)+dt;if(n.stT>1.5){const md=Math.hypot(n.x-(n.sx??n.x),n.z-(n.sz??n.z));
+    if(md<0.6){n.stuckN=(n.stuckN||0)+1;if(n.stuckN===1)n.avS=-(n.avS||1);else{const base=Math.atan2(fx-n.x,fz-n.z)+(Math.random()<0.5?1:-1)*(Math.PI/2+Math.random()*0.8);const L=4+Math.min(n.stuckN,6)*1.2;let px=n.x+Math.sin(base)*L,pz=n.z+Math.cos(base)*L;if(!farFrom(px,pz,0.6)){px=n.x-Math.sin(base)*L;pz=n.z-Math.cos(base)*L;}n.detour={x:px,z:pz};n.detT=4;n.avO=null;}}else n.stuckN=0;
+    n.sx=n.x;n.sz=n.z;n.stT=0;}
+  return true;}
+function bodyCollide(n,r=0.5){collideObs(n,r);pushWalls(n,r);}
+function npcNight(n,h){return h>=n.sleepH||h<n.wakeH;}
 function npcUpdate(dt,T){
-  const h=hour(),night=h>=21||h<6;
-  for(const n of npcs){const g=n.c.g;let moving=false;
+  const h=hour();
+  for(const n of npcs){const g=n.c.g;let moving=false;const night=npcNight(n,h);if(!n.init){n.init=1;if(night&&n.door)n.away=true;}
     if(n.stall&&!night&&n.onPost){n.away=false;const d=angDiff(n.face,n.talking?Math.atan2(ply.x-n.x,ply.z-n.z):STALLS[n.stall].ry);n.face+=d*Math.min(1,dt*6);}
     else if(n.talking){n.face+=angDiff(n.face,Math.atan2(ply.x-n.x,ply.z-n.z))*Math.min(1,dt*8);}
-    else if(night&&n.door){n.working=false;n.onPost=false;const dr=n.door;const dx=dr.x-n.x,dz=dr.z-n.z,d=Math.hypot(dx,dz);if(d>0.4&&!n.away){n.x+=dx/d*1.6*dt;n.z+=dz/d*1.6*dt;n.face=Math.atan2(dx,dz);n.walk+=dt*8;moving=true;}else n.away=true;}
-    else if(n.stall){if(n.away){n.away=false;n.x=n.door.x;n.z=n.door.z;}const dx=n.hx-n.x,dz=n.hz-n.z,d=Math.hypot(dx,dz);if(d>0.3){n.x+=dx/d*1.6*dt;n.z+=dz/d*1.6*dt;n.face=Math.atan2(dx,dz);n.walk+=dt*8;moving=true;}else{n.onPost=true;n.x=n.hx;n.z=n.hz;}}
+    else if(night&&n.door){n.working=false;n.onPost=false;if(!n.away){moving=steer(n,n.door.x,n.door.z,1.7,dt,0.5);n.homeT=(n.homeT||0)+dt;if(!moving||(n.homeT>20&&Math.hypot(ply.x-n.x,ply.z-n.z)>30&&Math.hypot(ply.x-n.door.x,ply.z-n.door.z)>30)){n.away=true;n.homeT=0;}}}
+    else if(n.stall){if(n.away){n.away=false;n.x=n.door.x;n.z=n.door.z;}moving=steer(n,n.hx,n.hz,1.7,dt,0.3);if(!moving){n.onPost=true;n.x=n.hx;n.z=n.hz;}}
     else{if(n.away){n.away=false;n.x=n.door.x;n.z=n.door.z;}
       if(n.job&&n.job!=='walk'){moving=jobUpdate(n,dt,T);if(n.job==='park')parkPush(n);}else{
       const dx=n.tx-n.x,dz=n.tz-n.z,d=Math.hypot(dx,dz);
-      if(d>0.3){n.x+=dx/d*1.3*dt;n.z+=dz/d*1.3*dt;n.face+=angDiff(n.face,Math.atan2(dx,dz))*Math.min(1,dt*6);n.walk+=dt*8;moving=true;}
+      if(d>0.3){moving=steer(n,n.tx,n.tz,1.3,dt);}
       else{n.wait-=dt;if(n.wait<=0){n.wait=R(2,5);const a=R(0,6.28),r=R(0.5,4);n.tx=n.hx+Math.cos(a)*r;n.tz=n.hz+Math.sin(a)*r;if(!farFrom(n.tx,n.tz,0.6)){n.tx=n.hx;n.tz=n.hz;}}}}
       if(Math.hypot(ply.x-n.x,ply.z-n.z)<3.5&&!moving&&!n.working)n.face+=angDiff(n.face,Math.atan2(ply.x-n.x,ply.z-n.z))*Math.min(1,dt*4);}
+    if(moving&&!(n.stall&&Math.hypot(n.x-n.hx,n.z-n.hz)<2.2))bodyCollide(n);
     g.visible=!n.away;if(n.away)continue;
     g.position.set(n.x,H(n.x,n.z)+(n.stall&&n.onPost?0.84:0),n.z);g.rotation.y=n.face;
     if(n.job){for(const t in n.c.T)n.c.T[t].visible=false;const tl={farm:'can',chop:'axe1',fish:'rod',net:'net'}[n.job];if(tl&&n.c.T[tl]&&!n.talking)n.c.T[tl].visible=n.working||n.job==='net';}
@@ -490,21 +521,21 @@ function jobUpdate(n,dt,T){
     else if(n.job==='net'){const b=butterflies.filter(b=>Math.hypot(b.x-n.hx,b.z-n.hz)<30)[0];if(b){n.target={x:b.x,z:b.z,face:0,bug:b};}else{const a=R(0,6.28);n.target={x:n.hx+Math.cos(a)*8,z:n.hz+Math.sin(a)*8,face:a};}}
     if(!n.target)n.target={x:n.hx,z:n.hz,face:0};}
   if(n.phase==='go'){const t=n.target;if(t.bug){t.x=t.bug.x;t.z=t.bug.z;}const dx=t.x-n.x,dz=t.z-n.z,d=Math.hypot(dx,dz);n.working=false;
-    if(d>(t.bug?1.4:0.3)){const sp=n.job==='net'?2.4:1.5;n.x+=dx/d*sp*dt;n.z+=dz/d*sp*dt;n.face+=angDiff(n.face,Math.atan2(dx,dz))*Math.min(1,dt*6);n.walk+=dt*8;return true;}
+    if(d>(t.bug?1.4:0.3)){const sp=n.job==='net'?2.4:1.5;n.goT=(n.goT||0)+dt;if(n.goT>25){n.goT=0;n.target=null;return false;}return steer(n,t.x,t.z,sp,dt,t.bug?1.4:0.3);}n.goT=0;
     n.phase='work';n.jt=n.job==='fish'?R(20,40):n.job==='net'?1.2:n.job==='park'?R(3,9):R(4,8);if(n.job==='park'){const F=PARKV.ferris;n.face=Math.random()<0.5?Math.atan2(F.x-n.x,F.z-n.z):R(0,6.28);}n.face=t.bug?Math.atan2(dx,dz):t.face;return false;}
   n.working=true;if(n.job==='chop'&&n.tree&&n.tree.state!=='alive'){n.jt=0;}
   if(n.job==='net'&&n.target.bug&&n.jt<0.6&&!n.target.caught){n.target.caught=true;const b=n.target.bug;const i=butterflies.indexOf(b);if(i>=0&&Math.hypot(b.x-n.x,b.z-n.z)<2.5){butterflies.splice(i,1);scene.remove(b.g);burst(b.x,H(b.x,b.z)+1.2,b.z,PAST.map(c=>parseInt(c.slice(1),16)),8,2);n.c.setFace('happy');}}
   if(n.jt<=0){n.phase='go';n.target=null;n.working=false;n.tree=null;}
   return false;}
 const STAGE_FRONT={x:STAGE.x,z:STAGE.z-3.6};
-function danceUpdate(dt,T){const beat=T*104/60,b8=beat%8,ph=beat%1;const h=hour(),night=h>=21||h<6;
-  for(const d of dancers){
+function danceUpdate(dt,T){const beat=T*104/60,b8=beat%8,ph=beat%1;const h=hour();
+  for(const d of dancers){const night=h>=20.5+d.i*0.5||h<5.5+d.i*0.25;if(!d.init){d.init=1;if(night){d.mode='home';d.c.g.visible=false;}}
     if(!d.door){let bd=1e9;for(const hs of V2HOUSES){const dd=Math.hypot(hs.door.x-d.x,hs.door.z-d.z)+d.i*3;if(dd<bd){bd=dd;d.door=hs.door;}}}
     if(night||d.mode){const g=d.c.g;
       if(night&&!d.mode){d.mode='down';d.wx=d.x;d.wz=d.z;d.t=0;}
       if(d.mode==='down'){d.t+=dt;const s=Math.min(1,d.t/0.6);const fx=lerp(d.x,STAGE_FRONT.x+(d.i-1.5)*1.2,s),fz=lerp(d.z,STAGE_FRONT.z,s);g.position.set(fx,lerp(H(STAGE.x,STAGE.z)+0.68,H(fx,fz),s)+Math.sin(s*Math.PI)*1.2,fz);
         if(s>=1){d.mode='walk';d.wx=fx;d.wz=fz;}}
-      else if(d.mode==='walk'){const dx=d.door.x-d.wx,dz=d.door.z-d.wz,dd=Math.hypot(dx,dz);if(dd>0.4){d.wx+=dx/dd*1.8*dt;d.wz+=dz/dd*1.8*dt;d.walkP=(d.walkP||0)+dt*8;g.rotation.y=Math.atan2(dx,dz);g.position.set(d.wx,H(d.wx,d.wz),d.wz);applyPose(d.c,walkPose(d.pose,d.walkP,true,T),dt);}else{d.mode='home';g.visible=false;}}
+      else if(d.mode==='walk'){const nv=d.nav||(d.nav={x:d.wx,z:d.wz,face:0,walk:0});if(steer(nv,d.door.x,d.door.z,1.8,dt,0.5)){bodyCollide(nv);d.wx=nv.x;d.wz=nv.z;g.rotation.y=nv.face;g.position.set(nv.x,H(nv.x,nv.z),nv.z);applyPose(d.c,walkPose(d.pose,nv.walk,true,T),dt);}else{d.mode='home';d.nav=null;g.visible=false;}}
       else if(d.mode==='home'&&!night){d.mode=null;g.visible=true;g.rotation.y=Math.PI;d.c.m.scale.setScalar(0.01);d.c.sqv+=8;}
       if(d.mode)continue;}
     d.c.g.position.y=H(STAGE.x,STAGE.z)+0.68;d.c.g.position.z=d.z;d.c.g.rotation.y=Math.PI;const p=d.pose;p.k=22;const hop=Math.abs(Math.sin(beat*Math.PI));p.y=hop*0.35;p.sq=(ph<0.15?-0.2:0.1);
@@ -561,7 +592,7 @@ function step(dt,T){
   if(ply.dashT>0){ply.dashT-=dt;ply.x+=ply.dvx*dt;ply.z+=ply.dvz*dt;if(Math.random()<0.6)puff(ply.x,ply.y,ply.z);}
   ply.x+=ply.kx*dt;ply.z+=ply.kz*dt;ply.kx*=Math.pow(0.02,dt);ply.kz*=Math.pow(0.02,dt);
   const obs=ply.cave?caveObs:obstacles;
-  for(const o of obs){if(o.r<=0)continue;if(o.y!==undefined&&Math.abs(o.y-ply.y)>0.9)continue;const dx=ply.x-o.x,dz=ply.z-o.z,d=Math.hypot(dx,dz),r=o.r+0.6;if(d<r&&d>0.001){ply.x=o.x+dx/d*r;ply.z=o.z+dz/d*r;}}
+  for(const o of obs){if(o.r<=0)continue;if(o.y!==undefined&&Math.abs(o.y-ply.y)>0.9)continue;if(o.box){pushBox(ply,o,0.6);continue;}const dx=ply.x-o.x,dz=ply.z-o.z,d=Math.hypot(dx,dz),r=o.r+0.6;if(d<r&&d>0.001){ply.x=o.x+dx/d*r;ply.z=o.z+dz/d*r;}}
   if(!ply.cave){pushWalls(ply,0.45);pushBlocks(ply,ply.y);}
   if(!ply.cave)for(const n of npcs){if(n.away)continue;const dx=ply.x-n.x,dz=ply.z-n.z,d=Math.hypot(dx,dz);if(d<1.4&&d>0.001){ply.x=n.x+dx/d*1.4;ply.z=n.z+dz/d*1.4;}}
   if(ply.cave){const dx=ply.x-CAVE.x,dz=ply.z-CAVE.z,d=Math.hypot(dx,dz);if(d>CAVE.r-0.8){ply.x=CAVE.x+dx/d*(CAVE.r-0.8);ply.z=CAVE.z+dz/d*(CAVE.r-0.8);}}
@@ -642,7 +673,7 @@ function step(dt,T){
     if(m.cave){const dx2=m.x-CAVE.x,dz2=m.z-CAVE.z,dd=Math.hypot(dx2,dz2);if(dd>CAVE.r-1.5){m.x=CAVE.x+dx2/dd*(CAVE.r-1.5);m.z=CAVE.z+dz2/dd*(CAVE.r-1.5);m.dir=Math.atan2(-dx2,-dz2);}}
     else{if(m.x<zmin){m.x=zmin;m.dir=Math.PI/2;}
     m.x=clamp(m.x,-110,110);m.z=clamp(m.z,-110,110);}
-    for(const o of(m.cave?caveObs:obstacles)){if(o.r<=0)continue;const ox=m.x-o.x,oz=m.z-o.z,od=Math.hypot(ox,oz),r=o.r+0.6*m.size;if(od<r&&od>0.001){m.x=o.x+ox/od*r;m.z=o.z+oz/od*r;}}
+    for(const o of(m.cave?caveObs:obstacles)){if(o.r<=0)continue;if(o.box){pushBox(m,o,0.6*m.size);continue;}const ox=m.x-o.x,oz=m.z-o.z,od=Math.hypot(ox,oz),r=o.r+0.6*m.size;if(od<r&&od>0.001){m.x=o.x+ox/od*r;m.z=o.z+oz/od*r;}}
     const wasAir=m.y>0;m.vy-=20*dt;m.y=Math.max(0,m.y+m.vy*dt);if(m.y===0){if(wasAir){m.sqv-=6;}m.vy=0;}
     m.sqv+=((m.y>0?0.12:0)-m.sq)*150*dt-m.sqv*10*dt;m.sq+=m.sqv*dt;const s=clamp(m.sq,-0.45,0.4);
     if(m.spawn>=1)c.m.scale.set(1-s*0.6,1+s,1-s*0.6);
@@ -736,7 +767,7 @@ function petAction(p,kind){if(!p)return;faceTo(p.x,p.z);const hy=H(p.x,p.z)+0.9;
   else if(kind==='invite'){for(const o of pets)if(o.follow){sendHome(o);toast(`${o.d.name} 先回家等你囉 🏠`);}p.follow=true;p.homing=false;p.happy=2;SFX.levelup();ring(p.x,H(p.x,p.z)+0.1,p.z,0xff9ec7,0.3,3,0.6);
     burst(p.x,hy,p.z,PAST.map(c=>parseInt(c.slice(1),16)),20,4);toast(`${p.d.name} 成為你的夥伴了！🐾`);}
   save();}
-function petMove(p,tx,tz,dt,sp){[tx,tz]=viaDoor(p.x,p.z,tx,tz);const dx=tx-p.x,dz=tz-p.z,d=Math.hypot(dx,dz);if(d<0.25)return false;const v=Math.min(sp,d*3);p.x+=dx/d*v*dt;p.z+=dz/d*v*dt;p.face+=angDiff(p.face,Math.atan2(dx,dz))*Math.min(1,dt*8);return true;}
+function petMove(p,tx,tz,dt,sp){[tx,tz]=viaDoor(p.x,p.z,tx,tz);if(p.follow&&ply.riding)return false;return steer(p,tx,tz,sp,dt,0.25);}
 function updatePets(dt,T){
   for(const p of pets){p.t+=dt;const g=p.a.g;let moving=false;
     if(p.follow){if(!!p.cave!==!!ply.cave||Math.hypot(p.x-ply.x,p.z-ply.z)>30){p.cave=!!ply.cave;p.x=ply.x-Math.sin(ply.face)*1.5;p.z=ply.z-Math.cos(ply.face)*1.5;}
@@ -753,8 +784,8 @@ function updatePets(dt,T){
         else if(!farFrom(p.tx,p.tz,0.5)){p.tx=p.hx;p.tz=p.hz;}}}
       if(Math.hypot(ply.x-p.x,ply.z-p.z)<3&&!moving)p.face+=angDiff(p.face,Math.atan2(ply.x-p.x,ply.z-p.z))*Math.min(1,dt*4);
       if(p.homing&&!moving&&Math.hypot(ply.x-p.x,ply.z-p.z)<6&&Math.random()<dt*0.3)p.happy=0.8;}
-    if(!p.cave)pushWalls(p,0.3);
-    const gy=p.cave?0:Math.max(H(p.x,p.z),inHouse(p.x,p.z)?0.02:-9);let hop=moving?Math.abs(Math.sin(p.t*11))*0.18:0;if(p.happy>0){p.happy-=dt;hop=Math.abs(Math.sin(p.t*14))*0.35;}
+    if(!p.cave&&p.rideY===undefined){pushWalls(p,0.3);if(moving)collideObs(p,0.35);}
+    const gy=p.rideY!==undefined&&ply.riding?p.rideY:p.cave?0:Math.max(H(p.x,p.z),inHouse(p.x,p.z)?0.02:-9);let hop=moving?Math.abs(Math.sin(p.t*11))*0.18:0;if(p.happy>0){p.happy-=dt;hop=Math.abs(Math.sin(p.t*14))*0.35;}
     g.position.set(p.x,gy+hop,p.z);g.rotation.y=p.face;const sq=moving||p.happy>0?1+Math.sin(p.t*22)*0.06:1+Math.sin(p.t*3)*0.03;p.a.m.scale.set(1/Math.sqrt(sq),sq,1/Math.sqrt(sq));
     if(p.a.m.userData.tail)p.a.m.userData.tail.rotation.z=Math.sin(p.t*(p.follow||p.happy>0?14:3))*0.45;
     g.visible=!!p.cave===!!ply.cave;p.sp.visible=g.visible&&!p.follow&&Math.hypot(ply.x-p.x,ply.z-p.z)<6;}

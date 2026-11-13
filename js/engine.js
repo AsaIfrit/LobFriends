@@ -12,7 +12,7 @@ const PAST=['#ff9ec7','#ffd36e','#8fdcb4','#b9a6f2','#8fd0ff','#ffb38a'];
 const V2={x:-64,z:52},V3={x:24,z:74},POND={x:34,z:30,r:7},CAVE={x:-400,z:0,r:26},CAVE_DOOR={x:96,z:-76};
 const HOME={x:-18,z:0,w:7,d:6,h:4.2},PARK={x:-88,z:-36,r:23};
 function H(x,z){if(x>200||x<-200)return 0;const dp=Math.hypot(x-POND.x,z-POND.z);let h=Math.sin(x*0.045)*1.6+Math.cos(z*0.05)*1.3+Math.sin((x+z)*0.1)*0.5+Math.cos(x*0.13-z*0.07)*0.35;
-  h=h*smooth(10,26,Math.hypot(x,z))*smooth(36,46,Math.hypot(x-V2.x,z-V2.z))*smooth(32,42,Math.hypot(x-V3.x,z-V3.z));h*=smooth(9.6,15,Math.hypot(x-HOME.x,z-HOME.z))*smooth(PARK.r+2,PARK.r+12,Math.hypot(x-PARK.x,z-PARK.z));h=h*smooth(POND.r+1,POND.r+9,dp)-1.2*(1-smooth(POND.r-1.6,POND.r+0.2,dp));return h;}
+  h=h*smooth(10,26,Math.hypot(x,z))*smooth(46,56,Math.hypot(x-V2.x,z-V2.z))*smooth(32,42,Math.hypot(x-V3.x,z-V3.z));h*=smooth(9.6,15,Math.hypot(x-HOME.x,z-HOME.z))*smooth(PARK.r+2,PARK.r+12,Math.hypot(x-PARK.x,z-PARK.z));h=h*smooth(POND.r+1,POND.r+9,dp)-1.2*(1-smooth(POND.r-1.6,POND.r+0.2,dp));return h;}
 function segDist(px,pz,ax,az,bx,bz){const dx=bx-ax,dz=bz-az,t=clamp(((px-ax)*dx+(pz-az)*dz)/(dx*dx+dz*dz),0,1);return Math.hypot(px-ax-dx*t,pz-az-dz*t);}
 const PATHS=[[0,0,58,0],[0,0,0,-20],[-9,4,-46,38],[4,6,17,58],[0,-8,-66,-30],[-10,0,0,0]];
 function onPath(x,z){for(const p of PATHS)if(segDist(x,z,...p)<1.7)return true;return false;}
