@@ -171,7 +171,7 @@ function useSlot(k){const it=ITEMS[k];if(!it)return;
   else if(it.k==='furn'){if(carry&&carry.id===k&&!carry.orig)carryCancel();else{if(carry)carryCancel();ply.held=null;startCarry(k,null);showHbLabel(`${it.i} ${it.n}：按「放置」放下`);}}
   else if(it.k==='hat'){ply.hat=ply.hat===k?null:k;applyHat();showHbLabel(ply.hat?`${it.i} 戴上「${it.n}」！`:'脫下帽子');SFX.click();if(ply.hat&&P){P.sqv-=4;const p=P.g.position;burst(p.x,p.y+P.topY+0.4,p.z,[0xff9ec4,0xffd36e,0x8fd0ff],10,2.5);}save();}
   else if(it.k==='skin'){const w=it.for;ply.skins=ply.skins||{};ply.skins[w]=ply.skins[w]===k?null:k;refreshHeld();const WN={sword:'🗡️ 木劍',spear:'🔱 長槍',bow:'🏹 弓箭',staff:'🪄 法杖'}[w];showHbLabel(ply.skins[w]?`${it.i} ${WN}換成「${it.n}」外觀！`:`換回${WN}原本的外觀`);updateAtkIcon();SFX.click();if(ply.skins[w]&&!has(w))toast(`先做一把${WN}，裝備時就會變成${it.n}喔`);save();}
-  else if(it.k==='food'){inv[k]--;const pm=1+[0,0.3,0.6,1][TV('a_potion')];ply.hp=Math.min(ply.max,ply.hp+(it.hp||2)*pm);ply.en=Math.min(100,ply.en+(it.en||5)*pm);SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);floatTxt(`💗＋⚡${Math.round((it.en||5)*pm)}`,innerWidth/2,innerHeight*0.45);updateHUD();save();}
+  else if(it.k==='food'){inv[k]--;const pm=1+[0,0.3,0.6,1][TV('a_potion')];ply.hp=Math.min(ply.max,ply.hp+(it.hp||2)*pm);ply.en=Math.min(100,ply.en+(it.en||5)*pm);SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);healFx(true,true);updateHUD();save();}
   else toast(`${it.i} ${it.n}${it.d?'：'+it.d:''}${inv[k]>1?' ×'+inv[k]:''}`);
   renderHotbar();}
 function useHb(i){const k=hb[i];if(!k){showHbLabel(`第 ${(i+1)%10} 格是空的`);return;}const el=$('hotbar').querySelector(`[data-i="${i}"]`);useSlot(k);const el2=$('hotbar').querySelector(`[data-i="${i}"]`);if(el2)bump(el2);}

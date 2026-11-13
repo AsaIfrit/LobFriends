@@ -25,9 +25,12 @@ function takeDmg(raw,m){let k=1;if(ply.weapon==='shield')k*=1-(0.6+0.05*TV('p_wa
   if(TV('r_escape')&&(ply.hp-d)/ply.max<0.3&&ply.hp-d>0&&performance.now()>(ply.escCD||0)){ply.escCD=performance.now()+30000;setTimeout(()=>{startStealth(2,false);toast('🫥 脫身術！');},10);}
   return d;}
 function healMe(h,e,quiet){if(ply.downed)return;h*=healMul();e=(e||0)*healMul();const before=ply.hp;ply.hp=Math.min(ply.max,ply.hp+h);ply.en=Math.min(100,ply.en+e);
-  if(!quiet&&(ply.hp>before||e>0)){const t=ply.hp>before?'+'+(+(ply.hp-before).toFixed(1)):'⚡+'+Math.round(e);dmgNum(ply.x,ply.y+2,ply.z,t,false,'#3fbf7f');}updateHUD();}
+  if(!quiet)healFx(ply.hp>before,e>0);updateHUD();}
+// 回復光粒子：綠色＝生命、藍色＝精神，在身邊繞一圈往上飄
+function healFx(hp,en){const n=14;for(let i=0;i<n;i++){const useEn=hp&&en?i%2===1:!hp;if(!hp&&!en)return;const col=useEn?[0x7fc8ff,0xbfe6ff]:[0x7fe0a0,0xc8ffd8];const a=i/n*Math.PI*2+R(-0.2,0.2),r=R(0.75,1.05);
+  setTimeout(()=>burst(ply.x+Math.cos(a)*r,ply.y+R(0.05,0.4),ply.z+Math.sin(a)*r,col,1,0.35,partG,R(0.9,1.3),-R(3.5,5.5)),i*25);}}
 function healParty(h,e,r){healMe(h,e);if(inParty())netPost({t:'heal',x:+ply.x.toFixed(1),z:+ply.z.toFixed(1),r,h,e,ar:ply.cave?'cave':'out'},true);}
-function onHealMsg(o){if((o.ar==='cave')!==!!ply.cave)return;if(Math.hypot(ply.x-o.x,ply.z-o.z)>(+o.r||8))return;healMe(+o.h||0,+o.e||0);burst(ply.x,ply.y+1.2,ply.z,[0x9ff0c8,0xffffff],5,2);}
+function onHealMsg(o){if((o.ar==='cave')!==!!ply.cave)return;if(Math.hypot(ply.x-o.x,ply.z-o.z)>(+o.r||8))return;healMe(+o.h||0,+o.e||0);}
 function onBuffMsg(o){if((o.ar==='cave')!==!!ply.cave)return;if(Math.hypot(ply.x-o.x,ply.z-o.z)>(+o.r||8))return;ply.tempoT=+o.d||1.5;ply.tempoV=Math.min(0.4,+o.v||0);}
 
 // ---------- 命中前後效果 ----------
@@ -133,7 +136,9 @@ function sMeteor(){const rk=TV('m_meteor'),p=aimPoint(7,16),A=weaponAtk(true);co
   m.userData.meteor=1;m.userData.dx=4/0.6;m.userData.dz=4/0.6;}
 function sSanct(){const rk=TV('p_sanct');addZone({kind:'heal',x:ply.x,z:ply.z,r:4,dur:[0,8,10,12][rk],tick:1,h:[0,1,1.5,2][rk],e:0,col:0xffe08a});SFX.heal();}
 function sGuardF(){const rk=TV('p_guardf');addZone({kind:'heal',x:ply.x,z:ply.z,r:4.5,dur:10,tick:1,h:[0,1,1.5,2][rk],e:[0,2,3,4][rk],col:0x8fdcb4});SFX.heal();}
-function sTaunt(){ply.tauntT=[0,6,9][TV('p_taunt')];ring(ply.x,ply.y+0.2,ply.z,0xff6a6a,0.5,10,0.6);dmgNumP('來打我啊！');SFX.thud();P.sqv+=6;
+function sTaunt(){ply.tauntT=[0,6,9][TV('p_taunt')];const gy=ply.y;ring(ply.x,gy+0.15,ply.z,0xff5a5a,0.5,10,0.7);ring(ply.x,gy+0.2,ply.z,0xffb36e,0.4,7,0.55);ring(ply.x,gy+0.25,ply.z,0xffffff,0.3,4.5,0.45);
+  setTimeout(()=>ring(ply.x,ply.y+0.15,ply.z,0xff5a5a,0.6,12,0.8),180);ring(ply.x,gy+1.2,ply.z,0xff6a6a,0.2,2.4,0.5);burst(ply.x,gy+1.4,ply.z,[0xff5a5a,0xffb36e,0xffffff],30,8);
+  for(let i=0;i<16;i++){const a=i/16*6.28;burst(ply.x+Math.cos(a)*1.1,gy+0.2,ply.z+Math.sin(a)*1.1,[0xff5a5a,0xff9e6e],1,0.5,partG,1.0,-9);}SFX.thud();SFX.boom();P.sqv+=8;hitStop=Math.max(hitStop,0.08);
   for(const m of monsters){if(m.dead<0&&!!m.cave===!!ply.cave&&Math.hypot(m.x-ply.x,m.z-ply.z)<10){m.dir=Math.atan2(ply.x-m.x,ply.z-m.z);m.hop=0;}}}
 let coinAura=null;
 function setCoinMode(on){ply.coinMode=on;if(on&&!coinAura){coinAura=new THREE.Group();for(let i=0;i<6;i++){const c=mk(coinG,toon(0xffd36e,{emissive:0x553300}),Math.cos(i/6*6.28)*1.05,0,Math.sin(i/6*6.28)*1.05);c.rotation.z=Math.PI/2;coinAura.add(c);}scene.add(coinAura);}
@@ -160,8 +165,8 @@ function sJelly(){const rk=TV('a_jelly');limitAllies('jelly',TV('a_twin')?2:1);a
 function sCrystal(){for(const a of allies.filter(a=>a.kind==='crystal'))removeAlly(a);const rk=TV('m_crystal'),res=TV('m_resonance');
   for(let i=0;i<rk;i++){const g=new THREE.Group();const c=mk(new THREE.OctahedronGeometry(0.28),basic(0xc8b4ff,{transparent:true,opacity:0.9}));c.scale.y=1.6;g.add(c);g.add(mk(new THREE.OctahedronGeometry(0.12),basic(0xffffff)));
     addAlly({kind:'crystal',g,x:ply.x,z:ply.z,life:20+10*res,ph:i/rk*Math.PI*2,rate:0.8/(1+0.25*res)});}toast(`🔷 召喚了 ${rk} 顆水晶護衛`);}
-function makeSpriteVis(){const c=makeCritter({species:'lobster',body:'#ff9ec4',accent:'#c0507a',patch:'#ffd6e6',eyeSize:1.25,mouth:'smile',blushShape:'oval',tail:'seg'},false);const g=new THREE.Group();c.g.scale.setScalar(0.34);g.add(c.g);
-  const wm=basic(0xffffff,{transparent:true,opacity:0.75,side:THREE.DoubleSide,depthWrite:false});const wings=[];for(const s of[-1,1]){const w=mk(new THREE.SphereGeometry(0.22,10,6),wm,s*0.16,0.42,-0.22);w.scale.set(1,1.4,0.15);w.rotation.z=s*0.6;g.add(w);wings.push(w);}
+function makeSpriteVis(){const c=makeCritter({species:'lobster'},false);const g=new THREE.Group();c.g.scale.setScalar(0.34);g.add(c.g);
+  const wm=basic(0xffffff,{transparent:true,opacity:0.75,side:THREE.DoubleSide,depthWrite:false});const wings=[];for(const s of[-1,1]){const w=mk(new THREE.SphereGeometry(0.09,10,6),wm,s*0.11,0.42,-0.24);w.scale.set(1,1.4,0.15);w.rotation.z=s*0.6;g.add(w);wings.push(w);}
   g.userData.wings=wings;g.userData.c=c;return g;}
 function sSprite(){for(const a of allies.filter(a=>a.kind==='sprite'))removeAlly(a);const rk=TV('m_sprite');addAlly({kind:'sprite',g:makeSpriteVis(),x:ply.x,z:ply.z,life:30,h:[0,1,1.5,2][rk],e:[0,2,3,4][rk],ph:R(0,6),rate:2});toast('🧚 龍蝦小精靈來幫忙了！');SFX.heal();}
 function allyLure(m){for(const a of allies){if(a.kind!=='golem'||a.cave!==!!m.cave)continue;if(Math.hypot(a.x-m.x,a.z-m.z)<10)return a;}return null;}
@@ -191,7 +196,7 @@ let skUiT=0,investT=0;
 function skillTick(dt,T){
   for(const k in cdLeft)if(cdLeft[k]>0)cdLeft[k]-=dt;
   if(ply.counterT>0)ply.counterT-=dt;if(ply.tempoT>0)ply.tempoT-=dt;
-  if(ply.tauntT>0){ply.tauntT-=dt;if(Math.random()<dt*2.5)ring(ply.x,ply.y+0.1,ply.z,0xff6a6a,0.4,2.2,0.5);}
+  if(ply.tauntT>0){ply.tauntT-=dt;if(Math.random()<dt*3)ring(ply.x,ply.y+0.1,ply.z,0xff6a6a,0.4,3,0.6);if(Math.random()<dt*14){const a=R(0,6.28);burst(ply.x+Math.cos(a)*0.9,ply.y+0.3,ply.z+Math.sin(a)*0.9,[0xff5a5a,0xffb36e],1,0.4,partG,0.8,-6);}}
   if(ply.stealthT>0){ply.stealthT-=dt;if(ply.stealthT<=0)endStealth();}
   if(TV('p_faith')&&!ply.downed&&ply.hp<ply.max)ply.hp=Math.min(ply.max,ply.hp+dt*0.1*TV('p_faith'));
   if(coinAura){coinAura.visible=!!ply.coinMode;if(ply.coinMode){coinAura.position.set(ply.x,ply.y+1.1+Math.sin(T*3)*0.1,ply.z);coinAura.rotation.y=T*2.4;if(Math.random()<dt*8)burst(ply.x+R(-0.8,0.8),ply.y+R(0.6,1.8),ply.z+R(-0.8,0.8),[0xffd36e,0xfff3b0],1,0.8,partG,0.5,-2);}}
