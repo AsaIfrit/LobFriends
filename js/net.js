@@ -5,7 +5,7 @@ function netArea(){return ply.cave?'cave':'out';}
 function netAnim(){if(ply.downed)return'down';if(ply.reviving)return'act';if(ply.sleeping)return'sleep';if(ply.sitting)return ply.sitting.kind==='bath'?'bath':'sit';if(ply.fishing)return'fish';if(ply.atkT>=0)return'atk';if(ply.act)return'act';if(!ply.ground)return'air';
   const k=keys,mv=(joy.id!==null&&Math.hypot(joy.x,joy.y)>0.05)||k.KeyW||k.KeyA||k.KeyS||k.KeyD||k.ArrowUp||k.ArrowDown||k.ArrowLeft||k.ArrowRight;
   if(!mv)return'idle';return(k.ShiftLeft||k.ShiftRight||(joy.id!==null&&Math.hypot(joy.x,joy.y)>0.95))?'run':'walk';}
-const LOOK_KEYS=['earSize','earGap','earY','tailSize','tailY','tailZ','species','body','accent','ears','tail','eyes','eyeSize','eyeGap','eyeY','eyeColor','brow','browSize','browGap','browY','lash','lashSize','lashGap','lashY','mouth','mouthSize','mouthW','mouthY','blushShape','blushColor','blushSize','blushGap','blushY'];
+const LOOK_KEYS=['hat','earSize','earGap','earY','tailSize','tailY','tailZ','species','body','accent','ears','tail','eyes','eyeSize','eyeGap','eyeY','eyeColor','brow','browSize','browGap','browY','lash','lashSize','lashGap','lashY','mouth','mouthSize','mouthW','mouthY','blushShape','blushColor','blushSize','blushGap','blushY'];
 function compactLook(){const o={};for(const k of LOOK_KEYS)o[k]=look[k];return o;}
 const cleanTxt=(s,n)=>String(s||'').replace(/[\u0000-\u001f\u007f​-‏‪-‮⁠-⁤﻿]/g,'').slice(0,n);
 
