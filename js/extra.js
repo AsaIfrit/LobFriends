@@ -101,16 +101,24 @@ function updateRide(dt,T){const r=ply.riding;const s=seatPos(r.kind,r.i);
 
 // ---------- 轉蛋 ----------
 const GACHA_POOL=['cat','puppy','dino','bunny','chick','axolotl','fox','bear'];let gBusy=false;
-function openGacha(){renderGacha();$('gRes').innerHTML='';$('gEgg').className='';$('gEgg').style.opacity=0;openPanel('gacha');}
-function renderGacha(){$('gSub').textContent=`每次 🪙100，會孵出滿好感度的寵物！（你有 🪙${ply.coins}）`;$('gList').innerHTML=GACHA_POOL.map(t=>`<span title="${PET_TYPES[t].n}">${PET_TYPES[t].i}</span>`).join('');
-  $('gBtn').disabled=gBusy||ply.coins<100;$('gBtn').classList.toggle('pink',!$('gBtn').disabled);}
-$('gBtn').addEventListener('click',()=>{if(gBusy||ply.coins<100){SFX.deny();return;}gBusy=true;ply.coins-=100;updateHUD();renderGacha();$('gRes').innerHTML='';SFX.craft();
-  const type=GACHA_POOL[(Math.random()*GACHA_POOL.length)|0];const m=$('gMach'),e=$('gEgg');m.classList.remove('shake');void m.offsetWidth;m.classList.add('shake');e.className='';e.textContent='🥚';e.style.opacity=0;
+let gKind='pet';const gPrice=()=>gKind==='hat'?500:100;
+function openGacha(kind='pet'){gKind=kind;$('gTitle').textContent=kind==='hat'?'🎀 時裝轉蛋機':'🥚 寵物轉蛋機';renderGacha();$('gRes').innerHTML='';$('gEgg').className='';$('gEgg').style.opacity=0;openPanel('gacha');}
+function renderGacha(){const pr=gPrice();
+  if(gKind==='hat'){const own=HAT_IDS.filter(k=>inv[k]>0).length;$('gSub').textContent=`每次 🪙500，抽到帽子後在背包點一下就能戴上！已收集 ${own}/${HAT_IDS.length}（你有 🪙${ply.coins}）`;
+    $('gList').innerHTML=HAT_IDS.map(k=>`<span class="${inv[k]>0?'own':'no'}" title="${ITEMS[k].n}">${itIcon(k)}</span>`).join('');}
+  else{$('gSub').textContent=`每次 🪙100，會孵出滿好感度的寵物！（你有 🪙${ply.coins}）`;$('gList').innerHTML=GACHA_POOL.map(t=>`<span title="${PET_TYPES[t].n}">${PET_TYPES[t].i}</span>`).join('');}
+  $('gBtn').textContent=`抽一次 🪙${pr}`;$('gBtn').disabled=gBusy||ply.coins<pr;$('gBtn').classList.toggle('pink',!$('gBtn').disabled);}
+function pullHat(){const k=HAT_IDS[(Math.random()*HAT_IDS.length)|0];const it=ITEMS[k];const dup=inv[k]>0;
+  if(dup){ply.coins+=250;updateHUD();}else{inv[k]=1;renderHotbar();}
+  showReveal(itIcon(k),dup?`又抽到「${it.n}」`:`抽到了「${it.n}」！`,dup?'已經有這頂囉～退還 🪙250 給你':'打開背包 🎒 點一下就能戴上！<br><small>再點一次可以脫下</small>');save();}
+$('gBtn').addEventListener('click',()=>{const pr=gPrice();if(gBusy||ply.coins<pr){SFX.deny();return;}gBusy=true;ply.coins-=pr;updateHUD();renderGacha();$('gRes').innerHTML='';SFX.craft();const kind=gKind;
+  const type=GACHA_POOL[(Math.random()*GACHA_POOL.length)|0];const m=$('gMach'),e=$('gEgg');m.classList.remove('shake');void m.offsetWidth;m.classList.add('shake');e.className='';e.textContent=kind==='hat'?'🎁':'🥚';e.style.opacity=0;
   setTimeout(()=>{m.classList.remove('shake');void e.offsetWidth;e.className='drop';SFX.pickup(3);},1000);
   setTimeout(()=>{e.className='drop crack';SFX.thud();},1750);
   setTimeout(()=>{e.className='';e.style.opacity=0;const r=$('gEgg').getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,24);SFX.levelup();
-    const p=hatchPet(type,null,false,true);gBusy=false;closePanel('gacha');setTimeout(()=>showPetReveal(p),250);save();},2800);});
+    gBusy=false;closePanel('gacha');if(kind==='hat'){setTimeout(pullHat,250);return;}const p=hatchPet(type,null,false,true);setTimeout(()=>showPetReveal(p),250);save();},2800);});
 let prT=null;
+function showReveal(icon,title,msg){const R2=$('petReveal');$('prE').innerHTML=icon;$('prN').textContent=title;$('prM').innerHTML=msg;R2.classList.add('on');SFX.levelup();const r=$('prE').getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,28);paused=true;clearTimeout(prT);prT=setTimeout(hidePetReveal,5000);}
 function showPetReveal(p){const R2=$('petReveal');$('prE').textContent=PET_TYPES[p.d.type].i;$('prN').textContent=`孵出了「${p.d.name}」！`;
   $('prM').innerHTML=(p.follow?'好感度 💗100，現在就跟著你走囉！🐾':'好感度 💗100<br>你已經有夥伴了，牠會先回家等你 🏠')+'<br><small>想換夥伴的話，到牠身邊按「邀請」</small>';
   R2.classList.add('on');SFX.levelup();const r=$('prE').getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,28);paused=true;clearTimeout(prT);prT=setTimeout(hidePetReveal,4500);}
@@ -171,7 +179,7 @@ function markTarget(c){const g=(x,z,dy)=>({x,z,y:(ply.cave?0:H(x,z))+dy});
     case'leave':return{x:CAVE_EXIT.x,z:CAVE_EXIT.z+2,y:4.6};
     case'deeper':return{x:CAVE_DOWN.x,z:CAVE_DOWN.z,y:4.2};
     case'ore':{const o=nearestOre();return o&&{x:o.x,z:o.z,y:2.4};}
-    case'gacha':{let b=null,bd=1e9;for(const m of GACHAS){const d=Math.hypot(m.x-ply.x,m.z-ply.z);if(d<bd){bd=d;b=m;}}return b&&g(b.x,b.z,3.5);}
+    case'gacha':case'fgacha':{let b=null,bd=1e9;for(const m of GACHAS){const d=Math.hypot(m.x-ply.x,m.z-ply.z);if(d<bd){bd=d;b=m;}}return b&&g(b.x,b.z,3.5);}
     case'ferris':return g(PARKV.ferris.board.x,PARKV.ferris.board.z,2.6);
     case'coaster':return g(PARKV.coaster.board.x,PARKV.coaster.board.z,2.6);
     case'carousel':{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);return g(K.x+Math.cos(a)*K.r,K.z+Math.sin(a)*K.r,3.2);}
