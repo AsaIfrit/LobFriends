@@ -301,7 +301,7 @@ const STAGE={x:V2.x,z:V2.z+18};
  const m=toon(0xe8c99a);
  const boxes=obstacles.filter(o=>Math.hypot(o.x-V2.x,o.z-V2.z)<60&&(o.box||o.r>=0.7)&&Math.hypot(o.x-V2.x,o.z-V2.z)>6).map(o=>o.box?o:{x:o.x,z:o.z,r:o.r,box:{ry:0,hw:o.r*0.8,hd:o.r*0.8}});
  const clear=(ax,az,bx,bz,skip)=>!boxes.some(o=>o!==skip&&segHitsBox(ax,az,bx,bz,o,1.0));
- const road=(ax,az,bx,bz)=>{const L=Math.hypot(bx-ax,bz-az);if(L<0.3)return;const geo=scaleUV(new THREE.PlaneGeometry(2.6,L+1.2),1,(L+1.2)/2.6);geo.rotateX(-Math.PI/2);const mm=new THREE.Mesh(geo,m);mm.position.set((ax+bx)/2,0.04,(az+bz)/2);mm.rotation.y=Math.atan2(bx-ax,bz-az);mm.receiveShadow=true;scene.add(mm);};
+ const road=(ax,az,bx,bz)=>{const L=Math.hypot(bx-ax,bz-az);if(L<0.3)return;const geo=scaleUV(new THREE.PlaneGeometry(2.6,L+1.2),1,(L+1.2)/2.6);geo.rotateX(-Math.PI/2);const mm=new THREE.Mesh(geo,m);mm.position.set((ax+bx)/2,0.018,(az+bz)/2);mm.rotation.y=Math.atan2(bx-ax,bz-az);mm.receiveShadow=true;scene.add(mm);};
  // 格子 A* 尋路：路線繞開所有建築
  const GS=1,GR=62,GN=GR*2+1,blk=new Uint8Array(GN*GN);const gi=(x,z)=>Math.round(x-V2.x+GR)+Math.round(z-V2.z+GR)*GN;
  for(let j=0;j<GN;j++)for(let i=0;i<GN;i++){const x=V2.x-GR+i,z=V2.z-GR+j;for(const o of boxes){const[lx,lz]=toLocal(o,x,z);if(Math.abs(lx)<o.box.hw+1.6&&Math.abs(lz)<o.box.hd+1.6){blk[i+j*GN]=1;break;}}}
@@ -660,8 +660,8 @@ function headBlocked(x,z,y){if(!blocks.size)return false;const[i,k]=bCell(x,z);c
 // ---------- 村莊廣場、農田 ----------
 const plazaTex=canvasTex(256,256,(g)=>{g.fillStyle='#e8cfa4';g.fillRect(0,0,256,256);const cs=['#f2dcb4','#e0c494','#ead2a8','#d8b88a'];
   for(let y=0;y<256;y+=32)for(let x=(y/32)%2?-16:0;x<256;x+=32){g.fillStyle=cs[((x*7+y*3)>>4)%4];g.beginPath();g.roundRect?g.roundRect(x+2,y+2,28,28,6):g.rect(x+2,y+2,28,28);g.fill();}},[6,6]);
-for(const[V,r]of[[V2,13],[V3,11]]){const m=mk(new THREE.CircleGeometry(r,48),toon(0xffffff,{map:plazaTex}),V.x,0.025,V.z);m.rotation.x=-Math.PI/2;m.receiveShadow=true;scene.add(m);
-  const rim=mk(new THREE.RingGeometry(r,r+0.5,48),toon(0xc8a878),V.x,0.03,V.z);rim.rotation.x=-Math.PI/2;scene.add(rim);}
+for(const[V,r]of[[V2,13],[V3,11]]){const m=mk(new THREE.CircleGeometry(r,48),toon(0xffffff,{map:plazaTex,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4}),V.x,0.04,V.z);m.renderOrder=2;m.rotation.x=-Math.PI/2;m.receiveShadow=true;scene.add(m);
+  const rim=mk(new THREE.RingGeometry(r,r+0.5,48),toon(0xc8a878,{polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4}),V.x,0.045,V.z);rim.renderOrder=2;rim.rotation.x=-Math.PI/2;scene.add(rim);}
 const FIELDS=[];
 function decoField(cx,cz,cols,rows,types){const spots=[];const fm=new THREE.Group();
   for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){const x=cx+(i-(cols-1)/2)*TILE,z=cz+(j-(rows-1)/2)*TILE;const t=mk(soilG,soilM[(i+j)%3?'wet':'dry'],x,H(x,z)+0.04,z);t.receiveShadow=true;fm.add(t);
