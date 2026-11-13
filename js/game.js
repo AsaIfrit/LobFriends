@@ -654,7 +654,7 @@ function step(dt,T){
     const fl=Math.sin(T*18+b.ph)*1.1;b.wl.rotation.z=fl;b.wr.rotation.z=-fl;b.y=1.1+Math.sin(T*2+b.ph)*0.35;
     b.g.position.set(b.x,H(b.x,b.z)+b.y,b.z);b.g.rotation.y=Math.atan2(dx,dz);}
   // ---- 樹、石頭 ----
-  for(const t of trees){
+  for(const t of trees){if(t.inst)treeSolo(t,t.shake>0||t.state!=='alive');
     if(t.shake>0){t.shake=Math.max(0,t.shake-dt*4);t.pivot.rotation.z=Math.sin(t.shake*30)*0.09*t.shake;t.pivot.rotation.x=t.state==='alive'?Math.cos(t.shake*26)*0.04*t.shake:t.pivot.rotation.x;}
     if(t.state==='falling'){t.t+=dt;const s=Math.min(t.t/0.9,1);t.pivot.rotation.x=(s*s)*Math.PI/2;
       if(s>=1){t.state='down';t.t=0;const fx2=Math.sin(t.yawG.rotation.y),fz2=Math.cos(t.yawG.rotation.y);
@@ -742,11 +742,11 @@ function step(dt,T){
 let lastCtx='';
 // ---------- 效能：遠處的樹隱藏、依幀率自動調整解析度 ----------
 let cullT=0;function cullFar(dt){cullT-=dt;if(cullT>0)return;cullT=0.4;const cx=ply.x,cz=ply.z;
-  for(const t of trees){const d=Math.hypot(t.x-cx,t.z-cz);t.root.visible=ply.cave?false:d<135;}
+  for(const t of trees){const d=Math.hypot(t.x-cx,t.z-cz);t.root.visible=ply.cave?false:d<135;}for(const im of TREE_INST)im.visible=!ply.cave;
   for(const r of rocks)r.m.visible=!ply.cave&&Math.hypot(r.x-cx,r.z-cz)<110;}
-const PERF={acc:0,n:0,dpr:Math.min(devicePixelRatio,1.5),t:0};
+const PERF={acc:0,n:0,dpr:Math.min(devicePixelRatio,1.25),t:0};
 function perfTune(rawDt){PERF.acc+=rawDt;PERF.n++;PERF.t+=rawDt;if(PERF.t<2.5)return;const avg=PERF.acc/PERF.n;PERF.acc=0;PERF.n=0;PERF.t=0;
-  let d=PERF.dpr;if(avg>0.024&&d>0.75)d=Math.max(0.75,d-0.25);else if(avg<0.013&&d<Math.min(devicePixelRatio,1.5))d=Math.min(Math.min(devicePixelRatio,1.5),d+0.25);
+  let d=PERF.dpr;if(avg>0.019&&d>0.75)d=Math.max(0.75,d-0.25);else if(avg<0.0125&&d<Math.min(devicePixelRatio,1.25))d=Math.min(Math.min(devicePixelRatio,1.25),d+0.25);
   if(d!==PERF.dpr){PERF.dpr=d;renderer.setPixelRatio(d);resize();}}
 const _v3=new THREE.Vector3();
 function worldToScreen(x,y,z){_v3.set(x,y,z).project(camera);return{x:(_v3.x*0.5+0.5)*innerWidth,y:(-_v3.y*0.5+0.5)*innerHeight};}

@@ -157,7 +157,7 @@ const TG=(()=>{
   const sph=new THREE.SphereGeometry(1,18,14);
   const flares=(r,h)=>[0,1,2,3].map(i=>{const a=i*Math.PI/2+0.4;return[new THREE.ConeGeometry(0.2*r,0.75*r,6),M4(Math.cos(a)*0.36*r,0.2,Math.sin(a)*0.36*r,0,-a,-2.0)];});
   const trunk=mergeGeos([[new THREE.CylinderGeometry(0.24,0.46,3.1,12),M4(0,1.55,0)],[new THREE.CylinderGeometry(0.08,0.16,1.3,8),M4(0.35,2.6,0.1,0,0,-0.7)],[new THREE.CylinderGeometry(0.08,0.16,1.3,8),M4(-0.3,2.55,-0.2,0.3,0,0.7)],...flares(1)]);
-  const clump=(cx,cy,cz,r,seed0)=>{const g=new THREE.SphereGeometry(1,14,10);const p=g.attributes.position;let sd=seed0;const rr=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};
+  const clump=(cx,cy,cz,r,seed0)=>{const g=new THREE.SphereGeometry(1,11,8);const p=g.attributes.position;let sd=seed0;const rr=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};
     const offs=[];for(let k=0;k<3;k++)offs.push([rr()*6.28,rr()*6.28,0.04+rr()*0.05]);
     for(let k=0;k<p.count;k++){const x=p.getX(k),y=p.getY(k),z=p.getZ(k);let d=1;for(const[a,b,amp]of offs){d+=amp*Math.sin(x*1.7+a)*Math.cos(z*1.5+b)*Math.cos(y*1.3+a);}
       p.setXYZ(k,x*r*d,y*r*d*0.88,z*r*d);}g.computeVertexNormals();return[g,M4(cx,cy,cz)];};
@@ -628,20 +628,13 @@ for(let i=0;i<300;i++){const x=SR(-112,112),z=SR(-112,112);if(!okSpot(x,z,22))co
 for(let i=0;i<70;i++){const x=SR(-110,110),z=SR(-110,110);if(!okSpot(x,z,16)||!farFrom(x,z,1.5))continue;rock(x,z,SR(0.6,1.4));}
 for(let i=0;i<6;i++){const a=SR(0,6.28);const x=Math.cos(a)*13,z=Math.sin(a)*13+3;if(farFrom(x,z,1.5)&&!onPath(x,z)&&!inHouse(x,z,-2))rock(x,z,SR(0.6,0.9));}
 // ---------- 草叢、灌木、小花（色塊細節） ----------
-{const blade=mergeGeos([0,1,2,3,4].map(i=>{const a=i*1.26;return[new THREE.ConeGeometry(0.06,0.55,3),M4(Math.cos(a)*0.08,0.26,Math.sin(a)*0.08,Math.sin(a)*0.35,0,-Math.cos(a)*0.35,1,0.7+((i*37)%5)*0.12,1)];}));
- const N=2600,im=new THREE.InstancedMesh(blade,toon(0xffffff),N),m=new THREE.Matrix4(),col=new THREE.Color(),q=new THREE.Quaternion(),e=new THREE.Euler();let k=0;
- const pal=[0x6cbf4e,0x7fcc58,0x5aad48,0x8fd862];
- for(let t=0;t<N*3&&k<N;t++){const x=SR(-110,110),z=SR(-110,110);if(onPath(x,z)||Math.hypot(x-POND.x,z-POND.z)<POND.r+0.5)continue;if(Math.hypot(x,z)<8||inHouse(x,z,-1)||Math.hypot(x-PARK.x,z-PARK.z)<PARK.r+1||Math.hypot(x-V2.x,z-V2.z)<15||Math.hypot(x-V3.x,z-V3.z)<13)continue;
-   const sc=SR(0.8,1.6);q.setFromEuler(e.set(0,SR(0,6.28),0));m.compose(new THREE.Vector3(x,H(x,z)-0.05,z),q,new THREE.Vector3(sc,sc,sc));im.setMatrixAt(k,m);
-   col.setHex(pal[(rnd()*4)|0]);if(x>45)col.lerp(new THREE.Color(0x4f9a74),0.6);im.setColorAt(k,col);k++;}
- im.count=k;im.receiveShadow=true;scene.add(im);}
 {const bushG=mergeGeos([[new THREE.SphereGeometry(0.7,12,8),M4(0,0.45,0,0,0,0,1.1,0.8,1)],[new THREE.SphereGeometry(0.5,10,7),M4(0.6,0.35,0.2)],[new THREE.SphereGeometry(0.5,10,7),M4(-0.55,0.32,-0.1)]]);
  const N=170,im=new THREE.InstancedMesh(bushG,toon(0xffffff),N),m=new THREE.Matrix4(),col=new THREE.Color(),q=new THREE.Quaternion(),e=new THREE.Euler();let k=0;const pal=[0x5fae4c,0x6fbc56,0x4f9e48];
  for(let t=0;t<N*4&&k<N;t++){const x=SR(-110,110),z=SR(-110,110);if(!okSpot(x,z,12)||!farFrom(x,z,1.2))continue;const sc=SR(0.7,1.4);q.setFromEuler(e.set(0,SR(0,6.28),0));
    m.compose(new THREE.Vector3(x,H(x,z),z),q,new THREE.Vector3(sc,sc,sc));im.setMatrixAt(k,m);col.setHex(pal[(rnd()*3)|0]);im.setColorAt(k,col);k++;}
  im.count=k;im.castShadow=true;im.receiveShadow=true;scene.add(im);}
 {const petal=mergeGeos([0,1,2,3,4].map(i=>{const a=i*1.2566;return[new THREE.CircleGeometry(0.09,6),M4(Math.cos(a)*0.08,0.22,Math.sin(a)*0.08,-Math.PI/2,0,0)];}).concat([[new THREE.CylinderGeometry(0.012,0.012,0.22,4),M4(0,0.11,0)]]));
- const N=900,im=new THREE.InstancedMesh(petal,toon(0xffffff,{side:THREE.DoubleSide}),N),m=new THREE.Matrix4(),col=new THREE.Color(),q=new THREE.Quaternion();let k=0;const pal=[0xffffff,0xffd0e0,0xfff08a,0xd8c8ff,0xff9ec0];
+ const N=550,im=new THREE.InstancedMesh(petal,toon(0xffffff,{side:THREE.DoubleSide}),N),m=new THREE.Matrix4(),col=new THREE.Color(),q=new THREE.Quaternion();let k=0;const pal=[0xffffff,0xffd0e0,0xfff08a,0xd8c8ff,0xff9ec0];
  for(let t=0;t<N*3&&k<N;t++){let x,z;const r=rnd();if(r<0.5){x=SR(-72,42);z=SR(-78,-14);}else{x=SR(-110,110);z=SR(-110,110);}if(onPath(x,z)||inHouse(x,z,-1)||Math.hypot(x-PARK.x,z-PARK.z)<PARK.r+1||Math.hypot(x-POND.x,z-POND.z)<POND.r+0.5)continue;
    q.identity();const sc=SR(0.8,1.3);m.compose(new THREE.Vector3(x,H(x,z),z),q,new THREE.Vector3(sc,sc,sc));im.setMatrixAt(k,m);col.setHex(pal[(rnd()*5)|0]);im.setColorAt(k,col);k++;}
  im.count=k;scene.add(im);}
@@ -837,3 +830,19 @@ decoField(V3.x+12,V3.z+22,6,4,['strawberry','carrot','pumpkin']);
 decoField(V3.x-14,V3.z-24,5,4,['tomato','strawberry']);
 
 shadowAll(LAMPG);batchStatic(LAMPG);
+
+// ---------- 樹木實例化（樹幹、樹冠、果實各一種，依大區塊分組；顏色用 instanceColor） ----------
+const TREE_INST=[],ZERO_M=new THREE.Matrix4().makeScale(0,0,0);
+{scene.updateMatrixWorld(true);const groups=new Map(),CH=80;const MT={tb:TM.trunk,tp:TM.ptrunk,cb:toon(0xffffff,{vertexColors:true}),cp:toon(0xffffff,{side:THREE.DoubleSide}),fr:toon(0xffffff)};
+ const GEO={tb:TG.trunk,tp:TG.ptrunk,cb:TG.canopy,cp:TG.pine,fr:TG.fruit};
+ const add=(t,k,col,cx,cz)=>{const key=k+'|'+cx+','+cz;let g=groups.get(key);if(!g){g={k,cx,cz,items:[]};groups.set(key,g);}g.items.push({t,col});};
+ for(const t of trees){const cx=Math.floor((t.x+120)/CH),cz=Math.floor((t.z+120)/CH);t.inst=[];const m=t.body.children[0];const pine=t.kind==='pine'||t.kind==='pineW';
+   add(t,pine?'tp':'tb',null,cx,cz);add(t,pine?'cp':'cb',m.material.color.getHex(),cx,cz);if(t.fruit)add(t,'fr',FRUITS[t.fruit].col,cx,cz);}
+ const c=new THREE.Color();
+ for(const g of groups.values()){const src=GEO[g.k];const geo=new THREE.BufferGeometry();for(const a in src.attributes)geo.setAttribute(a,src.attributes[a]);if(src.index)geo.setIndex(src.index);
+   geo.boundingSphere=new THREE.Sphere(new THREE.Vector3(-120+(g.cx+0.5)*CH,5,-120+(g.cz+0.5)*CH),CH*0.72+8);
+   const im=new THREE.InstancedMesh(geo,MT[g.k],g.items.length);im.castShadow=im.receiveShadow=true;
+   g.items.forEach((it,i)=>{const mw=it.t.body.matrixWorld.clone();im.setMatrixAt(i,mw);if(it.col!==null){c.setHex(it.col);im.setColorAt(i,c);}it.t.inst.push({im,i,mw});});
+   im.instanceMatrix.needsUpdate=true;if(im.instanceColor)im.instanceColor.needsUpdate=true;scene.add(im);TREE_INST.push(im);}
+ for(const t of trees){t.body.visible=false;t.solo=false;}}
+function treeSolo(t,on){if(t.solo===on)return;t.solo=on;t.body.visible=on;for(const s of t.inst){s.im.setMatrixAt(s.i,on?ZERO_M:s.mw);s.im.instanceMatrix.needsUpdate=true;}}

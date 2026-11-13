@@ -28,8 +28,8 @@ const ply={x:2,z:5,y:0,vy:0,ground:true,face:Math.PI,hp:10,max:10,en:100,coins:0
 
 // ---------- 渲染器 ----------
 const renderer=new THREE.WebGLRenderer({canvas:$('c'),antialias:false,powerPreference:'high-performance'});
-const DPR=Math.min(devicePixelRatio,1.5);renderer.setPixelRatio(DPR);
-renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const DPR=Math.min(devicePixelRatio,1.25);renderer.setPixelRatio(DPR);
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(52,1,0.3,600);
 
