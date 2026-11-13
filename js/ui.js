@@ -142,9 +142,9 @@ function renderHotbar(changed){
   if(ply.weapon!=='stick'&&!(inv[ply.weapon]>0)){ply.weapon='stick';refreshHeld();}
   const cur=curSlot();
   $('hotbar').innerHTML=hb.map((k,i)=>{const num=`<u>${(i+1)%10}</u>`;if(!k)return`<button class="slot empty" data-i="${i}">${num}</button>`;
-    const it=ITEMS[k];const sel=k===cur;const eq=ply.weapon===k||(it.k==='skin'&&ply.skins&&ply.skins[it.for]===k);const cnt=(it.k==='tool'||it.k==='weapon'||it.k==='held'||it.k==='skin')?'':`<i>${inv[k]}</i>`;
+    const it=ITEMS[k];const sel=k===cur;const eq=ply.weapon===k||ply.hat===k||(it.k==='skin'&&ply.skins&&ply.skins[it.for]===k);const cnt=(it.k==='tool'||it.k==='weapon'||it.k==='held'||it.k==='skin'||it.k==='hat')?'':`<i>${inv[k]}</i>`;
     const dot=it.k==='bug'?`<span class="bugdot" style="background:${it.col}"></span>`:'';
-    return`<button class="slot ${sel?'sel':''} ${eq?'eq':''}" data-i="${i}" data-k="${k}" title="${it.n}">${num}${dot}${it.i}${cnt}</button>`;}).join('')+`<button class="slot bagBtn" id="bagBtn" title="背包 (B)">🎒</button>`;
+    return`<button class="slot ${sel?'sel':''} ${eq?'eq':''}" data-i="${i}" data-k="${k}" title="${it.n}">${num}${dot}${itIcon(k)}${cnt}</button>`;}).join('')+`<button class="slot bagBtn" id="bagBtn" title="背包 (B)">🎒</button>`;
   if(changed){const el=$('hotbar').querySelector(`[data-k="${changed}"]`);el?bump(el):bump($('bagBtn'));}
   if($('bag').classList.contains('show'))renderBag(false);
 }
@@ -153,6 +153,7 @@ function useSlot(k){const it=ITEMS[k];if(!it)return;
   if(it.k==='weapon'){ply.weapon=ply.weapon===k?'stick':k;ply.held=null;if(carry)carryCancel();refreshHeld();updateAtkIcon();showHbLabel(ply.weapon==='stick'?'收起武器':`${it.i} ${it.n}`);SFX.click();}
   else if(it.k==='held'||it.k==='seed'||it.k==='block'){if(carry)carryCancel();ply.held=ply.held===k?null:k;if(ply.held==='plank')showHbLabel('🟫 木塊：對準位置按「蓋方塊」，可按 👁️ 切第一人稱');refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
   else if(it.k==='furn'){if(carry&&carry.id===k&&!carry.orig)carryCancel();else{if(carry)carryCancel();ply.held=null;startCarry(k,null);showHbLabel(`${it.i} ${it.n}：按「放置」放下`);}}
+  else if(it.k==='hat'){ply.hat=ply.hat===k?null:k;applyHat();showHbLabel(ply.hat?`${it.i} 戴上「${it.n}」！`:'脫下帽子');SFX.click();if(ply.hat&&P){P.sqv-=4;const p=P.g.position;burst(p.x,p.y+P.topY+0.4,p.z,[0xff9ec4,0xffd36e,0x8fd0ff],10,2.5);}save();}
   else if(it.k==='skin'){const w=it.for;ply.skins=ply.skins||{};ply.skins[w]=ply.skins[w]===k?null:k;refreshHeld();const WN={sword:'🗡️ 木劍',spear:'🔱 長槍',bow:'🏹 弓箭',staff:'🪄 法杖'}[w];showHbLabel(ply.skins[w]?`${it.i} ${WN}換成「${it.n}」外觀！`:`換回${WN}原本的外觀`);updateAtkIcon();SFX.click();if(ply.skins[w]&&!has(w))toast(`先做一把${WN}，裝備時就會變成${it.n}喔`);save();}
   else if(it.k==='food'){inv[k]--;ply.hp=Math.min(ply.max,ply.hp+(it.hp||2));ply.en=Math.min(100,ply.en+(it.en||5));SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);floatTxt(`💗＋⚡${it.en||5}`,innerWidth/2,innerHeight*0.45);updateHUD();save();}
   else toast(`${it.i} ${it.n}${it.d?'：'+it.d:''}${inv[k]>1?' ×'+inv[k]:''}`);
@@ -167,17 +168,34 @@ function cycleSlot(dir){const idx=[];for(let i=0;i<10;i++)if(SELECTABLE(hb[i]))i
 let hbLabelT=null;
 function showHbLabel(txt){let el=$('hbLabel');if(!el){el=document.createElement('div');el.id='hbLabel';document.body.appendChild(el);}el.textContent=txt;el.classList.remove('hide');bump(el,'lblIn');clearTimeout(hbLabelT);hbLabelT=setTimeout(()=>el.classList.add('hide'),1200);}
 $('hotbar').addEventListener('click',e=>{const b=e.target.closest('.slot');if(!b)return;if(b.id==='bagBtn'){openBag();return;}const i=+b.dataset.i;if(hb[i])useHb(i);else openBag();});
+// ---------- 時裝帽子 ----------
+const hatStyle=()=>ply.hat&&ITEMS[ply.hat]&&inv[ply.hat]>0?ITEMS[ply.hat].hat:'none';
+function applyHat(){look.hat=hatStyle();if(P&&P.setHat)P.setHat(look.hat);renderHotbar();}
+const HAT_THUMB={};
+function hatThumb(k){if(HAT_THUMB[k]!==undefined)return HAT_THUMB[k];let url=null;
+  try{const S=128,sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(30,1,0.1,20);sc.add(new THREE.HemisphereLight(0xffffff,0xd8c8e0,0.55));const dl=new THREE.DirectionalLight(0xffffff,0.55);dl.position.set(1,2,3);sc.add(dl);
+    const r=fashionHat(ITEMS[k].hat,{cy:0.84,R:0.848,V:0.72,topY:1.56});const g=r.g;sc.add(g);g.updateMatrixWorld(true);
+    const bx=new THREE.Box3().setFromObject(g),c=bx.getCenter(new THREE.Vector3()),sz=bx.getSize(new THREE.Vector3());const d=Math.max(sz.x,sz.y,sz.z)*2.05;
+    cam.position.set(c.x,c.y+d*0.32,c.z+d);cam.lookAt(c);
+    const rt=new THREE.WebGLRenderTarget(S,S);const pc=renderer.getClearColor(new THREE.Color()),pa=renderer.getClearAlpha();renderer.setRenderTarget(rt);renderer.setClearColor(0x000000,0);renderer.clear();renderer.render(sc,cam);
+    const px=new Uint8Array(S*S*4);renderer.readRenderTargetPixels(rt,0,0,S,S,px);renderer.setRenderTarget(null);renderer.setClearColor(pc,pa);rt.dispose();
+    const cv=document.createElement('canvas');cv.width=cv.height=S;const cx=cv.getContext('2d'),im=cx.createImageData(S,S);
+    for(let y=0;y<S;y++)im.data.set(px.subarray((S-1-y)*S*4,(S-y)*S*4),y*S*4);cx.putImageData(im,0,0);url=cv.toDataURL();}catch(e){url=null;}
+  return HAT_THUMB[k]=url;}
+const itIcon=k=>{const it=ITEMS[k];if(it.k==='hat'){const u=hatThumb(k);if(u)return`<img class="hic" src="${u}" alt="${it.i}">`;}return it.i;};
+
 // ---------- 背包 ----------
-const BAG_ORDER=['skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
+const HAT_IDS=['hat_bow','hat_sprout','hat_jelly','hat_party','hat_bucket'];
+const BAG_ORDER=[...HAT_IDS,'skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
   'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem','crystal',...Object.keys(BUGS)];
-const BAG_TABS=[['all','全部'],['gear','裝備'],['use','食物種子'],['furn','家具'],['mat','素材']];
-const tabOf=k=>{const t=ITEMS[k].k;return t==='weapon'||t==='tool'||t==='held'||t==='skin'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
+const BAG_TABS=[['all','全部'],['gear','裝備'],['hat','時裝'],['use','食物種子'],['furn','家具'],['mat','素材']];
+const tabOf=k=>{const t=ITEMS[k].k;return t==='hat'?'hat':t==='weapon'||t==='tool'||t==='held'||t==='skin'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
 let bagTab='all',bagPick=null,drag=null;
 function renderBag(anim=true){const keys=BAG_ORDER.filter(k=>(inv[k]||0)>0&&(bagTab==='all'||tabOf(k)===bagTab));
   $('bagTabs').innerHTML=BAG_TABS.map(([k,t])=>`<button class="tab ${k===bagTab?'on':''}" data-bt="${k}">${t}</button>`).join('');
-  $('bagGrid').innerHTML=keys.length?keys.map((k,i)=>{const it=ITEMS[k];const inHb=hb.includes(k);return`<div class="bi stg ${bagPick===k?'pick':''}" style="--i:${Math.min(i,20)}" data-k="${k}">${it.k==='bug'?`<span class="bugdot" style="background:${it.col}"></span>`:''}<span class="ic">${it.i}</span>${it.k==='tool'||it.k==='weapon'||it.k==='held'?'':`<i>${inv[k]}</i>`}${inHb?'<em>'+((hb.indexOf(k)+1)%10)+'</em>':''}</div>`;}).join(''):'<div class="sub">這裡空空的～</div>';
-  $('bagBar').innerHTML=hb.map((k,i)=>`<div class="bs ${k?'':'empty'}" data-i="${i}"><u>${(i+1)%10}</u>${k?ITEMS[k].i:''}</div>`).join('');
-  const it=bagPick&&ITEMS[bagPick];$('bagInfo').innerHTML=it?`<b>${it.i} ${it.n}</b>　${it.d||''}${inv[bagPick]>1?`（×${inv[bagPick]}）`:''}<br><small>點下方快捷欄的格子放進去，或直接拖曳 ↓</small>`:'點道具查看說明，拖曳或點選後放到快捷欄。點快捷欄上的道具可以拿掉。';
+  $('bagGrid').innerHTML=keys.length?keys.map((k,i)=>{const it=ITEMS[k];const inHb=hb.includes(k);const eq=ply.hat===k||ply.weapon===k||(it.k==='skin'&&ply.skins&&ply.skins[it.for]===k);return`<div class="bi stg ${bagPick===k?'pick':''} ${eq?'eq':''}" style="--i:${Math.min(i,20)}" data-k="${k}">${it.k==='bug'?`<span class="bugdot" style="background:${it.col}"></span>`:''}<span class="ic">${itIcon(k)}</span>${it.k==='tool'||it.k==='weapon'||it.k==='held'||it.k==='skin'||it.k==='hat'?'':`<i>${inv[k]}</i>`}${inHb?'<em>'+((hb.indexOf(k)+1)%10)+'</em>':''}</div>`;}).join(''):'<div class="sub">這裡空空的～</div>';
+  $('bagBar').innerHTML=hb.map((k,i)=>`<div class="bs ${k?'':'empty'}" data-i="${i}"><u>${(i+1)%10}</u>${k?itIcon(k):''}</div>`).join('');
+  const it=bagPick&&ITEMS[bagPick];$('bagInfo').innerHTML=it?`<b>${it.i} ${it.n}</b>　${it.d||''}${inv[bagPick]>1?`（×${inv[bagPick]}）`:''}<br><small>${it.k==='hat'?(ply.hat===bagPick?'👑 戴著中・再點一次脫下':'點一下戴上'):'點下方快捷欄的格子放進去，或直接拖曳 ↓'}</small>`:'點道具查看說明，拖曳或點選後放到快捷欄。點快捷欄上的道具可以拿掉。';
   if(!anim)noAnim($('bagGrid'));}
 function openBag(){if(!started||ply.sleeping)return;bagPick=null;renderBag();openPanel('bag');}
 function assignHb(i,k){const j=hb.indexOf(k);if(j>=0)hb[j]=hb[i];hb[i]=k;SFX.place();bagPick=null;renderBag(false);renderHotbar();const el=document.querySelector(`#bagBar [data-i="${i}"]`);if(el)bump(el);save();}
@@ -188,6 +206,7 @@ addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;if(!dr
   if(drag.el){drag.el.style.transform=`translate(${e.clientX-26}px,${e.clientY-26}px)`;document.querySelectorAll('#bagBar .bs').forEach(b=>b.classList.remove('hov'));const t=document.elementFromPoint(e.clientX,e.clientY);const bs=t&&t.closest&&t.closest('#bagBar .bs');if(bs)bs.classList.add('hov');}});
 addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;const d=drag;drag=null;
   if(d.el){d.el.remove();document.querySelectorAll('#bagBar .bs').forEach(b=>b.classList.remove('hov'));const t=document.elementFromPoint(e.clientX,e.clientY);const bs=t&&t.closest&&t.closest('#bagBar .bs');if(bs)assignHb(+bs.dataset.i,d.k);}
+  else if(ITEMS[d.k].k==='hat'){bagPick=d.k;useSlot(d.k);renderBag(false);}
   else{bagPick=bagPick===d.k?null:d.k;SFX.click();renderBag(false);}});
 $('pRot').addEventListener('click',carryRotate);$('pStore').addEventListener('click',carryStore);$('pCancel').addEventListener('click',carryCancel);
 
@@ -199,9 +218,15 @@ $('btnJump').addEventListener('pointerdown',e=>{e.preventDefault();if(!paused)ju
 $('wakeBtn').addEventListener('click',()=>wakeUp());
 
 // ---------- FAB 扇形選單（漢堡變形） ----------
-document.querySelectorAll('.fan').forEach(b=>{const i=+b.style.getPropertyValue('--i');const st=innerWidth<=560?62:74;const tx=i<3?-(i+1)*st:0,ty=i<3?0:(i-2)*st;b.style.setProperty('--tx',tx+'px');b.style.setProperty('--ty',ty+'px');});
+// 選單泡泡：從 ☰ 往左排成一行；左邊放不下時改排在小地圖下方（靠右對齊）
+function layoutFan(){const fans=[...document.querySelectorAll('.fan')];const n=fans.length,fab=$('fab');if(!n||!fab.offsetWidth)return;
+  const fr=fab.getBoundingClientRect(),b=fans[0].offsetWidth,gap=innerWidth<=560?5:10;let step=b+gap;const cx=fr.left+fr.width/2,cy=fr.top+fr.height/2;
+  let pos;if(cx-n*step-b/2>=6)pos=fans.map((_,i)=>[-(i+1)*step,0]);
+  else{const mr=$('mini').getBoundingClientRect(),rc=innerWidth-6-b/2;step=Math.min(step,(rc-6-b/2)/(n-1));const y=Math.max(mr.bottom,$('statBox').getBoundingClientRect().bottom)+8+b/2;pos=fans.map((_,i)=>[rc-i*step-cx,y-cy]);}
+  fans.forEach((f,i)=>{const k=+f.style.getPropertyValue('--i');f.style.setProperty('--tx',pos[k][0]+'px');f.style.setProperty('--ty',pos[k][1]+'px');});}
+layoutFan();
 function closeFab(){$('topR').classList.remove('open');$('fab').classList.remove('open');}
-$('fab').addEventListener('click',()=>{const o=!$('fab').classList.contains('open');$('fab').classList.toggle('open',o);$('topR').classList.toggle('open',o);SFX[o?'open':'close']();});
+$('fab').addEventListener('click',()=>{const o=!$('fab').classList.contains('open');if(o)layoutFan();$('fab').classList.toggle('open',o);$('topR').classList.toggle('open',o);SFX[o?'open':'close']();});
 document.querySelectorAll('.fan').forEach(b=>b.addEventListener('click',()=>{const f=b.dataset.f;
   if(f==='craft'){closeFab();openCraft();}
   else if(f==='tal'){closeFab();openTalents();}
@@ -211,7 +236,7 @@ document.querySelectorAll('.fan').forEach(b=>b.addEventListener('click',()=>{con
   else if(f==='set'){closeFab();openSettings();}
   else if(f==='social'){openSocial();}
   else if(f==='dex'){closeFab();openDex();}}));
-addEventListener('resize',()=>document.querySelectorAll('.fan').forEach(b=>{const i=+b.style.getPropertyValue('--i');const st=innerWidth<=560?62:74;b.style.setProperty('--tx',(i<3?-(i+1)*st:0)+'px');b.style.setProperty('--ty',(i<3?0:(i-2)*st)+'px');}));
+addEventListener('resize',layoutFan);
 // ---------- 設置（音量） ----------
 const VOL={m:1,b:1,s:1};try{Object.assign(VOL,JSON.parse(localStorage.getItem('lobster-vol')||'{}'));}catch(e){}
 function applyVol(){if(master)master.gain.value=VOL.m;if(sfxG)sfxG.gain.value=0.75*VOL.s;for(const k of['M','B','S']){const v=VOL[k.toLowerCase()];$('v'+k).value=v;$('v'+k+'v').textContent=Math.round(v*100)+'%';}}
@@ -321,7 +346,7 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
@@ -332,6 +357,7 @@ function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
   for(const[type,name,f,a]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f;if(!f)sendHome(p);p.x=p.tx;p.z=p.tz;}
   for(const[gx,gz,wet,type,stage,g]of d.farm||[]){const t=till(gx,gz,false);setWet(t,!!wet);if(type){t.crop={type,stage,g};setCropStage(t,stage);t.crop.pop=1;t.crop.mesh.scale.setScalar(1);}}
+  ply.hat=d.hat&&ITEMS[d.hat]&&inv[d.hat]>0?d.hat:null;look.hat=hatStyle();
   ply.y=ply.cave?0:standY(ply.x,ply.z,99);}
 
 // ---------- 捏角色 ----------
@@ -353,7 +379,7 @@ const SLD={eye:[['eyeSize','大小',0.6,1.9,0.05],['eyeGap','距離',0.13,0.4,0.
   ear:[['earSize','大小',0.6,1.6,0.05],['earGap','距離',0.6,1.4,0.02],['earY','高低',-0.25,0.2,0.01]],
   tail:[['tailSize','大小',0.6,1.8,0.05],['tailY','高低',-0.3,0.4,0.01],['tailZ','前後',-0.15,0.25,0.01]],
   blush:[['blushSize','大小',0.5,1.8,0.05],['blushGap','距離',0.25,0.6,0.01],['blushY','位置',0,0.3,0.01]]};
-function normLook(){look=Object.assign({},DEF_LOOK,look);look.hat='none';if(look.blush===true&&(!look.blushShape||look.blushShape==='none'))look.blushShape='oval';look.blush=false;
+function normLook(){look=Object.assign({},DEF_LOOK,look);look.hat=hatStyle();if(look.blush===true&&(!look.blushShape||look.blushShape==='none'))look.blushShape='oval';look.blush=false;
   if(!['seg','pom'].includes(look.tail))look.tail=look.species==='lobster'?'seg':'pom';if(look.species!=='lobster')look.tail='pom';}
 function swatches(el,list,key){el.innerHTML=list.map(c=>`<button data-v="${c}" style="background:${c}" class="${look[key]===c?'on':''}"></button>`).join('');}
 function chips(el,list,key){el.innerHTML=list.map(([v,t])=>`<button data-v="${v}" class="${look[key]===v?'on':''}">${t}</button>`).join('');}
@@ -394,4 +420,3 @@ applyVol();
 updateSky();updateHUD();drawMini();renderHotbar();updateAtkIcon();
 camera.position.set(ply.x,6,ply.z+10);
 window.__game={ply,inv,Q,trees,monsters,npcs,farm,tal,setTime:v=>tmin=v,addItem,grantXP,get look(){return look;},HOME,STALLS,butterflies,useSlot};
-
