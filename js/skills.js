@@ -94,7 +94,7 @@ const cdLeft={};
 const val=v=>typeof v==='function'?v():v;
 const SK_MAX=2;
 function skillList(){ply.skEq=(ply.skEq||[]).filter(k=>SKILLS[k]&&TV(k)>0).slice(0,SK_MAX);return ply.skEq;}
-const skWrong=k=>SKILLS[k].w&&SKILLS[k].w!==ply.weapon;
+const skWrong=k=>false;// 不用拿對應武器，有攜帶就能用
 function toggleEquip(k){skillList();const i=ply.skEq.indexOf(k);if(i>=0){ply.skEq.splice(i,1);toast(`卸下了「${TALENTS[k].n}」`);}else{if(ply.skEq.length>=SK_MAX){SFX.deny();toast(`最多只能裝備 ${SK_MAX} 招技能，先卸下一招吧`);return false;}ply.skEq.push(k);toast(`裝備了「${TALENTS[k].n}」！技能按鈕在攻擊鍵旁邊`);}SFX.click();renderSkillBar(true);save();return true;}
 function useSkill(k){const S=SKILLS[k];if(!S||!TV(k))return;
   if(!started||paused||ply.downed||ply.sleeping||ply.sitting||ply.riding||carry||ply.reviving||ply.leap){SFX.deny();return;}
@@ -240,8 +240,15 @@ function renderSkillBar(force){const L=skillList();const key=L.join(',')+'|'+inn
     b.querySelector('i').style.background=f>0?`conic-gradient(rgba(70,40,60,.55) ${f*360}deg,transparent 0)`:'none';b.querySelector('b').textContent=left>0.05&&!S.toggle?Math.ceil(left):'';
     b.classList.toggle('on',!!(S.toggle&&ply.coinMode)||(k==='r_song'&&!!ply.chan));b.classList.toggle('dim',left>0||!!skWrong(k));});}
 function layoutSkills(){const btns=[...document.querySelectorAll('#skillBar .sk')];if(!btns.length)return;const a=$('btnAtk').getBoundingClientRect();if(!a.width)return;
-  const cx=a.left+a.width/2,cy=a.top+a.height/2,mob=innerWidth<=560||innerHeight<=500;const R0=a.width/2+(mob?104:132);const angs=[188,163,138,113,88];
-  btns.forEach((b,i)=>{const t=angs[i]*Math.PI/180;const w=b.offsetWidth||50;b.style.left=(cx+Math.cos(t)*R0-w/2)+'px';b.style.top=(cy-Math.sin(t)*R0-w/2)+'px';});}
-addEventListener('resize',()=>{skKey='';});
+  const cx=a.left+a.width/2,cy=a.top+a.height/2,mob=innerWidth<=560||innerHeight<=500;const w=btns[0].offsetWidth||50,pad=5;
+  // 避開其他按鈕、快捷欄和螢幕邊緣，自動找空位
+  const block=['btnAct','btnJump','btnEmote','hotbar','topR'].map(id=>$(id)).filter(e=>e&&e.offsetWidth).map(e=>e.getBoundingClientRect());block.push(a);
+  const taken=[];const fits=(x,y)=>{if(x-w/2<4||y-w/2<4||x+w/2>innerWidth-4||y+w/2>innerHeight-4)return false;
+    for(const r of block)if(x+w/2+pad>r.left&&x-w/2-pad<r.right&&y+w/2+pad>r.top&&y-w/2-pad<r.bottom)return false;
+    for(const t of taken)if(Math.hypot(t[0]-x,t[1]-y)<w+pad*2)return false;return true;};
+  const angs=[150,125,170,105,185,140,115,160,95,200];const R1=a.width/2+(mob?58:70);
+  btns.forEach(b=>{let p=null;for(const R0 of[R1,R1+w*0.9,R1+w*1.8]){for(const g of angs){const t=g*Math.PI/180,x=cx+Math.cos(t)*R0,y=cy-Math.sin(t)*R0;if(fits(x,y)){p=[x,y];break;}}if(p)break;}
+    if(!p)p=[cx-R1,cy-R1];taken.push(p);b.style.left=(p[0]-w/2)+'px';b.style.top=(p[1]-w/2)+'px';});}
+addEventListener('resize',()=>{skKey='';setTimeout(()=>renderSkillBar(true),120);});
 $('skillBar').addEventListener('pointerdown',e=>{const b=e.target.closest('.sk');if(!b)return;e.preventDefault();e.stopPropagation();useSkill(b.dataset.k);bump(b);});
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.repeat||!started||paused)return;const i=SK_KEYS.indexOf(e.key.toUpperCase());if(i<0||!/^Key[KLUIO]$/.test(e.code))return;const L=skillList();if(L[i])useSkill(L[i]);});

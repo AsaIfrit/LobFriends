@@ -375,7 +375,7 @@ body.ingame #start{display:none!important}
   #btnDel{width:54px;height:54px;right:160px;bottom:calc(var(--sl) + 28px + env(safe-area-inset-bottom));font-size:10px}
   #btnEmote{width:50px;height:50px;left:12px;bottom:calc(var(--sl) + 30px + env(safe-area-inset-bottom));font-size:9.5px}
   #fpBtn{width:46px;height:46px;right:82px;bottom:calc(var(--sl) + 118px + env(safe-area-inset-bottom));font-size:19px}
-  #notes{bottom:calc(var(--sl) + 112px + env(safe-area-inset-bottom));left:8px}.note{width:min(50vw,200px);padding:6px 9px 6px 6px;border-radius:15px}.nav{width:32px;height:32px;font-size:18px}.nmsg{font-size:12.5px}.ntop b{font-size:11px}
+  #notes{bottom:calc(var(--sl) + 92px + env(safe-area-inset-bottom));left:8px;gap:4px}.note{width:auto;max-width:46vw;padding:3px 10px 3px 3px;border-radius:14px;gap:6px;border-width:1.5px}.nav{width:24px;height:24px;font-size:14px;border-width:1.5px}.ntop{display:none}.nmsg{font-size:12px}
   #chatLog{bottom:auto;top:46vh;max-width:56vw}
   #notes .note:nth-last-child(n+4){display:none}
   #placeBar{bottom:calc(var(--sl) + 116px)}#placeBar button{padding:6px 9px;font-size:12px}
@@ -386,7 +386,21 @@ body.ingame #start{display:none!important}
 @media (max-height:500px) and (orientation:landscape){
   #hud{transform:scale(.82);transform-origin:top left}#topR{transform:scale(.82);transform-origin:top right}
   #btnAtk{width:72px;height:72px;bottom:16px}#btnAct{width:58px;height:58px;bottom:14px;right:94px}#btnJump{width:48px;height:48px;bottom:98px}
-  #notes{bottom:70px}#hotbar{left:50%}
+  :root{--sl:min(36px,calc((100vw - 300px) / 11.6))}
+  #hotbar{left:max(70px,calc(env(safe-area-inset-left) + 66px));transform:none;bottom:max(6px,env(safe-area-inset-bottom));gap:3px;padding:3px;border-radius:14px;border-width:2px}
+  .slot{border-radius:10px;border-width:2px}.slot i{font-size:9.5px}
+  #btnEmote{left:max(10px,env(safe-area-inset-left));bottom:8px;width:50px;height:50px;font-size:9px}
+  #btnAtk{width:66px;height:66px;right:max(12px,env(safe-area-inset-right));bottom:12px;font-size:10.5px}#btnAtk span{font-size:22px}
+  #btnAct{width:52px;height:52px;right:calc(max(12px,env(safe-area-inset-right)) + 76px);bottom:10px;font-size:9.5px}#btnAct span{font-size:18px}
+  #btnJump{width:46px;height:46px;right:calc(max(12px,env(safe-area-inset-right)) + 10px);bottom:88px;font-size:18px}
+  #btnDel{width:48px;height:48px;right:calc(max(12px,env(safe-area-inset-right)) + 136px);bottom:10px;font-size:9px}
+  #fpBtn{width:42px;height:42px;right:calc(max(12px,env(safe-area-inset-right)) + 70px);bottom:74px;font-size:17px}
+  #notes{left:50%;top:6px;bottom:auto;transform:translateX(-50%);flex-direction:column;align-items:center;gap:3px}
+  .note{width:auto;max-width:40vw;padding:2px 10px 2px 2px;border-radius:13px;gap:5px;border-width:1.5px;box-shadow:0 3px 8px rgba(80,50,40,.18)}.nav{width:22px;height:22px;font-size:13px;border-width:1.5px}.ntop{display:none}.nmsg{font-size:11.5px}
+  #notes .note:nth-last-child(n+3){display:none}
+  #toast{top:24%}.tmsg{font-size:12.5px;padding:5px 12px}
+  #hbLabel{bottom:calc(var(--sl) + 22px)}#dlg{bottom:calc(var(--sl) + 20px)}
+  #castBar,#revBar{bottom:calc(var(--sl) + 60px)}
 }
 </style>
 </head>
@@ -523,20 +537,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261114p"></script>
-<script src="firebase-config.js?v=20261114p"></script>
+<script src="config.js?v=20261114q"></script>
+<script src="firebase-config.js?v=20261114q"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261114p"></script>
-<script src="js/audio.js?v=20261114p"></script>
-<script src="js/items.js?v=20261114p"></script>
-<script src="js/critter.js?v=20261114p"></script>
-<script src="js/world.js?v=20261114p"></script>
-<script src="js/game.js?v=20261114p"></script>
-<script src="js/ui.js?v=20261114p"></script>
-<script src="js/extra.js?v=20261114p"></script>
-<script src="js/net.js?v=20261114p"></script>
-<script src="js/cloud.js?v=20261114p"></script>
-<script src="js/skills.js?v=20261114p"></script>
-<script src="js/party.js?v=20261114p"></script>
+<script src="js/engine.js?v=20261114q"></script>
+<script src="js/audio.js?v=20261114q"></script>
+<script src="js/items.js?v=20261114q"></script>
+<script src="js/critter.js?v=20261114q"></script>
+<script src="js/world.js?v=20261114q"></script>
+<script src="js/game.js?v=20261114q"></script>
+<script src="js/ui.js?v=20261114q"></script>
+<script src="js/extra.js?v=20261114q"></script>
+<script src="js/net.js?v=20261114q"></script>
+<script src="js/cloud.js?v=20261114q"></script>
+<script src="js/skills.js?v=20261114q"></script>
+<script src="js/party.js?v=20261114q"></script>
 </body>
 </html>

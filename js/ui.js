@@ -117,7 +117,7 @@ function renderTalents(anim=true){$('spInfo').textContent=ply.sp;const nd=novice
   const C=CLASSES[talCls],lock=!clsOpen(talCls);
   h+=`<div id="tDesc">${C.i} ${C.d}${lock?`<br>🔒 把初學者的天賦全部學滿才會開啟（目前 ${classPts('novice')}/${classMax('novice')}）`:talCls!=='novice'?'<br>不用選職業，每個職業的天賦都可以學！':''}</div>`;
   h+=classKeys(talCls).map((k,i)=>{const t=TALENTS[k];const rq=reqOK(k);
-    const tags=(t.w?`<span class="ttag">${ITEMS[t.w].i} ${WNAME[t.w]}</span>`:'')+(t.act?'<span class="ttag act">主動技能</span>':'')+(!rq?`<span class="ttag req">需要：${TALENTS[t.req[0]].n} Lv${t.req[1]}</span>`:'')+(t.act&&tal[k]>0?`<button class="teq ${eqL.includes(k)?'on':''}" data-eq="${k}">${eqL.includes(k)?'✅ 已攜帶':'攜帶'}</button>`:'');
+    const tags=(t.w&&!t.act?`<span class="ttag">${ITEMS[t.w].i} ${WNAME[t.w]}</span>`:'')+(t.act?'<span class="ttag act">主動技能</span>':'')+(!rq?`<span class="ttag req">需要：${TALENTS[t.req[0]].n} Lv${t.req[1]}</span>`:'')+(t.act&&tal[k]>0?`<button class="teq ${eqL.includes(k)?'on':''}" data-eq="${k}">${eqL.includes(k)?'✅ 已攜帶':'攜帶'}</button>`:'');
     return`<div class="tbranch stg" style="--i:${Math.min(i,14)}"><div class="th">${t.i} ${t.n}${tags}</div><div class="tnodes">${t.nodes.map(([n,d],j)=>{
     const got=tal[k]>j,can=!got&&tal[k]===j&&ply.sp>0&&!lock&&rq;return`<div class="tnode ${got?'got':can?'can':(tal[k]<j||lock||!rq)?'lock':''}" data-t="${k}" data-j="${j}"><b>${got?'✅':can?'✨':'🔒'} ${n}</b>${d}</div>`;}).join('')}</div></div>`;}).join('');
   $('tList').innerHTML=h;if(!anim)noAnim($('tList'));}
@@ -212,7 +212,7 @@ function renderBag(anim=true){const keys=BAG_ORDER.filter(k=>(inv[k]||0)>0&&(bag
   $('bagTabs').innerHTML=BAG_TABS.map(([k,t])=>`<button class="tab ${k===bagTab?'on':''}" data-bt="${k}">${t}</button>`).join('');
   $('bagGrid').innerHTML=keys.length?keys.map((k,i)=>{const it=ITEMS[k];const inHb=hb.includes(k);const eq=ply.hat===k||ply.weapon===k||(it.k==='skin'&&ply.skins&&ply.skins[it.for]===k);return`<div class="bi stg ${bagPick===k?'pick':''} ${eq?'eq':''}" style="--i:${Math.min(i,20)}" data-k="${k}">${it.k==='bug'?`<span class="bugdot" style="background:${it.col}"></span>`:''}<span class="ic">${itIcon(k)}</span>${it.k==='tool'||it.k==='weapon'||it.k==='held'||it.k==='skin'||it.k==='hat'?'':`<i>${inv[k]}</i>`}${inHb?'<em>'+((hb.indexOf(k)+1)%10)+'</em>':''}</div>`;}).join(''):'<div class="sub">這裡空空的～</div>';
   $('bagBar').innerHTML=hb.map((k,i)=>`<div class="bs ${k?'':'empty'}" data-i="${i}"><u>${(i+1)%10}</u>${k?itIcon(k):''}</div>`).join('');
-  const it=bagPick&&ITEMS[bagPick];$('bagInfo').innerHTML=it?`<b>${it.i} ${it.n}</b>　${it.d||''}${inv[bagPick]>1?`（×${inv[bagPick]}）`:''}<br><small>${it.k==='hat'?(ply.hat===bagPick?'👑 戴著中・再點一次脫下':'點一下戴上'):'點下方快捷欄的格子放進去，或直接拖曳 ↓'}</small>`:'點道具查看說明，拖曳或點選後放到快捷欄。點快捷欄上的道具可以拿掉。';
+  const it=bagPick&&ITEMS[bagPick];$('bagInfo').innerHTML=it?`<b>${it.i} ${it.n}</b>　${it.d||''}${inv[bagPick]>1?`（×${inv[bagPick]}）`:''}<br><small>${it.k==='hat'?(ply.hat===bagPick?'👑 戴著中・再點一次脫下':'點一下戴上'):it.k==='skin'?(ply.skins&&ply.skins[it.for]===bagPick?'✅ 使用中的外觀・再點一次換回原本外觀':'點一下換上這個外觀（同武器只會用一種）'):'點下方快捷欄的格子放進去，或直接拖曳 ↓'}</small>`:'點道具查看說明，拖曳或點選後放到快捷欄。點快捷欄上的道具可以拿掉。';
   if(!anim)noAnim($('bagGrid'));}
 function openBag(){if(!started||ply.sleeping)return;bagPick=null;renderBag();openPanel('bag');}
 function assignHb(i,k){const j=hb.indexOf(k);if(j>=0)hb[j]=hb[i];hb[i]=k;SFX.place();bagPick=null;renderBag(false);renderHotbar();const el=document.querySelector(`#bagBar [data-i="${i}"]`);if(el)bump(el);save();}
@@ -223,7 +223,7 @@ addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;if(!dr
   if(drag.el){drag.el.style.transform=`translate(${e.clientX-26}px,${e.clientY-26}px)`;document.querySelectorAll('#bagBar .bs').forEach(b=>b.classList.remove('hov'));const t=document.elementFromPoint(e.clientX,e.clientY);const bs=t&&t.closest&&t.closest('#bagBar .bs');if(bs)bs.classList.add('hov');}});
 addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;const d=drag;drag=null;
   if(d.el){d.el.remove();document.querySelectorAll('#bagBar .bs').forEach(b=>b.classList.remove('hov'));const t=document.elementFromPoint(e.clientX,e.clientY);const bs=t&&t.closest&&t.closest('#bagBar .bs');if(bs)assignHb(+bs.dataset.i,d.k);}
-  else if(ITEMS[d.k].k==='hat'){bagPick=d.k;useSlot(d.k);renderBag(false);}
+  else if(ITEMS[d.k].k==='hat'||ITEMS[d.k].k==='skin'){bagPick=d.k;useSlot(d.k);renderBag(false);}
   else{bagPick=bagPick===d.k?null:d.k;SFX.click();renderBag(false);}});
 $('pRot').addEventListener('click',carryRotate);$('pStore').addEventListener('click',carryStore);$('pCancel').addEventListener('click',carryCancel);
 
@@ -439,3 +439,11 @@ updateSky();updateHUD();drawMini();renderHotbar();updateAtkIcon();
 camera.position.set(ply.x,6,ply.z+10);
 window.__game={ply,inv,Q,trees,monsters,npcs,farm,tal,setTime:v=>tmin=v,addItem,grantXP,get look(){return look;},HOME,STALLS,butterflies,useSlot};
 
+
+// ---------- 手機版：快捷欄若碰到右下角按鈕就自動縮小 ----------
+function fitHud(){const hbE=$('hotbar');if(!hbE||!hbE.offsetWidth)return;document.documentElement.style.removeProperty('--sl');
+  const hits=()=>{const h=hbE.getBoundingClientRect();return['btnAct','btnAtk','btnDel','btnEmote'].some(id=>{const e=$(id);if(!e||!e.offsetWidth)return false;const r=e.getBoundingClientRect();return h.right>r.left-4&&h.left<r.right+4&&h.bottom>r.top-4&&h.top<r.bottom+4;});};
+  if(!hits())return;let sl=parseFloat(getComputedStyle($('hotbar').querySelector('.slot')||hbE).width)||44;
+  for(let i=0;i<20&&hits()&&sl>24;i++){sl-=1.5;document.documentElement.style.setProperty('--sl',sl+'px');}
+  if(typeof renderSkillBar==='function')renderSkillBar(true);}
+addEventListener('resize',()=>setTimeout(fitHud,150));addEventListener('orientationchange',()=>setTimeout(fitHud,400));setInterval(fitHud,3000);

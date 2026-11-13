@@ -605,19 +605,23 @@ const PARKV={};
 sign(-7.8,-30.3,0.464,['🎡 龍蝦樂園','↑ 往這邊走']);
 // ---------- 轉蛋機 ----------
 const GACHAS=[];
-function gachaMachine(x,z,ry){const g=new THREE.Group();const pk=toon(0xff9ec4);
+function gachaMachine(x,z,ry,kind='pet'){const g=new THREE.Group();const hat=kind==='hat';const pk=toon(hat?0xb9a6f2:0xff9ec4);
   g.add(mk(new THREE.BoxGeometry(1.4,1.3,1.2),pk,0,0.65,0));g.add(mk(new THREE.BoxGeometry(1.5,0.12,1.3),toon(0xffffff),0,1.32,0));
   const dome=mk(new THREE.SphereGeometry(0.78,24,16),new THREE.MeshBasicMaterial({color:0xeaf6ff,transparent:true,opacity:0.28,depthWrite:false}),0,2.1,0);dome.renderOrder=5;g.add(dome);
   const rim=mk(new THREE.TorusGeometry(0.62,0.06,6,24),toon(0xffffff),0,1.48,0);rim.rotation.x=Math.PI/2;g.add(rim);
   const cc=[0xff9ec4,0xffd36e,0x8fdcb4,0x8fd0ff,0xb9a6f2,0xff8f7a];const pos=[];
   for(let t=0;t<200&&pos.length<11;t++){const x=(Math.random()-0.5)*1.0,y=1.62+Math.random()*0.75,z=(Math.random()-0.5)*1.0;if(Math.hypot(x,y-2.1,z)>0.78-0.19-0.05||y<1.6)continue;if(pos.some(p=>Math.hypot(p[0]-x,p[1]-y,p[2]-z)<0.36))continue;pos.push([x,y,z]);}
   pos.forEach((p,i)=>g.add(mk(new THREE.SphereGeometry(0.18,12,10),toon(cc[i%6]),p[0],p[1],p[2])));
-  g.add(mk(new THREE.SphereGeometry(0.2,10,8),toon(0xffd36e),0,2.85,0));
+  if(hat){const bw=toon(0xff9db2);for(const s of[-1,1]){const l=mk(new THREE.SphereGeometry(0.22,12,8),bw,s*0.24,2.92,0);l.scale.set(1.3,0.85,0.55);l.rotation.z=s*0.3;g.add(l);}g.add(mk(new THREE.SphereGeometry(0.11,10,8),bw,0,2.9,0));
+    const st=mk(new THREE.CylinderGeometry(0.3,0.3,0.06,20),toon(0xffd36e),0,0.95,0.61);st.rotation.x=Math.PI/2;g.add(st);
+    g.add(mk(new THREE.BoxGeometry(1.42,0.14,1.22),toon(0xffd36e),0,0.12,0));}
+  else g.add(mk(new THREE.SphereGeometry(0.2,10,8),toon(0xffd36e),0,2.85,0));
   const kn=mk(new THREE.CylinderGeometry(0.22,0.22,0.12,14),toon(0xffffff),0.25,0.9,0.62);kn.rotation.x=Math.PI/2;g.add(kn);g.add(mk(new THREE.BoxGeometry(0.42,0.32,0.08),toon(0x6a4a5a),-0.3,0.35,0.6));
   g.add(mk(new THREE.CircleGeometry(0.28,20),toon(0xffd36e),0,1.05,0.61));
-  g.position.set(x,H(x,z),z);g.rotation.y=ry;shadowAll(g);dome.castShadow=false;scene.add(g);obstacles.push({x,z,r:0.8});GACHAS.push({x,z,ry,front:{x:x+Math.sin(ry)*1.4,z:z+Math.cos(ry)*1.4}});}
-gachaMachine(-3,-7,0.3);
-{const p={x:PARKV.gateIn.x+Math.cos(PARKV.gateYaw)*4,z:PARKV.gateIn.z-Math.sin(PARKV.gateYaw)*4};gachaMachine(p.x,p.z,PARKV.gateYaw+Math.PI);}
+  g.position.set(x,H(x,z),z);g.rotation.y=ry;shadowAll(g);dome.castShadow=false;scene.add(g);obstacles.push({x,z,r:0.8});GACHAS.push({x,z,ry,kind,front:{x:x+Math.sin(ry)*1.4,z:z+Math.cos(ry)*1.4}});}
+gachaMachine(-3,-7,0.3);gachaMachine(-3-Math.cos(0.3)*2.3,-7+Math.sin(0.3)*2.3,0.3,'hat');
+{const p={x:PARKV.gateIn.x+Math.cos(PARKV.gateYaw)*4,z:PARKV.gateIn.z-Math.sin(PARKV.gateYaw)*4};gachaMachine(p.x,p.z,PARKV.gateYaw+Math.PI);
+ const a=PARKV.gateYaw+Math.PI;gachaMachine(p.x+Math.cos(a)*2.3,p.z-Math.sin(a)*2.3,a,'hat');}
 // ---------- 種樹、石頭 ----------
 const okSpot=(x,z,r)=>Math.hypot(x,z)>=r&&Math.hypot(x-HOME.x,z-HOME.z)>=12&&Math.hypot(x-PARK.x,z-PARK.z)>=PARK.r+5&&Math.hypot(x-POND.x,z-POND.z)>=POND.r+5&&Math.hypot(x-CAVE_DOOR.x,z-CAVE_DOOR.z)>=18&&Math.hypot(x-V2.x,z-V2.z)>=r+30&&Math.hypot(x-V3.x,z-V3.z)>=r+14&&!PATHS.some(p=>segDist(x,z,...p)<4);
 for(let i=0;i<26;i++){const a=SR(0,6.28),d=SR(17,24);const x=Math.cos(a)*d,z=Math.sin(a)*d;if(okSpot(x,z,16)&&farFrom(x,z,2.2))tree(x,z,SR(0.85,1.2),rnd()<0.35?'cherry':rnd()<0.3?'fruit':'broad');}
