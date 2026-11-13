@@ -162,6 +162,9 @@ const MARK=mk(new THREE.OctahedronGeometry(0.3),basic(0xffc83d));MARK.scale.set(
 function markTarget(c){const g=(x,z,dy)=>({x,z,y:(ply.cave?0:H(x,z))+dy});
   switch(c){
     case'board':return g(BOARD.x,BOARD.z,3.4);
+    case'revive':{const d=nearestDowned();return d&&g(d.x,d.z,1.8);}
+    case'chest':{const c=nearestChest();return c&&{x:c.x,z:c.z,y:2.2};}
+    case'pinvite':{const r=nearestRemote();return r&&g(r.x,r.z,3.0);}
     case'talk':{const n=nearestNpc();return n&&g(n.x,n.z,(n.stall&&n.onPost?0.84:0)+2.9);}
     case'feed':case'invite':{const p=nearestPet(1.8);return p&&g(p.x,p.z,1.7);}
     case'cave':return g(CAVE_FRONT.x,CAVE_FRONT.z,4.2);
@@ -183,7 +186,7 @@ function markTarget(c){const g=(x,z,dy)=>({x,z,y:(ply.cave?0:H(x,z))+dy});
 function updateMark(c,T){const t=markTarget(c);if(!t||paused){MARK.visible=false;return;}MARK.visible=true;MARK.position.set(t.x,t.y+Math.sin(T*3)*0.12,t.z);MARK.rotation.y=T*2.2;}
 
 // ---------- 表情按鈕（左下） ----------
-$('btnEmote').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!paused&&started)openSocial();});
+$('btnEmote').addEventListener('click',e=>{if(!paused&&started)openSocial();});
 
 // ---------- 圖鑑 ----------
 const DEX_PET_N={bunny:'小白兔',bunny2:'奶茶兔',chick:'小雞',cat:'小貓咪',puppy:'小狗狗',dino:'小恐龍',axolotl:'六角恐龍',fox:'小狐狸',bear:'小熊'};
@@ -212,7 +215,6 @@ function renderDex(){const tabs=[...Object.entries(DEX).map(([k,d])=>[k,`${d.i} 
 $('dexTabs').addEventListener('click',e=>{const b=e.target.closest('[data-dt]');if(!b)return;dexTab=b.dataset.dt;renderDex();SFX.click();});
 function openDex(){dexSync();renderDex();openPanel('dex');$('fab').classList.remove('dot');}
 
-loop();
 
 function castleFrame(cam){const CV=PARKV.castle;const inside=CV.inside(ply.x,ply.z,-0.3);CV.roof.visible=!inside;const L=HOMEV.light;
   if(inside){L.position.set(CV.lightPos.x,5.5,CV.lightPos.z);L.intensity=0.35;L.distance=30;}else{L.position.set(HOME.x,3.4,HOME.z);L.distance=16;}

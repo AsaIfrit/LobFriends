@@ -49,8 +49,8 @@ function medievalHouse(x,z,ry,o={}){const W=o.W||7.4,D=o.D||6.2,h1=3.1,h2=o.floo
   if(h2){b.add('wood',new THREE.BoxGeometry(D+0.75,0.26,W+0.75),M4(0,top+0.13,0));top+=0.26;b.add('timberB',new THREE.BoxGeometry(D+0.6,h2,W+0.6),M4(0,top+h2/2,0));top+=h2;}
   const span=D+(h2?0.6:0),len=W+(h2?0.6:0),rh=span*0.62;gableRoof(b,roofK,0,0,top,span,len,rh);const a2=span/2;
   // 門
-  b.add('door',new THREE.BoxGeometry(0.16,2.1,1.3),M4(D/2+0.02,0.7+1.05,0));{const ag=new THREE.CylinderGeometry(0.65,0.65,0.16,16,1,false,0,Math.PI);b.add('door',ag,M4(D/2+0.02,0.7+2.1,0,0,0,Math.PI/2));}
-  b.add('gold',new THREE.SphereGeometry(0.08,8,6),M4(D/2+0.14,1.75,0.4));b.add('stone',new THREE.BoxGeometry(1.0,0.2,1.8),M4(D/2+0.5,0.1,0));
+  b.add('door',new THREE.BoxGeometry(0.16,2.1,1.3),M4(D/2+0.02,0.7+1.05,0));{const ag=new THREE.CylinderGeometry(0.65,0.65,0.16,16,1,false,0,Math.PI);b.add('door',ag,M4(D/2+0.03,0.7+2.09,0,0,0,Math.PI/2));}
+  b.add('gold',new THREE.SphereGeometry(0.08,8,6),M4(D/2+0.14,1.75,0.4));b.add('stone',new THREE.BoxGeometry(0.75,0.5,1.8),M4(D/2+0.5,0.25,0));
   // 窗戶
   for(const zz of[-W/3.2,W/3.2])windowAt(b,D/2,0.7+1.6,zz,Math.PI/2,{shutter:shut,box:rr(1)>0.4});
   for(const zz of[-W/3,0,W/3])if(h2)windowAt(b,D/2+0.3,0.7+h1+0.26+1.45,zz,Math.PI/2,{shutter:zz?shut:null,arch:!zz,box:rr(2)>0.5&&!zz});
@@ -96,7 +96,7 @@ const indoorWin=[],indoorObs=[];
  const wp=canvasTex(128,128,(c)=>{c.fillStyle='#fff6ee';c.fillRect(0,0,128,128);c.fillStyle='#ffe2d6';for(let y=0;y<128;y+=32)for(let x=0;x<128;x+=32){c.beginPath();c.arc(x+(y%64?16:0),y+16,5,0,7);c.fill();}},[1,1]);
  const inn=toon(0xffffff,{map:wp}),wain=toon(0xf2c4b4);const out=HM.timberA;
  const fl=mk(new THREE.BoxGeometry(W*2+0.4,0.24,D*2+0.4),toon(0xf0c8a4,{map:TEX.wood}),HX,-0.1,HZ);fl.material.map=TEX.wood.clone();fl.material.map.repeat.set(5,4);fl.material.map.needsUpdate=true;fl.receiveShadow=true;g.add(fl);
- g.add(mk(scaleUV(new THREE.BoxGeometry(W*2+0.7,0.5,D*2+0.7),6,0.3),HM.stone,HX,0.0,HZ)).position.y=-0.02;
+ g.add(mk(scaleUV(new THREE.BoxGeometry(W*2+0.7,0.5,D*2+0.7),6,0.3),HM.stone,HX,-0.26,HZ));
  function wall(cx,cz,len,alongX,innerSign){const sx=alongX?len:T,sz=alongX?T:len;
    const geo=scaleUV(new THREE.BoxGeometry(sx,WH,sz),Math.max(1,Math.round(len/4.5)),1);
    const mats=[out,out,top,top,out,out];const idx=alongX?(innerSign>0?4:5):(innerSign>0?0:1);mats[idx]=inn;
@@ -110,12 +110,12 @@ const indoorWin=[],indoorObs=[];
  {const lh=WH-3.0;const m=mk(new THREE.BoxGeometry(T,lh,dw*2),[out,inn,top,top,out,out],HX+W,3.0+lh/2,HZ);g.add(m);HOMEV.walls.push({full:m,stub:null,alongX:false,pos:HX+W,innerSign:-1,deco:[]});}
  const wallOf=(x,z)=>HOMEV.walls.filter(w=>w.alongX?Math.abs(z-w.pos)<0.5&&w.stub:Math.abs(x-w.pos)<0.5&&w.stub);
  // 門（會自動打開）
- {const hinge=new THREE.Group();hinge.position.set(HX+W,0,HZ-dw);const leaf=mk(new THREE.BoxGeometry(0.12,2.95,dw*2-0.06),HM.door,0,1.5,dw-0.03);hinge.add(leaf);
+ {const hinge=new THREE.Group();hinge.position.set(HX+W,0,HZ-dw);const leaf=mk(new THREE.BoxGeometry(0.12,2.95,dw*2-0.1),HM.door,0,1.5,dw);hinge.add(leaf);
   hinge.add(mk(new THREE.SphereGeometry(0.1,8,6),HM.gold,0.12,1.45,dw*2-0.35));const wn=mk(new THREE.CircleGeometry(0.3,18),basic(0x9fd6ff),0.07,2.3,dw);wn.rotation.y=Math.PI/2;hinge.add(wn);g.add(hinge);HOMEV.door=hinge;
-  const arch=mk(new THREE.BoxGeometry(0.5,0.3,dw*2+0.6),HM.wood,HX+W,3.05,HZ);g.add(arch);for(const s of[-1,1])g.add(mk(new THREE.BoxGeometry(0.45,3.0,0.3),HM.wood,HX+W,1.5,HZ+s*(dw+0.15)));
+  const arch=mk(new THREE.BoxGeometry(0.5,0.3,dw*2+0.66),HM.wood,HX+W,3.12,HZ);g.add(arch);for(const s of[-1,1])g.add(mk(new THREE.BoxGeometry(0.46,3.02,0.34),HM.wood,HX+W,1.51,HZ+s*(dw+0.16)));
   const lamp=mk(new THREE.SphereGeometry(0.22,10,8),basic(0xfff0c8),HX+W+0.5,3.5,HZ+dw+0.9);g.add(lamp);}
- g.add(mk(new THREE.BoxGeometry(1.4,0.18,2.6),HM.stone,HX+W+0.8,0.05,HZ));
- const mat=mk(new THREE.PlaneGeometry(1.4,2.0),toon(0xb9a6f2),HX+W-1.0,0.03,HZ);mat.rotation.x=-Math.PI/2;g.add(mat);
+ g.add(mk(new THREE.BoxGeometry(1.4,0.18,2.56),HM.stone,HX+W+0.85,0.04,HZ));
+ const mat=mk(new THREE.PlaneGeometry(1.4,2.0),toon(0xb9a6f2,{polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),HX+W-1.0,0.035,HZ);mat.rotation.x=-Math.PI/2;g.add(mat);
  // 窗戶（內外兩面），跟著牆一起隱藏
  const winAt=(x,z,ry)=>{const list=wallOf(x,z);for(const side of[1,-1]){const o=new THREE.Group();o.position.set(x,2.3,z);o.rotation.y=ry+(side<0?Math.PI:0);
    const gm=side>0?HM.glass:basic(0x9fd6ff);if(side<0)indoorWin.push(gm);

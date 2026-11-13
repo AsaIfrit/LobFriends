@@ -24,7 +24,7 @@ const hour=()=>tmin/60;
 function isNight(){const h=hour();return h>=19||h<5;}
 const ply={x:2,z:5,y:0,vy:0,ground:true,face:Math.PI,hp:10,max:10,en:100,coins:0,lv:1,xp:0,sp:0,ifr:0,walk:0,kx:0,kz:0,lastStep:0,
   indoor:false,sleeping:null,sitting:null,act:null,actT:0,dashT:0,dvx:0,dvz:0,combo:0,comboT:0,atkT:-1,atkDur:0.3,hitDone:false,queued:false,
-  weapon:'stick',held:null,cool:0,runDust:0,lean:0};
+  weapon:'stick',skins:{},held:null,cool:0,runDust:0,lean:0};
 
 // ---------- 渲染器 ----------
 const renderer=new THREE.WebGLRenderer({canvas:$('c'),antialias:false,powerPreference:'high-performance'});

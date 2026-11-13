@@ -68,6 +68,34 @@ const G={body:new THREE.SphereGeometry(0.8,32,24),leg:new THREE.CylinderGeometry
   hornTip:(()=>{const pts=[];const Hh=0.82,Rr=0.3;for(let i=6;i>=0;i--){const th=Math.PI*i/20;pts.push(new THREE.Vector2(Math.max(0.0001,Rr*1.06*Math.sin(th)*Math.sin(th/2)),Hh/2*Math.cos(th)+Hh/2+0.005));}return new THREE.LatheGeometry(pts,18);})(),
   nub:new THREE.SphereGeometry(0.14,10,8),tailSeg:new THREE.SphereGeometry(0.12,10,8),tailBall:new THREE.SphereGeometry(0.17,12,10),slime:new THREE.SphereGeometry(0.8,28,20)};
 const DEF_LOOK={earSize:1,earGap:1,earY:0,tailSize:1,tailY:0,tailZ:0,name:'小蝦',species:'lobster',eyes:'round',tail:'seg',body:'#f0874f',accent:'#6e3428',ears:'round',eyeSize:1.1,eyeGap:0.22,eyeY:1.0,eyeColor:'#2a1c18',mouthColor:'#2a1c18',brow:'none',browSize:1,browGap:0.22,browY:0.17,lash:'none',lashSize:1,lashGap:0.6,lashY:0.5,mouth:'zigzag',mouthSize:1,mouthW:1,mouthY:0.15,blush:false,blushShape:'none',blushColor:'#ff8ca0',blushSize:1,blushGap:0.42,blushY:0.14,hat:'none'};
+// ---------- 寶箱武器外觀 ----------
+let SKM=null;
+function buildSkins(T,G2){if(!SKM)SKM={dark:toon(0x3a3238),iron:toon(0x6a6470),flame:basic(0xff6a10),core:basic(0xffb83a),ember:basic(0xff3a10),
+  silver:toon(0xd8d8ec),steel:toon(0x9a9ab8),volt:basic(0x9a5cff),voltW:basic(0xeadcff),jade:toon(0x3fae6c),jadeD:toon(0x1f5a3c),bone:toon(0xeae0c8),wind:basic(0xa8ffd0),
+  ice:basic(0xbfe6ff),iceW:basic(0xf0faff),iceD:toon(0x7fb8e8),handle:toon(0x2e2c34)};const M=SKM;
+  // 火焰之劍
+  {const g=G2();g.add(mk(new THREE.CylinderGeometry(0.06,0.065,0.34,8),M.dark,0,0.1,0));g.add(mk(new THREE.SphereGeometry(0.085,8,6),M.iron,0,-0.09,0));
+   const gd=mk(new THREE.BoxGeometry(0.5,0.1,0.14),M.iron,0,0.3,0);g.add(gd);for(const s of[-1,1]){const h=mk(new THREE.ConeGeometry(0.07,0.2,5),M.iron,s*0.27,0.36,0);h.rotation.z=-s*0.6;g.add(h);}
+   const bl=mk(new THREE.CylinderGeometry(0.06,0.11,1.05,6),M.flame,0,0.88,0);bl.scale.z=0.35;g.add(bl);const cr=mk(new THREE.CylinderGeometry(0.025,0.05,0.95,6),M.core,0,0.86,0.03);cr.scale.z=0.4;g.add(cr);
+   const tp=mk(new THREE.ConeGeometry(0.1,0.32,6),M.flame,0,1.55,0);tp.scale.z=0.35;g.add(tp);
+   for(let i=0;i<5;i++){const s=i%2?1:-1;const f=mk(new THREE.ConeGeometry(0.05,0.22,5),i%2?M.ember:M.core,s*0.1,0.55+i*0.2,0);f.rotation.z=-s*0.5;f.scale.z=0.4;g.add(f);}T.flame=g;}
+  // 雷電長槍
+  {const g=G2();g.add(mk(new THREE.CylinderGeometry(0.04,0.045,2.2,8),M.steel,0,0.7,0));for(const y of[-0.2,0.4,1.1,1.55])g.add(mk(new THREE.CylinderGeometry(0.06,0.06,0.08,8),M.silver,0,y,0));
+   const hd=mk(new THREE.ConeGeometry(0.1,0.62,4),M.silver,0,2.1,0);hd.scale.z=0.35;g.add(hd);const ed=mk(new THREE.ConeGeometry(0.05,0.5,4),M.volt,0,2.07,0.03);ed.scale.z=0.3;g.add(ed);
+   for(const s of[-1,1]){const w=mk(new THREE.ConeGeometry(0.05,0.3,4),M.silver,s*0.12,1.78,0);w.rotation.z=s*2.4;g.add(w);}
+   const zz=(x,y,r)=>{const b=mk(new THREE.BoxGeometry(0.025,0.16,0.025),M.volt,x,y,0.02);b.rotation.z=r;g.add(b);};
+   for(let i=0;i<6;i++){zz(0.06*(i%2?1:-1),1.25+i*0.09,i%2?0.7:-0.7);}zz(-0.1,0.3,0.6);zz(-0.13,0.42,-0.6);zz(0.1,1.68,0.8);T.thunder=g;}
+  // 旋風之弓
+  {const g=G2();const arc=mk(new THREE.TorusGeometry(0.66,0.045,6,26,Math.PI*0.86),M.jade);arc.rotation.set(0,Math.PI/2,Math.PI/2+Math.PI*0.07);arc.position.z=-0.35;g.add(arc);
+   const arc2=mk(new THREE.TorusGeometry(0.7,0.02,5,26,Math.PI*0.8),M.jadeD);arc2.rotation.copy(arc.rotation);arc2.rotation.z+=0.03;arc2.position.z=-0.37;g.add(arc2);
+   g.add(mk(new THREE.CylinderGeometry(0.012,0.012,1.25,4),M.wind,0,0,0.24));g.add(mk(new THREE.CylinderGeometry(0.065,0.065,0.22,6),M.jadeD,0,0,0.29));
+   for(const s of[-1,1]){const o=mk(new THREE.BoxGeometry(0.05,0.08,0.22),M.bone,0,s*0.32,0.14);o.rotation.x=s*0.6;g.add(o);const t=mk(new THREE.ConeGeometry(0.04,0.18,4),M.bone,0,s*0.2,0.3);t.rotation.x=s*-1.0;g.add(t);
+     for(let k=0;k<2;k++){const d=mk(new THREE.OctahedronGeometry(0.045),M.wind,0,s*(0.68+k*0.08),0.05+k*0.06);d.scale.y=1.8;g.add(d);}}T.windbow=g;}
+  // 冰凍之杖
+  {const g=G2();g.add(mk(new THREE.CylinderGeometry(0.045,0.06,1.25,6),M.handle,0,0.52,0));const st=mk(new THREE.OctahedronGeometry(0.15),M.iceW,0,1.32,0);st.scale.y=1.6;g.add(st);g.userData.gem=st;
+   for(let i=0;i<7;i++){const s=i%2?1:-1,k=(i/2)|0;const c=mk(new THREE.OctahedronGeometry(0.1),i%3?M.ice:M.iceD,s*(0.1+k*0.03),1.12+k*0.12,0);c.scale.set(0.7,2.4,0.45);c.rotation.z=-s*(0.5+k*0.08);g.add(c);}
+   const tp=mk(new THREE.OctahedronGeometry(0.09),M.ice,0,1.62,0);tp.scale.y=2;g.add(tp);T.icestaff=g;}
+}
 function buildTools(hold){
   const T={},wood=toon(0xe0b48f),stoneC=toon(0xcfc6dc),pinkC=toon(0xff9f8a),cream=toon(0xffe9cf);
   const G2=()=>new THREE.Group();
@@ -93,9 +121,12 @@ function buildTools(hold){
     const nt=mk(new THREE.ConeGeometry(0.3,0.5,12,1,true),basic(0xffffff,{transparent:true,opacity:0.55,side:THREE.DoubleSide,depthWrite:false}),0,1.5,-0.25);nt.rotation.x=-Math.PI/2;T.net.add(nt);}
   T.rod=G2();T.rod.add(mk(new THREE.CylinderGeometry(0.025,0.05,2.0,6),wood,0,0.8,0));T.rod.add(mk(new THREE.CylinderGeometry(0.09,0.09,0.08,10),pinkC,0.07,0.15,0));
   {const tip=new THREE.Object3D();tip.position.y=1.8;T.rod.add(tip);T.rod.userData.tip=tip;}
+  buildSkins(T,G2);
   for(const k in T){T[k].visible=false;hold.add(T[k]);}
   return T;
 }
+const BLINKERS=[];
+function tickBlinks(dt){for(let i=BLINKERS.length-1;i>=0;i--){const b=BLINKERS[i];if(!b.g.parent){if(b.seen)BLINKERS.splice(i,1);continue;}b.seen=1;let o=b.g,vis=true;while(o){if(!o.visible){vis=false;break;}o=o.parent;}if(vis)b.blink(dt);}}
 function makeCritter(o,withTools){
   o=Object.assign({},DEF_LOOK,o);
   const lob=o.species==='lobster';
@@ -106,8 +137,13 @@ function makeCritter(o,withTools){
   const fc=document.createElement('canvas');fc.width=FACE.W;fc.height=FACE.H;const ftex=new THREE.CanvasTexture(fc);ftex.anisotropy=4;
   const face=mk(faceGeo,new THREE.MeshToonMaterial({map:ftex,gradientMap:gradMap,transparent:true,depthWrite:false,alphaTest:0.02}),0,cy,0);
   face.scale.set(RR*sx*1.012,RR*sy*1.012,RR*sz*1.012);face.renderOrder=2;m.add(face);
-  const dims={sx,sy,cy,RR};let faceMode='';
-  const setFace=mode=>{if(mode===faceMode)return;faceMode=mode;drawFace(fc.getContext('2d'),o,mode,dims);ftex.needsUpdate=true;};
+  const dims={sx,sy,cy,RR};let shown='',want='open',blinkOn=false,blinkT=0.5+Math.random()*4,dbl=false;
+  const draw=mode=>{if(mode===shown)return;shown=mode;drawFace(fc.getContext('2d'),o,mode,dims);ftex.needsUpdate=true;};
+  const setFace=mode=>{want=mode;draw(blinkOn&&mode==='open'?'sleep':mode);};
+  // 眨眼：每隔幾秒閉眼一下（偶爾連眨兩次）
+  const blink=dt=>{blinkT-=dt;if(blinkT>0)return;
+    if(blinkOn){blinkOn=false;draw(want);if(dbl){dbl=false;blinkT=0.12;}else blinkT=2.2+Math.random()*3.8;}
+    else{if(want!=='open'){blinkT=0.5;return;}blinkOn=true;draw('sleep');blinkT=0.11;if(!dbl&&Math.random()<0.2)dbl=true;}};
   setFace('open');
   const topY=cy+RR*sy;
   const fz=(x,y)=>{const a=x/(RR*sx),b=(y-cy)/(RR*sy);const v=1-a*a-b*b;return v>0?Math.sqrt(v)*RR*sz:0;};
@@ -159,6 +195,7 @@ function makeCritter(o,withTools){
     m.add(mk(new THREE.BoxGeometry(Math.max(0.02,o.eyeGap*2-0.26*o.eyeSize),0.02,0.02),gm,0,o.eyeY+0.02,fz(0,o.eyeY)+0.03));}
   const T=withTools?buildTools(hold):{};
   shadowAll(g);g.traverse(o=>{if(o.isMesh&&o!==body)o.castShadow=false;});
+  BLINKERS.push({g,blink});
   return{g,m,face,setFace,legs,arms,hold,T,tail,bodyM,o,lob,sq:0,sqv:0,topY};
 }
 function makeSlime(night,size=1,color=null,angry=false){

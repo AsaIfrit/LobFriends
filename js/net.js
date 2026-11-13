@@ -2,7 +2,7 @@
 let room=null,netConn=false,netPeers=[],netTimer=0,netLookKey='',myEmote=null,myChat=null;
 const remotes=new Map();
 function netArea(){return ply.cave?'cave':'out';}
-function netAnim(){if(ply.sleeping)return'sleep';if(ply.sitting)return ply.sitting.kind==='bath'?'bath':'sit';if(ply.fishing)return'fish';if(ply.atkT>=0)return'atk';if(ply.act)return'act';if(!ply.ground)return'air';
+function netAnim(){if(ply.downed)return'down';if(ply.reviving)return'act';if(ply.sleeping)return'sleep';if(ply.sitting)return ply.sitting.kind==='bath'?'bath':'sit';if(ply.fishing)return'fish';if(ply.atkT>=0)return'atk';if(ply.act)return'act';if(!ply.ground)return'air';
   const k=keys,mv=(joy.id!==null&&Math.hypot(joy.x,joy.y)>0.05)||k.KeyW||k.KeyA||k.KeyS||k.KeyD||k.ArrowUp||k.ArrowDown||k.ArrowLeft||k.ArrowRight;
   if(!mv)return'idle';return(k.ShiftLeft||k.ShiftRight||(joy.id!==null&&Math.hypot(joy.x,joy.y)>0.95))?'run':'walk';}
 const LOOK_KEYS=['earSize','earGap','earY','tailSize','tailY','tailZ','species','body','accent','ears','tail','eyes','eyeSize','eyeGap','eyeY','eyeColor','brow','browSize','browGap','browY','lash','lashSize','lashGap','lashY','mouth','mouthSize','mouthW','mouthY','blushShape','blushColor','blushSize','blushGap','blushY'];
@@ -30,11 +30,11 @@ function sbClearRemotes(){for(const[k,r]of remotes){scene.remove(r.c.g);}remotes
 function sbInit(){const c=window.LOBSTER_CONFIG;
   const url=String(c.SUPABASE_URL).trim().replace(/\/(rest|auth|realtime|storage)\/v1.*$/,'').replace(/\/+$/,'');
   try{sbClient=window.supabase.createClient(url,String(c.SUPABASE_ANON_KEY).trim());}catch(e){sbErr='設定錯誤';updNetBadge();return;}
-  room={presence:async p=>{if(!sbCh||!netConn)return;const now=performance.now();const key=JSON.stringify([p.x,p.z,p.y,p.f,p.an,p.ar,p.w,p.em,p.ch,p.sx]);
+  room={presence:async p=>{if(!sbCh||!netConn)return;const now=performance.now();const key=JSON.stringify([p.x,p.z,p.y,p.f,p.an,p.ar,p.w,p.em,p.ch,p.sx,p.pt,p.dn,p.lv,Math.round((p.hp||0)*10)]);
       if(p.lk||p.n!==sbState._n){sbCh.track({n:p.n,lk:compactLook()}).catch(()=>{});sbState._n=p.n;}
       const urgent=(p.em&&p.em!==sbState._em)||(p.ch&&p.ch!==sbState._ch);
       const np=sbState.size+1,iv=Math.min(6000,Math.max(330,np*np/80*1000));if(key===sbLastKey&&now-sbLastSend<Math.max(4000,iv))return;if(!urgent&&now-sbLastSend<iv)return;
-      sbState._em=p.em;sbState._ch=p.ch;sbLastKey=key;sbLastSend=now;const q=Object.assign({},p);delete q.lk;sbCh.send({type:'broadcast',event:'s',payload:Object.assign(q,{id:myNetId})}).catch(()=>{});}};
+      sbState._em=p.em;sbState._ch=p.ch;sbLastKey=key;sbLastSend=now;const q=Object.assign({},p);delete q.lk;delete q.mq;delete q.mon;sbCh.send({type:'broadcast',event:'s',payload:Object.assign(q,{id:myNetId})}).catch(()=>{});}};
   setInterval(()=>{const now=performance.now();let ch=false;for(const[id,st]of sbState)if(now-(st._t||0)>20000){const r=remotes.get(id);if(r){scene.remove(r.c.g);remotes.delete(id);}sbState.delete(id);ch=true;}if(ch)sbRebuild();},5000);
   const pref=sbPref();sbJoin(pref||1,!pref);}
 function sbJoin(n,auto){const c=window.LOBSTER_CONFIG;
@@ -43,6 +43,7 @@ function sbJoin(n,auto){const c=window.LOBSTER_CONFIG;
   const ch=sbClient.channel((c.ROOM||'lobster-world')+'-'+n,{config:{broadcast:{self:false},presence:{key:myNetId}}});sbCh=ch;
   ch.on('broadcast',{event:'s'},({payload})=>{if(ch!==sbCh||!payload||payload.id===myNetId)return;const id=String(payload.id).slice(0,20);const old=sbState.get(id);
     const st=Object.assign({},old||{},payload);st._t=performance.now();const isNew=!old||typeof old.x!=='number';sbState.set(id,st);if(isNew&&st.n&&started)toast(`👋 ${cleanTxt(st.n,10)} 上線了`);sbRebuild();});
+  ch.on('broadcast',{event:'m'},({payload})=>{if(ch===sbCh&&typeof onNetMsg==='function')onNetMsg(payload);});
   ch.on('presence',{event:'sync'},()=>{if(ch!==sbCh)return;const ps=ch.presenceState();for(const id in ps){if(id===myNetId)continue;const meta=ps[id][0]||{};const old=sbState.get(id)||{};
       sbState.set(id,Object.assign(old,{n:meta.n,lk:meta.lk,_t:old._t||performance.now()}));}
     for(const id of[...sbState.keys()])if(!ps[id]){const r=remotes.get(id);if(r){scene.remove(r.c.g);remotes.delete(id);if(r.name)toast(`${r.name} 離線了`);}sbState.delete(id);}sbRebuild();});
@@ -63,7 +64,8 @@ $('netBadge').addEventListener('click',()=>{const o=others();toast(o.length?'線
 
 function netSend(){if(!room||!started)return;
   const p={v:1,n:cleanTxt(look.name,10),x:+ply.x.toFixed(2),z:+ply.z.toFixed(2),y:+ply.y.toFixed(2),f:+ply.face.toFixed(2),ar:netArea(),an:netAnim(),
-    w:(toolShow||ply.held&&P.T[ply.held]&&ply.held||wpnModel())||'stick',cb:ply.combo||0};
+    w:(toolShow||ply.held&&P.T[ply.held]&&ply.held||wpnModel())||'stick',cb:ply.combo||0,id:myNetId,pt:(typeof party!=='undefined'&&party)?party.pid:0,hp:+(Math.max(0,ply.hp)/ply.max).toFixed(2),dn:ply.downed?1:0,lv:ply.cave?caveLv:0};
+  if(!sbClient&&typeof outbox!=='undefined'){const now=performance.now();const mq=outbox.filter(x=>now-x[2]<3000).map(x=>[x[0],x[1]]);if(mq.length)p.mq=mq;if(roomMon)p.mon=roomMon;}
   if(ply.sleeping||ply.sitting){const s=(ply.sleeping||ply.sitting).p;p.sx=+s.x.toFixed(2);p.sz=+s.z.toFixed(2);p.sr=+s.ry.toFixed(2);p.sid=s.id;}
   const lk=JSON.stringify(compactLook());if(lk!==netLookKey){netLookKey=lk;p.lk=compactLook();}
   if(myEmote)p.em=myEmote;if(myChat)p.ch=myChat;
@@ -73,31 +75,37 @@ function netSend(){if(!room||!started)return;
 function buildRemote(peer,pr){const lk=Object.assign({},DEF_LOOK,pr.lk||{});const c=makeCritter(lk,true);const name=cleanTxt(pr.n,10)||'旅人';
   const tag=nameTag(name);tag.position.y=2.4;tag.material.color.setHex(0xd8f0ff);c.g.add(tag);scene.add(c.g);
   return{c,name,lkKey:JSON.stringify(pr.lk||{}),x:pr.x,z:pr.z,y:pr.y,f:pr.f,walk:0,pose:newPose(),emTs:0,chTs:0,bubble:null,bubT:0,atkT:0,lastAn:''};}
-function remoteBubble(r,txt,isEmoji){if(r.bubble){r.c.g.remove(r.bubble);r.bubble.material.map.dispose();}
-  const cv=document.createElement('canvas');const W=isEmoji?128:512,Hh=128;cv.width=W;cv.height=Hh;const g=cv.getContext('2d');
-  g.fillStyle='rgba(255,255,255,.96)';g.strokeStyle='#f0b8a0';g.lineWidth=6;const rr=40;g.beginPath();g.moveTo(rr,6);g.arcTo(W-6,6,W-6,Hh-26,rr);g.arcTo(W-6,Hh-26,6,Hh-26,rr);g.arcTo(6,Hh-26,6,6,rr);g.arcTo(6,6,W-6,6,rr);g.fill();g.stroke();
+function remoteBubble(r,txt,isEmoji){if(r.bubble){if(r.bubble.parent)r.bubble.parent.remove(r.bubble);r.bubble.material.map.dispose();}
+  const cv=document.createElement('canvas');const g0=cv.getContext('2d');const FONT=isEmoji?'64px sans-serif':'900 40px "Zen Maru Gothic",sans-serif';g0.font=FONT;
+  let lines=[txt];if(!isEmoji){const maxW=620;lines=[];let cur='';for(const ch of[...txt]){if(g0.measureText(cur+ch).width>maxW&&cur){lines.push(cur);cur=ch;}else cur+=ch;}if(cur)lines.push(cur);}
+  const tw=isEmoji?64:Math.max(...lines.map(l=>g0.measureText(l).width));const W=Math.max(128,Math.ceil(tw+70)),LH=50,Hh=Math.max(128,lines.length*LH+70);cv.width=W;cv.height=Hh;const g=cv.getContext('2d');
+  g.fillStyle='rgba(255,255,255,.96)';g.strokeStyle='#f0b8a0';g.lineWidth=6;const rr=Math.min(40,(Hh-26)/2-4);g.beginPath();g.moveTo(rr+6,6);g.arcTo(W-6,6,W-6,Hh-26,rr);g.arcTo(W-6,Hh-26,6,Hh-26,rr);g.arcTo(6,Hh-26,6,6,rr);g.arcTo(6,6,W-6,6,rr);g.fill();g.stroke();
   g.beginPath();g.moveTo(W/2-12,Hh-28);g.lineTo(W/2,Hh-6);g.lineTo(W/2+12,Hh-28);g.fill();
-  g.fillStyle='#6b4a3e';g.font=isEmoji?'64px sans-serif':'900 40px "Zen Maru Gothic",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,W/2,(Hh-22)/2+2);
-  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthWrite:false,transparent:true}));s.scale.set(isEmoji?0.9:3.6,0.9,1);s.position.y=3.1;s.renderOrder=15;r.c.g.add(s);r.bubble=s;r.bubT=3;r.bubPop=0;r.bubEnd=performance.now()+3000;}
+  g.fillStyle='#6b4a3e';g.font=FONT;g.textAlign='center';g.textBaseline='middle';const top=(Hh-22)/2-(lines.length-1)*LH/2+2;lines.forEach((l,k)=>g.fillText(l,W/2,top+k*LH));
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthWrite:false,transparent:true}));const k=0.9/128;s.scale.set(W*k,Hh*k,1);s.center.set(0.5,0);s.position.y=2.7;s.renderOrder=15;r.c.g.add(s);r.bubble=s;r.bubT=3;r.bubPop=0;r.bubEnd=performance.now()+3000;r.bubH=Hh*k;}
 const myBub={c:{g:null}};
 function netFrame(dt,T){
   if(!started)return;
   netTimer-=dt;if(netTimer<=0){netTimer=0.1;netSend();}
   myBub.c.g=P.g;if(myBub.bubble&&myBub.bubT>0&&myBub.bubble.parent!==P.g){P.g.add(myBub.bubble);}
-  if(myBub.bubT>0){myBub.bubT-=dt;myBub.bubPop=Math.min(1,(myBub.bubPop||0)+dt*5);myBub.bubble.scale.y=0.9*easeOutBack(myBub.bubPop);if(myBub.bubT<=0||performance.now()>myBub.bubEnd){myBub.bubT=0;P.g.remove(myBub.bubble);myBub.bubble=null;}}
+  if(myBub.bubT>0){myBub.bubT-=dt;myBub.bubPop=Math.min(1,(myBub.bubPop||0)+dt*5);myBub.bubble.scale.y=myBub.bubH*easeOutBack(myBub.bubPop);if(myBub.bubT<=0||performance.now()>myBub.bubEnd){myBub.bubT=0;P.g.remove(myBub.bubble);myBub.bubble=null;}}
   const area=netArea();const seen=new Set();
   for(const p of others()){const pr=p.presence;seen.add(p.peer);let r=remotes.get(p.peer);
-    if(!r){r=buildRemote(p.peer,pr);remotes.set(p.peer,r);}
+    if(!r){r=buildRemote(p.peer,pr);remotes.set(p.peer,r);if(typeof partyChanged==='function')setTimeout(partyChanged,0);}
+    r.nid=pr.id||p.peer;r.pr=pr;
+    if(Array.isArray(pr.mq)&&typeof onNetMsg==='function'){for(const[sq,o]of pr.mq){if(sq>(r.mqSeen||0)){r.mqSeen=sq;if(o&&typeof o==='object'){o.f=r.nid;onNetMsg(o);}}}}
+    if(pr.mon&&pr.mon.s!==r.monSeen&&typeof onMonState==='function'){r.monSeen=pr.mon.s;onMonState(r.nid,pr.mon);}
     else if(pr.lk&&JSON.stringify(pr.lk)!==r.lkKey){const old=r;scene.remove(old.c.g);r=buildRemote(p.peer,pr);r.x=old.x;r.z=old.z;r.y=old.y;r.f=old.f;remotes.set(p.peer,r);}
     const vis=pr.ar===area&&area!=='home'&&Math.hypot(pr.x-ply.x,pr.z-ply.z)<90;r.c.g.visible=vis;if(!vis)continue;
     if(Math.hypot(pr.x-r.x,pr.z-r.z)>12){r.x=pr.x;r.z=pr.z;}
     const k=1-Math.exp(-12*dt);const dx=pr.x-r.x,dz=pr.z-r.z;r.x+=dx*k;r.z+=dz*k;r.y+=(pr.y-r.y)*k;r.f+=angDiff(r.f,pr.f)*k;
     const an=pr.an;const moving=an==='walk'||an==='run';if(moving)r.walk+=dt*(an==='run'?16:8);
     const c=r.c;const show=(pr.w&&c.T[pr.w])?pr.w:'stick';for(const t in c.T)c.T[t].visible=(t===show)&&an!=='sit'&&an!=='bath'&&an!=='sleep';
-    if(an==='sleep'||an==='bath'||an==='sit'){const ry=(pr.sr||0)+(an==='bath'?Math.PI/2:0);c.g.position.set(pr.sx??r.x,r.y+(an==='sleep'?0.62*fsOf(pr.sid||'bed'):an==='bath'?0.32:0.38*fsOf(pr.sid||'chair')),pr.sz??r.z);c.g.rotation.y=ry;
+    if(an==='down'){c.g.position.set(r.x,r.y,r.z);c.g.rotation.y=r.f;c.m.rotation.set(-Math.PI/2,0,0);c.m.position.set(0,0.6,0.45);c.setFace('sleep');for(const t in c.T)c.T[t].visible=false;}
+    else if(an==='sleep'||an==='bath'||an==='sit'){const ry=(pr.sr||0)+(an==='bath'?Math.PI/2:0);c.g.position.set(pr.sx??r.x,r.y+(an==='sleep'?0.62*fsOf(pr.sid||'bed'):an==='bath'?0.32:0.38*fsOf(pr.sid||'chair')),pr.sz??r.z);c.g.rotation.y=ry;
       if(an==='sleep'){c.m.rotation.set(-Math.PI/2,0,0);c.m.position.set(0,0.72,0.45*fsOf(pr.sid||'bed'));c.setFace('sleep');}
       else{const ps=newPose();ps.legs=an==='bath'?[-1,-1.2]:[-1.45,-1.45];if(an==='bath'){ps.lean=-1.15;ps.arms=[[0.3,0,-1.5],[0.3,0,1.5]];}applyPose(c,ps,dt);c.setFace(an==='bath'?'happy':'open');}
-    }else{c.g.position.set(r.x,r.y,r.z);c.g.rotation.y=r.f;if(r.lastAn==='sleep'){c.m.rotation.set(0,0,0);c.m.position.set(0,0,0);}c.setFace('open');
+    }else{c.g.position.set(r.x,r.y,r.z);c.g.rotation.y=r.f;if(r.lastAn==='sleep'||r.lastAn==='down'){c.m.rotation.set(0,0,0);c.m.position.set(0,0,0);}c.setFace('open');
       let ps=walkPose(newPose(),r.walk,moving,T,r.x);if(an==='run'){ps.lean=0.3;ps.legs=[Math.sin(r.walk)*0.9,-Math.sin(r.walk)*0.9];ps.arms[0][0]=-Math.sin(r.walk)*1.1;ps.arms[1][0]=Math.sin(r.walk)*1.1;}
       if(an==='air'){ps.sq=0.12;ps.legs=[-0.6,0.35];ps.arms[0][2]=-1.25;ps.arms[1][2]=1.25;}
       if(an==='atk'||an==='act'){if(r.lastAn!==an)r.atkT=0;r.atkT+=dt;const s=(r.atkT%0.35)/0.35;ps.arms[0]=[-1.5,0,lerp(1.4,-1.3,easeOut(s))];ps.hold=Math.PI*0.95;ps.k=40;if(an==='act'){ps.arms[0]=[s<0.45?-2.8:-0.6,0,-0.2];ps.hold=2.3;ps.k=30;}}
@@ -107,7 +115,7 @@ function netFrame(dt,T){
     r.lastAn=an;
     if(Array.isArray(pr.em)&&pr.em[1]!==r.emTs){const first=r.emTs===0;r.emTs=pr.em[1];if(!first||Date.now()-pr.em[1]<3000){remoteBubble(r,cleanTxt(pr.em[0],4),true);c.sqv+=6;}}
     if(Array.isArray(pr.ch)&&pr.ch[1]!==r.chTs){const first=r.chTs===0;r.chTs=pr.ch[1];if(!first||Date.now()-pr.ch[1]<6000){const t=cleanTxt(pr.ch[0],24);if(t){remoteBubble(r,t,false);r.bubT=6;r.bubEnd=performance.now()+6000;addChatLog(r.name,t);}}}
-    if(r.bubT>0){r.bubT-=dt;r.bubPop=Math.min(1,(r.bubPop||0)+dt*5);if(r.bubble)r.bubble.scale.y=0.9*easeOutBack(r.bubPop);if((r.bubT<=0||performance.now()>r.bubEnd)&&r.bubble){r.bubT=0;r.c.g.remove(r.bubble);r.bubble=null;}}
+    if(r.bubT>0){r.bubT-=dt;r.bubPop=Math.min(1,(r.bubPop||0)+dt*5);if(r.bubble)r.bubble.scale.y=r.bubH*easeOutBack(r.bubPop);if((r.bubT<=0||performance.now()>r.bubEnd)&&r.bubble){r.bubT=0;r.c.g.remove(r.bubble);r.bubble=null;}}
     r.c.g.children.forEach(ch=>{if(ch.isSprite&&ch!==r.bubble)ch.visible=Math.hypot(r.x-ply.x,r.z-ply.z)<20;});
   }
   for(const[k,r]of remotes)if(!seen.has(k)){scene.remove(r.c.g);remotes.delete(k);}

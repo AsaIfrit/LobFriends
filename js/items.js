@@ -34,7 +34,11 @@ const ITEMS={
   bathtub:{n:'浴缸',i:'🛁',k:'furn',d:'可以泡澡回精神',r:1.45,bath:true},
   rug:{n:'圓地毯',i:'🟣',k:'furn',d:'可以踩上去',r:0},
   shelf:{n:'書櫃',i:'📚',k:'furn',d:'放滿了繪本',r:0.8},
-  churro:{n:'吉拿棒',i:'🥖',k:'skin',d:'劍的外觀造型，攻擊時會彈出星星！點一下切換'},
+  churro:{n:'吉拿棒',i:'🥖',k:'skin',for:'sword',model:'churro',d:'劍的外觀造型，攻擊時會彈出星星！點一下切換'},
+  skin_flame:{n:'火焰之劍',i:'🔥',k:'skin',for:'sword',model:'flame',d:'劍的外觀・火花與火焰軌跡'},
+  skin_thunder:{n:'雷電長槍',i:'⚡',k:'skin',for:'spear',model:'thunder',d:'長槍的外觀・紫色雷電'},
+  skin_wind:{n:'旋風之弓',i:'🍃',k:'skin',for:'bow',model:'windbow',d:'弓的外觀・淺綠光束箭'},
+  skin_ice:{n:'冰凍之杖',i:'❄️',k:'skin',for:'staff',model:'icestaff',d:'法杖的外觀・冰晶法球'},
   plush:{n:'龍蝦精靈娃娃',i:'🦞',k:'furn',d:'軟綿綿的龍蝦精靈布偶擺設',r:0.45},
   crystal:{n:'水晶',i:'🔮',k:'mat',price:30,d:'洞窟深處的閃亮礦物，可以賣錢'},
   plank:{n:'木塊',i:'🟫',k:'block',d:'拿在手上可以蓋木方塊，會自動對齊'}

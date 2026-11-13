@@ -98,6 +98,20 @@ body.building #btnAtk{display:none!important}
 #gRes{min-height:58px;text-align:center;font-weight:900;color:#7a4a5a;font-size:17px}
 #gRes .pet{font-size:64px;display:block;animation:popIn .6s var(--spring)}
 #gList{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:22px;margin:4px 0 10px}
+#partyBox{position:fixed;left:10px;top:200px;z-index:6;display:none;background:rgba(255,250,244,.92);border:3px solid #fff;border-radius:16px;padding:6px 9px;box-shadow:0 4px 0 rgba(200,140,110,.3);min-width:150px}
+#partyBox.on{display:block;animation:popIn .4s var(--spring)}#partyBox h4{margin:0 0 3px;font-size:12px;color:#7a4a3e;display:flex;justify-content:space-between;align-items:center}
+#partyBox .pm{font-size:11.5px;font-weight:900;color:#6b4a3e;margin:3px 0}#partyBox .pm i{display:block;height:6px;border-radius:4px;background:#f2dcd4;overflow:hidden;margin-top:2px}#partyBox .pm i b{display:block;height:100%;background:linear-gradient(90deg,#ff8fa3,#ff6f8f)}
+#partyBox .pm.dn{opacity:.6}#ptLeave{border:2px solid #fff;border-radius:10px;background:#ffd6d6;font-size:10px;font-weight:900;padding:1px 6px;color:#8a3a3a}
+#invBox{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:40;display:none;background:var(--cream);border:3px solid #fff;border-radius:20px;padding:10px 14px;box-shadow:0 6px 0 rgba(200,140,110,.35);text-align:center;font-weight:900;color:#6b4a3e}
+#invBox.on{display:block;animation:popIn .45s var(--spring)}#invBox div{display:flex;gap:8px;justify-content:center;margin-top:8px}
+#downBox{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:20;display:none;background:rgba(60,40,60,.82);color:#fff;border:3px solid #fff;border-radius:20px;padding:12px 18px;text-align:center;font-weight:900;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+#downBox.on{display:block;animation:popIn .45s var(--spring)}#downBox p{margin:4px 0 10px;font-size:13px;opacity:.9}#downBox div{display:flex;gap:8px;justify-content:center}
+body.downed #btnAtk,body.downed #btnAct,body.downed #btnJump,body.downed #joyBase{display:none!important}
+#revBar{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);z-index:19;display:none;width:240px;background:rgba(255,250,244,.95);border:3px solid #fff;border-radius:16px;padding:6px 10px;text-align:center;font-weight:900;font-size:12.5px;color:#6b4a3e;box-shadow:0 4px 0 rgba(200,140,110,.3)}
+#revBar.on{display:block}#revBar i{display:block;height:10px;border-radius:6px;background:#f2dcd4;overflow:hidden;margin-top:4px}#revFill{display:block;height:100%;width:0;background:linear-gradient(90deg,#9ff0c8,#ff9ec7)}
+#bossBar{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:7;display:none;width:min(60vw,420px);text-align:center;font-weight:900;color:#fff;text-shadow:0 2px 0 #8a2a4a}
+#bossBar.on{display:block;animation:popIn .5s var(--spring)}#bossBar i{display:block;height:14px;border-radius:8px;background:rgba(60,30,50,.6);border:2px solid #fff;overflow:hidden;margin-top:3px}#bossFill{display:block;height:100%;background:linear-gradient(90deg,#ff6f9f,#ffb36e)}
+#bossBar small{font-size:11px}
 #decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:linear-gradient(140deg,#ffd36e,#ffb38a);color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35)}
 body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 /* 擺放中按鈕 */
@@ -378,7 +392,12 @@ body.ingame #start{display:none!important}
 <div id="social"><div class="sbox"><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
 <div id="hotbar"></div>
-<button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><span>👁️</span></button><div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>😊</span>表情</button><button class="btn game" id="btnDel"><span>🔨</span>拆方塊</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
+<button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><span>👁️</span></button><div id="partyBox"><h4><span>🤝 隊伍</span><button id="ptLeave">離開</button></h4><div id="ptList"></div></div>
+<div id="invBox"><span id="invTxt"></span><div><button class="qb pink" id="invYes">接受</button><button class="qb lav" id="invNo">拒絕</button></div></div>
+<div id="downBox">💫 你倒下了<p>等待隊友來救助，或是直接返回重生點</p><div><button class="qb" disabled>⏳ 等待救援中…</button><button class="qb pink" id="downHome">返回重生點</button></div></div>
+<div id="revBar"><span id="revTxt"></span><i><b id="revFill"></b></i></div>
+<div id="bossBar">👑 果凍王 <small id="bossHp"></small><i><b id="bossFill"></b></i></div>
+<div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>😊</span>表情</button><button class="btn game" id="btnDel"><span>🔨</span>拆方塊</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
 <button class="btn game" id="btnAct"><span id="actIcon">🤚</span><b id="actTxt">互動</b></button>
 <button class="btn game" id="btnAtk"><span id="atkIcon">⚔️</span><b>攻擊</b></button>
 <div id="sleepUI"><div class="tag">💤 睡覺中・時間 ×5 流動</div><button class="btn" id="wakeBtn"><span>☀️</span>起床</button></div>
@@ -473,16 +492,17 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261113f"></script>
+<script src="config.js?v=20261114b"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261113f"></script>
-<script src="js/audio.js?v=20261113f"></script>
-<script src="js/items.js?v=20261113f"></script>
-<script src="js/critter.js?v=20261113f"></script>
-<script src="js/world.js?v=20261113f"></script>
-<script src="js/game.js?v=20261113f"></script>
-<script src="js/ui.js?v=20261113f"></script>
-<script src="js/extra.js?v=20261113f"></script>
-<script src="js/net.js?v=20261113f"></script>
+<script src="js/engine.js?v=20261114b"></script>
+<script src="js/audio.js?v=20261114b"></script>
+<script src="js/items.js?v=20261114b"></script>
+<script src="js/critter.js?v=20261114b"></script>
+<script src="js/world.js?v=20261114b"></script>
+<script src="js/game.js?v=20261114b"></script>
+<script src="js/ui.js?v=20261114b"></script>
+<script src="js/extra.js?v=20261114b"></script>
+<script src="js/net.js?v=20261114b"></script>
+<script src="js/party.js?v=20261114b"></script>
 </body>
 </html>

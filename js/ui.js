@@ -129,7 +129,7 @@ $('dlg').addEventListener('click',()=>{if(!dlg)return;
 function endTalk(){clearInterval(typeTimer);if(dlg)dlg.n.talking=false;dlg=null;$('dlg').style.display='none';paused=false;SFX.close();}
 
 // ---------- 物品欄 ----------
-const HB_ORDER=['churro','sword','spear','bow','staff','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
+const HB_ORDER=['skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
 // 10 格快捷欄（1~0）＋背包
 let hb=new Array(10).fill(null),hbKeys=hb;
 const AUTO_HB=k=>['weapon','held','seed','furn','food','block','skin'].includes(ITEMS[k].k);
@@ -142,18 +142,18 @@ function renderHotbar(changed){
   if(ply.weapon!=='stick'&&!(inv[ply.weapon]>0)){ply.weapon='stick';refreshHeld();}
   const cur=curSlot();
   $('hotbar').innerHTML=hb.map((k,i)=>{const num=`<u>${(i+1)%10}</u>`;if(!k)return`<button class="slot empty" data-i="${i}">${num}</button>`;
-    const it=ITEMS[k];const sel=k===cur;const eq=ply.weapon===k||(k==='churro'&&ply.skin==='churro');const cnt=(it.k==='tool'||it.k==='weapon'||it.k==='held'||it.k==='skin')?'':`<i>${inv[k]}</i>`;
+    const it=ITEMS[k];const sel=k===cur;const eq=ply.weapon===k||(it.k==='skin'&&ply.skins&&ply.skins[it.for]===k);const cnt=(it.k==='tool'||it.k==='weapon'||it.k==='held'||it.k==='skin')?'':`<i>${inv[k]}</i>`;
     const dot=it.k==='bug'?`<span class="bugdot" style="background:${it.col}"></span>`:'';
     return`<button class="slot ${sel?'sel':''} ${eq?'eq':''}" data-i="${i}" data-k="${k}" title="${it.n}">${num}${dot}${it.i}${cnt}</button>`;}).join('')+`<button class="slot bagBtn" id="bagBtn" title="背包 (B)">🎒</button>`;
   if(changed){const el=$('hotbar').querySelector(`[data-k="${changed}"]`);el?bump(el):bump($('bagBtn'));}
   if($('bag').classList.contains('show'))renderBag(false);
 }
-function updateAtkIcon(){$('atkIcon').textContent={churro:'🥖',stick:'⚔️',sword:'🗡️',spear:'🔱',bow:'🏹',staff:'🪄'}[wpnModel()];}
+function updateAtkIcon(){$('atkIcon').textContent={flame:'🔥',thunder:'⚡',windbow:'🍃',icestaff:'❄️',churro:'🥖',stick:'⚔️',sword:'🗡️',spear:'🔱',bow:'🏹',staff:'🪄'}[wpnModel()];}
 function useSlot(k){const it=ITEMS[k];if(!it)return;
   if(it.k==='weapon'){ply.weapon=ply.weapon===k?'stick':k;ply.held=null;if(carry)carryCancel();refreshHeld();updateAtkIcon();showHbLabel(ply.weapon==='stick'?'收起武器':`${it.i} ${it.n}`);SFX.click();}
   else if(it.k==='held'||it.k==='seed'||it.k==='block'){if(carry)carryCancel();ply.held=ply.held===k?null:k;if(ply.held==='plank')showHbLabel('🟫 木塊：對準位置按「蓋方塊」，可按 👁️ 切第一人稱');refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
   else if(it.k==='furn'){if(carry&&carry.id===k&&!carry.orig)carryCancel();else{if(carry)carryCancel();ply.held=null;startCarry(k,null);showHbLabel(`${it.i} ${it.n}：按「放置」放下`);}}
-  else if(it.k==='skin'){ply.skin=ply.skin==='churro'?null:'churro';refreshHeld();showHbLabel(ply.skin?'🥖 劍換成吉拿棒造型！':'🗡️ 換回木劍造型');updateAtkIcon();SFX.click();if(ply.skin&&!has('sword'))toast('先做一把 🗡️ 木劍，裝備時就會變成吉拿棒喔');save();}
+  else if(it.k==='skin'){const w=it.for;ply.skins=ply.skins||{};ply.skins[w]=ply.skins[w]===k?null:k;refreshHeld();const WN={sword:'🗡️ 木劍',spear:'🔱 長槍',bow:'🏹 弓箭',staff:'🪄 法杖'}[w];showHbLabel(ply.skins[w]?`${it.i} ${WN}換成「${it.n}」外觀！`:`換回${WN}原本的外觀`);updateAtkIcon();SFX.click();if(ply.skins[w]&&!has(w))toast(`先做一把${WN}，裝備時就會變成${it.n}喔`);save();}
   else if(it.k==='food'){inv[k]--;ply.hp=Math.min(ply.max,ply.hp+(it.hp||2));ply.en=Math.min(100,ply.en+(it.en||5));SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);floatTxt(`💗＋⚡${it.en||5}`,innerWidth/2,innerHeight*0.45);updateHUD();save();}
   else toast(`${it.i} ${it.n}${it.d?'：'+it.d:''}${inv[k]>1?' ×'+inv[k]:''}`);
   renderHotbar();}
@@ -168,7 +168,7 @@ let hbLabelT=null;
 function showHbLabel(txt){let el=$('hbLabel');if(!el){el=document.createElement('div');el.id='hbLabel';document.body.appendChild(el);}el.textContent=txt;el.classList.remove('hide');bump(el,'lblIn');clearTimeout(hbLabelT);hbLabelT=setTimeout(()=>el.classList.add('hide'),1200);}
 $('hotbar').addEventListener('click',e=>{const b=e.target.closest('.slot');if(!b)return;if(b.id==='bagBtn'){openBag();return;}const i=+b.dataset.i;if(hb[i])useHb(i);else openBag();});
 // ---------- 背包 ----------
-const BAG_ORDER=['churro','sword','spear','bow','staff','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
+const BAG_ORDER=['skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
   'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem','crystal',...Object.keys(BUGS)];
 const BAG_TABS=[['all','全部'],['gear','裝備'],['use','食物種子'],['furn','家具'],['mat','素材']];
 const tabOf=k=>{const t=ITEMS[k].k;return t==='weapon'||t==='tool'||t==='held'||t==='skin'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
@@ -321,11 +321,11 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skin:ply.skin||null,cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
-function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',skin:d.skin||null,indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
+function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',skins:d.skins||(d.skin?{sword:d.skin}:{}),indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
   (d.pets||[]).forEach(([a,f],i)=>{if(pets[i]){setAff(pets[i],a);pets[i].follow=!!f;}});
   Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});coinShown=ply.coins;$('coins').textContent=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
   for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const b of d.blocks||[])blocks.set(bKey(b[0],b[1],b[2]),{i:b[0],j:b[1],k:b[2]});rebuildBlocks();
