@@ -112,17 +112,18 @@ const clsOpen=c=>c==='novice'||noviceDone();
 function renderTalents(anim=true){$('spInfo').textContent=ply.sp;const nd=noviceDone();
   const box=c=>{const C=CLASSES[c],lock=!clsOpen(c),pts=classPts(c),mx=classMax(c);return`<div class="tcls ${c==='novice'?'nov':''} ${talCls===c?'on':''} ${lock?'lock':''} ${pts>=mx?'full':''}" data-c="${c}">${C.i}<b>${C.n}</b><small>${lock?'🔒':pts+'/'+mx}</small></div>`;};
   const xs=[50,150,250,350,450];
-  let h=`<div id="tTree">${box('novice')}<svg viewBox="0 0 500 22" preserveAspectRatio="none"><path d="M250 0V11M50 11H450${xs.map(x=>`M${x} 11V22`).join('')}" stroke="#6b4a3e" stroke-width="3" fill="none" vector-effect="non-scaling-stroke"/></svg><div class="trow">${CLS_ORDER.map(box).join('')}</div></div>`;
+  const eqL=(typeof skillList==='function'?skillList():[]);
+  let h=`<div id="tEq"><b>⚔️ 攜帶技能</b>${[0,1].map(i=>{const k=eqL[i];return k?`<span class="teqs" data-uneq="${k}">${TALENTS[k].i} ${TALENTS[k].n} ✕</span>`:'<span class="teqs empty">空</span>';}).join('')}</div><div id="tTree">${box('novice')}<svg viewBox="0 0 500 22" preserveAspectRatio="none"><path d="M250 0V11M50 11H450${xs.map(x=>`M${x} 11V22`).join('')}" stroke="#6b4a3e" stroke-width="3" fill="none" vector-effect="non-scaling-stroke"/></svg><div class="trow">${CLS_ORDER.map(box).join('')}</div></div>`;
   const C=CLASSES[talCls],lock=!clsOpen(talCls);
   h+=`<div id="tDesc">${C.i} ${C.d}${lock?`<br>🔒 把初學者的天賦全部學滿才會開啟（目前 ${classPts('novice')}/${classMax('novice')}）`:talCls!=='novice'?'<br>不用選職業，每個職業的天賦都可以學！':''}</div>`;
   h+=classKeys(talCls).map((k,i)=>{const t=TALENTS[k];const rq=reqOK(k);
-    const tags=(t.w?`<span class="ttag">${ITEMS[t.w].i} ${WNAME[t.w]}</span>`:'')+(t.act?'<span class="ttag act">主動技能</span>':'')+(!rq?`<span class="ttag req">需要：${TALENTS[t.req[0]].n} Lv${t.req[1]}</span>`:'');
+    const tags=(t.w?`<span class="ttag">${ITEMS[t.w].i} ${WNAME[t.w]}</span>`:'')+(t.act?'<span class="ttag act">主動技能</span>':'')+(!rq?`<span class="ttag req">需要：${TALENTS[t.req[0]].n} Lv${t.req[1]}</span>`:'')+(t.act&&tal[k]>0?`<button class="teq ${eqL.includes(k)?'on':''}" data-eq="${k}">${eqL.includes(k)?'✅ 已攜帶':'攜帶'}</button>`:'');
     return`<div class="tbranch stg" style="--i:${Math.min(i,14)}"><div class="th">${t.i} ${t.n}${tags}</div><div class="tnodes">${t.nodes.map(([n,d],j)=>{
     const got=tal[k]>j,can=!got&&tal[k]===j&&ply.sp>0&&!lock&&rq;return`<div class="tnode ${got?'got':can?'can':(tal[k]<j||lock||!rq)?'lock':''}" data-t="${k}" data-j="${j}"><b>${got?'✅':can?'✨':'🔒'} ${n}</b>${d}</div>`;}).join('')}</div></div>`;}).join('');
   $('tList').innerHTML=h;if(!anim)noAnim($('tList'));}
-$('tList').addEventListener('click',e=>{const cb=e.target.closest('.tcls');if(cb){const c=cb.dataset.c;if(!clsOpen(c)){SFX.deny();toast(`🔒 先把初學者天賦全部學滿（${classPts('novice')}/${classMax('novice')}）`);return;}talCls=c;SFX.click();renderTalents();return;}
+$('tList').addEventListener('click',e=>{const eb=e.target.closest('[data-eq],[data-uneq]');if(eb){toggleEquip(eb.dataset.eq||eb.dataset.uneq);renderTalents(false);return;}const cb=e.target.closest('.tcls');if(cb){const c=cb.dataset.c;if(!clsOpen(c)){SFX.deny();toast(`🔒 先把初學者天賦全部學滿（${classPts('novice')}/${classMax('novice')}）`);return;}talCls=c;SFX.click();renderTalents();return;}
   const n=e.target.closest('.tnode.can');if(!n)return;const k=n.dataset.t;const wasNd=noviceDone();tal[k]++;ply.sp--;SFX.craft();const r=n.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,16);
-  const t=TALENTS[k];toast(t.c==='novice'?`學會了「${t.nodes[tal[k]-1][0]}」！`:`「${t.n}」提升到 Lv${tal[k]}！${t.act&&tal[k]===1?'（技能按鈕在攻擊鍵旁邊）':''}`);
+  const t=TALENTS[k];toast(t.c==='novice'?`學會了「${t.nodes[tal[k]-1][0]}」！`:`「${t.n}」提升到 Lv${tal[k]}！`);if(t.act&&tal[k]===1){skillList();if(ply.skEq.length<2){ply.skEq.push(k);setTimeout(()=>toast(`已自動攜帶「${t.n}」，技能按鈕在攻擊鍵旁邊`),300);}else setTimeout(()=>toast('技能欄已滿（最多 2 招），可以在這裡按「攜帶」替換'),300);}
   if(!wasNd&&noviceDone()){setTimeout(()=>{toast('🎉 初學者畢業！五大職業天賦開啟了！');SFX.levelup();},400);}
   recalcMax();renderTalents(false);bump(document.querySelector(`.tnode[data-t="${k}"][data-j="${tal[k]-1}"]`));if(typeof renderSkillBar==='function')renderSkillBar(true);updateHUD();save();});
 function openTalents(){if(!started||ply.sleeping)return;renderTalents();openPanel('talent');}
@@ -362,7 +363,7 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
@@ -373,7 +374,7 @@ function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
   for(const[type,name,f,a]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f;if(!f)sendHome(p);p.x=p.tx;p.z=p.tz;}
   for(const[gx,gz,wet,type,stage,g]of d.farm||[]){const t=till(gx,gz,false);setWet(t,!!wet);if(type){t.crop={type,stage,g};setCropStage(t,stage);t.crop.pop=1;t.crop.mesh.scale.setScalar(1);}}
-  ply.iday=d.iday;recalcMax();if(d.hp!==undefined)ply.hp=Math.min(ply.max,d.hp);
+  ply.iday=d.iday;ply.skEq=Array.isArray(d.skEq)?d.skEq.slice(0,2):[];recalcMax();if(d.hp!==undefined)ply.hp=Math.min(ply.max,d.hp);
   ply.hat=d.hat&&ITEMS[d.hat]&&inv[d.hat]>0?d.hat:null;look.hat=hatStyle();
   ply.y=ply.cave?0:standY(ply.x,ply.z,99);}
 

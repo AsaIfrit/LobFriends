@@ -89,11 +89,15 @@ const SKILLS={
 const SK_KEYS=['K','L','U','I','O'];
 const cdLeft={};
 const val=v=>typeof v==='function'?v():v;
-function skillList(){const L=Object.keys(SKILLS).filter(k=>TV(k)>0&&(!SKILLS[k].w||SKILLS[k].w===ply.weapon));L.sort((a,b)=>(SKILLS[a].w?0:1)-(SKILLS[b].w?0:1));return L.slice(0,5);}
+const SK_MAX=2;
+function skillList(){ply.skEq=(ply.skEq||[]).filter(k=>SKILLS[k]&&TV(k)>0).slice(0,SK_MAX);return ply.skEq;}
+const skWrong=k=>SKILLS[k].w&&SKILLS[k].w!==ply.weapon;
+function toggleEquip(k){skillList();const i=ply.skEq.indexOf(k);if(i>=0){ply.skEq.splice(i,1);toast(`卸下了「${TALENTS[k].n}」`);}else{if(ply.skEq.length>=SK_MAX){SFX.deny();toast(`最多只能裝備 ${SK_MAX} 招技能，先卸下一招吧`);return false;}ply.skEq.push(k);toast(`裝備了「${TALENTS[k].n}」！技能按鈕在攻擊鍵旁邊`);}SFX.click();renderSkillBar(true);save();return true;}
 function useSkill(k){const S=SKILLS[k];if(!S||!TV(k))return;
   if(!started||paused||ply.downed||ply.sleeping||ply.sitting||ply.riding||carry||ply.reviving||ply.leap){SFX.deny();return;}
   if(k==='r_song'&&ply.chan){endChan();return;}
   if(ply.cast||ply.chan){SFX.deny();return;}
+  if(skWrong(k)){SFX.deny();showHbLabel(`${TALENTS[k].i} 要拿著${ITEMS[SKILLS[k].w].i}${WNAME[SKILLS[k].w]}才能用「${TALENTS[k].n}」`);return;}
   if((cdLeft[k]||0)>0){SFX.deny();showHbLabel(`${TALENTS[k].i} ${TALENTS[k].n} 冷卻中… ${Math.ceil(cdLeft[k])} 秒`);return;}
   if(S.cost){for(const[it,n]of Object.entries(S.cost))if((inv[it]||0)<n){SFX.deny();toast(`${TALENTS[k].i} 需要 ${ITEMS[it].i}${ITEMS[it].n} ×${n} 才能煉成`);return;}for(const[it,n]of Object.entries(S.cost))inv[it]-=n;renderHotbar();}
   if(ply.atkT>=0)ply.atkT=-1;
@@ -225,11 +229,11 @@ function skillTick(dt,T){
 
 // ---------- 技能列 UI ----------
 let skKey='';
-function renderSkillBar(force){const L=skillList();const key=L.join(',')+'|'+innerWidth;const bar=$('skillBar');
-  if(key!==skKey||force){skKey=key;bar.innerHTML=L.map((k,i)=>`<button class="sk ${SKILLS[k].toggle&&ply.coinMode?'on':''}" data-k="${k}" title="${TALENTS[k].n}（${SK_KEYS[i]}）"><span>${TALENTS[k].i}</span><u>${SK_KEYS[i]}</u><i></i><b></b></button>`).join('');layoutSkills();}
+function renderSkillBar(force){const L=skillList();const key=L.join(',')+'|'+innerWidth+'|'+ply.weapon;const bar=$('skillBar');
+  if(key!==skKey||force){skKey=key;bar.innerHTML=L.map((k,i)=>`<button class="sk ${SKILLS[k].toggle&&ply.coinMode?'on':''}" data-k="${k}" title="${TALENTS[k].n}"><span>${TALENTS[k].i}</span><i></i><b></b></button>`).join('');layoutSkills();}
   bar.querySelectorAll('.sk').forEach(b=>{const k=b.dataset.k,S=SKILLS[k],left=Math.max(0,cdLeft[k]||0),tot=val(S.cd)*(1-0.1*TV('m_wisdom'));const f=left>0?left/tot:0;
     b.querySelector('i').style.background=f>0?`conic-gradient(rgba(70,40,60,.55) ${f*360}deg,transparent 0)`:'none';b.querySelector('b').textContent=left>0.05&&!S.toggle?Math.ceil(left):'';
-    b.classList.toggle('on',!!(S.toggle&&ply.coinMode)||(k==='r_song'&&!!ply.chan));b.classList.toggle('dim',left>0);});}
+    b.classList.toggle('on',!!(S.toggle&&ply.coinMode)||(k==='r_song'&&!!ply.chan));b.classList.toggle('dim',left>0||!!skWrong(k));});}
 function layoutSkills(){const btns=[...document.querySelectorAll('#skillBar .sk')];if(!btns.length)return;const a=$('btnAtk').getBoundingClientRect();if(!a.width)return;
   const cx=a.left+a.width/2,cy=a.top+a.height/2,mob=innerWidth<=560||innerHeight<=500;const R0=a.width/2+(mob?104:132);const angs=[188,163,138,113,88];
   btns.forEach((b,i)=>{const t=angs[i]*Math.PI/180;const w=b.offsetWidth||50;b.style.left=(cx+Math.cos(t)*R0-w/2)+'px';b.style.top=(cy-Math.sin(t)*R0-w/2)+'px';});}
