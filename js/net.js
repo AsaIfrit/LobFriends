@@ -63,7 +63,7 @@ $('netBadge').addEventListener('click',()=>{const o=others();toast(o.length?'線
 
 function netSend(){if(!room||!started)return;
   const p={v:1,n:cleanTxt(look.name,10),x:+ply.x.toFixed(2),z:+ply.z.toFixed(2),y:+ply.y.toFixed(2),f:+ply.face.toFixed(2),ar:netArea(),an:netAnim(),
-    w:(toolShow||ply.held&&P.T[ply.held]&&ply.held||ply.weapon)||'stick',cb:ply.combo||0};
+    w:(toolShow||ply.held&&P.T[ply.held]&&ply.held||wpnModel())||'stick',cb:ply.combo||0};
   if(ply.sleeping||ply.sitting){const s=(ply.sleeping||ply.sitting).p;p.sx=+s.x.toFixed(2);p.sz=+s.z.toFixed(2);p.sr=+s.ry.toFixed(2);p.sid=s.id;}
   const lk=JSON.stringify(compactLook());if(lk!==netLookKey){netLookKey=lk;p.lk=compactLook();}
   if(myEmote)p.em=myEmote;if(myChat)p.ch=myChat;

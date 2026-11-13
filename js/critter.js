@@ -74,6 +74,9 @@ function buildTools(hold){
   T.stick=G2();T.stick.add(mk(new THREE.CylinderGeometry(0.05,0.07,1.2,6),wood,0,0.55,0));{const lf=mk(new THREE.SphereGeometry(0.13,6,4),toon(0x8fd97a),0,1.05,0.08);lf.scale.set(1,0.4,1.6);T.stick.add(lf);}
   T.sword=G2();T.sword.add(mk(new THREE.CylinderGeometry(0.06,0.06,0.32,6),pinkC,0,0.12,0));T.sword.add(mk(new THREE.BoxGeometry(0.42,0.08,0.12),pinkC,0,0.3,0));
   T.sword.add(mk(new THREE.BoxGeometry(0.17,1.0,0.06),cream,0,0.85,0));{const tip=mk(new THREE.ConeGeometry(0.12,0.22,4),cream,0,1.46,0);tip.rotation.y=Math.PI/4;tip.scale.z=0.35;T.sword.add(tip);}
+  T.churro=G2();{const dough=toon(0xd9924a),sug=toon(0xfff3dc);T.churro.add(mk(new THREE.CylinderGeometry(0.11,0.12,0.36,8),toon(0xffffff),0,0.12,0));T.churro.add(mk(new THREE.CylinderGeometry(0.115,0.125,0.08,8),toon(0xff6f8f),0,0.2,0));
+    const c=mk(new THREE.CylinderGeometry(0.075,0.09,1.25,8),dough,0,0.85,0);T.churro.add(c);T.churro.add(mk(new THREE.SphereGeometry(0.075,8,6),dough,0,1.48,0));
+    for(let i=0;i<14;i++){const a=i*2.4;T.churro.add(mk(new THREE.SphereGeometry(0.022,5,4),sug,Math.cos(a)*0.085,0.35+i*0.08,Math.sin(a)*0.085));}}
   T.spear=G2();T.spear.add(mk(new THREE.CylinderGeometry(0.045,0.05,2.1,6),wood,0,0.7,0));T.spear.add(mk(new THREE.ConeGeometry(0.12,0.4,6),stoneC,0,1.95,0));
   {const rb=mk(new THREE.TorusGeometry(0.09,0.035,6,10),pinkC,0,1.68,0);rb.rotation.x=Math.PI/2;T.spear.add(rb);}
   T.bow=G2();{const arc=mk(new THREE.TorusGeometry(0.62,0.04,6,22,Math.PI*0.86),wood);arc.rotation.set(0,Math.PI/2,Math.PI/2+Math.PI*0.07);arc.position.z=-0.35;T.bow.add(arc);

@@ -54,34 +54,48 @@ function updateBuildGhost(T){
   bGhost.userData.m.material.color.setHex(mode==='del'?0xff9e6f:ok?0x8fdcb4:0xff6f6f);bGhost.userData.m.material.opacity=0.28+Math.sin(T*6)*0.08;bGhost.userData.e.material.color.setHex(mode==='del'?0xffd0b0:0xffffff);}
 
 // ---------- 遊樂園 ----------
-const PARK_OBS=obstacles.filter(o=>Math.hypot(o.x-PARK.x,o.z-PARK.z)<PARK.r+1&&o.r>0);
+const PARK_OBS=obstacles.filter(o=>Math.hypot(o.x-PARK.x,o.z-PARK.z)<PARK.r+1&&o.r>0&&!o.navOnly);
 function parkPush(n){for(const o of PARK_OBS){const dx=n.x-o.x,dz=n.z-o.z,d=Math.hypot(dx,dz),r=o.r+0.5;if(d<r&&d>1e-3){n.x=o.x+dx/d*r;n.z=o.z+dz/d*r;}}
   const dx=n.x-PARK.x,dz=n.z-PARK.z,d=Math.hypot(dx,dz);if(d>PARK.r-1&&!(n.away||Math.hypot(n.x-PARKV.gate.x,n.z-PARKV.gate.z)<5)){n.x=PARK.x+dx/d*(PARK.r-1);n.z=PARK.z+dz/d*(PARK.r-1);}}
 const parkRiders=[];
 {const looks=[{body:'#ff8fa3',accent:'#8a2a4a',eyes:'big',mouth:'open'},{species:'hamster',body:'#ffe6b8',accent:'#e8a070',ears:'round',mouth:'w'},{body:'#8fc8ff',accent:'#2a4a8a',mouth:'smile'},
-  {species:'hamster',body:'#f5f5f5',accent:'#c8c0b8',ears:'bunny',eyes:'dot'},{body:'#ffd36e',accent:'#8a5a1a',eyes:'star',mouth:'open'},{body:'#c4b2f0',accent:'#4a3268',mouth:'w'},{species:'hamster',body:'#c98a5a',accent:'#7a4a2a',ears:'bear'}];
- [['ferris',1],['ferris',4],['ferris',7],['carousel',0],['carousel',3],['carousel',5],['ferris',9]].forEach(([kind,i],n)=>{const c=makeCritter(Object.assign({species:'lobster',blush:true},looks[n]),false);c.setFace('happy');c.g.scale.setScalar(0.85);scene.add(c.g);parkRiders.push({kind,i,c,pose:newPose()});});}
+  {species:'hamster',body:'#f5f5f5',accent:'#c8c0b8',ears:'bunny',eyes:'dot'},{body:'#ffd36e',accent:'#8a5a1a',eyes:'star',mouth:'open'},{body:'#c4b2f0',accent:'#4a3268',mouth:'w'},{species:'hamster',body:'#c98a5a',accent:'#7a4a2a',ears:'bear'},{body:'#ff8fa3',accent:'#8a2a4a',eyes:'star',mouth:'open'},{species:'hamster',body:'#fff3e2',accent:'#ffb3c8',ears:'bunny',mouth:'open'}];
+ [['ferris',1],['ferris',4],['ferris',7],['carousel',0],['carousel',3],['carousel',5],['ferris',9],['coaster',2],['coaster',3]].forEach(([kind,i],n)=>{const c=makeCritter(Object.assign({species:'lobster',blush:true},looks[n]),false);c.setFace('happy');c.g.scale.setScalar(0.85);scene.add(c.g);parkRiders.push({kind,i,c,pose:newPose()});});}
 const _wp=new THREE.Vector3();
-function seatPos(kind,i,off=-0.75){if(kind==='ferris'){const F=PARKV.ferris;F.cars[i].getWorldPosition(_wp);const c=Math.cos(F.yaw),s=Math.sin(F.yaw);return{x:_wp.x+c*off,y:_wp.y-F.drop,z:_wp.z-s*off,ry:F.yaw};}
+function seatPos(kind,i,off=-0.75){if(kind==='coaster'){const car=PARKV.coaster.cars[i];const v=new THREE.Vector3(0,0.38,-0.2);car.localToWorld(v);return{x:v.x,y:v.y,z:v.z,ry:car.rotation.y,q:car.quaternion};}if(kind==='ferris'){const F=PARKV.ferris;F.cars[i].getWorldPosition(_wp);const c=Math.cos(F.yaw),s=Math.sin(F.yaw);return{x:_wp.x+c*off,y:_wp.y-F.drop,z:_wp.z-s*off,ry:F.yaw};}
   const K=PARKV.carousel,h=K.horses[i];h.h.getWorldPosition(_wp);return{x:_wp.x,y:_wp.y+0.12,z:_wp.z,ry:K.ang-h.a};}
 function sitPoseOn(p,kind,T){p.legs=kind==='ferris'?[-0.2,0.2]:[-0.5,-0.5];p.sq=Math.sin(T*2.2)*0.04;p.arms=kind==='ferris'?[[-0.3+Math.sin(T*1.7)*0.2,0,-0.5],[-2.4+Math.sin(T*3)*0.3,0,0.4]]:[[-1.0,0,-0.3],[-1.0,0,0.3]];p.k=10;return p;}
-function updatePark(dt,T){const F=PARKV.ferris,K=PARKV.carousel,TC=PARKV.teacups;const near=Math.hypot(ply.x-PARK.x,ply.z-PARK.z)<140;
+function updatePark(dt,T){const F=PARKV.ferris,K=PARKV.carousel,TC=PARKV.teacups;const near=Math.hypot(ply.x-PARK.x,ply.z-PARK.z)<150;
   F.ang+=dt*0.1;F.wheel.rotation.z=F.ang;for(let i=0;i<F.n;i++){const a=F.ang+i/F.n*Math.PI*2;F.cars[i].position.set(Math.cos(a)*F.R,F.cy+Math.sin(a)*F.R,0);F.cars[i].rotation.z=Math.sin(T*1.3+i)*0.04;}
   K.ang-=dt*0.45;K.rot.rotation.y=K.ang;K.horses.forEach((h,i)=>{h.h.position.y=1.6+Math.sin(T*2.4+i*1.3)*0.28;});
+  // 雲霄飛車
+  {const CO=PARKV.coaster;const i0=Math.floor(CO.s*CO.N)%CO.N;const v=CO.v[i0];const ds=v*dt/CO.L;CO.s=(CO.s+ds)%1;CO.lap=(CO.lap||0)+ds;
+   for(let k=0;k<CO.cars.length;k++){const u=((CO.s-k*3.0/CO.L)%1+1)%1;const p=CO.curve.getPointAt(u),q=CO.curve.getPointAt((u+0.004)%1);const car=CO.cars[k];car.position.copy(p);car.position.y+=0.15;car.lookAt(q.x,q.y+0.15,q.z);}}
+  // 城堡餐廳
+  {const CV=PARKV.castle;const nearC=Math.hypot(ply.x-PARKV.KC.x,ply.z-PARKV.KC.z)<45;
+   if(nearC){for(const d of CV.diners){const p=d.pose;const ph=(T*1.6+d.ph)%(Math.PI*2);p.sq=Math.sin(T*3+d.ph)*0.05;p.k=12;const bite=Math.sin(ph)>0.2;
+      p.arms=[[bite?-2.0:-0.9,0,-0.5],[-0.6-Math.sin(T*2+d.ph)*0.3,0,0.5]];p.legs=[-1.2,-1.2];p.y=Math.abs(Math.sin(T*2.2+d.ph))*0.05;applyPose(d.c,p,dt);if(Math.random()<dt*0.08)burst(d.x,1.9,d.z,[0xff9ec7,0xffd36e],2,1.2);}
+    for(const w of CV.waiters){const r=w.route,tg=r[w.k];const dx=tg[0]-w.x,dz=tg[1]-w.z,dd=Math.hypot(dx,dz);if(dd<0.3){w.k=(w.k+1)%r.length;}else{w.x+=dx/dd*1.4*dt;w.z+=dz/dd*1.4*dt;w.face+=angDiff(w.face,Math.atan2(dx,dz))*Math.min(1,dt*6);w.walk+=dt*8;}
+      w.c.g.position.set(w.x,0.05,w.z);w.c.g.rotation.y=w.face;const p=walkPose(w.pose,w.walk,true,T);p.arms[0]=[-1.6,0,-0.3];applyPose(w.c,p,dt);}
+    CV.flag.rotation.y=Math.sin(T*1.5)*0.25;CV.cake.rotation.y=Math.PI/2+Math.sin(T)*0.2;}}
   TC.plate.rotation.y+=dt*0.5;TC.cups.forEach((c,i)=>c.rotation.y+=dt*(1.2+i*0.3));
   const h=hour(),open=h>=7&&h<21;
   for(const r of parkRiders){r.c.g.visible=open&&near&&!(ply.riding&&ply.riding.kind===r.kind&&ply.riding.i===r.i);if(!r.c.g.visible)continue;const s=seatPos(r.kind,r.i);
-    r.c.g.position.set(s.x,s.y,s.z);r.c.g.rotation.y=s.ry;applyPose(r.c,sitPoseOn(r.pose,r.kind,T+r.i),dt);}
+    r.c.g.position.set(s.x,s.y,s.z);if(s.q)r.c.g.quaternion.copy(s.q);else r.c.g.rotation.set(0,s.ry,0);if(r.kind==='coaster'){const p=r.pose;p.arms=[[-2.8,0,-0.5],[-2.8,0,0.5]];p.legs=[-1.4,-1.4];p.k=14;applyPose(r.c,p,dt);}else applyPose(r.c,sitPoseOn(r.pose,r.kind,T+r.i),dt);}
 }
 function rideFerris(){const F=PARKV.ferris;let bi=0,bd=1e9;for(let i=0;i<F.n;i++){const a=F.ang+i/F.n*Math.PI*2;const d=Math.abs(angDiff(a,-Math.PI/2));if(d<bd){bd=d;bi=i;}}
   if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'ferris',i:bi,a0:F.ang};const pt=pets.find(p=>p.follow);if(pt)pt.happy=1.5;ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;toast('🎡 摩天輪出發！轉一圈會自動下車，也可以按「下來」');}
+function rideCoaster(){if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'coaster',i:0,lap0:PARKV.coaster.lap||0};ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;const pt=pets.find(p=>p.follow);if(pt)pt.happy=1.5;toast('🎢 雲霄飛車出發！抓緊囉～跑一圈會自動下車');}
 function rideCarousel(){const K=PARKV.carousel;let bi=0,bd=1e9;K.horses.forEach((h,i)=>{h.h.getWorldPosition(_wp);const d=Math.hypot(_wp.x-ply.x,_wp.z-ply.z);if(d<bd){bd=d;bi=i;}});
   if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'carousel',i:bi};ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;toast('🎠 騎上木馬了！');}
 function getOff(){const r=ply.riding;if(!r)return;ply.riding=null;refreshHeld();for(const p of pets)p.rideY=undefined;
-  if(r.kind==='ferris'){const e=PARKV.ferris.exit;ply.x=e.x;ply.z=e.z;}else{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);ply.x=K.x+Math.cos(a)*(K.r+1.4);ply.z=K.z+Math.sin(a)*(K.r+1.4);}
+  P.g.rotation.set(0,ply.face,0);if(r.kind==='coaster'){const e=PARKV.coaster.exit;ply.x=e.x;ply.z=e.z;}else if(r.kind==='ferris'){const e=PARKV.ferris.exit;ply.x=e.x;ply.z=e.z;}else{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);ply.x=K.x+Math.cos(a)*(K.r+1.4);ply.z=K.z+Math.sin(a)*(K.r+1.4);}
   ply.y=H(ply.x,ply.z)+0.4;ply.vy=4;ply.ground=false;P.m.rotation.set(0,0,0);P.m.position.set(0,0,0);SFX.jump();}
 function updateRide(dt,T){const r=ply.riding;const s=seatPos(r.kind,r.i);
-  if(r.kind==='ferris'){const pt=pets.find(p=>p.follow);if(pt){const q=seatPos('ferris',r.i,0.95);pt.x=q.x;pt.z=q.z;pt.ry=q.y;pt.rideY=q.y;pt.face=q.ry+0.4;}}ply.x=s.x;ply.z=s.z;ply.y=s.y;ply.vy=0;ply.face=s.ry;
+  if(r.kind==='ferris'){const pt=pets.find(p=>p.follow);if(pt){const q=seatPos('ferris',r.i,0.95);pt.x=q.x;pt.z=q.z;pt.ry=q.y;pt.rideY=q.y;pt.face=q.ry+0.4;}}
+  if(r.kind==='coaster'){const pt=pets.find(p=>p.follow);if(pt){const q=seatPos('coaster',1);pt.x=q.x;pt.z=q.z;pt.rideY=q.y;pt.face=q.ry;}
+    ply.x=s.x;ply.z=s.z;ply.y=s.y;ply.vy=0;ply.face=s.ry;P.g.position.set(s.x,s.y,s.z);P.g.quaternion.copy(s.q);const p=newPose();p.legs=[-1.4,-1.4];p.arms=[[-2.8,0,-0.5],[-2.8,0,0.5]];p.sq=Math.sin(T*8)*0.04;applyPose(P,p,dt);
+    if((PARKV.coaster.lap||0)-r.lap0>1.0){getOff();toast('🎢 好刺激！再來一次嗎？');}return;}ply.x=s.x;ply.z=s.z;ply.y=s.y;ply.vy=0;ply.face=s.ry;
   P.g.position.set(s.x,s.y,s.z);P.g.rotation.y=s.ry;applyPose(P,sitPoseOn(newPose(),r.kind,T),dt);if(P.tail)P.tail.rotation.y=Math.sin(T*3)*0.3;
   if(r.kind==='ferris'&&PARKV.ferris.ang-r.a0>Math.PI*2+0.05){getOff();toast('🎡 繞了一圈～風景好美！');}}
 
@@ -110,3 +124,6 @@ function hatchPet(type,name,silent,quiet){const base=PET_TYPES[type];const cnt=p
   return p;}
 
 loop();
+
+function castleFrame(cam){const CV=PARKV.castle;const inside=CV.inside(ply.x,ply.z,-0.3);CV.roof.visible=!inside;CV.light.intensity=inside?0.35:0;
+  for(const w of CV.walls){const c=w.alongX?cam.z:cam.x;const cut=inside&&(c-w.pos)*w.innerSign<0;w.full.visible=!cut;if(w.stub)w.stub.visible=cut;for(const d of w.deco)d.visible=!cut;}}

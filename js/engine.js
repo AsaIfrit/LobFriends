@@ -10,11 +10,11 @@ const easeOutBack=t=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Ma
 const angDiff=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
 const PAST=['#ff9ec7','#ffd36e','#8fdcb4','#b9a6f2','#8fd0ff','#ffb38a'];
 const V2={x:-64,z:52},V3={x:24,z:74},POND={x:34,z:30,r:7},CAVE={x:-400,z:0,r:26},CAVE_DOOR={x:96,z:-76};
-const HOME={x:-18,z:0,w:7,d:6,h:4.2},PARK={x:-88,z:-36,r:23};
+const HOME={x:-18,z:0,w:7,d:6,h:4.2},PARK={x:-70,z:-68,r:40};
 function H(x,z){if(x>200||x<-200)return 0;const dp=Math.hypot(x-POND.x,z-POND.z);let h=Math.sin(x*0.045)*1.6+Math.cos(z*0.05)*1.3+Math.sin((x+z)*0.1)*0.5+Math.cos(x*0.13-z*0.07)*0.35;
   h=h*smooth(10,26,Math.hypot(x,z))*smooth(46,56,Math.hypot(x-V2.x,z-V2.z))*smooth(32,42,Math.hypot(x-V3.x,z-V3.z));h*=smooth(9.6,15,Math.hypot(x-HOME.x,z-HOME.z))*smooth(PARK.r+2,PARK.r+12,Math.hypot(x-PARK.x,z-PARK.z));h=h*smooth(POND.r+1,POND.r+9,dp)-1.2*(1-smooth(POND.r-1.6,POND.r+0.2,dp));return h;}
 function segDist(px,pz,ax,az,bx,bz){const dx=bx-ax,dz=bz-az,t=clamp(((px-ax)*dx+(pz-az)*dz)/(dx*dx+dz*dz),0,1);return Math.hypot(px-ax-dx*t,pz-az-dz*t);}
-const PATHS=[[0,0,58,0],[0,0,0,-20],[-9,4,-46,38],[4,6,17,58],[0,-8,-66,-30],[-10,0,0,0]];
+const PATHS=[[0,0,58,0],[0,0,0,-20],[-9,4,-46,38],[4,6,17,58],[0,-8,-30,-68],[-10,0,0,0]];
 function onPath(x,z){for(const p of PATHS)if(segDist(x,z,...p)<1.7)return true;return false;}
 
 // ---------- 遊戲狀態（共用） ----------
@@ -39,9 +39,10 @@ const postMat=new THREE.ShaderMaterial({uniforms:{tC:{value:null},tD:{value:null
   vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
   fragmentShader:`uniform sampler2D tC;uniform vec2 res;varying vec2 vUv;
   void main(){vec3 c=texture2D(tC,vUv).rgb;float l=dot(c,vec3(0.299,0.587,0.114));
-    c=mix(vec3(l),c,1.08);
+    c=mix(vec3(l),c,1.05);
     vec3 sh=vec3(0.84,0.87,1.04),hi=vec3(0.97,0.95,0.92);c*=mix(sh,hi,smoothstep(0.15,0.85,l));
     c=c/(1.0+max(c-0.82,0.0)*1.6);
+    c=mix(c,vec3(0.93,0.97,1.0),0.05);
     c=pow(c,vec3(0.96));
     vec2 q=vUv-0.5;c*=1.0-dot(q,q)*0.28;
     gl_FragColor=vec4(c,1.);}`,depthTest:false,depthWrite:false});
@@ -103,11 +104,11 @@ function mergeGeos(parts){let n=0;const gs=parts.map(([g0,m])=>{const g=g0.index
 const M4=(x=0,y=0,z=0,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1)=>new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),new THREE.Quaternion().setFromEuler(new THREE.Euler(rx,ry,rz)),new THREE.Vector3(sx,sy,sz));
 
 // ---------- 天空、光源（柔和） ----------
-scene.fog=new THREE.Fog(0xcfeaff,70,190);
+scene.fog=new THREE.Fog(0xc4e6fa,40,230);
 const skyU={top:{value:new THREE.Color(0x7ec8f8)},bot:{value:new THREE.Color(0xcfeaff)}};
 const skyDome=new THREE.Mesh(new THREE.SphereGeometry(400,24,16),new THREE.ShaderMaterial({uniforms:skyU,side:THREE.BackSide,depthWrite:false,fog:false,
   vertexShader:'varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-  fragmentShader:'uniform vec3 top;uniform vec3 bot;varying vec3 vP;void main(){float h=clamp(vP.y*1.6+0.06,0.,1.);gl_FragColor=vec4(mix(bot,top,pow(h,0.7)),1.);}'}));
+  fragmentShader:'uniform vec3 top;uniform vec3 bot;varying vec3 vP;void main(){float h=clamp(vP.y*1.25+0.02,0.,1.);gl_FragColor=vec4(mix(bot,top,pow(h,0.6)),1.);}'}));
 skyDome.renderOrder=-10;scene.add(skyDome);
 const hemi=new THREE.HemisphereLight(0xfff6e8,0x8a90c8,0.55);scene.add(hemi);
 const amb=new THREE.AmbientLight(0xffffff,0.12);scene.add(amb);
@@ -119,12 +120,13 @@ const moonL=new THREE.DirectionalLight(0xc8c0ff,0);scene.add(moonL,moonL.target)
 const ZONE={meadow:(x,z)=>x>-72&&x<42&&z>-78&&z<-14};
 {const gGeo=new THREE.PlaneGeometry(240,240,120,120);gGeo.rotateX(-Math.PI/2);
  const pos=gGeo.attributes.position,cols=[];
- const g1=new THREE.Color(0x7cc95a),g2=new THREE.Color(0x92d566),g3=new THREE.Color(0x6bb84e),cM=new THREE.Color(0xa6dc72),cW=new THREE.Color(0x5fa878),cP=new THREE.Color(0xe8c99a),cV=new THREE.Color(0xeed4a6),c=new THREE.Color();
+ const g1=new THREE.Color(0x84c252),g2=new THREE.Color(0x95cc5c),g3=new THREE.Color(0x70b048),cM=new THREE.Color(0x9ad064),cW=new THREE.Color(0x63a65c),cP=new THREE.Color(0xdccf8e),cV=new THREE.Color(0xe2d6a2),cD=new THREE.Color(0xcdbb7e),c=new THREE.Color(),c2=new THREE.Color();
  const nz=(x,z)=>Math.sin(x*0.11+Math.cos(z*0.07)*2)*0.5+Math.sin(z*0.13-x*0.05)*0.35+Math.sin((x+z)*0.31)*0.15;
- for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,H(x,z));const n=nz(x,z);c.copy(n>0.35?g2:n<-0.3?g3:g1);
+ for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,H(x,z));const n=nz(x,z);c.copy(g1);if(n>0)c.lerp(g2,smooth(0,0.8,n));else c.lerp(g3,smooth(0,0.7,-n));
+  {const n2=Math.sin(x*0.21+z*0.07)*Math.cos(z*0.19-x*0.05)+Math.sin(x*0.5+z*0.43)*0.25;if(n2>0.55)c.lerp(cD,smooth(0.55,0.85,n2)*0.75);}
   if(ZONE.meadow(x,z))c.lerp(cM,0.6);
   c.lerp(cW,smooth(38,60,x)*0.8);
-  if(onPath(x,z))c.copy(cP);
+  {let pd=1e9;for(const p of PATHS)pd=Math.min(pd,segDist(x,z,...p));if(pd<2.6)c.lerp(cP,1-smooth(1.3,2.6,pd));}
   if(Math.hypot(x-PARK.x,z-PARK.z)<PARK.r+0.5||Math.hypot(x,z)<7.5||Math.hypot(x-V2.x,z-V2.z)<14||Math.hypot(x-V3.x,z-V3.z)<12)c.copy(cV);
   cols.push(c.r,c.g,c.b);}
  gGeo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));gGeo.computeVertexNormals();
