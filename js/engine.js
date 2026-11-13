@@ -9,11 +9,12 @@ const easeOut=t=>1-Math.pow(1-t,3);
 const easeOutBack=t=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);};
 const angDiff=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
 const PAST=['#ff9ec7','#ffd36e','#8fdcb4','#b9a6f2','#8fd0ff','#ffb38a'];
-const V2={x:-64,z:52},V3={x:24,z:74},POND={x:34,z:30,r:7},CAVE={x:-400,z:0,r:26},CAVE_DOOR={x:96,z:-74};
+const V2={x:-64,z:52},V3={x:24,z:74},POND={x:34,z:30,r:7},CAVE={x:-400,z:0,r:26},CAVE_DOOR={x:96,z:-76};
+const HOME={x:-18,z:0,w:7,d:6,h:4.2},PARK={x:-88,z:-36,r:23};
 function H(x,z){if(x>200||x<-200)return 0;const dp=Math.hypot(x-POND.x,z-POND.z);let h=Math.sin(x*0.045)*1.6+Math.cos(z*0.05)*1.3+Math.sin((x+z)*0.1)*0.5+Math.cos(x*0.13-z*0.07)*0.35;
-  h=h*smooth(10,26,Math.hypot(x,z))*smooth(36,46,Math.hypot(x-V2.x,z-V2.z))*smooth(32,42,Math.hypot(x-V3.x,z-V3.z));h=h*smooth(POND.r+1,POND.r+9,dp)-1.2*(1-smooth(POND.r-1.6,POND.r+0.2,dp));return h;}
+  h=h*smooth(10,26,Math.hypot(x,z))*smooth(36,46,Math.hypot(x-V2.x,z-V2.z))*smooth(32,42,Math.hypot(x-V3.x,z-V3.z));h*=smooth(9.6,15,Math.hypot(x-HOME.x,z-HOME.z))*smooth(PARK.r+2,PARK.r+12,Math.hypot(x-PARK.x,z-PARK.z));h=h*smooth(POND.r+1,POND.r+9,dp)-1.2*(1-smooth(POND.r-1.6,POND.r+0.2,dp));return h;}
 function segDist(px,pz,ax,az,bx,bz){const dx=bx-ax,dz=bz-az,t=clamp(((px-ax)*dx+(pz-az)*dz)/(dx*dx+dz*dz),0,1);return Math.hypot(px-ax-dx*t,pz-az-dz*t);}
-const PATHS=[[0,0,58,0],[0,0,0,-20],[-9,4,-46,38],[4,6,17,58]];
+const PATHS=[[0,0,58,0],[0,0,0,-20],[-9,4,-46,38],[4,6,17,58],[0,-8,-66,-30],[-10,0,0,0]];
 function onPath(x,z){for(const p of PATHS)if(segDist(x,z,...p)<1.7)return true;return false;}
 
 // ---------- 遊戲狀態（共用） ----------
@@ -38,8 +39,9 @@ const postMat=new THREE.ShaderMaterial({uniforms:{tC:{value:null},tD:{value:null
   vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
   fragmentShader:`uniform sampler2D tC;uniform vec2 res;varying vec2 vUv;
   void main(){vec3 c=texture2D(tC,vUv).rgb;float l=dot(c,vec3(0.299,0.587,0.114));
-    c=mix(vec3(l),c,1.16);
-    vec3 sh=vec3(0.80,0.84,1.08),hi=vec3(1.05,1.0,0.94);c*=mix(sh,hi,smoothstep(0.15,0.85,l));
+    c=mix(vec3(l),c,1.08);
+    vec3 sh=vec3(0.84,0.87,1.04),hi=vec3(0.97,0.95,0.92);c*=mix(sh,hi,smoothstep(0.15,0.85,l));
+    c=c/(1.0+max(c-0.82,0.0)*1.6);
     c=pow(c,vec3(0.96));
     vec2 q=vUv-0.5;c*=1.0-dot(q,q)*0.28;
     gl_FragColor=vec4(c,1.);}`,depthTest:false,depthWrite:false});
@@ -83,11 +85,11 @@ TEX.felt=canvasTex(256,256,(g,W,Hh)=>{g.fillStyle='#f4f4f4';g.fillRect(0,0,W,Hh)
     g.strokeStyle=`rgba(${v},${v},${v},0.3)`;g.lineWidth=0.6+Math.random()*0.8;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+Math.cos(a+1)*l*0.5,y+Math.sin(a+1)*l*0.5,x+Math.cos(a)*l,y+Math.sin(a)*l);g.stroke();}},[3,2]);
 
 // ---------- 材質 ----------
-const gradMap=new THREE.DataTexture(new Uint8Array([168,168,168,255,255,255,255,255]),2,1,THREE.RGBAFormat);
+const gradMap=new THREE.DataTexture(new Uint8Array([182,182,182,255,240,240,240,255]),2,1,THREE.RGBAFormat);
 gradMap.minFilter=gradMap.magFilter=THREE.NearestFilter;gradMap.generateMipmaps=false;gradMap.needsUpdate=true;
 const RIM={value:1};
 function animeMat(m){m.onBeforeCompile=sh=>{sh.uniforms.rimAmt=RIM;sh.fragmentShader='uniform float rimAmt;\n'+sh.fragmentShader.replace('#include <dithering_fragment>',
-  'float rimF=1.0-clamp(dot(normalize(vViewPosition),normal),0.0,1.0);gl_FragColor.rgb+=vec3(1.0,0.96,0.88)*smoothstep(0.6,0.86,rimF)*0.2*rimAmt;\n#include <dithering_fragment>');};
+  'float rimF=1.0-clamp(dot(normalize(vViewPosition),normal),0.0,1.0);gl_FragColor.rgb+=vec3(1.0,0.96,0.88)*smoothstep(0.6,0.86,rimF)*0.1*rimAmt;\n#include <dithering_fragment>');};
   m.customProgramCacheKey=()=>'anime';return m;}
 const toon=(c,o={})=>animeMat(new THREE.MeshToonMaterial(Object.assign({color:c,gradientMap:gradMap},o)));
 const basic=(c,o={})=>new THREE.MeshBasicMaterial(Object.assign({color:c},o));
@@ -123,7 +125,7 @@ const ZONE={meadow:(x,z)=>x>-72&&x<42&&z>-78&&z<-14};
   if(ZONE.meadow(x,z))c.lerp(cM,0.6);
   c.lerp(cW,smooth(38,60,x)*0.8);
   if(onPath(x,z))c.copy(cP);
-  if(Math.hypot(x,z)<7.5||Math.hypot(x-V2.x,z-V2.z)<14||Math.hypot(x-V3.x,z-V3.z)<12)c.copy(cV);
+  if(Math.hypot(x-PARK.x,z-PARK.z)<PARK.r+0.5||Math.hypot(x,z)<7.5||Math.hypot(x-V2.x,z-V2.z)<14||Math.hypot(x-V3.x,z-V3.z)<12)c.copy(cV);
   cols.push(c.r,c.g,c.b);}
  gGeo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));gGeo.computeVertexNormals();
  var ground=new THREE.Mesh(gGeo,animeMat(new THREE.MeshToonMaterial({vertexColors:true,gradientMap:gradMap})));ground.receiveShadow=true;scene.add(ground);}

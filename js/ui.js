@@ -45,9 +45,9 @@ $('qdrop').addEventListener('click',()=>{$('qdrop').classList.toggle('open');SFX
 // ---------- 面板（Bottom Sheet / Drawer） ----------
 function stagger(root){root.querySelectorAll('.stg').forEach((el,i)=>el.style.setProperty('--i',i));}
 function openPanel(id){const el=$(id);stagger(el);el.style.display='flex';void el.offsetWidth;el.classList.add('show');paused=true;SFX.open();holdAtk=holdAct=false;closeFab();}
-function closePanel(id){const el=$(id);if(!el.classList.contains('show'))return;el.classList.remove('show');SFX.close();setTimeout(()=>{el.style.display='none';},320);
+function closePanel(id){const el=$(id);if(!el.classList.contains('show'))return;el.classList.remove('show');SFX.close();setTimeout(()=>{if(!el.classList.contains('show'))el.style.display='none';},320);
   if(!creatorOpen)paused=!started;}
-function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
+function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs','gacha'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closePanel(b.dataset.close)));
 document.querySelectorAll('.panel').forEach(p=>p.addEventListener('pointerdown',e=>{if(e.target===p&&p.id!=='start'&&p.id!=='creator')closePanel(p.id);}));
 const noAnim=root=>root.querySelectorAll('.stg').forEach(el=>{el.style.animation='none';el.style.opacity=1;el.style.transform='none';});
@@ -59,7 +59,7 @@ function costHtml(c){return Object.entries(c).map(([k,n])=>`<span class="${(inv[
 function renderCraft(anim=true){
   const nb=nearBench();$('craftSub').textContent=nb?'在工作台旁邊，所有配方都能做！':'徒手只能做基本道具，靠近 🧰工作台 解鎖全部配方';
   document.querySelectorAll('#craft .tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===craftTab));
-  $('craftGrid').innerHTML=RECIPES[craftTab].map(([id,cost,needB,out=1],i)=>{const it=ITEMS[id];const owned=(it.k!=='furn')&&has(id);
+  $('craftGrid').innerHTML=RECIPES[craftTab].map(([id,cost,needB,out=1],i)=>{const it=ITEMS[id];const owned=['tool','weapon','held'].includes(it.k)&&has(id);
     const enough=Object.entries(cost).every(([k,n])=>(inv[k]||0)>=n);let btn;
     if(owned)btn=`<button class="qb" disabled>已擁有</button>`;else if(needB&&!nb)btn=`<button class="qb" disabled>需要工作台</button>`;
     else btn=`<button class="qb ${enough?'pink':''}" data-c="${id}" ${enough?'':'disabled'}>製作${out>1?' ×'+out:''}</button>`;
@@ -125,10 +125,10 @@ $('dlg').addEventListener('click',()=>{if(!dlg)return;
 function endTalk(){clearInterval(typeTimer);if(dlg)dlg.n.talking=false;dlg=null;$('dlg').style.display='none';paused=false;SFX.close();}
 
 // ---------- 物品欄 ----------
-const HB_ORDER=['sword','spear','bow','staff','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
+const HB_ORDER=['sword','spear','bow','staff','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'plank','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
 // 10 格快捷欄（1~0）＋背包
 let hb=new Array(10).fill(null),hbKeys=hb;
-const AUTO_HB=k=>['weapon','held','seed','furn','food'].includes(ITEMS[k].k);
+const AUTO_HB=k=>['weapon','held','seed','furn','food','block'].includes(ITEMS[k].k);
 function hbAuto(k){if(!AUTO_HB(k)||hb.includes(k))return;const i=hb.indexOf(null);if(i>=0)hb[i]=k;}
 function hbIndexOfCur(){const c=curSlot();return c?hb.indexOf(c):-1;}
 function renderHotbar(changed){
@@ -147,16 +147,16 @@ function renderHotbar(changed){
 function updateAtkIcon(){$('atkIcon').textContent={stick:'⚔️',sword:'🗡️',spear:'🔱',bow:'🏹',staff:'🪄'}[ply.weapon];}
 function useSlot(k){const it=ITEMS[k];if(!it)return;
   if(it.k==='weapon'){ply.weapon=ply.weapon===k?'stick':k;ply.held=null;if(carry)carryCancel();refreshHeld();updateAtkIcon();showHbLabel(ply.weapon==='stick'?'收起武器':`${it.i} ${it.n}`);SFX.click();}
-  else if(it.k==='held'||it.k==='seed'){if(carry)carryCancel();ply.held=ply.held===k?null:k;refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
+  else if(it.k==='held'||it.k==='seed'||it.k==='block'){if(carry)carryCancel();ply.held=ply.held===k?null:k;if(ply.held==='plank')showHbLabel('🟫 木塊：對準位置按「蓋方塊」，可按 👁️ 切第一人稱');refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
   else if(it.k==='furn'){if(carry&&carry.id===k&&!carry.orig)carryCancel();else{if(carry)carryCancel();ply.held=null;startCarry(k,null);showHbLabel(`${it.i} ${it.n}：按「放置」放下`);}}
   else if(it.k==='food'){inv[k]--;ply.hp=Math.min(ply.max,ply.hp+(it.hp||2));ply.en=Math.min(100,ply.en+(it.en||5));SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);floatTxt(`💗＋⚡${it.en||5}`,innerWidth/2,innerHeight*0.45);updateHUD();save();}
   else toast(`${it.i} ${it.n}${it.d?'：'+it.d:''}${inv[k]>1?' ×'+inv[k]:''}`);
   renderHotbar();}
 function useHb(i){const k=hb[i];if(!k){showHbLabel(`第 ${(i+1)%10} 格是空的`);return;}const el=$('hotbar').querySelector(`[data-i="${i}"]`);useSlot(k);const el2=$('hotbar').querySelector(`[data-i="${i}"]`);if(el2)bump(el2);}
-const SELECTABLE=k=>k&&['weapon','held','seed','furn'].includes(ITEMS[k].k);
+const SELECTABLE=k=>k&&['weapon','held','seed','furn','block'].includes(ITEMS[k].k);
 function curSlot(){if(carry&&!carry.orig)return carry.id;if(ply.held)return ply.held;if(ply.weapon!=='stick')return ply.weapon;return null;}
 function selectSlot(k){const it=ITEMS[k];if(carry&&(carry.id!==k||carry.orig))carryCancel();
-  if(it.k==='weapon'){ply.weapon=k;ply.held=null;}else if(it.k==='held'||it.k==='seed'){ply.held=k;}else if(it.k==='furn'){ply.held=null;if(!carry)startCarry(k,null);}
+  if(it.k==='weapon'){ply.weapon=k;ply.held=null;}else if(it.k==='held'||it.k==='seed'||it.k==='block'){ply.held=k;}else if(it.k==='furn'){ply.held=null;if(!carry)startCarry(k,null);}
   refreshHeld();updateAtkIcon();renderHotbar();const el=$('hotbar').querySelector(`[data-k="${k}"]`);if(el)bump(el);showHbLabel(`${it.i} ${it.n}`);SFX.click();}
 function cycleSlot(dir){const idx=[];for(let i=0;i<10;i++)if(SELECTABLE(hb[i]))idx.push(i);if(!idx.length)return;const ci=hbIndexOfCur();let p=idx.indexOf(ci);p=p<0?(dir>0?0:idx.length-1):(p+dir+idx.length)%idx.length;selectSlot(hb[idx[p]]);}
 let hbLabelT=null;
@@ -164,9 +164,9 @@ function showHbLabel(txt){let el=$('hbLabel');if(!el){el=document.createElement(
 $('hotbar').addEventListener('click',e=>{const b=e.target.closest('.slot');if(!b)return;if(b.id==='bagBtn'){openBag();return;}const i=+b.dataset.i;if(hb[i])useHb(i);else openBag();});
 // ---------- 背包 ----------
 const BAG_ORDER=['sword','spear','bow','staff','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
-  'bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS)];
+  'plank','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS)];
 const BAG_TABS=[['all','全部'],['gear','裝備'],['use','食物種子'],['furn','家具'],['mat','素材']];
-const tabOf=k=>{const t=ITEMS[k].k;return t==='weapon'||t==='tool'||t==='held'?'gear':t==='food'||t==='seed'?'use':t==='furn'?'furn':'mat';};
+const tabOf=k=>{const t=ITEMS[k].k;return t==='weapon'||t==='tool'||t==='held'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
 let bagTab='all',bagPick=null,drag=null;
 function renderBag(anim=true){const keys=BAG_ORDER.filter(k=>(inv[k]||0)>0&&(bagTab==='all'||tabOf(k)===bagTab));
   $('bagTabs').innerHTML=BAG_TABS.map(([k,t])=>`<button class="tab ${k===bagTab?'on':''}" data-bt="${k}">${t}</button>`).join('');
@@ -266,13 +266,12 @@ function drawMini(){
   if(ply.cave){mini.fillStyle='#3a2f4a';mini.fillRect(0,0,S,S);const cs=S/(CAVE.r*2.4);mini.fillStyle='#5a4a6c';mini.beginPath();mini.arc(S/2,S/2,CAVE.r*cs,0,7);mini.fill();
     mini.fillStyle='#fff3c0';mini.fillRect(S/2+(CAVE_EXIT.x-CAVE.x)*cs-5,S/2+(CAVE_EXIT.z-CAVE.z)*cs-3,10,6);for(const m of monsters)if(m.cave&&m.dead<0){mini.fillStyle=m.c.mat.color.getStyle();mini.beginPath();mini.arc(S/2+(m.x-CAVE.x)*cs,S/2+(m.z-CAVE.z)*cs,3,0,7);mini.fill();}
     mini.fillStyle='#fff';mini.beginPath();mini.arc(S/2+(ply.x-CAVE.x)*cs,S/2+(ply.z-CAVE.z)*cs,4,0,7);mini.fill();mini.restore();return;}
-  if(ply.indoor){mini.fillStyle='#ffe6d8';mini.fillRect(0,0,S,S);mini.font='900 60px sans-serif';mini.textAlign='center';mini.textBaseline='middle';mini.fillText('🏠',S/2,S/2-8);mini.font='900 26px sans-serif';mini.fillStyle='#8a5a4a';mini.fillText('室內',S/2,S/2+48);mini.restore();return;}
   mini.fillStyle='#a8dc94';mini.fillRect(0,0,S,S);mini.fillStyle='#bce6a0';mini.fillRect(X(-72),Z(-78),114*sc,64*sc);
   mini.fillStyle=isNight()?'#9a8ad8':'#8ec4b0';mini.fillRect(X(isNight()?36:50),0,S,S);
   mini.strokeStyle='#f0d9a6';mini.lineWidth=4;mini.lineCap='round';for(const p of PATHS){mini.beginPath();mini.moveTo(X(p[0]),Z(p[1]));mini.lineTo(X(p[2]),Z(p[3]));mini.stroke();}
   mini.fillStyle='#f2dcae';mini.beginPath();mini.arc(X(V2.x),Z(V2.z),12*sc*1.4,0,7);mini.fill();
   mini.fillStyle='#f2dcae';mini.beginPath();mini.arc(X(V3.x),Z(V3.z),11*sc*1.4,0,7);mini.fill();
-  mini.fillStyle='#ff8f7a';mini.fillRect(X(HOUSE.x)-5,Z(HOUSE.z)-5,10,10);for(const h of V2HOUSES)mini.fillRect(X(h.x)-3,Z(h.z)-3,7,7);mini.fillStyle='#ffc94a';for(const h of V3HOUSES)mini.fillRect(X(h.x)-3,Z(h.z)-3,7,7);
+  mini.fillStyle='#ffe0ea';mini.beginPath();mini.arc(X(PARK.x),Z(PARK.z),PARK.r*sc,0,7);mini.fill();mini.fillStyle='#ff9ec4';mini.font='900 18px sans-serif';mini.textAlign='center';mini.textBaseline='middle';mini.fillText('🎡',X(PARK.x),Z(PARK.z));mini.fillStyle='#ff8f7a';mini.fillRect(X(HOUSE.x)-HOME.w*sc,Z(HOUSE.z)-HOME.d*sc,HOME.w*2*sc,HOME.d*2*sc);for(const h of V2HOUSES)mini.fillRect(X(h.x)-3,Z(h.z)-3,7,7);mini.fillStyle='#ffc94a';for(const h of V3HOUSES)mini.fillRect(X(h.x)-3,Z(h.z)-3,7,7);
   mini.fillStyle='#b9a6f2';mini.fillRect(X(STAGE.x)-6,Z(STAGE.z)-3,12,6);for(const k in STALLS){const s=STALLS[k];mini.fillStyle='#ffd36e';mini.fillRect(X(s.x)-3,Z(s.z)-3,6,6);}
   mini.fillStyle='#ffc83d';mini.beginPath();mini.arc(X(BOARD.x),Z(BOARD.z),4,0,7);mini.fill();
   mini.fillStyle='#a0703a';for(const t of farm.values())mini.fillRect(X(t.x)-1.5,Z(t.z)-1.5,3,3);
@@ -305,23 +304,25 @@ function updateSky(){
   starMat.opacity=(ply.indoor||ply.cave)?0:clamp(1-dayF*1.6,0,1);stars.position.set(ply.x,0,ply.z);
   const night=dayF<0.45;for(const w of windowMats)w.color.copy(night?SKY.winOn:SKY.winOff);
   for(const w of indoorWin)w.color.copy(SKY.nT).lerp(SKY.dT,dayF).lerp(SKY.sT,dusk);
-  INT.light.intensity=night?0.45:0.2;
-  for(const l of lamps){if(l.L)l.L.intensity=night?0.8:0;l.bm.color.setHex(night?0xffeec8:0xe8e2d8);}
-  for(const p of placed){if(p.g.userData.glow)p.g.userData.glow.color.setHex(night?0xffe6b0:0xfff3e0);if(p.light)p.light.intensity=p.id==='campfire'?(0.7+Math.sin(performance.now()*0.02)*0.15)*(night?1.2:0.4):(night?0.8:0);}
+  HOMEV.light.intensity=inHouse(ply.x,ply.z,-3)?(night?0.55:0.15):(night?0.3:0);
+  for(const l of lamps){if(l.L)l.L.intensity=night?0.5:0;l.bm.color.setHex(night?0xffeec8:0xe8e2d8);}
+  for(const p of placed){if(p.g.userData.glow)p.g.userData.glow.color.setHex(night?0xffe6b0:0xfff3e0);if(p.light)p.light.intensity=p.id==='campfire'?(0.55+Math.sin(performance.now()*0.02)*0.1)*(night?1.0:0.3):(night?0.5:0);}
 }
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,indoor:ply.indoor,cave:!!ply.cave,pets:pets.map(p=>[p.aff,p.follow?1:0]),x:ply.x,z:ply.z,
-  Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,p.indoor?1:0]),
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+  Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
-function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',indoor:!!d.indoor,cave:!!d.cave,x:d.x,z:d.z});
+function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
   (d.pets||[]).forEach(([a,f],i)=>{if(pets[i]){setAff(pets[i],a);pets[i].follow=!!f;}});
   Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});coinShown=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
-  for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const[id,x,z,ry,ind]of d.placed)placeFurn(id,x,z,ry,false,!!ind);
+  for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const b of d.blocks||[])blocks.set(bKey(b[0],b[1],b[2]),{i:b[0],j:b[1],k:b[2]});rebuildBlocks();
+  for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
+  for(const[type,name,f,a]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f;if(!f)sendHome(p);p.x=p.tx;p.z=p.tz;}
   for(const[gx,gz,wet,type,stage,g]of d.farm||[]){const t=till(gx,gz,false);setWet(t,!!wet);if(type){t.crop={type,stage,g};setCropStage(t,stage);t.crop.pop=1;t.crop.mesh.scale.setScalar(1);}}
-  ply.y=(ply.indoor||ply.cave)?0:H(ply.x,ply.z);}
+  ply.y=ply.cave?0:standY(ply.x,ply.z,99);}
 
 // ---------- 捏角色 ----------
 const BODY_SW=['#f0874f','#e9773e','#ffb3a0','#ffd6e6','#ffe08a','#fff3e2','#c9f0d6','#9edbb0','#cfe4ff','#c4b2f0','#c98a5a','#f5f5f5'];
@@ -339,6 +340,8 @@ const SLD={eye:[['eyeSize','大小',0.6,1.9,0.05],['eyeGap','距離',0.13,0.4,0.
   brow:[['browSize','大小',0.5,1.8,0.05],['browGap','距離',0.12,0.4,0.01],['browY','位置',0.08,0.32,0.01]],
   lash:[['lashSize','大小',0.5,2,0.05],['lashGap','距離',0.2,1.3,0.05],['lashY','位置',0,1,0.05]],
   mouth:[['mouthSize','大小',0.6,1.7,0.05],['mouthW','寬度',0.6,1.8,0.05],['mouthY','位置',0.08,0.28,0.01]],
+  ear:[['earSize','大小',0.6,1.6,0.05],['earGap','距離',0.6,1.4,0.02],['earY','高低',-0.25,0.2,0.01]],
+  tail:[['tailSize','大小',0.6,1.8,0.05],['tailY','高低',-0.3,0.4,0.01],['tailZ','前後',-0.15,0.25,0.01]],
   blush:[['blushSize','大小',0.5,1.8,0.05],['blushGap','距離',0.25,0.6,0.01],['blushY','位置',0,0.3,0.01]]};
 function normLook(){look=Object.assign({},DEF_LOOK,look);look.hat='none';if(look.blush===true&&(!look.blushShape||look.blushShape==='none'))look.blushShape='oval';look.blush=false;
   if(!['seg','pom'].includes(look.tail))look.tail=look.species==='lobster'?'seg':'pom';if(look.species!=='lobster')look.tail='pom';}
@@ -348,7 +351,7 @@ document.querySelectorAll('#creator .sl').forEach(el=>{el.innerHTML=SLD[el.datas
 function renderCreator(){normLook();swatches($('swBody'),BODY_SW,'body');swatches($('swAcc'),ACC_SW,'accent');swatches($('swEye'),EYE_SW,'eyeColor');swatches($('swMouth'),EYE_SW,'mouthColor');swatches($('swBlush'),BLUSH_SW,'blushColor');
   chips($('chSpecies'),OPTS.species,'species');chips($('chEars'),OPTS.ears,'ears');chips($('chEyes'),OPTS.eyes,'eyes');chips($('chTail'),look.species==='lobster'?OPTS.tail:OPTS.tail.filter(t=>t[0]!=='seg'),'tail');
   chips($('chBrow'),OPTS.brow,'brow');chips($('chLash'),OPTS.lash,'lash');chips($('chMouth'),OPTS.mouth,'mouth');chips($('chBlush'),OPTS.blushShape,'blushShape');
-  $('earWrap').style.display=look.species==='lobster'?'none':'block';$('labAcc').textContent=look.species==='lobster'?'角的顏色':'耳朵／腳的顏色';
+  $('earWrap').style.display=look.species==='lobster'?'none':'block';$('labAcc').textContent=look.species==='lobster'?'角的顏色':'耳朵／腳的顏色';$('labEarSl').textContent=look.species==='lobster'?'角的大小／位置':'耳朵大小／位置';
   document.querySelectorAll('#creator input[data-k]').forEach(i=>i.value=look[i.dataset.k]);$('cName').value=look.name;}
 [['swBody','body'],['swAcc','accent'],['swEye','eyeColor'],['swMouth','mouthColor'],['swBlush','blushColor'],['chEyes','eyes'],['chTail','tail'],['chSpecies','species'],['chEars','ears'],['chBrow','brow'],['chLash','lash'],['chMouth','mouth'],['chBlush','blushShape']].forEach(([id,key])=>
   $(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;look[key]=b.dataset.v;if(key==='species')look.tail=look.species==='lobster'?'seg':'pom';
@@ -378,5 +381,5 @@ applyVol();
 
 updateSky();updateHUD();drawMini();renderHotbar();updateAtkIcon();
 camera.position.set(ply.x,6,ply.z+10);
-window.__game={ply,inv,Q,trees,monsters,npcs,farm,tal,setTime:v=>tmin=v,addItem,grantXP,get look(){return look;},INT,STALLS,butterflies,useSlot};
-loop();
+window.__game={ply,inv,Q,trees,monsters,npcs,farm,tal,setTime:v=>tmin=v,addItem,grantXP,get look(){return look;},HOME,STALLS,butterflies,useSlot};
+

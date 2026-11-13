@@ -33,7 +33,8 @@ const ITEMS={
   bed:{n:'小床',i:'🛏️',k:'furn',d:'可以躺下睡覺',r:1.0,bed:true},
   bathtub:{n:'浴缸',i:'🛁',k:'furn',d:'可以泡澡回精神',r:1.45,bath:true},
   rug:{n:'圓地毯',i:'🟣',k:'furn',d:'可以踩上去',r:0},
-  shelf:{n:'書櫃',i:'📚',k:'furn',d:'放滿了繪本',r:0.8}
+  shelf:{n:'書櫃',i:'📚',k:'furn',d:'放滿了繪本',r:0.8},
+  plank:{n:'木塊',i:'🟫',k:'block',d:'拿在手上可以蓋木方塊，會自動對齊'}
 };
 for(const[k,c]of Object.entries(CROPS)){ITEMS[k]={n:c.n,i:c.i,k:'food',d:`吃掉回精神 ${c.en}`,en:c.en,price:c.price};ITEMS['seed_'+k]={n:c.n+'種子',i:'🌱',k:'seed',crop:k,d:`種下去會長出${c.n}`};}
 for(const[k,f]of Object.entries(FRUITS))ITEMS[k]={n:f.n,i:f.i,k:'food',d:'吃掉回精神 12',en:12,price:10};
@@ -42,7 +43,7 @@ for(const[k,b]of Object.entries(BUGS))ITEMS[k]={n:b.n,i:'🦋',k:'bug',d:'可以
 const RECIPES={
   tool:[['axe1',{wood:3},0],['pick1',{wood:3},1],['axe2',{wood:2,stone:3},1],['pick2',{wood:2,stone:3},1],['hoe',{wood:3,stone:1},1],['can',{wood:2,stone:2},1],['net',{wood:4},1],['rod',{wood:3,weed:3},1]],
   weapon:[['sword',{wood:4},1],['spear',{wood:5,stone:1},1],['bow',{wood:5},1],['staff',{wood:3,stone:3},1]],
-  furn:[['bench',{wood:4},0],['fence',{wood:2},1,3],['chair',{wood:3},1],['table',{wood:4},1],['pot',{wood:1,stone:2},1],['lantern',{wood:2,stone:2},1],['campfire',{wood:4,stone:3},1],['bed',{wood:8},1]]
+  furn:[['plank',{wood:1},0,5],['bench',{wood:4},0],['fence',{wood:2},1,3],['chair',{wood:3},1],['table',{wood:4},1],['pot',{wood:1,stone:2},1],['lantern',{wood:2,stone:2},1],['campfire',{wood:4,stone:3},1],['bed',{wood:8},1]]
 };
 const inv={};
 const has=k=>(inv[k]||0)>0;
