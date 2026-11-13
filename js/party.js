@@ -16,7 +16,7 @@ function syncPartyChannel(){if(!sbClient)return;const want=inParty()?party.pid:'
   if(want){const c=window.LOBSTER_CONFIG;partyCh=sbClient.channel((c.ROOM||'lobster-world')+'-pty-'+want,{config:{broadcast:{self:false}}});partyCh.on('broadcast',{event:'m'},({payload})=>onNetMsg(payload));partyCh.subscribe();}}
 function onNetMsg(o){if(!o||o.f===myNetId)return;if(o.to&&o.to!==myNetId)return;if(o.pid&&(!party||party.pid!==o.pid))return;
   switch(o.t){case'inv':showInvite(o);break;case'acc':onAccept(o);break;case'dec':toast(`${cleanTxt(o.name,10)} 婉拒了組隊邀請`);break;case'full':toast('隊伍已經滿了（最多 4 人）');break;
-    case'pty':onRoster(o);break;case'lv':onLeave(o.f);break;case'mon':onMonState(o.f,o);break;case'hit':onHit(o);break;case'kill':onKill(o);break;case'rev':onRevived(o);break;case'slam':onSlam(o);break;}}
+    case'pty':onRoster(o);break;case'lv':onLeave(o.f);break;case'mon':onMonState(o.f,o);break;case'hit':onHit(o);break;case'kill':onKill(o);break;case'rev':onRevived(o);break;case'slam':onSlam(o);break;case'heal':onHealMsg(o);break;case'buff':onBuffMsg(o);break;}}
 
 // ---------- 組隊 ----------
 let invite=null,invT=null;
@@ -49,9 +49,10 @@ let monSeq=1,wasFollower=false,monSendT=0,lastMonT=0;
 function caveHost(){if(!inParty()||!ply.cave)return null;for(const n of party.members){if(n===myNetId)return n;const pr=presOf(n);if(pr&&pr.ar==='cave'&&pr.lv===caveLv&&pr.pt===party.pid&&!pr.dn)return n;}return myNetId;}
 function caveFollower(){const h=caveHost();return!!h&&h!==myNetId;}
 function otherInCave(){if(!inParty())return false;return party.members.some(n=>{if(n===myNetId)return false;const pr=presOf(n);return pr&&pr.ar==='cave'&&pr.lv===caveLv;});}
-function monTargets(){const L=[];if(ply.cave&&!ply.downed&&!ply.riding)L.push({x:ply.x,z:ply.z,me:1});
-  if(inParty())for(const n of party.members){if(n===myNetId)continue;const pr=presOf(n);if(pr&&pr.ar==='cave'&&pr.lv===caveLv&&!pr.dn)L.push({x:pr.x,z:pr.z});}return L;}
-function monTarget(m){let best=null,bd=1e9;for(const t of MT_CACHE){const d=Math.hypot(t.x-m.x,t.z-m.z);if(d<bd){bd=d;best=t;}}return best;}
+function monTargets(){const L=[];if(ply.cave&&!ply.downed&&!ply.riding&&!(ply.stealthT>0))L.push({x:ply.x,z:ply.z,me:1,tn:ply.tauntT>0});
+  if(inParty())for(const n of party.members){if(n===myNetId)continue;const pr=presOf(n);if(pr&&pr.ar==='cave'&&pr.lv===caveLv&&!pr.dn&&!pr.st)L.push({x:pr.x,z:pr.z,tn:!!pr.tn});}return L;}
+function monTarget(m){let best=null,bd=1e9;for(const t of MT_CACHE){if(!t.tn)continue;const d=Math.hypot(t.x-m.x,t.z-m.z);if(d<14&&d<bd){bd=d;best=t;}}if(best)return best;
+  for(const t of MT_CACHE){const d=Math.hypot(t.x-m.x,t.z-m.z);if(d<bd){bd=d;best=t;}}return best;}
 let MT_CACHE=[];
 function monEntry(m){if(!m.id)m.id=monSeq++;return[m.id,Math.round(m.x*10),Math.round(m.z*10),Math.round(m.y*10),Math.max(0,Math.ceil(m.hp)),m.max,m.tyI||0,Math.round(m.size*100),m.boss?1:0,Math.round((m.dir>=0?m.dir:m.g.rotation.y)*100),m.dmg||2];}
 function partyTick(dt){
@@ -80,8 +81,8 @@ function mirrorTick(m,dt){const k=1-Math.exp(-10*dt);m.x+=(m.tx-m.x)*k;m.z+=(m.t
   if(py>0.05&&m.y<=0.05)m.sqv-=6;m.sqv+=((m.y>0.05?0.12:0)-m.sq)*150*dt-m.sqv*10*dt;m.sq+=m.sqv*dt;const s=clamp(m.sq,-0.45,0.4);m.c.m.scale.set(1-s*0.6,1+s,1-s*0.6);
   let jx=0,jz=0;if(m.shake>0){m.shake-=dt;jx=Math.sin(m.shake*90)*0.1;jz=Math.cos(m.shake*70)*0.08;}m.g.position.set(m.x+jx,m.y,m.z+jz);m.g.rotation.y+=angDiff(m.g.rotation.y,m.dirT||0)*Math.min(1,dt*8);
   m.ifr-=dt;m.cool-=dt;const dx=ply.x-m.x,dz=ply.z-m.z,d=Math.hypot(dx,dz)||0.01;
-  if(!ply.downed&&!ply.riding&&ply.cave&&d<1.1+m.size*0.35&&m.cool<=0&&ply.ifr<=0&&m.flash<0.3&&m.y<1){m.cool=1;hurtMe(m.dmg||2,dx/d,dz/d);}}
-function hurtMe(dmg,nx,nz){ply.ifr=0.9;ply.hp-=dmg;ply.kx=nx*10;ply.kz=nz*10;ply.vy=4;ply.ground=false;SFX.hurt();P.sqv-=5;burst(ply.x,ply.y+0.8,ply.z,[0xff9ec7,0xffffff],8,3);hurtFX();updateHUD();
+  if(!ply.downed&&!ply.riding&&ply.cave&&!(ply.stealthT>0)&&d<1.1+m.size*0.35&&m.cool<=0&&ply.ifr<=0&&m.flash<0.3&&m.y<1){m.cool=1;hurtMe(m.dmg||2,dx/d,dz/d,m);}}
+function hurtMe(dmg,nx,nz,m){ply.ifr=0.9;ply.hp-=takeDmg(dmg,m||null);ply.kx=nx*10;ply.kz=nz*10;ply.vy=4;ply.ground=false;SFX.hurt();P.sqv-=5;burst(ply.x,ply.y+0.8,ply.z,[0xff9ec7,0xffffff],8,3);hurtFX();updateHUD();
   if(ply.hp<=0){ply.hp=0;playerKO('被果凍怪打倒了… 💫');}}
 function onHit(o){if(caveFollower())return;const m=monsters.find(m=>m.id===o.id&&!m.mirror&&m.dead<0);if(!m)return;m.ifr=0;damageMonster(m,+o.d||1,+o.nx||0,+o.nz||0,!!o.c,true);}
 function partyOnKill(m){const out={t:'kill',id:m.id||0,x:+m.x.toFixed(1),z:+m.z.toFixed(1),ar:m.cave?'cave':'out',lv:caveLv,
@@ -102,12 +103,12 @@ $('downHome').addEventListener('click',()=>{if(!ply.downed)return;clearDown();fa
 function onRevived(o){if(o.to===myNetId)reviveMe(nameOf(o.f));}
 function nearestDowned(){if(!inParty()||ply.downed)return null;let best=null,bd=2.4;for(const n of party.members){if(n===myNetId)continue;const pr=presOf(n);if(!pr||!pr.dn)continue;
   if((pr.ar==='cave')!==!!ply.cave)continue;const d=Math.hypot(pr.x-ply.x,pr.z-ply.z);if(d<bd){bd=d;best={nid:n,x:pr.x,z:pr.z};}}return best;}
-function startRevive(t){ply.reviving={nid:t.nid,t:0,x:ply.x,z:ply.z,tx:t.x,tz:t.z};faceTo(t.x,t.z);toast(`正在救助 ${nameOf(t.nid)}… 請待在原地 10 秒`);SFX.open();}
+function startRevive(t){ply.reviving={nid:t.nid,t:0,x:ply.x,z:ply.z,tx:t.x,tz:t.z};faceTo(t.x,t.z);toast(`正在救助 ${nameOf(t.nid)}… 請待在原地 ${Math.ceil(reviveDur())} 秒`);SFX.open();}
 function updateRevive(dt){const rv=ply.reviving,bar=$('revBar');if(!rv){bar.classList.remove('on');return;}const pr=presOf(rv.nid);
   if(!pr||!pr.dn||Math.hypot(ply.x-rv.x,ply.z-rv.z)>0.9||ply.downed){ply.reviving=null;bar.classList.remove('on');if(pr&&pr.dn)toast('救助中斷了…要待在原地喔');return;}
-  rv.t+=dt;bar.classList.add('on');$('revFill').style.width=Math.min(100,rv.t/10*100)+'%';$('revTxt').textContent=`救助 ${nameOf(rv.nid)} 中… ${Math.max(0,Math.ceil(10-rv.t))} 秒`;
+  rv.t+=dt;bar.classList.add('on');const RD=reviveDur();$('revFill').style.width=Math.min(100,rv.t/RD*100)+'%';$('revTxt').textContent=`救助 ${nameOf(rv.nid)} 中… ${Math.max(0,Math.ceil(RD-rv.t))} 秒`;
   if(Math.random()<dt*4)burst(pr.x,(ply.cave?0:H(pr.x,pr.z))+1,pr.z,[0xff9ec7,0x9ff0c8],2,1.5);
-  if(rv.t>=10){netPost({t:'rev',to:rv.nid},true);netPost({t:'rev',to:rv.nid});toast(`💖 救起了 ${nameOf(rv.nid)}！`);SFX.quest();ply.reviving=null;bar.classList.remove('on');}}
+  if(rv.t>=RD){netPost({t:'rev',to:rv.nid},true);netPost({t:'rev',to:rv.nid});toast(`💖 救起了 ${nameOf(rv.nid)}！`);SFX.quest();ply.reviving=null;bar.classList.remove('on');}}
 
 // ---------- 果凍王（B5） ----------
 let bossSpawned=false,bossDone=false,bossWait=0;
@@ -150,7 +151,7 @@ function openChest(c){c.open=true;c.ot=0;SFX.craft();burst(c.x,1.2,c.z,PAST.map(
   const coins=100+((Math.random()*60)|0),cry=2+((Math.random()*3)|0);ply.coins+=coins;addItem('crystal',cry);addItem('gem',1);updateHUD();
   let skin=null;if(Math.random()<0.45){const pool=CHEST_SKINS.filter(k=>!has(k));if(pool.length){skin=pool[(Math.random()*pool.length)|0];addItem(skin,1);}else{ply.coins+=200;}}
   setTimeout(()=>{const it=skin&&ITEMS[skin];$('prE').textContent=it?it.i:'🎁';$('prN').textContent=it?`獲得武器外觀「${it.n}」！`:'寶箱打開了！';
-    $('prM').innerHTML=(it?`${it.d}<br><small>在背包或快捷欄點一下就能換上</small><br>`:'這次沒有武器外觀…再挑戰一次吧！<br>')+`🪙${coins}・🔮水晶 ×${cry}・💎寶石 ×1`;
+    $('prM').innerHTML=(it?`${it.d}<br><small>在背包或快捷欄點一下就能換上</small><br>`:'這次沒有武器外觀…再挑戰一次吧！<br>')+`🪙${coins}・🔷水晶 ×${cry}・💎寶石 ×1`;
     $('petReveal').classList.add('on');SFX.levelup();paused=true;clearTimeout(prT);prT=setTimeout(hidePetReveal,6000);},500);save();}
 
 loop();

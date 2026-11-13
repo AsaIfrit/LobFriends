@@ -30,7 +30,7 @@ function sbClearRemotes(){for(const[k,r]of remotes){scene.remove(r.c.g);}remotes
 function sbInit(){const c=window.LOBSTER_CONFIG;
   const url=String(c.SUPABASE_URL).trim().replace(/\/(rest|auth|realtime|storage)\/v1.*$/,'').replace(/\/+$/,'');
   try{sbClient=window.supabase.createClient(url,String(c.SUPABASE_ANON_KEY).trim());}catch(e){sbErr='設定錯誤';updNetBadge();return;}
-  room={presence:async p=>{if(!sbCh||!netConn)return;const now=performance.now();const key=JSON.stringify([p.x,p.z,p.y,p.f,p.an,p.ar,p.w,p.em,p.ch,p.sx,p.pt,p.dn,p.lv,Math.round((p.hp||0)*10)]);
+  room={presence:async p=>{if(!sbCh||!netConn)return;const now=performance.now();const key=JSON.stringify([p.x,p.z,p.y,p.f,p.an,p.ar,p.w,p.em,p.ch,p.sx,p.pt,p.dn,p.lv,p.tn,p.st,Math.round((p.hp||0)*10)]);
       if(p.lk||p.n!==sbState._n){sbCh.track({n:p.n,lk:compactLook()}).catch(()=>{});sbState._n=p.n;}
       const urgent=(p.em&&p.em!==sbState._em)||(p.ch&&p.ch!==sbState._ch);
       const np=sbState.size+1,iv=Math.min(6000,Math.max(330,np*np/80*1000));if(key===sbLastKey&&now-sbLastSend<Math.max(4000,iv))return;if(!urgent&&now-sbLastSend<iv)return;
@@ -64,7 +64,7 @@ $('netBadge').addEventListener('click',()=>{const o=others();toast(o.length?'線
 
 function netSend(){if(!room||!started)return;
   const p={v:1,n:cleanTxt(look.name,10),x:+ply.x.toFixed(2),z:+ply.z.toFixed(2),y:+ply.y.toFixed(2),f:+ply.face.toFixed(2),ar:netArea(),an:netAnim(),
-    w:(toolShow||ply.held&&P.T[ply.held]&&ply.held||wpnModel())||'stick',cb:ply.combo||0,id:myNetId,pt:(typeof party!=='undefined'&&party)?party.pid:0,hp:+(Math.max(0,ply.hp)/ply.max).toFixed(2),dn:ply.downed?1:0,lv:ply.cave?caveLv:0};
+    w:(toolShow||ply.held&&P.T[ply.held]&&ply.held||wpnModel())||'stick',cb:ply.combo||0,id:myNetId,pt:(typeof party!=='undefined'&&party)?party.pid:0,hp:+(Math.max(0,ply.hp)/ply.max).toFixed(2),dn:ply.downed?1:0,lv:ply.cave?caveLv:0,tn:ply.tauntT>0?1:0,st:ply.stealthT>0?1:0};
   if(!sbClient&&typeof outbox!=='undefined'){const now=performance.now();const mq=outbox.filter(x=>now-x[2]<3000).map(x=>[x[0],x[1]]);if(mq.length)p.mq=mq;if(roomMon)p.mon=roomMon;}
   if(ply.sleeping||ply.sitting){const s=(ply.sleeping||ply.sitting).p;p.sx=+s.x.toFixed(2);p.sz=+s.z.toFixed(2);p.sr=+s.ry.toFixed(2);p.sid=s.id;}
   const lk=JSON.stringify(compactLook());if(lk!==netLookKey){netLookKey=lk;p.lk=compactLook();}

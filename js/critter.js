@@ -111,6 +111,28 @@ function buildTools(hold){
     T.bow.add(mk(new THREE.CylinderGeometry(0.01,0.01,1.18,4),toon(0xfff6ea),0,0,0.22));T.bow.add(mk(new THREE.CylinderGeometry(0.06,0.06,0.18,6),pinkC,0,0,0.27));}
   T.staff=G2();T.staff.add(mk(new THREE.CylinderGeometry(0.05,0.06,1.4,6),wood,0,0.6,0));{const st=mk(new THREE.OctahedronGeometry(0.2),basic(0xff9ed6),0,1.42,0);T.staff.add(st);T.staff.userData.gem=st;
     const rg=mk(new THREE.TorusGeometry(0.22,0.03,6,16),toon(0xffd36e),0,1.42,0);T.staff.add(rg);}
+  // ---- 新武器 ----
+  {const steel=toon(0xe8eef6),dark=toon(0x6a5a78),gold=toon(0xffd36e);
+   T.greatsword=G2();T.greatsword.add(mk(new THREE.CylinderGeometry(0.07,0.07,0.5,6),dark,0,0.1,0));T.greatsword.add(mk(new THREE.SphereGeometry(0.1,8,6),gold,0,-0.17,0));
+   T.greatsword.add(mk(new THREE.BoxGeometry(0.72,0.12,0.16),gold,0,0.38,0));T.greatsword.add(mk(new THREE.BoxGeometry(0.34,1.65,0.08),steel,0,1.26,0));
+   T.greatsword.add(mk(new THREE.BoxGeometry(0.08,1.4,0.1),toon(0xc8d4e4),0,1.2,0));{const tip=mk(new THREE.ConeGeometry(0.24,0.36,4),steel,0,2.26,0);tip.rotation.y=Math.PI/4;tip.scale.z=0.33;T.greatsword.add(tip);}
+   T.dagger=G2();T.dagger.add(mk(new THREE.CylinderGeometry(0.045,0.05,0.24,6),dark,0,0.08,0));T.dagger.add(mk(new THREE.BoxGeometry(0.26,0.05,0.08),pinkC,0,0.22,0));
+   T.dagger.add(mk(new THREE.BoxGeometry(0.11,0.42,0.04),steel,0,0.44,0));{const tip=mk(new THREE.ConeGeometry(0.08,0.16,4),steel,0,0.73,0);tip.rotation.y=Math.PI/4;tip.scale.z=0.3;T.dagger.add(tip);}
+   T.lute=G2();{const bd=mk(new THREE.SphereGeometry(0.3,16,12),toon(0xd99a5e),0,0.3,0);bd.scale.set(1,1.25,0.45);T.lute.add(bd);
+    const hole=mk(new THREE.CircleGeometry(0.08,14),basic(0x5a3422),0,0.36,0.14);T.lute.add(hole);T.lute.add(mk(new THREE.BoxGeometry(0.1,0.7,0.06),toon(0x8a5a3a),0,0.9,0.02));
+    const hd=mk(new THREE.BoxGeometry(0.14,0.2,0.07),toon(0x8a5a3a),0,1.32,-0.03);hd.rotation.x=-0.4;T.lute.add(hd);
+    for(const x of[-0.03,0,0.03])T.lute.add(mk(new THREE.BoxGeometry(0.006,0.9,0.006),toon(0xfff6ea),x,0.75,0.07));T.lute.add(mk(new THREE.SphereGeometry(0.06,8,6),pinkC,0.12,0.12,0.1));T.lute.userData.mount={p:[-0.37,0.4,0.84],r:[0,0,-1.35],s:0.75};}
+   T.orb=G2();{const g=mk(new THREE.SphereGeometry(0.24,18,14),basic(0xc8b4ff,{transparent:true,opacity:0.8}));T.orb.add(g);T.orb.add(mk(new THREE.SphereGeometry(0.11,10,8),basic(0xffffff)));
+    const r1=mk(new THREE.TorusGeometry(0.34,0.018,6,28),basic(0xffd36e));r1.rotation.x=1.2;T.orb.add(r1);const r2=mk(new THREE.TorusGeometry(0.3,0.014,6,28),basic(0xffe9f6));r2.rotation.y=1.2;T.orb.add(r2);
+    T.orb.userData.gem=g;T.orb.userData.spin=[r1,r2];T.orb.userData.mount={p:[-1.08,1.2,0.4],r:[0,0,0],bob:1};}
+   T.book=G2();{const cv=toon(0xff8fb0),pg=toon(0xfffaf0),B=new THREE.Group();
+    for(const s of[-1,1]){const c=mk(new THREE.BoxGeometry(0.36,0.03,0.48),cv,s*0.18,0,0);c.rotation.z=-s*0.16;B.add(c);const pp=mk(new THREE.BoxGeometry(0.32,0.05,0.44),pg,s*0.17,0.035,0);pp.rotation.z=-s*0.2;B.add(pp);
+      for(let i=0;i<3;i++)B.add(mk(new THREE.BoxGeometry(0.2,0.005,0.02),basic(0xd8c8c0),s*0.17,0.07+s*0.0,-0.12+i*0.1));}
+    const st=mk(new THREE.OctahedronGeometry(0.07),basic(0xffe08a),0,0.3,0);B.add(st);B.rotation.set(0.75,0,0);T.book.add(B);
+    T.book.userData.gem=st;T.book.userData.star=st;T.book.userData.mount={p:[-1.1,1.0,0.5],r:[0,0.35,0],bob:1};}
+   T.shield=G2();{const sh=new THREE.Group();sh.add(mk(new THREE.CylinderGeometry(0.5,0.5,0.1,22),toon(0x8fc8f0),0,0,0));const rim=mk(new THREE.TorusGeometry(0.5,0.05,6,24),gold);rim.rotation.x=Math.PI/2;sh.add(rim);
+    sh.add(mk(new THREE.CylinderGeometry(0.17,0.2,0.08,14),gold,0,0.07,0));const hs=new THREE.Shape();hs.moveTo(0,-0.12);hs.bezierCurveTo(-0.22,0.02,-0.1,0.16,0,0.06);hs.bezierCurveTo(0.1,0.16,0.22,0.02,0,-0.12);
+    const ht=mk(new THREE.ShapeGeometry(hs),basic(0xff6f9f,{side:THREE.DoubleSide}),0,0.12,0);ht.rotation.x=-Math.PI/2;sh.add(ht);T.shield.add(sh);T.shield.userData.mount={p:[1.1,0.72,0.12],r:[0,0,-Math.PI/2]};}}
   for(const[k,mat]of[['axe1',cream],['axe2',stoneC]]){const s=G2();s.add(mk(new THREE.CylinderGeometry(0.05,0.06,1.1,6),wood,0,0.5,0));s.add(mk(new THREE.BoxGeometry(0.06,0.38,0.42),mat,0,0.95,0.2));T[k]=s;}
   for(const[k,mat]of[['pick1',cream],['pick2',stoneC]]){const s=G2();s.add(mk(new THREE.CylinderGeometry(0.05,0.06,1.1,6),wood,0,0.5,0));s.add(mk(new THREE.BoxGeometry(0.08,0.1,0.9),mat,0,1.05,0));
     for(const z of[-1,1]){const tp=mk(new THREE.ConeGeometry(0.06,0.18,4),mat,0,1.0,z*0.5);tp.rotation.x=z*Math.PI/2+z*0.4;s.add(tp);}T[k]=s;}
@@ -235,6 +257,7 @@ function makeCritter(o,withTools){
   const setHat=id=>{if(hatG){m.remove(hatG);hatG=null;}const r=fashionHat(id,{cy,R:RR*sx,V:RR*sy,topY});for(const e of earMs)e.visible=!(r&&r.hideEars);if(r){hatG=r.g;hatG.traverse(q=>{if(q.isMesh)q.castShadow=false;});m.add(hatG);}};
   setHat(o.hat);
   const T=withTools?buildTools(hold):{};
+  for(const k in T){const mt=T[k].userData.mount;if(!mt)continue;m.add(T[k]);T[k].position.set(mt.p[0]*sx,mt.p[1],mt.p[2]);T[k].rotation.set(...mt.r);if(mt.s)T[k].scale.setScalar(mt.s);T[k].userData.by=mt.p[1];}
   shadowAll(g);g.traverse(o=>{if(o.isMesh&&o!==body)o.castShadow=false;});
   BLINKERS.push({g,blink});
   return{g,m,face,setFace,setHat,legs,arms,hold,T,tail,bodyM,o,lob,sq:0,sqv:0,topY};

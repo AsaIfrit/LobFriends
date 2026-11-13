@@ -157,7 +157,7 @@ function nearestOre(){let best=null,bd=1.9;for(const o of ores){if(o.state!=='al
 function mineOre(o){if(o.state!=='alive')return;const pw=minePow();if(pw===0){SFX.thud();o.shake=0.5;toast('好硬！需要 ⛏️ 鎬子才挖得動水晶');return;}
   o.hp-=pw;o.shake=1;SFX.mine();hitStop=0.035;burst(o.x,1,o.z,[0xd0a8ff,0xffffff],7,3.5,cubeG);
   if(o.hp<=0){o.state='gone';scene.remove(o.g);const i=caveObs.indexOf(o.o);if(i>=0)caveObs.splice(i,1);SFX.rock();burst(o.x,0.8,o.z,[0xd0a8ff,0x9fd8ff,0xffffff],18,5,cubeG);
-    spawnDrops('crystal',o.x,1,o.z,1+Math.floor(caveLv/2)+(Math.random()<0.4?1:0));spawnDrops('xp',o.x,1,o.z,2+caveLv,3);}}
+    if(TV('a_transmute')&&Math.random()<0.1*TV('a_transmute'))spawnDrops('coin',o.x,1.2,o.z,5*TV('a_transmute'),1);spawnDrops('crystal',o.x,1,o.z,1+Math.floor(caveLv/2)+(Math.random()<0.4?1:0));spawnDrops('xp',o.x,1,o.z,2+caveLv,3);}}
 function setCaveLv(n){caveLv=clamp(n,1,5);const t=new THREE.Color(CAVE_TINT[caveLv-1][2]);for(const m of caveMats)m.color.copy(m.userData.base).multiply(t);
   for(let i=monsters.length-1;i>=0;i--)if(monsters[i].cave){scene.remove(monsters[i].g);monsters.splice(i,1);}
   caveDown.visible=caveLv<5;caveDown.userData.lb.material.map=textTex([caveLv<5?`↓ 往 B${caveLv+1}`:'最深處'],'#2a1f3a','#ffe6a0',256,64,34);spawnOres();}

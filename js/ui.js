@@ -86,30 +86,45 @@ const SHOPS={
 };
 const RAMEN=[{n:'醬油拉麵',i:'🍜',p:15,en:35,hp:3,d:'精神 +35'},{n:'味噌拉麵',i:'🍲',p:25,en:60,hp:6,d:'精神 +60、體力 +6'},{n:'龍蝦特製拉麵',i:'🦞',p:40,en:100,hp:99,d:'全部回滿！'}];
 let shopKind='store',shopTab='buy';
+const buyP=p=>Math.max(1,Math.round(p*(1-0.1*TV('c_haggle')))),sellP=k=>Math.round(ITEMS[k].price*(1+0.1*TV('c_haggle')));
 function openShop(kind){shopKind=kind;shopTab=SHOPS[kind].tabs[0][0];renderShop();openPanel('shop');}
 function renderShop(anim=true){const S=SHOPS[shopKind];$('shopTitle').textContent=S.title;$('shopSub').textContent=S.sub+`（你有 🪙${ply.coins}）`;
   $('shopTabs').innerHTML=S.tabs.length>1?S.tabs.map(([k,t])=>`<button class="tab ${k===shopTab?'on':''}" data-st="${k}">${t}</button>`).join(''):'';
   let html='';
-  if(shopTab==='buy'){html=S.buy().map(([k,p,n],i)=>{const it=ITEMS[k];const ok=ply.coins>=p;return`<div class="rc stg" style="--i:${i}"><div class="ic">${it.i}</div><div class="nm">${it.n}${n>1?' ×'+n:''}</div><div class="ds">${it.d||''}</div><div class="cost">🪙 ${p}</div><button class="qb ${ok?'pink':''}" data-buy="${k}" data-p="${p}" data-n="${n}" ${ok?'':'disabled'}>購買</button></div>`;}).join('');}
-  else if(shopTab==='sell'){const list=Object.keys(inv).filter(k=>inv[k]>0&&ITEMS[k].price);html=list.length?list.map((k,i)=>{const it=ITEMS[k];return`<div class="rc stg" style="--i:${i}"><div class="ic">${it.i}</div><div class="nm">${it.n} ×${inv[k]}</div><div class="cost">每個 🪙${it.price}</div><div style="display:flex;gap:4px"><button class="qb" data-sell="${k}" data-n="1">賣 1</button><button class="qb claim" data-sell="${k}" data-n="all">全部</button></div></div>`;}).join(''):'<div class="sub">沒有可以賣的東西～</div>';}
+  if(shopTab==='buy'){html=S.buy().map(([k,p0,n],i)=>{const p=buyP(p0);const it=ITEMS[k];const ok=ply.coins>=p;return`<div class="rc stg" style="--i:${i}"><div class="ic">${it.i}</div><div class="nm">${it.n}${n>1?' ×'+n:''}</div><div class="ds">${it.d||''}</div><div class="cost">🪙 ${p}</div><button class="qb ${ok?'pink':''}" data-buy="${k}" data-p="${p}" data-n="${n}" ${ok?'':'disabled'}>購買</button></div>`;}).join('');}
+  else if(shopTab==='sell'){const list=Object.keys(inv).filter(k=>inv[k]>0&&ITEMS[k].price);html=list.length?list.map((k,i)=>{const it=ITEMS[k];return`<div class="rc stg" style="--i:${i}"><div class="ic">${it.i}</div><div class="nm">${it.n} ×${inv[k]}</div><div class="cost">每個 🪙${sellP(k)}</div><div style="display:flex;gap:4px"><button class="qb" data-sell="${k}" data-n="1">賣 1</button><button class="qb claim" data-sell="${k}" data-n="all">全部</button></div></div>`;}).join(''):'<div class="sub">沒有可以賣的東西～</div>';}
   else html=(S.menu||RAMEN).map((r,i)=>{const ok=ply.coins>=r.p;return`<div class="rc stg" style="--i:${i}"><div class="ic">${r.i}</div><div class="nm">${r.n}</div><div class="ds">${r.d}</div><div class="cost">🪙 ${r.p}</div><button class="qb ${ok?'pink':''}" data-eat="${i}" ${ok?'':'disabled'}>點餐</button></div>`;}).join('');
   $('shopGrid').innerHTML=html;if(!anim)noAnim($('shopGrid'));}
 $('shopTabs').addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(!b)return;shopTab=b.dataset.st;renderShop();const p=$('shop');p.classList.remove('show');void p.offsetWidth;p.classList.add('show');});
 $('shopGrid').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const r=b.getBoundingClientRect();
   if(b.dataset.buy){const p=+b.dataset.p;if(ply.coins<p)return;ply.coins-=p;addItem(b.dataset.buy,+b.dataset.n);SFX.coin();sparkle(r.left+r.width/2,r.top,10);toast(`買了 ${ITEMS[b.dataset.buy].n}！`);renderShop(false);}
-  else if(b.dataset.sell){const k=b.dataset.sell,n=b.dataset.n==='all'?inv[k]:1;inv[k]-=n;const gain=n*ITEMS[k].price;renderHotbar();SFX.coin();
+  else if(b.dataset.sell){const k=b.dataset.sell,n=b.dataset.n==='all'?inv[k]:1;inv[k]-=n;const gain=n*sellP(k);renderHotbar();SFX.coin();
     for(let i=0;i<Math.min(10,gain);i++)setTimeout(()=>flyReward('coin',gain/Math.min(10,gain),r.left+r.width/2+R(-15,15),r.top),i*40);renderShop(false);}
   else if(b.dataset.eat){const m=(SHOPS[shopKind].menu||RAMEN)[+b.dataset.eat];if(ply.coins<m.p)return;ply.coins-=m.p;closePanel('shop');SFX.slurp();P.setFace('happy');
     fade(`呼嚕嚕～ ${m.i}`,()=>{ply.en=Math.min(100,ply.en+m.en);ply.hp=Math.min(ply.max,ply.hp+m.hp);updateHUD();},()=>{toast(`好好吃！${m.d} ✨`);P.setFace('open');sparkle(innerWidth/2,innerHeight*0.45,16);save();});}
   updateHUD();save();});
 
 // ---------- 天賦（側邊抽屜） ----------
-function renderTalents(anim=true){$('spInfo').textContent=ply.sp;
-  $('tList').innerHTML=Object.entries(TALENTS).map(([k,t],i)=>`<div class="tbranch stg" style="--i:${i}"><div class="th">${t.i} ${t.n}</div><div class="tnodes">${t.nodes.map(([n,d],j)=>{
-    const got=tal[k]>j,can=!got&&tal[k]===j&&ply.sp>0;return`<div class="tnode ${got?'got':can?'can':tal[k]<j?'lock':''}" data-t="${k}" data-j="${j}"><b>${got?'✅':can?'✨':'🔒'} ${n}</b>${d}</div>`;}).join('')}</div></div>`).join('');
-  if(!anim)noAnim($('tList'));}
-$('tList').addEventListener('click',e=>{const n=e.target.closest('.tnode.can');if(!n)return;const k=n.dataset.t;tal[k]++;ply.sp--;SFX.craft();const r=n.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,16);
-  toast(`學會了「${TALENTS[k].nodes[tal[k]-1][0]}」！`);renderTalents(false);bump(document.querySelector(`.tnode[data-t="${k}"][data-j="${tal[k]-1}"]`));updateHUD();save();});
+let talCls='novice';
+const CLS_ORDER=['warrior','ranger','mage','merchant','priest'];
+const reqOK=k=>{const r=TALENTS[k].req;return!r||TV(r[0])>=r[1];};
+const clsOpen=c=>c==='novice'||noviceDone();
+function renderTalents(anim=true){$('spInfo').textContent=ply.sp;const nd=noviceDone();
+  const box=c=>{const C=CLASSES[c],lock=!clsOpen(c),pts=classPts(c),mx=classMax(c);return`<div class="tcls ${c==='novice'?'nov':''} ${talCls===c?'on':''} ${lock?'lock':''} ${pts>=mx?'full':''}" data-c="${c}">${C.i}<b>${C.n}</b><small>${lock?'🔒':pts+'/'+mx}</small></div>`;};
+  const xs=[50,150,250,350,450];
+  let h=`<div id="tTree">${box('novice')}<svg viewBox="0 0 500 22" preserveAspectRatio="none"><path d="M250 0V11M50 11H450${xs.map(x=>`M${x} 11V22`).join('')}" stroke="#6b4a3e" stroke-width="3" fill="none" vector-effect="non-scaling-stroke"/></svg><div class="trow">${CLS_ORDER.map(box).join('')}</div></div>`;
+  const C=CLASSES[talCls],lock=!clsOpen(talCls);
+  h+=`<div id="tDesc">${C.i} ${C.d}${lock?`<br>🔒 把初學者的天賦全部學滿才會開啟（目前 ${classPts('novice')}/${classMax('novice')}）`:talCls!=='novice'?'<br>不用選職業，每個職業的天賦都可以學！':''}</div>`;
+  h+=classKeys(talCls).map((k,i)=>{const t=TALENTS[k];const rq=reqOK(k);
+    const tags=(t.w?`<span class="ttag">${ITEMS[t.w].i} ${WNAME[t.w]}</span>`:'')+(t.act?'<span class="ttag act">主動技能</span>':'')+(!rq?`<span class="ttag req">需要：${TALENTS[t.req[0]].n} Lv${t.req[1]}</span>`:'');
+    return`<div class="tbranch stg" style="--i:${Math.min(i,14)}"><div class="th">${t.i} ${t.n}${tags}</div><div class="tnodes">${t.nodes.map(([n,d],j)=>{
+    const got=tal[k]>j,can=!got&&tal[k]===j&&ply.sp>0&&!lock&&rq;return`<div class="tnode ${got?'got':can?'can':(tal[k]<j||lock||!rq)?'lock':''}" data-t="${k}" data-j="${j}"><b>${got?'✅':can?'✨':'🔒'} ${n}</b>${d}</div>`;}).join('')}</div></div>`;}).join('');
+  $('tList').innerHTML=h;if(!anim)noAnim($('tList'));}
+$('tList').addEventListener('click',e=>{const cb=e.target.closest('.tcls');if(cb){const c=cb.dataset.c;if(!clsOpen(c)){SFX.deny();toast(`🔒 先把初學者天賦全部學滿（${classPts('novice')}/${classMax('novice')}）`);return;}talCls=c;SFX.click();renderTalents();return;}
+  const n=e.target.closest('.tnode.can');if(!n)return;const k=n.dataset.t;const wasNd=noviceDone();tal[k]++;ply.sp--;SFX.craft();const r=n.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,16);
+  const t=TALENTS[k];toast(t.c==='novice'?`學會了「${t.nodes[tal[k]-1][0]}」！`:`「${t.n}」提升到 Lv${tal[k]}！${t.act&&tal[k]===1?'（技能按鈕在攻擊鍵旁邊）':''}`);
+  if(!wasNd&&noviceDone()){setTimeout(()=>{toast('🎉 初學者畢業！五大職業天賦開啟了！');SFX.levelup();},400);}
+  recalcMax();renderTalents(false);bump(document.querySelector(`.tnode[data-t="${k}"][data-j="${tal[k]-1}"]`));if(typeof renderSkillBar==='function')renderSkillBar(true);updateHUD();save();});
 function openTalents(){if(!started||ply.sleeping)return;renderTalents();openPanel('talent');}
 
 // ---------- 對話 ----------
@@ -129,7 +144,7 @@ $('dlg').addEventListener('click',()=>{if(!dlg)return;
 function endTalk(){clearInterval(typeTimer);if(dlg)dlg.n.talking=false;dlg=null;$('dlg').style.display='none';paused=false;SFX.close();}
 
 // ---------- 物品欄 ----------
-const HB_ORDER=['skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
+const HB_ORDER=['skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
 // 10 格快捷欄（1~0）＋背包
 let hb=new Array(10).fill(null),hbKeys=hb;
 const AUTO_HB=k=>['weapon','held','seed','furn','food','block','skin'].includes(ITEMS[k].k);
@@ -148,14 +163,14 @@ function renderHotbar(changed){
   if(changed){const el=$('hotbar').querySelector(`[data-k="${changed}"]`);el?bump(el):bump($('bagBtn'));}
   if($('bag').classList.contains('show'))renderBag(false);
 }
-function updateAtkIcon(){$('atkIcon').textContent={flame:'🔥',thunder:'⚡',windbow:'🍃',icestaff:'❄️',churro:'🥖',stick:'⚔️',sword:'🗡️',spear:'🔱',bow:'🏹',staff:'🪄'}[wpnModel()];}
+function updateAtkIcon(){$('atkIcon').textContent={flame:'🔥',thunder:'⚡',windbow:'🍃',icestaff:'❄️',churro:'🥖',stick:'⚔️',sword:'🗡️',spear:'🔱',bow:'🏹',staff:'🪄',greatsword:'⚔️',dagger:'🔪',lute:'🪕',orb:'🔮',book:'📖',shield:'🛡️'}[wpnModel()];}
 function useSlot(k){const it=ITEMS[k];if(!it)return;
   if(it.k==='weapon'){ply.weapon=ply.weapon===k?'stick':k;ply.held=null;if(carry)carryCancel();refreshHeld();updateAtkIcon();showHbLabel(ply.weapon==='stick'?'收起武器':`${it.i} ${it.n}`);SFX.click();}
   else if(it.k==='held'||it.k==='seed'||it.k==='block'){if(carry)carryCancel();ply.held=ply.held===k?null:k;if(ply.held==='plank')showHbLabel('🟫 木塊：對準位置按「蓋方塊」，可按 👁️ 切第一人稱');refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
   else if(it.k==='furn'){if(carry&&carry.id===k&&!carry.orig)carryCancel();else{if(carry)carryCancel();ply.held=null;startCarry(k,null);showHbLabel(`${it.i} ${it.n}：按「放置」放下`);}}
   else if(it.k==='hat'){ply.hat=ply.hat===k?null:k;applyHat();showHbLabel(ply.hat?`${it.i} 戴上「${it.n}」！`:'脫下帽子');SFX.click();if(ply.hat&&P){P.sqv-=4;const p=P.g.position;burst(p.x,p.y+P.topY+0.4,p.z,[0xff9ec4,0xffd36e,0x8fd0ff],10,2.5);}save();}
   else if(it.k==='skin'){const w=it.for;ply.skins=ply.skins||{};ply.skins[w]=ply.skins[w]===k?null:k;refreshHeld();const WN={sword:'🗡️ 木劍',spear:'🔱 長槍',bow:'🏹 弓箭',staff:'🪄 法杖'}[w];showHbLabel(ply.skins[w]?`${it.i} ${WN}換成「${it.n}」外觀！`:`換回${WN}原本的外觀`);updateAtkIcon();SFX.click();if(ply.skins[w]&&!has(w))toast(`先做一把${WN}，裝備時就會變成${it.n}喔`);save();}
-  else if(it.k==='food'){inv[k]--;ply.hp=Math.min(ply.max,ply.hp+(it.hp||2));ply.en=Math.min(100,ply.en+(it.en||5));SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);floatTxt(`💗＋⚡${it.en||5}`,innerWidth/2,innerHeight*0.45);updateHUD();save();}
+  else if(it.k==='food'){inv[k]--;const pm=1+[0,0.3,0.6,1][TV('a_potion')];ply.hp=Math.min(ply.max,ply.hp+(it.hp||2)*pm);ply.en=Math.min(100,ply.en+(it.en||5)*pm);SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);floatTxt(`💗＋⚡${Math.round((it.en||5)*pm)}`,innerWidth/2,innerHeight*0.45);updateHUD();save();}
   else toast(`${it.i} ${it.n}${it.d?'：'+it.d:''}${inv[k]>1?' ×'+inv[k]:''}`);
   renderHotbar();}
 function useHb(i){const k=hb[i];if(!k){showHbLabel(`第 ${(i+1)%10} 格是空的`);return;}const el=$('hotbar').querySelector(`[data-i="${i}"]`);useSlot(k);const el2=$('hotbar').querySelector(`[data-i="${i}"]`);if(el2)bump(el2);}
@@ -186,8 +201,9 @@ const itIcon=k=>{const it=ITEMS[k];if(it.k==='hat'){const u=hatThumb(k);if(u)ret
 
 // ---------- 背包 ----------
 const HAT_IDS=['hat_bow','hat_sprout','hat_jelly','hat_party','hat_bucket'];
-const BAG_ORDER=[...HAT_IDS,'skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
+const BAG_ORDER=[...HAT_IDS,'skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
   'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem','crystal',...Object.keys(BUGS)];
+for(const k in ITEMS)if(!BAG_ORDER.includes(k))BAG_ORDER.push(k);
 const BAG_TABS=[['all','全部'],['gear','裝備'],['hat','時裝'],['use','食物種子'],['furn','家具'],['mat','素材']];
 const tabOf=k=>{const t=ITEMS[k].k;return t==='hat'?'hat':t==='weapon'||t==='tool'||t==='held'||t==='skin'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
 let bagTab='all',bagPick=null,drag=null;
@@ -346,7 +362,7 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
@@ -357,6 +373,7 @@ function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
   for(const[type,name,f,a]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f;if(!f)sendHome(p);p.x=p.tx;p.z=p.tz;}
   for(const[gx,gz,wet,type,stage,g]of d.farm||[]){const t=till(gx,gz,false);setWet(t,!!wet);if(type){t.crop={type,stage,g};setCropStage(t,stage);t.crop.pop=1;t.crop.mesh.scale.setScalar(1);}}
+  ply.iday=d.iday;recalcMax();if(d.hp!==undefined)ply.hp=Math.min(ply.max,d.hp);
   ply.hat=d.hat&&ITEMS[d.hat]&&inv[d.hat]>0?d.hat:null;look.hat=hatStyle();
   ply.y=ply.cave?0:standY(ply.x,ply.z,99);}
 
@@ -420,3 +437,4 @@ applyVol();
 updateSky();updateHUD();drawMini();renderHotbar();updateAtkIcon();
 camera.position.set(ply.x,6,ply.z+10);
 window.__game={ply,inv,Q,trees,monsters,npcs,farm,tal,setTime:v=>tmin=v,addItem,grantXP,get look(){return look;},HOME,STALLS,butterflies,useSlot};
+
