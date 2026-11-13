@@ -594,10 +594,7 @@ const PARKV={};
       const lk=Object.assign({species:n%5===3?'hamster':'lobster',eyes:eyes[n%6],mouth:mouths[n%5],blushShape:'oval'},looks[n%8]);const c=makeCritter(lk,false);c.setFace('happy');
       c.g.userData.dyn=true;c.g.position.set(cx+dx,0.25,cz+dz);c.g.rotation.y=Math.atan2(-dx,-dz);gi.add(c.g);gi.add(mk(new THREE.CylinderGeometry(0.5,0.5,0.25,12),toon(0xd8a880),cx+dx,0.12,cz+dz));
       CV.diners.push({c,pose:newPose(),ph:Math.random()*6,x:cx+dx,z:cz+dz});n++;}}
-  // 服務生
-  const route=[[X+7,Z-2],[X-6,Z-2],[X-6,Z+2],[X+7,Z+2]];for(let i=0;i<2;i++){const c=makeCritter({species:'lobster',body:'#fff3e2',accent:'#8a5a3a',eyes:'round',mouth:'smile',scarf:'#d94a5e'},false);c.setFace('happy');
-    const tray=new THREE.Group();tray.add(mk(new THREE.CylinderGeometry(0.45,0.45,0.05,16),toon(0xd8d0e8),0,0,0));tray.add(mk(new THREE.CylinderGeometry(0.2,0.15,0.18,12),toon(0xfff6ea),0,0.1,0));tray.position.set(0.55,1.45,0.3);c.g.add(tray);
-    c.g.userData.dyn=true;c.g.position.set(route[i*2][0],0.05,route[i*2][1]);gi.add(c.g);CV.waiters.push({c,pose:newPose(),k:i*2,t:0,x:route[i*2][0],z:route[i*2][1],route,walk:0,face:0});}
+  // （服務生已移除）
   // 室內光
   CV.lightPos={x:X,z:Z};
   g.traverse(o=>{if(o.isMesh&&o.material!==HM.glass){o.castShadow=true;o.receiveShadow=true;}});scene.add(g);batchStatic(gi);

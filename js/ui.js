@@ -263,7 +263,7 @@ function updateHUD(){
 }
 const mini=$('mini').getContext('2d');
 function drawMini(){
-  const S=208,sc=S/240,X=x=>(x+120)*sc,Z=z=>(z+120)*sc;const kk=$('mini').width/208;
+  const S=208,sc=S/240,X=x=>(x+120)*sc,Z=z=>(z+120)*sc;const mc=$('mini'),want=Math.round(mc.clientWidth*Math.min(devicePixelRatio||1,2))||208;if(mc.width!==want){mc.width=mc.height=want;}const kk=mc.width/208;
   mini.setTransform(kk,0,0,kk,0,0);mini.save();mini.clearRect(0,0,S,S);mini.beginPath();mini.arc(S/2,S/2,S/2,0,7);mini.clip();
   if(ply.cave){mini.fillStyle='#3a2f4a';mini.fillRect(0,0,S,S);const cs=S/(CAVE.r*2.4);mini.fillStyle='#5a4a6c';mini.beginPath();mini.arc(S/2,S/2,CAVE.r*cs,0,7);mini.fill();
     mini.fillStyle='#fff3c0';mini.fillRect(S/2+(CAVE_EXIT.x-CAVE.x)*cs-5,S/2+(CAVE_EXIT.z-CAVE.z)*cs-3,10,6);for(const m of monsters)if(m.cave&&m.dead<0){mini.fillStyle=m.c.mat.color.getStyle();mini.beginPath();mini.arc(S/2+(m.x-CAVE.x)*cs,S/2+(m.z-CAVE.z)*cs,3,0,7);mini.fill();}
