@@ -36,6 +36,7 @@ const ITEMS={
   shelf:{n:'書櫃',i:'📚',k:'furn',d:'放滿了繪本',r:0.8},
   churro:{n:'吉拿棒',i:'🥖',k:'skin',d:'劍的外觀造型，攻擊時會彈出星星！點一下切換'},
   plush:{n:'龍蝦精靈娃娃',i:'🦞',k:'furn',d:'軟綿綿的龍蝦精靈布偶擺設',r:0.45},
+  crystal:{n:'水晶',i:'🔮',k:'mat',price:30,d:'洞窟深處的閃亮礦物，可以賣錢'},
   plank:{n:'木塊',i:'🟫',k:'block',d:'拿在手上可以蓋木方塊，會自動對齊'}
 };
 for(const[k,c]of Object.entries(CROPS)){ITEMS[k]={n:c.n,i:c.i,k:'food',d:`吃掉回精神 ${c.en}`,en:c.en,price:c.price};ITEMS['seed_'+k]={n:c.n+'種子',i:'🌱',k:'seed',crop:k,d:`種下去會長出${c.n}`};}

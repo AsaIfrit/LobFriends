@@ -78,6 +78,8 @@ body.sleeping #spdTag{display:inline-block}
 @keyframes prBounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.06)}}
 #btnDel{right:200px;bottom:66px;width:64px;height:64px;font-size:11px;background:linear-gradient(160deg,#ffd6c8,#ff9e7a);color:#fff;display:none}
 body.building #btnDel{display:flex;animation:popIn .4s var(--spring)}#btnDel.dim{opacity:.45}
+#btnEmote{left:16px;bottom:80px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#fff3c0,#ffd6a0);color:#7a4a3e}
+body.sleeping #btnEmote{display:none!important}
 #fpBtn{right:100px;bottom:182px;width:52px;height:52px;font-size:22px;background:linear-gradient(160deg,#fff3c0,#ffd36e);color:#fff;display:none}
 body.canfp #fpBtn{display:flex;animation:popIn .4s var(--spring)}#fpBtn.on{background:linear-gradient(160deg,#ffb3c8,#ff8fb0)}
 #xhair{position:fixed;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;pointer-events:none;z-index:4;display:none}
@@ -329,6 +331,7 @@ body.ingame #start{display:none!important}
   #btnAct{width:60px;height:60px;right:94px;bottom:calc(var(--sl) + 26px + env(safe-area-inset-bottom));font-size:10.5px}#btnAct span{font-size:20px}
   #btnJump{width:48px;height:48px;right:24px;bottom:calc(var(--sl) + 116px + env(safe-area-inset-bottom));font-size:19px}
   #btnDel{width:54px;height:54px;right:160px;bottom:calc(var(--sl) + 28px + env(safe-area-inset-bottom));font-size:10px}
+  #btnEmote{width:50px;height:50px;left:12px;bottom:calc(var(--sl) + 30px + env(safe-area-inset-bottom));font-size:9.5px}
   #fpBtn{width:46px;height:46px;right:82px;bottom:calc(var(--sl) + 118px + env(safe-area-inset-bottom));font-size:19px}
   #notes{bottom:calc(var(--sl) + 112px + env(safe-area-inset-bottom));left:8px}.note{width:min(50vw,200px);padding:6px 9px 6px 6px;border-radius:15px}.nav{width:32px;height:32px;font-size:18px}.nmsg{font-size:12.5px}.ntop b{font-size:11px}
   #chatLog{bottom:auto;top:46vh;max-width:56vw}
@@ -365,7 +368,7 @@ body.ingame #start{display:none!important}
   <button class="fan" data-f="tal" style="--i:1">⭐<b>天賦</b><em class="dotS" id="spDot">0</em></button>
   <button class="fan" data-f="bag" style="--i:2">🎒<b>背包</b></button>
   <button class="fan" data-f="deco" style="--i:3">🛋️<b id="decoLbl">布置</b></button>
-  <button class="fan" data-f="social" style="--i:4">😊<b>表情</b></button>
+  <button class="fan" data-f="dex" style="--i:4">📖<b>圖鑑</b></button>
   <button class="fan" data-f="full" style="--i:5">⛶<b>全螢幕</b></button>
   <button class="fan" data-f="set" style="--i:6">⚙️<b>設置</b></button>
 </div>
@@ -375,7 +378,7 @@ body.ingame #start{display:none!important}
 <div id="social"><div class="sbox"><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
 <div id="hotbar"></div>
-<button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><span>👁️</span></button><div id="xhair"></div><button class="btn game" id="btnDel"><span>🔨</span>拆方塊</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
+<button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><span>👁️</span></button><div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>😊</span>表情</button><button class="btn game" id="btnDel"><span>🔨</span>拆方塊</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
 <button class="btn game" id="btnAct"><span id="actIcon">🤚</span><b id="actTxt">互動</b></button>
 <button class="btn game" id="btnAtk"><span id="atkIcon">⚔️</span><b>攻擊</b></button>
 <div id="sleepUI"><div class="tag">💤 睡覺中・時間 ×5 流動</div><button class="btn" id="wakeBtn"><span>☀️</span>起床</button></div>
@@ -441,6 +444,10 @@ body.ingame #start{display:none!important}
   <div id="gRes"></div>
   <button class="qb pink" id="gBtn" style="font-size:16px;padding:12px 22px;margin:0 auto;display:block">抽一次 🪙100</button>
   <button class="qb lav close" data-close="gacha">關閉</button></div></div>
+<div class="panel" id="dex"><div class="sheet"><div class="grab"></div>
+  <h2>📖 圖鑑</h2><div class="sub" id="dexSub"></div>
+  <div class="tabs" id="dexTabs"></div>
+  <div class="grid" id="dexGrid"></div><button class="qb lav close" data-close="dex">關閉</button></div></div>
 <div class="panel" id="settings"><div class="sheet"><div class="grab"></div>
   <h2>⚙️ 設置</h2>
   <div class="clab">主音量 <span id="vMv"></span></div><input type="range" id="vM" min="0" max="1" step="0.05">
@@ -466,16 +473,16 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261113e"></script>
+<script src="config.js?v=20261113f"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261113e"></script>
-<script src="js/audio.js?v=20261113e"></script>
-<script src="js/items.js?v=20261113e"></script>
-<script src="js/critter.js?v=20261113e"></script>
-<script src="js/world.js?v=20261113e"></script>
-<script src="js/game.js?v=20261113e"></script>
-<script src="js/ui.js?v=20261113e"></script>
-<script src="js/extra.js?v=20261113e"></script>
-<script src="js/net.js?v=20261113e"></script>
+<script src="js/engine.js?v=20261113f"></script>
+<script src="js/audio.js?v=20261113f"></script>
+<script src="js/items.js?v=20261113f"></script>
+<script src="js/critter.js?v=20261113f"></script>
+<script src="js/world.js?v=20261113f"></script>
+<script src="js/game.js?v=20261113f"></script>
+<script src="js/ui.js?v=20261113f"></script>
+<script src="js/extra.js?v=20261113f"></script>
+<script src="js/net.js?v=20261113f"></script>
 </body>
 </html>

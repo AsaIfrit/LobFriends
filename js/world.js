@@ -105,8 +105,8 @@ const indoorWin=[],indoorObs=[];
    const wb=mk(new THREE.BoxGeometry(alongX?len-0.02:0.02,0.9,alongX?0.02:len-0.02),wain,cx+(alongX?0:innerSign*(T/2+0.012)),0.45,cz+(alongX?innerSign*(T/2+0.012):0));g.add(wb);
    HOMEV.walls.push({full,stub,wb,alongX,pos:alongX?cz:cx,innerSign,deco:[]});
    WALLS.push({x0:cx-sx/2,x1:cx+sx/2,z0:cz-sz/2,z1:cz+sz/2,y1:WH});}
- wall(HX,HZ-D,W*2+T,true,1);wall(HX,HZ+D,W*2+T,true,-1);wall(HX-W,HZ,D*2,false,1);
- const dw=1.15,seg=(D-dw);wall(HX+W,HZ-dw-seg/2,seg,false,-1);wall(HX+W,HZ+dw+seg/2,seg,false,-1);
+ wall(HX,HZ-D,W*2+T+0.02,true,1);wall(HX,HZ+D,W*2+T+0.02,true,-1);wall(HX-W,HZ,D*2-T-0.02,false,1);
+ const dw=1.15,seg=(D-dw-T/2-0.01);wall(HX+W,HZ-dw-seg/2,seg,false,-1);wall(HX+W,HZ+dw+seg/2,seg,false,-1);
  {const lh=WH-3.0;const m=mk(new THREE.BoxGeometry(T,lh,dw*2),[out,inn,top,top,out,out],HX+W,3.0+lh/2,HZ);g.add(m);HOMEV.walls.push({full:m,stub:null,alongX:false,pos:HX+W,innerSign:-1,deco:[]});}
  const wallOf=(x,z)=>HOMEV.walls.filter(w=>w.alongX?Math.abs(z-w.pos)<0.5&&w.stub:Math.abs(x-w.pos)<0.5&&w.stub);
  // 門（會自動打開）
@@ -390,7 +390,7 @@ const caveObs=[];const CAVE_EXIT={x:CAVE.x,z:CAVE.z+CAVE.r-3.5};
   const glow=mk(new THREE.CircleGeometry(4.6,32,0,Math.PI),basic(0xfff3c0,{transparent:true,opacity:0.25,depthWrite:false}),0,0,-0.05);ex.add(glow);
   for(const s2 of[-1,1]){ex.add(mk(new THREE.SphereGeometry(1.6,12,10),toon(0x6a5c7c),s2*4.6,0.9,0.4));ex.add(mk(new THREE.SphereGeometry(1.1,12,10),toon(0x7a6c8c),s2*3.8,3.3,0.2));}
   ex.position.set(0,0,CAVE.r-0.6);ex.rotation.y=Math.PI;g.add(ex);
- shadowAll(g);scene.add(g);batchStatic(g);
+ shadowAll(g);scene.add(g);batchStatic(g);var CAVEG=g;
 }
 // ---------- 大型遊樂園 ----------
 const PARKV={};
@@ -542,7 +542,7 @@ const PARKV={};
     const mats=[stoneO,stoneO,top,top,stoneO,stoneO];const idx=alongX?(innerSign>0?4:5):(innerSign>0?0:1);mats[idx]=inn;
     const full=mk(geo,mats,cx,WH/2,cz);const stub=mk(new THREE.BoxGeometry(sx,0.9,sz),mats.map(m=>m===inn?toon(0xffd9e4):m),cx,0.45,cz);stub.visible=false;g.add(full,stub);
     CV.walls.push({full,stub,alongX,pos:alongX?cz:cx,innerSign,deco:[]});WALLS.push({x0:cx-sx/2,x1:cx+sx/2,z0:cz-sz/2,z1:cz+sz/2,y1:WH});}
-  wall(X,Z-D,W*2+T,true,1);wall(X,Z+D,W*2+T,true,-1);wall(X-W,Z,D*2,false,1);const dw=1.8,seg=D-dw;wall(X+W,Z-dw-seg/2,seg,false,-1);wall(X+W,Z+dw+seg/2,seg,false,-1);
+  wall(X,Z-D,W*2+T+0.02,true,1);wall(X,Z+D,W*2+T+0.02,true,-1);wall(X-W,Z,D*2-T-0.02,false,1);const dw=1.8,seg=D-dw-T/2-0.01;wall(X+W,Z-dw-seg/2,seg,false,-1);wall(X+W,Z+dw+seg/2,seg,false,-1);
   {const lh=WH-4.6;const m=mk(new THREE.BoxGeometry(T,lh,dw*2),[stoneO,inn,top,top,stoneO,stoneO],X+W,4.6+lh/2,Z);g.add(m);CV.walls.push({full:m,stub:null,alongX:false,pos:X+W,innerSign:-1,deco:[]});}
   const wallOf=(x,z)=>CV.walls.filter(w=>w.stub&&(w.alongX?Math.abs(z-w.pos)<0.6:Math.abs(x-w.pos)<0.6));
   // 正面拱門與看板（貼在正面牆上）

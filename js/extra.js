@@ -123,6 +123,95 @@ function hatchPet(type,name,silent,quiet){const base=PET_TYPES[type];const cnt=p
     burst(d.x,H(d.x,d.z)+0.6,d.z,PAST.map(c=>parseInt(c.slice(1),16)),20,4);ring(d.x,H(d.x,d.z)+0.1,d.z,0xff9ec7,0.3,3,0.6);}
   return p;}
 
+// ---------- 手機：輕點畫面攻擊 ----------
+function tapAct(){if(ply.sleeping||dlg)return;if(fpMode)doAction();else attack();}
+
+// ---------- 洞窟層數（B1～B5）與水晶礦 ----------
+let caveLv=1;const CAVE_DOWN={x:CAVE.x,z:CAVE.z-CAVE.r+5};
+const CAVE_TINT=[[0x120c1e,0x2a1f3a,0xffffff],[0x0c1426,0x1c2a48,0xb8d0ff],[0x0a1c1c,0x183a3a,0xa8f0e0],[0x1e0c10,0x3a1c24,0xffb0b0],[0x16081e,0x2e1240,0xe0a8ff]];
+function caveFog(){const t=CAVE_TINT[caveLv-1];return[t[0],t[1]];}
+const caveMats=[];CAVEG.traverse(o=>{if(o.isMesh&&o.material.color&&!caveMats.includes(o.material)&&o.material.type!=='MeshBasicMaterial'){o.material.userData.base=o.material.color.clone();caveMats.push(o.material);}});
+const caveDown=(()=>{const g=new THREE.Group();const pit=mk(new THREE.CircleGeometry(2.2,28),basic(0x05030a),0,0.04,0);pit.rotation.x=-Math.PI/2;g.add(pit);
+  const rim=mk(new THREE.TorusGeometry(2.3,0.35,8,28),toon(0x6a5c7c),0,0.1,0);rim.rotation.x=Math.PI/2;g.add(rim);
+  const glow=mk(new THREE.CylinderGeometry(2.1,1.6,2.5,24,1,true),basic(0xb48cff,{transparent:true,opacity:0.18,depthWrite:false,side:THREE.DoubleSide}),0,1.25,0);g.add(glow);
+  for(let i=0;i<4;i++){const st=mk(new THREE.BoxGeometry(1.6,0.25,0.6),toon(0x8a7c9a),0,-0.2-i*0.25,-1.2+i*0.55);g.add(st);}
+  const lb=new THREE.Sprite(new THREE.SpriteMaterial({map:textTex(['↓ 往下一層'],'#2a1f3a','#ffe6a0',256,64,34),depthWrite:false,transparent:true}));lb.scale.set(3,0.75,1);lb.position.y=3.2;g.add(lb);g.userData.lb=lb;
+  g.position.set(CAVE_DOWN.x,0,CAVE_DOWN.z);scene.add(g);caveObs.push({x:CAVE_DOWN.x,z:CAVE_DOWN.z-2.6,r:0.01});return g;})();
+const ores=[];const oreG=new THREE.OctahedronGeometry(0.42);
+dropGeo.crystal=new THREE.OctahedronGeometry(0.2);dropMat.crystal=basic(0xd0a8ff);
+function spawnOres(){for(const o of ores){scene.remove(o.g);const i=caveObs.indexOf(o.o);if(i>=0)caveObs.splice(i,1);}ores.length=0;
+  const col=[0xd0a8ff,0x9fd8ff,0x9ff0d8,0xffa8b8,0xe0a0ff][caveLv-1];const n=5+caveLv;
+  for(let k=0;k<n*8&&ores.length<n;k++){const a=R(0,6.28),d=R(6,CAVE.r-4);const x=CAVE.x+Math.cos(a)*d,z=CAVE.z+Math.sin(a)*d;if(!farFrom(x,z,1.6,caveObs)||Math.hypot(x-CAVE_EXIT.x,z-CAVE_EXIT.z)<6||Math.hypot(x-CAVE_DOWN.x,z-CAVE_DOWN.z)<5)continue;
+    const g=new THREE.Group();g.add(mk(new THREE.DodecahedronGeometry(0.7,0),toon(0x6a5c7c),0,0.25,0));const m=basic(col);
+    for(let i=0;i<5;i++){const c=mk(oreG,m,Math.cos(i*1.3)*0.35,0.7+(i%2)*0.2,Math.sin(i*1.3)*0.35);c.scale.set(0.7,1.7+(i%3)*0.4,0.7);c.rotation.set(Math.cos(i)*0.4,i,Math.sin(i)*0.4);g.add(c);}
+    g.position.set(x,0,z);scene.add(g);const o={x,z,r:0.9};caveObs.push(o);ores.push({ore:true,x,z,g,o,hp:3+caveLv,max:3+caveLv,state:'alive',shake:0});}}
+function nearestOre(){let best=null,bd=1.9;for(const o of ores){if(o.state!=='alive')continue;const d=Math.hypot(o.x-ply.x,o.z-ply.z)-0.8;if(d<bd){bd=d;best=o;}}return best;}
+function mineOre(o){if(o.state!=='alive')return;const pw=minePow();if(pw===0){SFX.thud();o.shake=0.5;toast('好硬！需要 ⛏️ 鎬子才挖得動水晶');return;}
+  o.hp-=pw;o.shake=1;SFX.mine();hitStop=0.035;burst(o.x,1,o.z,[0xd0a8ff,0xffffff],7,3.5,cubeG);
+  if(o.hp<=0){o.state='gone';scene.remove(o.g);const i=caveObs.indexOf(o.o);if(i>=0)caveObs.splice(i,1);SFX.rock();burst(o.x,0.8,o.z,[0xd0a8ff,0x9fd8ff,0xffffff],18,5,cubeG);
+    spawnDrops('crystal',o.x,1,o.z,1+Math.floor(caveLv/2)+(Math.random()<0.4?1:0));spawnDrops('xp',o.x,1,o.z,2+caveLv,3);}}
+function setCaveLv(n){caveLv=clamp(n,1,5);const t=new THREE.Color(CAVE_TINT[caveLv-1][2]);for(const m of caveMats)m.color.copy(m.userData.base).multiply(t);
+  for(let i=monsters.length-1;i>=0;i--)if(monsters[i].cave){scene.remove(monsters[i].g);monsters.splice(i,1);}
+  caveDown.visible=caveLv<5;caveDown.userData.lb.material.map=textTex([caveLv<5?`↓ 往 B${caveLv+1}`:'最深處'],'#2a1f3a','#ffe6a0',256,64,34);spawnOres();}
+function goDeeper(){if(caveLv>=5)return;SFX.door();quickFade(()=>{setCaveLv(caveLv+1);ply.x=CAVE_EXIT.x;ply.z=CAVE_EXIT.z-2;ply.y=0;ply.vy=0;ply.face=Math.PI;camYaw=0;snapCam=true;
+  for(const p of pets)if(p.follow){p.x=ply.x+1;p.z=ply.z+1;}toast(`🕳️ 洞窟 B${caveLv}：果凍怪變得更強了！小心～`);});}
+function updateOres(dt){for(const o of ores){if(o.shake>0){o.shake=Math.max(0,o.shake-dt*5);o.g.position.x=o.x+Math.sin(o.shake*40)*0.06*o.shake;}}}
+
+// ---------- 可互動提示（黃色小方塊） ----------
+const MARK=mk(new THREE.OctahedronGeometry(0.3),basic(0xffc83d));MARK.scale.set(0.7,1.3,0.7);MARK.visible=false;MARK.renderOrder=5;scene.add(MARK);
+function markTarget(c){const g=(x,z,dy)=>({x,z,y:(ply.cave?0:H(x,z))+dy});
+  switch(c){
+    case'board':return g(BOARD.x,BOARD.z,3.4);
+    case'talk':{const n=nearestNpc();return n&&g(n.x,n.z,(n.stall&&n.onPost?0.84:0)+2.9);}
+    case'feed':case'invite':{const p=nearestPet(1.8);return p&&g(p.x,p.z,1.7);}
+    case'cave':return g(CAVE_FRONT.x,CAVE_FRONT.z,4.2);
+    case'leave':return{x:CAVE_EXIT.x,z:CAVE_EXIT.z+2,y:4.6};
+    case'deeper':return{x:CAVE_DOWN.x,z:CAVE_DOWN.z,y:4.2};
+    case'ore':{const o=nearestOre();return o&&{x:o.x,z:o.z,y:2.4};}
+    case'gacha':{let b=null,bd=1e9;for(const m of GACHAS){const d=Math.hypot(m.x-ply.x,m.z-ply.z);if(d<bd){bd=d;b=m;}}return b&&g(b.x,b.z,3.5);}
+    case'ferris':return g(PARKV.ferris.board.x,PARKV.ferris.board.z,2.6);
+    case'coaster':return g(PARKV.coaster.board.x,PARKV.coaster.board.z,2.6);
+    case'carousel':{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);return g(K.x+Math.cos(a)*K.r,K.z+Math.sin(a)*K.r,3.2);}
+    case'bench':case'sleep':case'sit':case'bath':{const p=nearestUse(1.3);return p&&{x:p.x,z:p.z,y:p.y+2.2};}
+    case'move':{const p=nearestFurn(null,1.3);return p&&{x:p.x,z:p.z,y:p.y+2.2};}
+    case'catch':{const b=nearestBug(2.8);return b&&g(b.x,b.z,b.y+0.9);}
+    case'harvest':{const t=ripeTile();return t&&g(t.x,t.z,1.6);}
+    case'weed':{const w=nearestWeed(1.9);return w&&g(w.x,w.z,1.5);}
+    case'tree':{const t=nearestTree();return t&&g(t.x,t.z,5.4*t.s);}
+    case'rock':{const r=nearestRock();return r&&g(r.x,r.z,1.9*r.s);}
+  }return null;}
+function updateMark(c,T){const t=markTarget(c);if(!t||paused){MARK.visible=false;return;}MARK.visible=true;MARK.position.set(t.x,t.y+Math.sin(T*3)*0.12,t.z);MARK.rotation.y=T*2.2;}
+
+// ---------- 表情按鈕（左下） ----------
+$('btnEmote').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!paused&&started)openSocial();});
+
+// ---------- 圖鑑 ----------
+const DEX_PET_N={bunny:'小白兔',bunny2:'奶茶兔',chick:'小雞',cat:'小貓咪',puppy:'小狗狗',dino:'小恐龍',axolotl:'六角恐龍',fox:'小狐狸',bear:'小熊'};
+const DEX={fruit:{n:'果實',i:'🍎',list:Object.keys(FRUITS),name:k=>FRUITS[k].n,icon:k=>FRUITS[k].i,hint:'砍樹時掉落的水果'},
+  bug:{n:'昆蟲',i:'🦋',list:Object.keys(BUGS),name:k=>BUGS[k].n,icon:k=>'🦋',hint:'用捕蟲網抓到'},
+  fish:{n:'魚類',i:'🐟',list:Object.keys(FISH),name:k=>FISH[k].n,icon:k=>FISH[k].i,hint:'在池塘釣到'},
+  pet:{n:'寵物',i:'🐾',list:Object.keys(DEX_PET_N),name:k=>DEX_PET_N[k],icon:k=>(PET_TYPES[k]||PET_TYPES.bunny).i,hint:'好感度滿 💗100 才會登錄'}};
+let dexGot={},dexAch={};try{const d=JSON.parse(localStorage.getItem('lobster-dex')||'{}');dexGot=d.got||{};dexAch=d.ach||{};}catch(e){}
+function dexSave(){try{localStorage.setItem('lobster-dex',JSON.stringify({got:dexGot,ach:dexAch}));}catch(e){}}
+function dexCat(k){if(FRUITS[k])return'fruit';if(BUGS[k])return'bug';if(FISH[k])return'fish';return null;}
+function dexMark(cat,k,quiet){const key=cat+':'+k;if(dexGot[key])return;dexGot[key]=1;dexSave();if(!quiet){toast(`📖 圖鑑登錄：${DEX[cat].icon(k)} ${DEX[cat].name(k)}`);$('fab').classList.add('dot');}dexCheck(quiet);}
+function dexCount(cat){return DEX[cat].list.filter(k=>dexGot[cat+':'+k]).length;}
+function dexCheck(quiet){let all=true;for(const cat in DEX){const done=dexCount(cat)===DEX[cat].list.length;if(!done)all=false;
+    if(done&&!dexAch[cat]){dexAch[cat]=1;if(!quiet){ply.coins+=100;toast(`🏆 成就達成：${DEX[cat].n}圖鑑全收集！獎勵 🪙100`);SFX.levelup();updateHUD();}}}
+  if(all&&!dexAch.all){dexAch.all=1;if(!quiet){ply.coins+=500;toast('🏆✨ 圖鑑大師！全部圖鑑收集完成！獎勵 🪙500');SFX.levelup();updateHUD();}}dexSave();}
+{const _add=addItem;addItem=function(k,n=1){_add(k,n);const c=dexCat(k);if(c&&started)dexMark(c,k);};}
+setInterval(()=>{if(!started)return;for(const p of pets)if(p.aff>=100)dexMark('pet',p.d.type);},1000);
+function dexSync(){for(const k in inv)if(inv[k]>0){const c=dexCat(k);if(c)dexMark(c,k,true);}for(const p of pets)if(p.aff>=100)dexMark('pet',p.d.type,true);}
+let dexTab='fruit';
+function renderDex(){const tabs=[...Object.entries(DEX).map(([k,d])=>[k,`${d.i} ${d.n} ${dexCount(k)}/${d.list.length}`]),['ach','🏆 成就']];
+  $('dexTabs').innerHTML=tabs.map(([k,t])=>`<button class="tab ${k===dexTab?'on':''}" data-dt="${k}">${t}</button>`).join('');
+  const tot=Object.keys(DEX).reduce((a,c)=>a+DEX[c].list.length,0),got=Object.keys(DEX).reduce((a,c)=>a+dexCount(c),0);$('dexSub').textContent=`收集進度 ${got}/${tot}`;
+  if(dexTab==='ach'){const rows=[...Object.entries(DEX).map(([k,d])=>[dexAch[k],`${d.i} ${d.n}圖鑑全收集`,'🪙100']),[dexAch.all,'✨ 圖鑑大師（全部收集）','🪙500']];
+    $('dexGrid').innerHTML=rows.map(([ok,t,r],i)=>`<div class="rc stg" style="--i:${i}"><div class="ic">${ok?'🏆':'🔒'}</div><div class="nm">${t}</div><div class="ds">${ok?'已達成！':'獎勵 '+r}</div></div>`).join('');return;}
+  const D=DEX[dexTab];$('dexGrid').innerHTML=D.list.map((k,i)=>{const ok=dexGot[dexTab+':'+k];return`<div class="rc stg" style="--i:${i}"><div class="ic" style="${ok?'':'filter:grayscale(1) brightness(.3);opacity:.5'}">${D.icon(k)}</div><div class="nm">${ok?D.name(k):'？？？'}</div><div class="ds">${ok?'已登錄 ✅':D.hint}</div></div>`;}).join('');}
+$('dexTabs').addEventListener('click',e=>{const b=e.target.closest('[data-dt]');if(!b)return;dexTab=b.dataset.dt;renderDex();SFX.click();});
+function openDex(){dexSync();renderDex();openPanel('dex');$('fab').classList.remove('dot');}
+
 loop();
 
 function castleFrame(cam){const CV=PARKV.castle;const inside=CV.inside(ply.x,ply.z,-0.3);CV.roof.visible=!inside;const L=HOMEV.light;

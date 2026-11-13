@@ -122,7 +122,7 @@ function addChatLog(name,t){const log=$('chatLog');const d=document.createElemen
 $('emoBar').innerHTML=EMOTES.map(e=>`<button data-e="${e}">${e}</button>`).join('');
 $('emoBar').addEventListener('click',e=>{const b=e.target.closest('[data-e]');if(!b)return;sendEmote(b.dataset.e);closeSocial();});
 $('chatForm').addEventListener('submit',e=>{e.preventDefault();sendChat($('chatIn').value);$('chatIn').value='';closeSocial();});
-function openSocial(){const s=$('social');s.style.display='flex';void s.offsetWidth;s.classList.add('show');paused=true;holdAtk=holdAct=false;closeFab();}
+function openSocial(focus){const s=$('social');s.style.display='flex';void s.offsetWidth;s.classList.add('show');paused=true;holdAtk=holdAct=false;closeFab();if(focus)setTimeout(()=>$('chatIn').focus(),60);}
 function closeSocial(){const s=$('social');s.classList.remove('show');setTimeout(()=>s.style.display='none',250);paused=!started;$('chatIn').blur();}
 $('social').addEventListener('pointerdown',e=>{if(e.target.id==='social')closeSocial();});
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.code==='KeyQ'&&started&&!paused)openSocial();});

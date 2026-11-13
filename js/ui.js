@@ -24,16 +24,18 @@ function dismissNote(e){if(e.classList.contains('out'))return;e.classList.add('o
 
 // ---------- 委託 ----------
 const Q={
-  weed:{icon:'🌿',name:'拔草委託',desc:'到北邊草原拔 10 株雜草。',need:10,reward:30,xp:20,state:'none',prog:0,times:0},
+  weed:{icon:'🌿',name:'雜草回收',desc:'隨時都能拔草！帶 10 株 🌿 雜草來這裡交給告示板就能領獎。',need:10,turnin:'weed',reward:30,xp:20,state:'none',prog:0,times:0},
   hunt:{icon:'⚔️',name:'果凍怪討伐',desc:'到東邊野外打倒 3 隻粉紅果凍怪。晚上牠們會更兇！',need:3,reward:80,xp:40,state:'none',prog:0,times:0},
   farm:{icon:'🌾',name:'收成委託',desc:'收成 5 個任何作物。',need:5,reward:60,xp:30,state:'none',prog:0,times:0}
 };
 function renderBoard(){$('qlist').innerHTML=Object.entries(Q).map(([k,q],i)=>{let btn;
-  if(q.state==='none')btn=`<button class="qb" data-k="${k}" data-a="take">接取</button>`;
+  if(q.turnin){const n=inv[q.turnin]||0;btn=n>=q.need?`<button class="qb claim" data-k="${k}" data-a="turnin">交付 🌿${q.need}（有 ${n}）</button>`:`<button class="qb" disabled>🌿 ${n}/${q.need}</button>`;}
+  else if(q.state==='none')btn=`<button class="qb" data-k="${k}" data-a="take">接取</button>`;
   else if(q.state==='active')btn=`<button class="qb" disabled>進行中 ${q.prog}/${q.need}</button>`;
   else btn=`<button class="qb claim" data-k="${k}" data-a="claim">領取 🪙${q.reward}</button>`;
   return`<div class="qc stg" style="--i:${i}"><b>${q.icon} ${q.name}</b><p>${q.desc}</p><div class="row"><span>🪙${q.reward}＋✨${q.xp}・完成 ${q.times} 次</span>${btn}</div></div>`;}).join('');}
 $('qlist').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(!b)return;const q=Q[b.dataset.k];
+  if(b.dataset.a==='turnin'){if((inv[q.turnin]||0)<q.need)return;inv[q.turnin]-=q.need;renderHotbar();}
   if(b.dataset.a==='take'){q.state='active';q.prog=0;toast(`接取了「${q.name}」✨`);SFX.open();}
   else{q.times++;q.state='none';toast(`委託完成！`);SFX.quest();const r=b.getBoundingClientRect();sparkle(r.left+r.width/2,r.top,14);
     for(let i=0;i<Math.min(12,q.reward/5);i++)setTimeout(()=>flyReward('coin',q.reward/Math.min(12,q.reward/5),r.left+r.width/2+R(-20,20),r.top),i*50);
@@ -47,7 +49,7 @@ function stagger(root){root.querySelectorAll('.stg').forEach((el,i)=>el.style.se
 function openPanel(id){const el=$(id);stagger(el);el.style.display='flex';void el.offsetWidth;el.classList.add('show');paused=true;SFX.open();holdAtk=holdAct=false;closeFab();}
 function closePanel(id){const el=$(id);if(!el.classList.contains('show'))return;el.classList.remove('show');SFX.close();setTimeout(()=>{if(!el.classList.contains('show'))el.style.display='none';},320);
   if(!creatorOpen)paused=!started;}
-function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs','gacha'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
+function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs','gacha','dex'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closePanel(b.dataset.close)));
 document.querySelectorAll('.panel').forEach(p=>p.addEventListener('pointerdown',e=>{if(e.target===p&&p.id!=='start'&&p.id!=='creator')closePanel(p.id);}));
 const noAnim=root=>root.querySelectorAll('.stg').forEach(el=>{el.style.animation='none';el.style.opacity=1;el.style.transform='none';});
@@ -167,7 +169,7 @@ function showHbLabel(txt){let el=$('hbLabel');if(!el){el=document.createElement(
 $('hotbar').addEventListener('click',e=>{const b=e.target.closest('.slot');if(!b)return;if(b.id==='bagBtn'){openBag();return;}const i=+b.dataset.i;if(hb[i])useHb(i);else openBag();});
 // ---------- 背包 ----------
 const BAG_ORDER=['churro','sword','spear','bow','staff','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
-  'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS)];
+  'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem','crystal',...Object.keys(BUGS)];
 const BAG_TABS=[['all','全部'],['gear','裝備'],['use','食物種子'],['furn','家具'],['mat','素材']];
 const tabOf=k=>{const t=ITEMS[k].k;return t==='weapon'||t==='tool'||t==='held'||t==='skin'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
 let bagTab='all',bagPick=null,drag=null;
@@ -207,7 +209,8 @@ document.querySelectorAll('.fan').forEach(b=>b.addEventListener('click',()=>{con
   else if(f==='bag'){closeFab();openBag();}
   else if(f==='full'){toggleFull();}
   else if(f==='set'){closeFab();openSettings();}
-  else if(f==='social'){openSocial();}}));
+  else if(f==='social'){openSocial();}
+  else if(f==='dex'){closeFab();openDex();}}));
 addEventListener('resize',()=>document.querySelectorAll('.fan').forEach(b=>{const i=+b.style.getPropertyValue('--i');const st=innerWidth<=560?62:74;b.style.setProperty('--tx',(i<3?-(i+1)*st:0)+'px');b.style.setProperty('--ty',(i<3?0:(i-2)*st)+'px');}));
 // ---------- 設置（音量） ----------
 const VOL={m:1,b:1,s:1};try{Object.assign(VOL,JSON.parse(localStorage.getItem('lobster-vol')||'{}'));}catch(e){}
@@ -277,7 +280,7 @@ function drawMini(){
   mini.fillStyle='#b9a6f2';mini.fillRect(X(STAGE.x)-6,Z(STAGE.z)-3,12,6);for(const k in STALLS){const s=STALLS[k];mini.fillStyle='#ffd36e';mini.fillRect(X(s.x)-3,Z(s.z)-3,6,6);}
   mini.fillStyle='#ffc83d';mini.beginPath();mini.arc(X(BOARD.x),Z(BOARD.z),4,0,7);mini.fill();
   mini.fillStyle='#a0703a';for(const t of farm.values())mini.fillRect(X(t.x)-1.5,Z(t.z)-1.5,3,3);
-  if(Q.weed.state==='active'){mini.fillStyle='#3f8a3a';for(const w of weeds)mini.fillRect(X(w.x)-1,Z(w.z)-1,3,3);}
+  {mini.fillStyle='#3f8a3a';for(const w of weeds)mini.fillRect(X(w.x)-1,Z(w.z)-1,3,3);}
   mini.fillStyle='#f0874f';for(const n of npcs)if(!n.away){mini.beginPath();mini.arc(X(n.x),Z(n.z),2.6,0,7);mini.fill();}
   mini.fillStyle='#7cc8f0';mini.beginPath();mini.arc(X(POND.x),Z(POND.z),POND.r*sc,0,7);mini.fill();mini.fillStyle='#847696';mini.beginPath();mini.arc(X(CAVE_DOOR.x),Z(CAVE_DOOR.z),4,0,7);mini.fill();
   for(const p of pets)if(!p.cave&&!p.indoor){mini.fillStyle='#ff9ec7';mini.fillRect(X(p.x)-2,Z(p.z)-2,4,4);}
@@ -290,14 +293,19 @@ function drawMini(){
 const SKY={dT:new THREE.Color(0x3d92d8),dB:new THREE.Color(0xbfe6fb),sT:new THREE.Color(0xb9a2f0),sB:new THREE.Color(0xffc8b4),nT:new THREE.Color(0x232a5a),nB:new THREE.Color(0x5d5a9a),
   iT:new THREE.Color(0x6a4a52),iB:new THREE.Color(0xa07a78),winOff:new THREE.Color(0xa8c8d8),winOn:new THREE.Color(0xffe2a8),hemiN:new THREE.Color(0xa8a0f0),sunC:new THREE.Color(0xfff4e6),dusk:new THREE.Color(0xffb8a0)};
 let dayF=1;
+const _sd=new THREE.Vector3(),_sr=new THREE.Vector3(),_su=new THREE.Vector3(),_sp=new THREE.Vector3(),_up=new THREE.Vector3(0,1,0);
 function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUNTAINS.visible=out;OUTERG.visible=out;for(const c of clouds)c.visible=out;}
   const a=(tmin/1440)*Math.PI*2-Math.PI/2,sh=Math.sin(a),sc=Math.cos(a);
   dayF=clamp(sh*2.5+0.35,0,1);const dusk=clamp(1-Math.abs(sh)/0.3,0,1)*0.65;
   if(ply.indoor){skyU.top.value.copy(SKY.iT);skyU.bot.value.copy(SKY.iB);scene.fog.far=1000;scene.fog.near=900;}
-  else if(ply.cave){skyU.top.value.setHex(0x120c1e);skyU.bot.value.setHex(0x2a1f3a);scene.fog.color.setHex(0x2a1f3a);scene.fog.near=18;scene.fog.far=55;}
+  else if(ply.cave){const cf=typeof caveFog==='function'?caveFog():[0x120c1e,0x2a1f3a];skyU.top.value.setHex(cf[0]);skyU.bot.value.setHex(cf[1]);scene.fog.color.setHex(cf[1]);scene.fog.near=18;scene.fog.far=55;}
   else{skyU.top.value.copy(SKY.nT).lerp(SKY.dT,dayF).lerp(SKY.sT,dusk);skyU.bot.value.copy(SKY.nB).lerp(SKY.dB,dayF).lerp(SKY.sB,dusk);
     scene.fog.color.copy(skyU.bot.value);scene.fog.far=lerp(110,240,dayF);scene.fog.near=lerp(20,45,dayF);}
-  sun.position.set(ply.x+sc*60,Math.max(sh,0.05)*80,ply.z+30);sun.target.position.set(ply.x,0,ply.z);sun.castShadow=dayF>0.05;
+  {// 影子不閃爍：太陽方向每 4 分鐘才更新一次，並把影子相機對齊像素格
+   const aq=(Math.floor(tmin/4)*4/1440)*Math.PI*2-Math.PI/2,sq=Math.sin(aq),cq=Math.cos(aq);_sd.set(cq*60,Math.max(sq,0.05)*80,30).normalize();
+   _sr.crossVectors(_up,_sd).normalize();_su.crossVectors(_sd,_sr);const tx=56/1024;_sp.set(ply.x,0,ply.z);
+   const u=Math.round(_sp.dot(_sr)/tx)*tx,v=Math.round(_sp.dot(_su)/tx)*tx,w=_sp.dot(_sd);_sp.copy(_sr).multiplyScalar(u).addScaledVector(_su,v).addScaledVector(_sd,w);
+   sun.target.position.copy(_sp);sun.position.copy(_sp).addScaledVector(_sd,100);}sun.castShadow=dayF>0.05;
   sun.intensity=0.3*dayF;sun.color.copy(SKY.sunC).lerp(SKY.dusk,clamp(1-sh/0.35,0,1)*0.45);
   hemi.intensity=ply.cave?0.42:0.5+0.1*dayF;hemi.color.setHex(0xffffff).lerp(SKY.hemiN,1-dayF);amb.intensity=0.12+0.03*dayF;
   moonL.position.set(ply.x-sc*60,Math.max(-sh,0.1)*80,ply.z-20);moonL.target.position.set(ply.x,0,ply.z);moonL.intensity=0.2*(1-dayF);
@@ -319,7 +327,7 @@ function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.s
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',skin:d.skin||null,indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
   (d.pets||[]).forEach(([a,f],i)=>{if(pets[i]){setAff(pets[i],a);pets[i].follow=!!f;}});
-  Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});coinShown=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
+  Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});coinShown=ply.coins;$('coins').textContent=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
   for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const b of d.blocks||[])blocks.set(bKey(b[0],b[1],b[2]),{i:b[0],j:b[1],k:b[2]});rebuildBlocks();
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
   for(const[type,name,f,a]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f;if(!f)sendHome(p);p.x=p.tx;p.z=p.tz;}
