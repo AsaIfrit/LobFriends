@@ -18,11 +18,21 @@ async function cloudInit(){const FB=window.LOBSTER_FIREBASE;if(!FB||!FB.apiKey||
   try{await loadJs(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app-compat.js`);await loadJs(`https://www.gstatic.com/firebasejs/${FBV}/firebase-auth-compat.js`);await loadJs(`https://www.gstatic.com/firebasejs/${FBV}/firebase-firestore-compat.js`);}
   catch(e){console.warn('Firebase 載入失敗',e);return;}
   try{firebase.initializeApp(FB);CLOUD.auth=firebase.auth();CLOUD.db=firebase.firestore();}catch(e){console.warn(e);return;}
+  if(FB.googleClientId)loadJs('https://accounts.google.com/gsi/client').catch(()=>{});
   CLOUD.ready=true;cloudUI();CLOUD.auth.getRedirectResult().catch(e=>cloudErr(e));
   CLOUD.auth.onAuthStateChanged(u=>{CLOUD.user=u;cloudUI();if(u&&CLOUD.checked!==u.uid){CLOUD.checked=u.uid;cloudOnLogin(u);}});}
 function cloudErr(e){if(!e)return;const c=e.code||'';if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return;
   toast(c==='auth/unauthorized-domain'?'⚠️ 這個網址還沒加進 Firebase 的授權網域':c==='permission-denied'?'⚠️ 雲端存檔被拒絕，請檢查 Firestore 規則':'⚠️ 雲端錯誤：'+(c||e.message||e));console.warn(e);}
-async function cloudLogin(){if(!CLOUD.ready){toast('雲端存檔只能在 GitHub Pages 上使用喔');return;}const pr=new firebase.auth.GoogleAuthProvider();pr.setCustomParameters({prompt:'select_account'});
+// 優先用 Google Identity Services 取得權杖，再交給 Firebase（不經過 firebaseapp.com 的彈出視窗，不受瀏覽器儲存分割影響）
+let gisClient=null;
+async function gisLogin(cid){if(!window.google||!google.accounts||!google.accounts.oauth2){try{await loadJs('https://accounts.google.com/gsi/client');}catch(e){return false;}}
+  return new Promise(res=>{try{gisClient=google.accounts.oauth2.initTokenClient({client_id:cid,scope:'openid email profile',prompt:'select_account',
+      callback:async t=>{if(t.error){if(t.error!=='popup_closed')toast('⚠️ Google 登入失敗：'+t.error);res(true);return;}
+        try{await CLOUD.auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(null,t.access_token));}catch(e){cloudErr(e);}res(true);},
+      error_callback:e=>{if(e&&e.type!=='popup_closed')toast('⚠️ 登入視窗被擋住了，請允許彈出視窗');res(true);}});
+    gisClient.requestAccessToken();}catch(e){console.warn(e);res(false);}});}
+async function cloudLogin(){if(!CLOUD.ready){toast('雲端存檔只能在 GitHub Pages 上使用喔');return;}
+  const cid=(window.LOBSTER_FIREBASE||{}).googleClientId;if(cid&&await gisLogin(cid))return;const pr=new firebase.auth.GoogleAuthProvider();pr.setCustomParameters({prompt:'select_account'});
   const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   try{if(standalone)await CLOUD.auth.signInWithRedirect(pr);else await CLOUD.auth.signInWithPopup(pr);}
   catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-environment','auth/web-storage-unsupported'].includes(e.code)){try{await CLOUD.auth.signInWithRedirect(pr);}catch(e2){cloudErr(e2);}}else cloudErr(e);}}
