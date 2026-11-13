@@ -98,7 +98,7 @@ body.building #btnAtk{display:none!important}
 #gRes{min-height:58px;text-align:center;font-weight:900;color:#7a4a5a;font-size:17px}
 #gRes .pet{font-size:64px;display:block;animation:popIn .6s var(--spring)}
 #gList{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:22px;margin:4px 0 10px}
-#partyBox{position:fixed;left:10px;top:200px;z-index:6;display:none;background:rgba(255,250,244,.92);border:3px solid #fff;border-radius:16px;padding:6px 9px;box-shadow:0 4px 0 rgba(200,140,110,.3);min-width:150px}
+#partyBox{position:relative;pointer-events:auto;align-self:flex-start;display:none;background:rgba(255,250,244,.92);border:3px solid #fff;border-radius:16px;padding:6px 9px;box-shadow:0 4px 0 rgba(200,140,110,.3);min-width:150px}
 #partyBox.on{display:block;animation:popIn .4s var(--spring)}#partyBox h4{margin:0 0 3px;font-size:12px;color:#7a4a3e;display:flex;justify-content:space-between;align-items:center}
 #partyBox .pm{font-size:11.5px;font-weight:900;color:#6b4a3e;margin:3px 0}#partyBox .pm i{display:block;height:6px;border-radius:4px;background:#f2dcd4;overflow:hidden;margin-top:2px}#partyBox .pm i b{display:block;height:100%;background:linear-gradient(90deg,#ff8fa3,#ff6f8f)}
 #partyBox .pm.dn{opacity:.6}#ptLeave{border:2px solid #fff;border-radius:10px;background:#ffd6d6;font-size:10px;font-weight:900;padding:1px 6px;color:#8a3a3a}
@@ -379,6 +379,7 @@ body.ingame #start{display:none!important}
   </div>
   <div style="display:flex;gap:6px;align-self:flex-start"><div class="card" id="coinPill">🪙 <b id="coins">0</b></div><div class="card" id="netBadge"><i></i><span id="netTxt">連線中…</span></div></div>
   <div class="card" id="qdrop"><div class="qh">📜 委託 <span id="qCount"></span><span class="chev">▾</span></div><div id="qlistMini"></div></div>
+  <div id="partyBox"><h4><span>🤝 隊伍</span><button id="ptLeave">離開</button></h4><div id="ptList"></div></div>
 </div>
 <div id="topR"><canvas id="mini" width="208" height="208"></canvas>
   <button id="fab"><span></span><span></span><span></span><i></i></button>
@@ -396,8 +397,7 @@ body.ingame #start{display:none!important}
 <div id="social"><div class="sbox"><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
 <div id="hotbar"></div>
-<button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><span>👁️</span></button><div id="partyBox"><h4><span>🤝 隊伍</span><button id="ptLeave">離開</button></h4><div id="ptList"></div></div>
-<div id="invBox"><span id="invTxt"></span><div><button class="qb pink" id="invYes">接受</button><button class="qb lav" id="invNo">拒絕</button></div></div>
+<button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><span>👁️</span></button><div id="invBox"><span id="invTxt"></span><div><button class="qb pink" id="invYes">接受</button><button class="qb lav" id="invNo">拒絕</button></div></div>
 <div id="downBox">💫 你倒下了<p>等待隊友來救助，或是直接返回重生點</p><div><button class="qb" disabled>⏳ 等待救援中…</button><button class="qb pink" id="downHome">返回重生點</button></div></div>
 <div id="revBar"><span id="revTxt"></span><i><b id="revFill"></b></i></div>
 <div id="bossBar">👑 果凍王 <small id="bossHp"></small><i><b id="bossFill"></b></i></div>
@@ -499,19 +499,19 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261114d"></script>
-<script src="firebase-config.js?v=20261114d"></script>
+<script src="config.js?v=20261114e"></script>
+<script src="firebase-config.js?v=20261114e"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261114d"></script>
-<script src="js/audio.js?v=20261114d"></script>
-<script src="js/items.js?v=20261114d"></script>
-<script src="js/critter.js?v=20261114d"></script>
-<script src="js/world.js?v=20261114d"></script>
-<script src="js/game.js?v=20261114d"></script>
-<script src="js/ui.js?v=20261114d"></script>
-<script src="js/extra.js?v=20261114d"></script>
-<script src="js/net.js?v=20261114d"></script>
-<script src="js/cloud.js?v=20261114d"></script>
-<script src="js/party.js?v=20261114d"></script>
+<script src="js/engine.js?v=20261114e"></script>
+<script src="js/audio.js?v=20261114e"></script>
+<script src="js/items.js?v=20261114e"></script>
+<script src="js/critter.js?v=20261114e"></script>
+<script src="js/world.js?v=20261114e"></script>
+<script src="js/game.js?v=20261114e"></script>
+<script src="js/ui.js?v=20261114e"></script>
+<script src="js/extra.js?v=20261114e"></script>
+<script src="js/net.js?v=20261114e"></script>
+<script src="js/cloud.js?v=20261114e"></script>
+<script src="js/party.js?v=20261114e"></script>
 </body>
 </html>
