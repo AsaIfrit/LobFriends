@@ -140,6 +140,8 @@ body:not(.ingame) #skillBar,body.sleeping #skillBar,body.downed #skillBar,body.c
 #decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:linear-gradient(140deg,#ffd36e,#ffb38a);color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35)}
 body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 /* 擺放中按鈕 */
+#rotSl{position:fixed;left:0;top:0;z-index:6;display:none;align-items:center;gap:8px;transform:translate(-50%,0);background:rgba(255,250,243,.95);border:3px solid #fff;border-radius:18px;padding:6px 12px;box-shadow:0 4px 0 rgba(200,140,110,.4)}
+#rotSl.on{display:flex}#rotSl input{width:min(56vw,240px);accent-color:#ff9ec7}#rotSl b{min-width:40px;text-align:right;font-weight:900;font-size:13px;color:var(--ink)}
 #placeBar{position:fixed;left:50%;bottom:66px;transform:translateX(-50%);display:none;gap:8px;z-index:5}
 body.carrying #placeBar{display:flex;animation:popIn .4s var(--spring)}
 #placeBar button{border:3px solid #fff;border-radius:16px;padding:7px 12px;font-weight:900;font-size:13px;background:var(--cream);box-shadow:0 4px 0 rgba(200,140,110,.4)}
@@ -444,7 +446,7 @@ body.ingame #start{display:none!important}
   <button class="fan" data-f="set" style="--i:6">⚙️<b>設置</b></button>
 </div>
 <div id="decoTag">🛋️ 布置模式・靠近家具按「搬動」</div>
-<div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
+<div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
 <div id="toast"></div><div id="notes"></div><div id="chatLog"></div>
 <div id="social"><div class="sbox"><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
@@ -551,20 +553,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261114u"></script>
-<script src="firebase-config.js?v=20261114u"></script>
+<script src="config.js?v=20261114y"></script>
+<script src="firebase-config.js?v=20261114y"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261114u"></script>
-<script src="js/audio.js?v=20261114u"></script>
-<script src="js/items.js?v=20261114u"></script>
-<script src="js/critter.js?v=20261114u"></script>
-<script src="js/world.js?v=20261114u"></script>
-<script src="js/game.js?v=20261114u"></script>
-<script src="js/ui.js?v=20261114v"></script>
-<script src="js/extra.js?v=20261114x"></script>
-<script src="js/net.js?v=20261114u"></script>
-<script src="js/cloud.js?v=20261114u"></script>
-<script src="js/skills.js?v=20261114u"></script>
-<script src="js/party.js?v=20261114u"></script>
+<script src="js/engine.js?v=20261114y"></script>
+<script src="js/audio.js?v=20261114y"></script>
+<script src="js/items.js?v=20261114y"></script>
+<script src="js/critter.js?v=20261114y"></script>
+<script src="js/world.js?v=20261114y"></script>
+<script src="js/game.js?v=20261114y"></script>
+<script src="js/ui.js?v=20261114y"></script>
+<script src="js/extra.js?v=20261114y"></script>
+<script src="js/net.js?v=20261114y"></script>
+<script src="js/cloud.js?v=20261114y"></script>
+<script src="js/skills.js?v=20261114y"></script>
+<script src="js/party.js?v=20261114y"></script>
 </body>
 </html>

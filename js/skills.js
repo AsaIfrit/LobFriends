@@ -239,16 +239,25 @@ function renderSkillBar(force){const L=skillList();const key=L.join(',')+'|'+inn
   bar.querySelectorAll('.sk').forEach(b=>{const k=b.dataset.k,S=SKILLS[k],left=Math.max(0,cdLeft[k]||0),tot=val(S.cd)*(1-0.1*TV('m_wisdom'));const f=left>0?left/tot:0;
     b.querySelector('i').style.background=f>0?`conic-gradient(rgba(70,40,60,.55) ${f*360}deg,transparent 0)`:'none';b.querySelector('b').textContent=left>0.05&&!S.toggle?Math.ceil(left):'';
     b.classList.toggle('on',!!(S.toggle&&ply.coinMode)||(k==='r_song'&&!!ply.chan));b.classList.toggle('dim',left>0||!!skWrong(k));});}
-function layoutSkills(){const btns=[...document.querySelectorAll('#skillBar .sk')];if(!btns.length)return;const a=$('btnAtk').getBoundingClientRect();if(!a.width)return;
-  const cx=a.left+a.width/2,cy=a.top+a.height/2,mob=innerWidth<=560||innerHeight<=500;const w=btns[0].offsetWidth||50,pad=5;
-  // 避開其他按鈕、快捷欄和螢幕邊緣，自動找空位
-  const block=['btnAct','btnJump','btnEmote','hotbar','topR'].map(id=>$(id)).filter(e=>e&&e.offsetWidth).map(e=>e.getBoundingClientRect());block.push(a);
-  const taken=[];const fits=(x,y)=>{if(x-w/2<4||y-w/2<4||x+w/2>innerWidth-4||y+w/2>innerHeight-4)return false;
-    for(const r of block)if(x+w/2+pad>r.left&&x-w/2-pad<r.right&&y+w/2+pad>r.top&&y-w/2-pad<r.bottom)return false;
-    for(const t of taken)if(Math.hypot(t[0]-x,t[1]-y)<w+pad*2)return false;return true;};
-  const angs=[150,125,170,105,185,140,115,160,95,200];const R1=a.width/2+(mob?58:70);
-  btns.forEach(b=>{let p=null;for(const R0 of[R1,R1+w*0.9,R1+w*1.8]){for(const g of angs){const t=g*Math.PI/180,x=cx+Math.cos(t)*R0,y=cy-Math.sin(t)*R0;if(fits(x,y)){p=[x,y];break;}}if(p)break;}
-    if(!p)p=[cx-R1,cy-R1];taken.push(p);b.style.left=(p[0]-w/2)+'px';b.style.top=(p[1]-w/2)+'px';});}
+// ---------- 右下角按鈕：蜂巢式等距排列（所有按鈕彼此間距相同） ----------
+const CLUSTER=['btnAtk','btnAct','btnJump','SK0','SK1','btnDel','fpBtn'];
+let clusterSig='';
+function clusterEls(){const sks=document.querySelectorAll('#skillBar .sk');const skOn=getComputedStyle($('skillBar')).display!=='none';
+  return CLUSTER.map(id=>id.startsWith('SK')?(skOn?sks[+id[2]]:null):$(id)).filter(e=>e&&getComputedStyle(e).display!=='none');}
+function layoutCluster(force){const els=clusterEls();if(!els.length)return;const W=innerWidth,Hh=innerHeight;const mob=W<=560||Hh<=500,land=Hh<=500;
+  const A=mob?(land?62:70):86,S=mob?(land?46:50):58,G=mob?11:15,m=mob?12:18;
+  const hb=$('hotbar').getBoundingClientRect();const portrait=W<=560;
+  const sig=els.map(e=>e.id||e.dataset.k).join(',')+'|'+W+'x'+Hh+'|'+(portrait?Math.round(hb.top):0);if(!force&&sig===clusterSig)return;clusterSig=sig;
+  const cx=W-m-A/2,cy=(portrait&&hb.height?hb.top-G:Hh-m)-A/2;
+  const R1=A/2+G+S/2,D=S+G,step=2*Math.asin(D/(2*R1));const inner=[];
+  for(let k=0;k<6;k++){const t=Math.PI-k*step,x=cx+Math.cos(t)*R1,y=cy-Math.sin(t)*R1;if(x+S/2>W-4)break;inner.push([x,y]);}
+  const vall=[];for(let k=0;k+1<inner.length;k++){const[p1,p2]=[inner[k],inner[k+1]];const mx=(p1[0]+p2[0])/2,my=(p1[1]+p2[1])/2;let nx=mx-cx,ny=my-cy;const L=Math.hypot(nx,ny)||1;nx/=L;ny/=L;
+    const d=Math.hypot(p1[0]-p2[0],p1[1]-p2[1]),h=Math.sqrt(Math.max(0,D*D-d*d/4));vall.push([mx+nx*h,my+ny*h]);}
+  const slots=[inner[0],inner[inner.length-1],...inner.slice(1,-1),...vall,inner[0]&&[inner[0][0]-D,inner[0][1]]].filter(Boolean);
+  const put=(e,x,y,sz)=>{Object.assign(e.style,{left:(x-sz/2)+'px',top:(y-sz/2)+'px',right:'auto',bottom:'auto',width:sz+'px',height:sz+'px'});};
+  put(els[0],cx,cy,A);els.slice(1).forEach((e,i)=>{const p=slots[i]||[cx-R1-D*(i-slots.length+2),cy];put(e,p[0],p[1],S);});}
+function layoutSkills(){layoutCluster(true);}
+setInterval(()=>{if(document.body.classList.contains('ingame'))layoutCluster(false);},200);
 addEventListener('resize',()=>{skKey='';setTimeout(()=>renderSkillBar(true),120);});
 $('skillBar').addEventListener('pointerdown',e=>{const b=e.target.closest('.sk');if(!b)return;e.preventDefault();e.stopPropagation();useSkill(b.dataset.k);bump(b);});
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.repeat||!started||paused||kbWait)return;const i=e.code===KB.sk1?0:e.code===KB.sk2?1:-1;if(i<0)return;const L=skillList();if(L[i])useSkill(L[i]);});

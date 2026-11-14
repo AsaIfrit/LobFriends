@@ -442,7 +442,7 @@ window.__game={ply,inv,Q,trees,monsters,npcs,farm,tal,setTime:v=>tmin=v,addItem,
 
 // ---------- 手機版：快捷欄若碰到右下角按鈕就自動縮小 ----------
 function fitHud(){const hbE=$('hotbar');if(!hbE||!hbE.offsetWidth)return;document.documentElement.style.removeProperty('--sl');
-  const hits=()=>{const h=hbE.getBoundingClientRect();return['btnAct','btnAtk','btnDel','btnEmote'].some(id=>{const e=$(id);if(!e||!e.offsetWidth)return false;const r=e.getBoundingClientRect();return h.right>r.left-4&&h.left<r.right+4&&h.bottom>r.top-4&&h.top<r.bottom+4;});};
+  const hits=()=>{const h=hbE.getBoundingClientRect();return['btnAct','btnAtk','btnDel','btnEmote','btnJump','fpBtn'].some(id=>{const e=$(id);if(!e||!e.offsetWidth)return false;const r=e.getBoundingClientRect();return h.right>r.left-4&&h.left<r.right+4&&h.bottom>r.top-4&&h.top<r.bottom+4;});};
   if(!hits())return;let sl=parseFloat(getComputedStyle($('hotbar').querySelector('.slot')||hbE).width)||44;
   for(let i=0;i<20&&hits()&&sl>24;i++){sl-=1.5;document.documentElement.style.setProperty('--sl',sl+'px');}
   if(typeof renderSkillBar==='function')renderSkillBar(true);}

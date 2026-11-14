@@ -171,10 +171,14 @@ let decoMode=false,carry=null,ghost=null,ghostOK=false,fpMode=false,fpPitch=0.3,
 const ghostOkM=basic(0x8fdcb4,{transparent:true,opacity:.5,depthWrite:false}),ghostNoM=basic(0xff6f6f,{transparent:true,opacity:.45,depthWrite:false});
 function startCarry(id,orig){if(ghost)scene.remove(ghost);carry={id,orig,ry:orig?orig.ry:Math.round(ply.face/(Math.PI/2))*(Math.PI/2)};
   ghost=buildFurn(id);ghost.traverse(o=>{if(o.isMesh)o.material=ghostOkM;});scene.add(ghost);document.body.classList.add('carrying');renderHotbar();}
-function endCarry(){if(ghost)scene.remove(ghost);ghost=null;carry=null;document.body.classList.remove('carrying');renderHotbar();}
+function endCarry(){$('rotSl').classList.remove('on');if(ghost)scene.remove(ghost);ghost=null;carry=null;document.body.classList.remove('carrying');renderHotbar();}
 function ghostSpot(){if(fpMode&&fpHit){let x=Math.round(fpHit.x*2)/2,z=Math.round(fpHit.z*2)/2;return[x,z];}
   const d=1.3+(carry?ITEMS[carry.id].r*fsOf(carry.id):0.8);let x=ply.x+Math.sin(ply.face)*d,z=ply.z+Math.cos(ply.face)*d;x=Math.round(x*2)/2;z=Math.round(z*2)/2;return[x,z];}
-function carryRotate(){if(!carry)return;carry.ry+=Math.PI/2;SFX.click();}
+const rotDeg=()=>Math.round(((carry.ry*180/Math.PI)%360+360)%360)%360;
+function carryRotate(step){if(!carry)return;if(typeof step==='number'){carry.ry+=step*Math.PI/180;syncRotSl();SFX.click();return;}const sl=$('rotSl');sl.classList.toggle('on');syncRotSl();SFX.click();}
+function syncRotSl(){if(!carry)return;$('rotIn').value=rotDeg();$('rotVal').textContent=rotDeg()+'°';}
+$('rotIn').addEventListener('input',e=>{if(!carry)return;carry.ry=(+e.target.value)*Math.PI/180;$('rotVal').textContent=e.target.value+'°';});
+['pointerdown','touchstart'].forEach(ev=>$('rotSl').addEventListener(ev,e=>e.stopPropagation()));
 function carryPlace(){if(!carry)return;const[x,z]=ghostSpot();if(!ghostOK){SFX.deny();toast('這裡放不下喔');return;}
   const y=supportY(x,z);const p=placeFurn(carry.id,x,z,carry.ry,true,y);if(!carry.orig){inv[carry.id]--;}SFX.place();burst(x,y+0.5,z,PAST.map(c=>parseInt(c.slice(1),16)),10,3);
   const id=carry.id,fromInv=!carry.orig;endCarry();if(fromInv&&inv[id]>0)startCarry(id,null);if(id==='bench')toast('工作台放好了！靠近它可以做進階道具 🔨');save();}
@@ -201,7 +205,7 @@ addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||kbWait)return;if(e
   if(kIs(e,'jump')){jump();e.preventDefault();}
   if(kIs(e,'atk')){holdAtk=true;attack();}
   if(act){holdAct=true;doAction();}
-  if(kIs(e,'rot'))carryRotate();
+  if(kIs(e,'rot'))carryRotate(e.shiftKey?-15:15);
   if(kIs(e,'craft'))openCraft();
   if(kIs(e,'tal'))openTalents();
   if(/^Digit[0-9]$/.test(e.code)){const d=+e.code.slice(5);useHb(d===0?9:d-1);}
@@ -755,7 +759,7 @@ function step(dt,T){
   for(const p of placed){if(p.pop<1){p.pop=Math.min(1,p.pop+dt*3);p.g.scale.setScalar(easeOutBack(p.pop)+0.001);}
     if(p.g.userData.panel){const pn=p.g.userData.panel,tg=p.open?-1.7:0;pn.rotation.y+=(tg-pn.rotation.y)*Math.min(1,dt*8);}
     if(p.g.userData.flame){const f=p.g.userData.flame;f.scale.set(1+Math.sin(T*13)*0.1,1+Math.sin(T*17)*0.15,1+Math.cos(T*11)*0.1);if(Math.random()<dt*6)burst(p.x,H(p.x,p.z)+1.3,p.z,[0xffd36e,0xffa36e],1,1.2,partG,0.6);}}
-  if(ghost){const[x,z]=ghostSpot();const gy=supportY(x,z);ghost.position.set(x,gy+Math.sin(T*5)*0.05+0.05,z);ghost.rotation.y=carry.ry;
+  if(ghost){const[x,z]=ghostSpot();const gy=supportY(x,z);ghost.position.set(x,gy+Math.sin(T*5)*0.05+0.05,z);ghost.rotation.y=carry.ry;if($('rotSl').classList.contains('on')){const sp=worldToScreen(x,gy,z);const r=$('rotSl');r.style.left=clamp(sp.x,150,innerWidth-150)+'px';r.style.top=clamp(sp.y+34,60,innerHeight-160)+'px';}
     const r=ITEMS[carry.id].r*fsOf(carry.id),rr=Math.max(r*0.8,0.3);ghostOK=(r===0||!obstacles.some(o=>o.r>0&&(o.y===undefined||Math.abs(o.y-gy)<0.9)&&Math.hypot(o.x-x,o.z-z)<o.r+r*0.9))&&!hitsWall(x-rr,x+rr,z-rr,z+rr)&&Math.hypot(x-BOARD.x,z-BOARD.z)>2&&Math.hypot(x-ply.x,z-ply.z)<9;
     const mat=ghostOK?ghostOkM:ghostNoM;ghost.traverse(o=>{if(o.isMesh)o.material=mat;});}
   // ---- 果凍怪 ----
