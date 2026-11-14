@@ -49,9 +49,9 @@ function stagger(root){root.querySelectorAll('.stg').forEach((el,i)=>el.style.se
 function openPanel(id){const el=$(id);stagger(el);el.style.display='flex';void el.offsetWidth;el.classList.add('show');paused=true;SFX.open();holdAtk=holdAct=false;closeFab();}
 function closePanel(id){const el=$(id);if(!el.classList.contains('show'))return;el.classList.remove('show');SFX.close();setTimeout(()=>{if(!el.classList.contains('show'))el.style.display='none';},320);
   if(!creatorOpen)paused=!started;}
-function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs','gacha','dex'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
+function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs','gacha','dex','pets','players'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closePanel(b.dataset.close)));
-document.querySelectorAll('.panel').forEach(p=>p.addEventListener('pointerdown',e=>{if(e.target===p&&p.id!=='start'&&p.id!=='creator')closePanel(p.id);}));
+document.querySelectorAll('.panel').forEach(p=>p.addEventListener('pointerdown',e=>{if(e.target===p&&p.id!=='start'&&p.id!=='creator'&&p.id!=='players')closePanel(p.id);}));
 const noAnim=root=>root.querySelectorAll('.stg').forEach(el=>{el.style.animation='none';el.style.opacity=1;el.style.transform='none';});
 
 // ---------- 合成 ----------
@@ -252,7 +252,8 @@ document.querySelectorAll('.fan').forEach(b=>b.addEventListener('click',()=>{con
   else if(f==='full'){toggleFull();}
   else if(f==='set'){closeFab();openSettings();}
   else if(f==='social'){openSocial();}
-  else if(f==='dex'){closeFab();openDex();}}));
+  else if(f==='dex'){closeFab();openDex();}
+  else if(f==='pet'){closeFab();openPets();}}));
 addEventListener('resize',layoutFan);
 // ---------- 設置（音量） ----------
 const VOL={m:1,b:1,s:1};try{Object.assign(VOL,JSON.parse(localStorage.getItem('lobster-vol')||'{}'));}catch(e){}
@@ -363,16 +364,16 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0,p.stored?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff,p.stored?1:0]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]).concat(carry&&carry.orig?[[carry.id,carry.orig.x,carry.orig.z,carry.orig.ry,+(carry.orig.y||0).toFixed(3)]]:[]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',skins:d.skins||(d.skin?{sword:d.skin}:{}),indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
-  (d.pets||[]).forEach(([a,f],i)=>{if(pets[i]){setAff(pets[i],a);pets[i].follow=!!f;}});
+  (d.pets||[]).forEach(([a,f,st],i)=>{if(pets[i]){setAff(pets[i],a);pets[i].follow=!!f&&!st;pets[i].stored=!!st;}});
   Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});coinShown=ply.coins;$('coins').textContent=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
   for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const b of d.blocks||[])blocks.set(bKey(b[0],b[1],b[2]),{i:b[0],j:b[1],k:b[2],c:b[3]&&ITEMS[b[3]]?b[3]:undefined});rebuildBlocks();
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
-  for(const[type,name,f,a]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f;if(!f)sendHome(p);p.x=p.tx;p.z=p.tz;}
+  for(const[type,name,f,a,st]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f&&!st;p.stored=!!st;if(!p.follow)sendHome(p);p.x=p.tx;p.z=p.tz;}
   for(const[gx,gz,wet,type,stage,g]of d.farm||[]){const t=till(gx,gz,false);setWet(t,!!wet);if(type){t.crop={type,stage,g};setCropStage(t,stage);t.crop.pop=1;t.crop.mesh.scale.setScalar(1);}}
   ply.iday=d.iday;ply.skEq=Array.isArray(d.skEq)?d.skEq.slice(0,2):[];recalcMax();if(d.hp!==undefined)ply.hp=Math.min(ply.max,d.hp);
   ply.hat=d.hat&&ITEMS[d.hat]&&inv[d.hat]>0?d.hat:null;look.hat=hatStyle();
@@ -463,3 +464,23 @@ addEventListener('keyup',e=>{if(kbWait){e.stopImmediatePropagation();}},true);
 renderKB();
 // 關閉／切換頁面時立即存檔
 addEventListener('pagehide',()=>save());document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save();});
+
+// ---------- 寵物小屋（收納／放出） ----------
+const PET_ICON=t=>(PET_TYPES[t]&&PET_TYPES[t].i)||({bunny2:'🐰'}[t])||'🐾';
+const ownedPets=()=>pets.filter(p=>p.aff>=100);
+function storePet(p){if(!p)return;p.stored=true;p.follow=false;p.homing=false;const hy=(p.cave?0:H(p.x,p.z))+0.6;burst(p.x,hy,p.z,[0xffd36e,0xffffff,0xff9ec7],14,3);puff(p.x,hy,p.z,0xffffff,1.4);p.a.g.visible=false;SFX.pickup(4);toast(`📦 ${p.d.name} 收進寵物小屋了`);save();}
+function releasePet(p){if(!p)return;p.stored=false;p.cave=!!ply.cave;p.x=ply.x+Math.sin(ply.face)*1.6;p.z=ply.z+Math.cos(ply.face)*1.6;p.a.g.position.set(p.x,ply.cave?0:H(p.x,p.z),p.z);p.a.g.visible=true;
+  if(!pets.some(o=>o!==p&&o.follow)){p.follow=true;p.homing=false;toast(`🐾 ${p.d.name} 出來陪你了！`);}else{sendHome(p);toast(`🐾 ${p.d.name} 出來了，先回家等你 🏠`);}
+  ring(p.x,(ply.cave?0:H(p.x,p.z))+0.1,p.z,0xff9ec7,0.3,2.5,0.5);burst(p.x,(ply.cave?0:H(p.x,p.z))+0.6,p.z,[0xff9ec7,0xffd36e,0xffffff],14,3);SFX.levelup();save();}
+function renderPets(){const L=ownedPets();$('petSub').textContent=L.length?`收納中 ${L.filter(p=>p.stored).length} 隻・在外面 ${L.filter(p=>!p.stored).length} 隻`:'還沒有夥伴喔～把小動物的好感度餵到 💗100 就能成為夥伴！';
+  $('petList').innerHTML=L.map((p,i)=>{const st=p.stored?'📦 收納中':p.follow?'🐾 跟著你':'🏠 在家';
+    return`<div class="pcard stg ${p.stored?'in':''}" style="--i:${Math.min(i,12)}"><div class="pi">${PET_ICON(p.d.type)}</div><div class="pn"><b>${p.d.name}</b><small>${st}</small></div><button class="qb ${p.stored?'pink':''}" data-pi="${pets.indexOf(p)}">${p.stored?'放出':'收納'}</button></div>`;}).join('');}
+function openPets(){if(!started||ply.sleeping)return;renderPets();openPanel('pets');}
+$('petList').addEventListener('click',e=>{const b=e.target.closest('[data-pi]');if(!b)return;const p=pets[+b.dataset.pi];if(!p)return;if(p.stored)releasePet(p);else storePet(p);renderPets();});
+// 寵物附近按互動：邀請／收納
+let petPick=null;
+function openPetChoice(p){if(!p)return;petPick=p;faceTo(p.x,p.z);$('pcName').textContent=`${PET_ICON(p.d.type)} ${p.d.name}`;$('petChoice').classList.add('on');SFX.open();}
+function closePetChoice(){$('petChoice').classList.remove('on');petPick=null;}
+$('pcInvite').addEventListener('click',()=>{const p=petPick;closePetChoice();if(p)petAction(p,'invite');});
+$('pcStore').addEventListener('click',()=>{const p=petPick;closePetChoice();if(p)storePet(p);});
+$('pcCancel').addEventListener('click',closePetChoice);

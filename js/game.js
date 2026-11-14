@@ -265,7 +265,7 @@ function context(){
   {const K=PARKV.carousel;const d=Math.hypot(ply.x-K.x,ply.z-K.z);if(d<K.r+1.9&&d>K.r-0.5)return'carousel';}
   if(nearestNpc())return'talk';
   {const r=nearestRemote();if(r&&!(party&&party.members.includes(r.nid))&&(!inParty()||party.leader===myNetId))return'pinvite';}
-  {const pt=nearestPet(1.8);if(pt&&!pt.follow){if(pt.aff>=100)return'invite';if(hasFoodFor(pt))return'feed';}}
+  {const pt=nearestPet(1.8);if(pt&&!pt.follow){if(pt.aff>=100)return'petmenu';if(hasFoodFor(pt))return'feed';}}
 
   if(ply.held==='rod'&&Math.hypot(ply.x-POND.x,ply.z-POND.z)<POND.r+2.4)return'fish';
   if(fr){const it=ITEMS[fr.id];if(fr.id==='bench')return'bench';if(it.bed)return'sleep';if(it.sit)return'sit';if(it.bath)return'bath';}
@@ -281,7 +281,7 @@ function context(){
   if(nearestRock())return'rock';
   return'none';
 }
-const CTX={door:['🚪','開／關門'],getoff:['🚶','下來'],revive:['💖','救助'],chest:['🎁','打開寶箱'],pinvite:['🤝','邀請組隊'],deeper:['🕳️','往下一層'],ore:['💎','採水晶'],build:['🧱','蓋方塊'],unblock:['🔨','拆方塊'],gacha:['🥚','轉蛋'],fgacha:['🎀','時裝轉蛋'],ferris:['🎡','搭摩天輪'],coaster:['🎢','搭雲霄飛車'],carousel:['🎠','騎木馬'],place:['✨','放置'],move:['🫳','搬動'],stand:['🧍','起來'],board:['📋','告示板'],talk:['💬','對話'],enter:['🚪','進屋'],exit:['🚪','出門'],sleep:['🛏️','躺下'],sit:['🪑','坐下'],bath:['🛁','泡澡'],
+const CTX={petmenu:['🐾','寵物'],door:['🚪','開／關門'],getoff:['🚶','下來'],revive:['💖','救助'],chest:['🎁','打開寶箱'],pinvite:['🤝','邀請組隊'],deeper:['🕳️','往下一層'],ore:['💎','採水晶'],build:['🧱','蓋方塊'],unblock:['🔨','拆方塊'],gacha:['🥚','轉蛋'],fgacha:['🎀','時裝轉蛋'],ferris:['🎡','搭摩天輪'],coaster:['🎢','搭雲霄飛車'],carousel:['🎠','騎木馬'],place:['✨','放置'],move:['🫳','搬動'],stand:['🧍','起來'],board:['📋','告示板'],talk:['💬','對話'],enter:['🚪','進屋'],exit:['🚪','出門'],sleep:['🛏️','躺下'],sit:['🪑','坐下'],bath:['🛁','泡澡'],
   catch:['🥅','捕捉'],harvest:['🧺','收成'],till:['🟫','翻土'],water:['💧','澆水'],plant:['🌱','播種'],bench:['🧰','合成'],cave:['⛰️','進入洞窟'],leave:['🌤️','離開洞窟'],fish:['🎣','釣魚'],wait:['🎣','收竿'],reel:['❗','拉竿！'],feed:['🍎','餵食'],invite:['💕','邀請'],pat:['🤲','摸摸'],untill:['🟩','剷平'],weed:['🌿','拔草'],tree:['🪓','砍樹'],rock:['⛏️','挖礦'],none:['🤚','互動']};
 const ACT_DUR={pull:0.4,chop:0.42,mine:0.38,till:0.45,water:0.7,plant:0.45,catch:0.45,harvest:0.5};
 const ACT_HIT={pull:0.5,chop:0.6,mine:0.6,till:0.62,water:0.5,plant:0.55,catch:0.55,harvest:0.5};
@@ -326,6 +326,7 @@ function doAction(){
     case'wait':endFishing('收竿了');break;
     case'reel':catchFish();break;
     case'feed':case'invite':petAction(nearestPet(1.8),c);break;
+    case'petmenu':openPetChoice(nearestPet(1.8));break;
     case'water':startAct('water',frontTile(),'can');SFX.water();break;
     case'plant':startAct('plant',frontTile());break;
     case'weed':{const w=nearestWeed(1.9);faceTo(w.x,w.z);startAct('pull',w,'_none');break;}
@@ -878,7 +879,7 @@ function homeSpot(p){const i=pets.indexOf(p);if(i%2===0){const a=i*1.3;return{x:
 // 經過門口的路徑
 function viaDoor(px,pz,tx,tz){const pin=inHouse(px,pz,0.2),tin=inHouse(tx,tz,0.2);if(pin===tin)return[tx,tz];
   const a=pin?DOOR_IN:DOOR_OUT,b=pin?DOOR_OUT:DOOR_IN;if(Math.hypot(px-a.x,pz-a.z)>0.6&&!(Math.abs(pz-HOME.z)<0.9&&Math.abs(px-(HOME.x+HOME.w))<1.6))return[a.x,a.z];return[b.x,b.z];}
-function nearestPet(r){let best=null,bd=r;for(const p of pets){if(!!p.cave!==!!ply.cave)continue;const d=Math.hypot(p.x-ply.x,p.z-ply.z);if(d<bd){bd=d;best=p;}}return best;}
+function nearestPet(r){let best=null,bd=r;for(const p of pets){if(p.stored||!!p.cave!==!!ply.cave)continue;const d=Math.hypot(p.x-ply.x,p.z-ply.z);if(d<bd){bd=d;best=p;}}return best;}
 const isFav=(p,k)=>p.d.fav==='fish'?ITEMS[k].k==='fish':k===p.d.fav;
 function foodFor(p){const keys=Object.keys(inv).filter(k=>inv[k]>0&&(ITEMS[k].k==='food'||ITEMS[k].k==='fish'));return keys.find(k=>isFav(p,k))||keys[0];}
 function hasFoodFor(p){return!!foodFor(p);}
@@ -892,7 +893,7 @@ function petAction(p,kind){if(!p)return;faceTo(p.x,p.z);const hy=H(p.x,p.z)+0.9;
   save();}
 function petMove(p,tx,tz,dt,sp){[tx,tz]=viaDoor(p.x,p.z,tx,tz);if(p.follow&&ply.riding)return false;return steer(p,tx,tz,sp,dt,0.25);}
 function updatePets(dt,T){
-  for(const p of pets){p.t+=dt;const g=p.a.g;let moving=false;
+  for(const p of pets){p.t+=dt;const g=p.a.g;let moving=false;if(p.stored){g.visible=false;continue;}
     if(p.follow){if(!!p.cave!==!!ply.cave||Math.hypot(p.x-ply.x,p.z-ply.z)>30){p.cave=!!ply.cave;p.x=ply.x-Math.sin(ply.face)*1.5;p.z=ply.z-Math.cos(ply.face)*1.5;}
       const tx=ply.x-Math.sin(ply.face)*1.8+Math.cos(ply.face)*0.8,tz=ply.z-Math.cos(ply.face)*1.8-Math.sin(ply.face)*0.8,d=Math.hypot(tx-p.x,tz-p.z);
       if(d>0.4){moving=petMove(p,tx,tz,dt,Math.min(d*2.5,11));}else p.face+=angDiff(p.face,ply.face)*Math.min(1,dt*3);

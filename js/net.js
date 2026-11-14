@@ -14,7 +14,7 @@ async function netInit(tries=0){
   try{if(!window.claude||typeof window.claude.use!=='function'){if(tries<20)setTimeout(()=>netInit(tries+1),500);return;}
     room=await window.claude.use('room');if(!room){updNetBadge();return;}
     room.onConnection(c=>{netConn=c;updNetBadge();},()=>{netConn=false;room=null;updNetBadge();});
-    room.onPeers(ch=>{netPeers=ch.peers;for(const p of ch.joined)if(!p.isMe&&p.kind==='viewer'&&p.presence&&p.presence.n&&started)toast(`👋 ${cleanTxt(p.presence.n,10)} 上線了`);
+    room.onPeers(ch=>{netPeers=ch.peers;
       for(const p of ch.left){const r=remotes.get(p.peer);if(r){scene.remove(r.c.g);remotes.delete(p.peer);if(r.name)toast(`${r.name} 離線了`);}}
       updNetBadge();},()=>{room=null;updNetBadge();});
   }catch(e){room=null;updNetBadge();}
@@ -42,7 +42,7 @@ function sbJoin(n,auto){const c=window.LOBSTER_CONFIG;
   sbClearRemotes();sbShard=n;netConn=false;sbErr='';sbLastKey='';updNetBadge();
   const ch=sbClient.channel((c.ROOM||'lobster-world')+'-'+n,{config:{broadcast:{self:false},presence:{key:myNetId}}});sbCh=ch;
   ch.on('broadcast',{event:'s'},({payload})=>{if(ch!==sbCh||!payload||payload.id===myNetId)return;const id=String(payload.id).slice(0,20);const old=sbState.get(id);
-    const st=Object.assign({},old||{},payload);st._t=performance.now();const isNew=!old||typeof old.x!=='number';sbState.set(id,st);if(isNew&&st.n&&started)toast(`👋 ${cleanTxt(st.n,10)} 上線了`);sbRebuild();});
+    const st=Object.assign({},old||{},payload);st._t=performance.now();const isNew=!old||typeof old.x!=='number';sbState.set(id,st);sbRebuild();});
   ch.on('broadcast',{event:'m'},({payload})=>{if(ch===sbCh&&typeof onNetMsg==='function')onNetMsg(payload);});
   ch.on('presence',{event:'sync'},()=>{if(ch!==sbCh)return;const ps=ch.presenceState();for(const id in ps){if(id===myNetId)continue;const meta=ps[id][0]||{};const old=sbState.get(id)||{};
       sbState.set(id,Object.assign(old,{n:meta.n,lk:meta.lk,_t:old._t||performance.now()}));}
@@ -60,7 +60,13 @@ if($('chChips'))$('chChips').addEventListener('click',e=>{const b=e.target.close
 function others(){return netPeers.filter(p=>!p.isMe&&p.kind==='viewer'&&p.presence&&typeof p.presence.n==='string'&&typeof p.presence.x==='number');}
 function updNetBadge(){const b=$('netBadge');if(!b)return;if(!room&&!sbClient){b.style.display='none';return;}b.style.display='flex';
   const n=others().length;b.classList.toggle('off',!netConn);const pre=sbClient?`頻道${sbShard}・`:'';$('netTxt').textContent=netConn?pre+(n?`線上 ${n+1} 人`:'只有你'):(sbErr||pre+'連線中…');}
-$('netBadge').addEventListener('click',()=>{const o=others();toast(o.length?'線上：'+o.map(p=>cleanTxt(p.presence.n,10)).join('、'):'目前只有你在線上，邀請朋友一起玩吧！');});
+function renderPlayers(){const o=others();const ar=pr=>pr.ar==='cave'?`⛰️ 洞窟 B${pr.lv||1}`:pr.ar==='in'?'🏠 室內':'🌳 野外';
+  const inP=nid=>typeof party!=='undefined'&&party&&party.members.includes(nid);
+  $('plSub').textContent=`${sbClient?'頻道 '+sbShard+'・':''}共 ${o.length+1} 人在線上`;
+  $('plList').innerHTML=`<div class="plr me"><span>🦞 ${cleanTxt(look.name,10)}（你）</span><small>${ply.cave?'⛰️ 洞窟 B'+caveLv:ply.indoor?'🏠 室內':'🌳 野外'}</small></div>`+
+    (o.length?o.map(p=>{const pr=p.presence,nid=pr.id||p.peer;return`<div class="plr"><span>${inP(nid)?'🤝':'🦞'} ${cleanTxt(pr.n,10)||'旅人'}${pr.dn?' 💫':''}</span><small>${ar(pr)}</small></div>`;}).join(''):'<div class="sub" style="text-align:center;margin:10px 0">目前只有你在這個頻道，邀請朋友一起玩吧！</div>');}
+let plT=null;
+$('netBadge').addEventListener('click',()=>{renderPlayers();openPanel('players');clearInterval(plT);plT=setInterval(()=>{if($('players').classList.contains('show'))renderPlayers();else clearInterval(plT);},1000);});
 
 function netSend(){if(!room||!started)return;
   const p={v:1,n:cleanTxt(look.name,10),x:+ply.x.toFixed(2),z:+ply.z.toFixed(2),y:+ply.y.toFixed(2),f:+ply.face.toFixed(2),ar:netArea(),an:netAnim(),
