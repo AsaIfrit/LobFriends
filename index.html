@@ -278,6 +278,18 @@ body.sleeping #sleepUI{display:flex}
 .pcard .pi{font-size:30px;line-height:1}.pcard .pn{flex:1;min-width:0}.pcard .pn b{display:block;font-size:14px}.pcard .pn small{font-size:11.5px;opacity:.7}.pcard .qb{padding:6px 14px;font-size:13px}
 #plList{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;max-height:52vh;overflow:auto}
 .plr{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:2.5px solid #fbe3d8;border-radius:14px;padding:8px 12px;font-weight:900;font-size:14px}.plr.me{border-color:#ffb8c8;background:#fff4f8}.plr small{font-size:11.5px;opacity:.7;white-space:nowrap}
+#plChoice{position:fixed;inset:0;z-index:30;display:none;align-items:flex-end;justify-content:center;padding-bottom:calc(var(--sl,44px) + 120px);pointer-events:none}
+#plChoice.on{display:flex}#plChoice .card2{pointer-events:auto;background:#fffaf4;border:3px solid #fff;border-radius:22px;padding:12px 16px;box-shadow:0 6px 0 rgba(220,140,160,.3),0 10px 30px rgba(200,100,140,.2);text-align:center;animation:popIn .4s var(--spring)}
+#plChoice h3{margin:0 0 8px;font-size:16px}#plChoice .pcb{display:flex;gap:8px}#plChoice .qb{padding:8px 14px;font-size:14px}#plChoice .qb:disabled{opacity:.45}
+.giftCoin{display:flex;align-items:center;gap:8px;background:#fff;border:2.5px solid #ffe3a0;border-radius:14px;padding:6px 10px;margin:4px 0 8px;font-weight:900;font-size:14px}
+.giftCoin input{flex:1;min-width:0;border:2px solid #f2e0d4;border-radius:10px;padding:6px 8px;font-size:15px;font-weight:800}.giftCoin .qb{padding:6px 14px}
+#giftGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;max-height:42vh;overflow:auto;margin-bottom:8px}
+#giftGrid .bi{position:relative}#giftGrid .bi.eqx{opacity:.45;filter:grayscale(.6)}#giftGrid .eqt{position:absolute;z-index:2;left:50%;bottom:2px;transform:translateX(-50%);font-size:9px;font-style:normal;background:#b9a6f2;color:#fff;border-radius:6px;padding:0 4px;white-space:nowrap}
+#giftConfirm{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;background:rgba(255,240,246,.35)}#giftConfirm.on{display:flex}
+#giftConfirm .card2{background:#fffaf4;border:4px solid #fff;border-radius:24px;padding:16px 20px;text-align:center;box-shadow:0 8px 0 rgba(220,140,160,.3);animation:popIn .45s var(--spring);min-width:240px}
+#giftConfirm .gci{font-size:46px;line-height:1.1}#giftConfirm .gci img{width:56px;height:56px}#giftConfirm p{font-weight:900;font-size:15px;margin:6px 0 10px}
+#giftConfirm .gcq{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px;font-weight:900}#giftConfirm .gcq input{width:64px;text-align:center;border:2px solid #f2e0d4;border-radius:10px;padding:5px;font-size:15px;font-weight:800}
+#giftConfirm .gcq .qb{padding:4px 12px}#giftConfirm .pcb{display:flex;gap:8px;justify-content:center}
 #petChoice{position:fixed;inset:0;z-index:30;display:none;align-items:flex-end;justify-content:center;padding-bottom:calc(var(--sl,44px) + 120px);pointer-events:none}
 #petChoice.on{display:flex}#petChoice .card2{pointer-events:auto;background:#fffaf4;border:3px solid #fff;border-radius:22px;padding:12px 16px;box-shadow:0 6px 0 rgba(220,140,160,.3),0 10px 30px rgba(200,100,140,.2);text-align:center;animation:popIn .4s var(--spring)}
 #petChoice h3{margin:0 0 8px;font-size:16px}#petChoice .pcb{display:flex;gap:8px}#petChoice .qb{padding:8px 14px;font-size:14px}
@@ -537,6 +549,13 @@ body.ingame #start{display:none!important}
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
   <h2>🌐 線上玩家</h2><div class="sub" id="plSub"></div><div id="plList"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div class="panel" id="gift"><div class="sheet"><div class="grab"></div>
+  <h2>🎁 送禮</h2><div class="sub" id="giftSub"></div>
+  <div class="giftCoin"><span>🪙 送金幣</span><input type="number" id="giftCoin" min="1" step="1" placeholder="數量" inputmode="numeric"><button class="qb pink" id="giftCoinBtn">送出</button></div>
+  <div class="clab">點一下想送的道具（裝備中的不能送）</div><div id="giftGrid"></div>
+  <button class="qb lav close" data-close="gift">關閉</button></div></div>
+<div id="giftConfirm"><div class="card2"><div id="gcIcon" class="gci"></div><p id="gcTxt"></p><div id="gcQtyRow" class="gcq"><button class="qb" id="gcMinus">－</button><input type="number" id="gcQty" min="1" value="1" inputmode="numeric"><span id="gcMax"></span><button class="qb" id="gcPlus">＋</button></div><div class="pcb"><button class="qb pink" id="gcYes">送出</button><button class="qb lav" id="gcNo">取消</button></div></div></div>
 <div id="petChoice"><div class="card2"><h3 id="pcName"></h3><div class="pcb"><button class="qb pink" id="pcInvite">🐾 邀請</button><button class="qb" id="pcStore">📦 收納</button><button class="qb lav" id="pcCancel">取消</button></div></div></div>
 <div class="panel" id="dex"><div class="sheet"><div class="grab"></div>
   <h2>📖 圖鑑</h2><div class="sub" id="dexSub"></div>
@@ -569,20 +588,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261115a"></script>
-<script src="firebase-config.js?v=20261115a"></script>
+<script src="config.js?v=20261115b"></script>
+<script src="firebase-config.js?v=20261115b"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261115a"></script>
-<script src="js/audio.js?v=20261115a"></script>
-<script src="js/items.js?v=20261115a"></script>
-<script src="js/critter.js?v=20261115a"></script>
-<script src="js/world.js?v=20261115a"></script>
-<script src="js/game.js?v=20261115a"></script>
-<script src="js/ui.js?v=20261115a"></script>
-<script src="js/extra.js?v=20261115a"></script>
-<script src="js/net.js?v=20261115a"></script>
-<script src="js/cloud.js?v=20261115a"></script>
-<script src="js/skills.js?v=20261115a"></script>
-<script src="js/party.js?v=20261115a"></script>
+<script src="js/engine.js?v=20261115b"></script>
+<script src="js/audio.js?v=20261115b"></script>
+<script src="js/items.js?v=20261115b"></script>
+<script src="js/critter.js?v=20261115b"></script>
+<script src="js/world.js?v=20261115b"></script>
+<script src="js/game.js?v=20261115b"></script>
+<script src="js/ui.js?v=20261115b"></script>
+<script src="js/extra.js?v=20261115b"></script>
+<script src="js/net.js?v=20261115b"></script>
+<script src="js/cloud.js?v=20261115b"></script>
+<script src="js/skills.js?v=20261115b"></script>
+<script src="js/party.js?v=20261115b"></script>
 </body>
 </html>

@@ -195,7 +195,7 @@ function markTarget(c){const g=(x,z,dy)=>({x,z,y:(ply.cave?0:H(x,z))+dy});
     case'board':return g(BOARD.x,BOARD.z,3.4);
     case'revive':{const d=nearestDowned();return d&&g(d.x,d.z,1.8);}
     case'chest':{const c=nearestChest();return c&&{x:c.x,z:c.z,y:2.2};}
-    case'pinvite':{const r=nearestRemote();return r&&g(r.x,r.z,3.0);}
+    case'pinvite':case'player':{const r=nearestRemote();return r&&g(r.x,r.z,3.0);}
     case'talk':{const n=nearestNpc();return n&&g(n.x,n.z,(n.stall&&n.onPost?0.84:0)+2.9);}
     case'feed':case'invite':case'petmenu':{const p=nearestPet(1.8);return p&&g(p.x,p.z,1.7);}
     case'cave':return g(CAVE_FRONT.x,CAVE_FRONT.z,4.2);

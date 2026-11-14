@@ -264,7 +264,7 @@ function context(){
   if(Math.hypot(ply.x-PARKV.coaster.board.x,ply.z-PARKV.coaster.board.z)<3)return'coaster';
   {const K=PARKV.carousel;const d=Math.hypot(ply.x-K.x,ply.z-K.z);if(d<K.r+1.9&&d>K.r-0.5)return'carousel';}
   if(nearestNpc())return'talk';
-  {const r=nearestRemote();if(r&&!(party&&party.members.includes(r.nid))&&(!inParty()||party.leader===myNetId))return'pinvite';}
+  {const r=nearestRemote();if(r)return'player';}
   {const pt=nearestPet(1.8);if(pt&&!pt.follow){if(pt.aff>=100)return'petmenu';if(hasFoodFor(pt))return'feed';}}
 
   if(ply.held==='rod'&&Math.hypot(ply.x-POND.x,ply.z-POND.z)<POND.r+2.4)return'fish';
@@ -281,7 +281,7 @@ function context(){
   if(nearestRock())return'rock';
   return'none';
 }
-const CTX={petmenu:['🐾','寵物'],door:['🚪','開／關門'],getoff:['🚶','下來'],revive:['💖','救助'],chest:['🎁','打開寶箱'],pinvite:['🤝','邀請組隊'],deeper:['🕳️','往下一層'],ore:['💎','採水晶'],build:['🧱','蓋方塊'],unblock:['🔨','拆方塊'],gacha:['🥚','轉蛋'],fgacha:['🎀','時裝轉蛋'],ferris:['🎡','搭摩天輪'],coaster:['🎢','搭雲霄飛車'],carousel:['🎠','騎木馬'],place:['✨','放置'],move:['🫳','搬動'],stand:['🧍','起來'],board:['📋','告示板'],talk:['💬','對話'],enter:['🚪','進屋'],exit:['🚪','出門'],sleep:['🛏️','躺下'],sit:['🪑','坐下'],bath:['🛁','泡澡'],
+const CTX={player:['🤝','玩家'],petmenu:['🐾','寵物'],door:['🚪','開／關門'],getoff:['🚶','下來'],revive:['💖','救助'],chest:['🎁','打開寶箱'],pinvite:['🤝','邀請組隊'],deeper:['🕳️','往下一層'],ore:['💎','採水晶'],build:['🧱','蓋方塊'],unblock:['🔨','拆方塊'],gacha:['🥚','轉蛋'],fgacha:['🎀','時裝轉蛋'],ferris:['🎡','搭摩天輪'],coaster:['🎢','搭雲霄飛車'],carousel:['🎠','騎木馬'],place:['✨','放置'],move:['🫳','搬動'],stand:['🧍','起來'],board:['📋','告示板'],talk:['💬','對話'],enter:['🚪','進屋'],exit:['🚪','出門'],sleep:['🛏️','躺下'],sit:['🪑','坐下'],bath:['🛁','泡澡'],
   catch:['🥅','捕捉'],harvest:['🧺','收成'],till:['🟫','翻土'],water:['💧','澆水'],plant:['🌱','播種'],bench:['🧰','合成'],cave:['⛰️','進入洞窟'],leave:['🌤️','離開洞窟'],fish:['🎣','釣魚'],wait:['🎣','收竿'],reel:['❗','拉竿！'],feed:['🍎','餵食'],invite:['💕','邀請'],pat:['🤲','摸摸'],untill:['🟩','剷平'],weed:['🌿','拔草'],tree:['🪓','砍樹'],rock:['⛏️','挖礦'],none:['🤚','互動']};
 const ACT_DUR={pull:0.4,chop:0.42,mine:0.38,till:0.45,water:0.7,plant:0.45,catch:0.45,harvest:0.5};
 const ACT_HIT={pull:0.5,chop:0.6,mine:0.6,till:0.62,water:0.5,plant:0.55,catch:0.55,harvest:0.5};
@@ -305,6 +305,7 @@ function doAction(){
     case'revive':startRevive(nearestDowned());break;
     case'chest':openChest(nearestChest());break;
     case'pinvite':sendInvite(nearestRemote().nid);break;
+    case'player':openPlayerChoice(nearestRemote());break;
     case'build':placeBlock();break;
     case'unblock':removeBlock();break;
     case'gacha':openGacha('pet');break;

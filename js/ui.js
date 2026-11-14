@@ -49,7 +49,7 @@ function stagger(root){root.querySelectorAll('.stg').forEach((el,i)=>el.style.se
 function openPanel(id){const el=$(id);stagger(el);el.style.display='flex';void el.offsetWidth;el.classList.add('show');paused=true;SFX.open();holdAtk=holdAct=false;closeFab();}
 function closePanel(id){const el=$(id);if(!el.classList.contains('show'))return;el.classList.remove('show');SFX.close();setTimeout(()=>{if(!el.classList.contains('show'))el.style.display='none';},320);
   if(!creatorOpen)paused=!started;}
-function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs','gacha','dex','pets','players'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
+function closeAllPanels(){['board','craft','shop','talent','bag','settings','iosFs','gacha','dex','pets','players','gift'].forEach(id=>{if($(id).classList.contains('show'))closePanel(id);});}
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closePanel(b.dataset.close)));
 document.querySelectorAll('.panel').forEach(p=>p.addEventListener('pointerdown',e=>{if(e.target===p&&p.id!=='start'&&p.id!=='creator'&&p.id!=='players')closePanel(p.id);}));
 const noAnim=root=>root.querySelectorAll('.stg').forEach(el=>{el.style.animation='none';el.style.opacity=1;el.style.transform='none';});
@@ -484,3 +484,34 @@ function closePetChoice(){$('petChoice').classList.remove('on');petPick=null;}
 $('pcInvite').addEventListener('click',()=>{const p=petPick;closePetChoice();if(p)petAction(p,'invite');});
 $('pcStore').addEventListener('click',()=>{const p=petPick;closePetChoice();if(p)storePet(p);});
 $('pcCancel').addEventListener('click',closePetChoice);
+
+// ---------- 玩家互動：邀請／送禮 ----------
+let plPick=null;
+const canInvite=r=>r&&!(party&&party.members.includes(r.nid))&&(!inParty()||party.leader===myNetId);
+function openPlayerChoice(r){if(!r)return;plPick=r;faceTo(r.x,r.z);$('pcpName').textContent=`🦞 ${r.name}`;const ok=canInvite(r);const b=$('pcpInvite');b.disabled=!ok;b.title=ok?'':(party&&party.members.includes(r.nid)?'已經是隊友了':'只有隊長可以邀請');b.textContent=party&&party.members.includes(r.nid)?'🤝 已是隊友':'🤝 邀請';$('plChoice').classList.add('on');SFX.open();}
+function closePlayerChoice(){$('plChoice').classList.remove('on');}
+$('pcpInvite').addEventListener('click',()=>{const r=plPick;closePlayerChoice();if(r&&canInvite(r))sendInvite(r.nid);});
+$('pcpGift').addEventListener('click',()=>{closePlayerChoice();if(plPick)openGift(plPick);});
+$('pcpCancel').addEventListener('click',()=>{closePlayerChoice();plPick=null;});
+let giftTo=null,giftK=null;
+const isEquipped=k=>ply.weapon===k||ply.hat===k||ply.held===k||(ply.skins&&Object.values(ply.skins).includes(k))||(carry&&carry.id===k);
+function openGift(r){giftTo={nid:r.nid,name:r.name};renderGift();openPanel('gift');}
+function renderGift(){$('giftSub').textContent=`送禮給 ${giftTo.name}・你有 🪙${ply.coins}`;$('giftCoin').max=ply.coins;
+  const keys=BAG_ORDER.filter(k=>(inv[k]||0)>0);
+  $('giftGrid').innerHTML=keys.length?keys.map(k=>{const it=ITEMS[k],eq=isEquipped(k);return`<div class="bi ${eq?'eqx':''}" data-gk="${k}" title="${it.n}${eq?'（裝備中）':''}"><span class="ic">${itIcon(k)}</span>${inv[k]>1?`<i>${inv[k]}</i>`:''}${eq?'<span class="eqt">裝備中</span>':''}</div>`;}).join(''):'<div class="sub">背包空空的～</div>';}
+$('giftGrid').addEventListener('click',e=>{const c=e.target.closest('[data-gk]');if(!c)return;const k=c.dataset.gk;if(isEquipped(k)){SFX.deny();toast('裝備中的道具無法贈送，先卸下再送吧');return;}
+  giftK=k;const it=ITEMS[k];$('gcIcon').innerHTML=itIcon(k);$('gcTxt').textContent=`要把「${it.n}」送給 ${giftTo.name} 嗎？`;const q=$('gcQty');q.max=inv[k];q.value=1;$('gcQtyRow').style.display=inv[k]>1?'flex':'none';$('gcMax').textContent=`/ ${inv[k]}`;$('giftConfirm').classList.add('on');SFX.open();});
+$('gcMinus').addEventListener('click',()=>{const q=$('gcQty');q.value=Math.max(1,(+q.value||1)-1);});
+$('gcPlus').addEventListener('click',()=>{const q=$('gcQty');q.value=Math.min(+q.max,(+q.value||1)+1);});
+$('gcNo').addEventListener('click',()=>{$('giftConfirm').classList.remove('on');giftK=null;});
+$('gcYes').addEventListener('click',()=>{const k=giftK;$('giftConfirm').classList.remove('on');if(!k||!giftTo)return;
+  if(k==='__coin'){const c=giftCoinAmt;if(c<1||c>ply.coins){SFX.deny();return;}ply.coins-=c;netPost({t:'gift',to:giftTo.nid,c,name:myName()});toast(`🎁 送了 🪙${c} 給 ${giftTo.name}！`);}
+  else{if(isEquipped(k)){SFX.deny();return;}const n=Math.max(1,Math.min(inv[k]||0,Math.floor(+$('gcQty').value||1)));if(!(inv[k]>=n))return;inv[k]-=n;netPost({t:'gift',to:giftTo.nid,k,n,name:myName()});toast(`🎁 送了 ${ITEMS[k].i}${ITEMS[k].n}${n>1?' ×'+n:''} 給 ${giftTo.name}！`);renderHotbar();}
+  SFX.quest();sparkle(innerWidth/2,innerHeight/2,16);updateHUD();renderGift();save();giftK=null;});
+let giftCoinAmt=0;
+$('giftCoinBtn').addEventListener('click',()=>{const c=Math.floor(+$('giftCoin').value||0);if(c<1){SFX.deny();toast('請輸入要送的金幣數量');return;}if(c>ply.coins){SFX.deny();toast('金幣不夠喔');return;}
+  giftCoinAmt=c;giftK='__coin';$('gcIcon').textContent='🪙';$('gcTxt').textContent=`要把 🪙${c} 送給 ${giftTo.name} 嗎？`;$('gcQtyRow').style.display='none';$('giftConfirm').classList.add('on');SFX.open();});
+function onGift(o){if(o.to!==myNetId)return;const who=cleanTxt(o.name,10)||'旅人';
+  if(o.c){const c=Math.max(0,Math.min(1e7,Math.floor(+o.c||0)));if(c){ply.coins+=c;updateHUD();toast(`🎁 ${who} 送你 🪙${c}！`);}}
+  if(o.k&&ITEMS[o.k]){const n=Math.max(1,Math.min(999,Math.floor(+o.n||1)));addItem(o.k,n);toast(`🎁 ${who} 送你 ${ITEMS[o.k].i}${ITEMS[o.k].n}${n>1?' ×'+n:''}！`);}
+  SFX.levelup();sparkle(innerWidth/2,innerHeight*0.4,20);save();}

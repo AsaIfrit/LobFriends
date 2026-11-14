@@ -16,7 +16,7 @@ function syncPartyChannel(){if(!sbClient)return;const want=inParty()?party.pid:'
   if(want){const c=window.LOBSTER_CONFIG;partyCh=sbClient.channel((c.ROOM||'lobster-world')+'-pty-'+want,{config:{broadcast:{self:false}}});partyCh.on('broadcast',{event:'m'},({payload})=>onNetMsg(payload));partyCh.subscribe();}}
 function onNetMsg(o){if(!o||o.f===myNetId)return;if(o.to&&o.to!==myNetId)return;if(o.pid&&(!party||party.pid!==o.pid))return;
   switch(o.t){case'inv':showInvite(o);break;case'acc':onAccept(o);break;case'dec':toast(`${cleanTxt(o.name,10)} 婉拒了組隊邀請`);break;case'full':toast('隊伍已經滿了（最多 4 人）');break;
-    case'pty':onRoster(o);break;case'lv':onLeave(o.f);break;case'mon':onMonState(o.f,o);break;case'hit':onHit(o);break;case'kill':onKill(o);break;case'rev':onRevived(o);break;case'slam':onSlam(o);break;case'heal':onHealMsg(o);break;case'buff':onBuffMsg(o);break;}}
+    case'pty':onRoster(o);break;case'lv':onLeave(o.f);break;case'mon':onMonState(o.f,o);break;case'hit':onHit(o);break;case'kill':onKill(o);break;case'rev':onRevived(o);break;case'slam':onSlam(o);break;case'heal':onHealMsg(o);break;case'buff':onBuffMsg(o);break;case'gift':onGift(o);break;}}
 
 // ---------- 組隊 ----------
 let invite=null,invT=null;
