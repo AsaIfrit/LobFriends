@@ -147,7 +147,7 @@ const caveDown=(()=>{const g=new THREE.Group();const pit=mk(new THREE.CircleGeom
   for(let i=0;i<4;i++){const st=mk(new THREE.BoxGeometry(1.6,0.25,0.6),toon(0x8a7c9a),0,-0.2-i*0.25,-1.2+i*0.55);g.add(st);}
   const lb=new THREE.Sprite(new THREE.SpriteMaterial({map:textTex(['↓ 往下一層'],'#2a1f3a','#ffe6a0',256,64,34),depthWrite:false,transparent:true}));lb.scale.set(3,0.75,1);lb.position.y=3.2;g.add(lb);g.userData.lb=lb;
   g.position.set(CAVE_DOWN.x,0,CAVE_DOWN.z);scene.add(g);caveObs.push({x:CAVE_DOWN.x,z:CAVE_DOWN.z-2.6,r:0.01});return g;})();
-caveDown.children.forEach(c=>{if(c!==caveDown.userData.lb)c.visible=false;});
+caveDown.children.forEach(c=>{c.visible=false;});// 傳送點保持乾淨，不顯示文字
 // ---------- 傳送點（走進去就會自動傳送，持續向外擴散的光波） ----------
 const PORTAL_TEX=canvasTex(128,128,(g)=>{const gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,255,255,0.95)');gr.addColorStop(0.35,'rgba(220,235,255,0.55)');gr.addColorStop(0.7,'rgba(190,215,255,0.18)');gr.addColorStop(1,'rgba(190,215,255,0)');g.clearRect(0,0,128,128);g.fillStyle=gr;g.fillRect(0,0,128,128);});
 const PORTAL_COL=canvasTex(16,128,(g)=>{const gr=g.createLinearGradient(0,128,0,0);gr.addColorStop(0,'rgba(230,240,255,0.7)');gr.addColorStop(0.4,'rgba(210,228,255,0.22)');gr.addColorStop(1,'rgba(210,228,255,0)');g.clearRect(0,0,16,128);g.fillStyle=gr;g.fillRect(0,0,16,128);});
@@ -253,6 +253,6 @@ function castleFrame(cam){const CV=PARKV.castle;const inside=CV.inside(ply.x,ply
   for(const w of CV.walls){const c=w.alongX?cam.z:cam.x;const cut=inside&&(c-w.pos)*w.innerSign<0;w.full.visible=!cut;if(w.stub)w.stub.visible=cut;for(const d of w.deco)d.visible=!cut;}}
 
 // 洞窟的三個傳送點
-makePortal({x:CAVE_FRONT.x,y:H(CAVE_FRONT.x,CAVE_FRONT.z),z:CAVE_FRONT.z,r:1.7,cave:false,label:'⛰️ 果凍怪洞窟',go:()=>enterCave()});
+makePortal({x:CAVE_FRONT.x,y:H(CAVE_FRONT.x,CAVE_FRONT.z),z:CAVE_FRONT.z,r:1.7,cave:false,go:()=>enterCave()});
 makePortal({x:CAVE_EXIT.x,y:0,z:CAVE_EXIT.z+0.5,r:1.6,cave:true,go:()=>leaveCave()});
 makePortal({x:CAVE_DOWN.x,y:0,z:CAVE_DOWN.z,r:1.7,cave:true,col:0xe0d0ff,on:()=>caveLv<5,go:()=>goDeeper()});
