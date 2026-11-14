@@ -308,6 +308,10 @@ body.sleeping #sleepUI{display:flex}
 #creator .grab{display:none}
 #creator .sw button{width:28px;height:28px}
 .clab{font-weight:900;font-size:13px;margin:10px 0 5px}
+.cfold{background:#fff;border:2.5px solid #fbe3d8;border-radius:16px;margin:8px 0;padding:0 12px;transition:border-color .2s}
+.cfold[open]{border-color:#ffb8c8;padding-bottom:10px}
+.cfold summary{list-style:none;cursor:pointer;font-weight:900;font-size:15px;padding:10px 0;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.cfold summary::-webkit-details-marker{display:none}.cfold summary::after{content:'▾';font-size:13px;opacity:.55;transition:transform .25s}.cfold[open] summary::after{transform:rotate(180deg)}
 .sec{font-weight:900;font-size:15px;margin:16px 0 6px;padding-top:10px;border-top:2px dashed #f2d4c2}
 .sl .clab{font-size:12px;margin:6px 0 0;opacity:.8}
 .sw{display:flex;flex-wrap:wrap;gap:7px}
@@ -482,17 +486,16 @@ body.ingame #start{display:none!important}
   <div class="sub" style="margin-bottom:4px">拖曳右邊畫面可以轉動角色</div>
   <div class="clab">名字</div><input id="cName" maxlength="8">
   <div class="clab">種族</div><div class="chips" id="chSpecies"></div>
-  <div class="clab">身體顏色</div><div class="sw" id="swBody"></div>
-  <div class="clab" id="labAcc">角的顏色</div><div class="sw" id="swAcc"></div>
-  <div id="earWrap"><div class="clab">耳朵</div><div class="chips" id="chEars"></div></div>
-  <div class="clab" id="labEarSl">耳朵大小／位置</div><div class="sl" data-g="ear"></div>
-  <div class="clab">尾巴</div><div class="chips" id="chTail"></div><div class="sl" data-g="tail"></div>
-  <div class="sec">👀 眼睛</div><div class="chips" id="chEyes"></div>
-  <div class="clab">眼睛顏色</div><div class="sw" id="swEye"></div><div class="sl" data-g="eye"></div>
-  <div class="sec">〰️ 眉毛</div><div class="chips" id="chBrow"></div><div class="sl" data-g="brow"></div>
-  <div class="sec">✨ 睫毛</div><div class="chips" id="chLash"></div><div class="sl" data-g="lash"></div>
-  <div class="sec">👄 嘴巴</div><div class="chips" id="chMouth"></div><div class="clab">嘴巴顏色</div><div class="sw" id="swMouth"></div><div class="sl" data-g="mouth"></div>
-  <div class="sec">🌸 腮紅</div><div class="chips" id="chBlush"></div><div class="clab">腮紅顏色</div><div class="sw" id="swBlush"></div><div class="sl" data-g="blush"></div>
+  <details class="cfold"><summary>🎨 身體顏色</summary><div class="clab">身體</div><div class="sw" id="swBody"></div>
+    <div class="clab" id="labAcc">角的顏色</div><div class="sw" id="swAcc"></div></details>
+  <details class="cfold"><summary id="sumEar">🦞 角</summary><div id="earWrap"><div class="clab">耳朵樣式</div><div class="chips" id="chEars"></div></div>
+    <div class="clab" id="labEarSl">耳朵大小／位置</div><div class="sl" data-g="ear"></div></details>
+  <details class="cfold"><summary>🐾 尾巴</summary><div class="chips" id="chTail"></div><div class="sl" data-g="tail"></div></details>
+  <details class="cfold"><summary>👀 眼睛</summary><div class="chips" id="chEyes"></div><div class="clab">眼睛顏色</div><div class="sw" id="swEye"></div><div class="sl" data-g="eye"></div></details>
+  <details class="cfold"><summary>〰️ 眉毛</summary><div class="chips" id="chBrow"></div><div class="sl" data-g="brow"></div></details>
+  <details class="cfold"><summary>✨ 睫毛</summary><div class="chips" id="chLash"></div><div class="sl" data-g="lash"></div></details>
+  <details class="cfold"><summary>👄 嘴巴</summary><div class="chips" id="chMouth"></div><div class="clab">嘴巴顏色</div><div class="sw" id="swMouth"></div><div class="sl" data-g="mouth"></div></details>
+  <details class="cfold"><summary>🌸 腮紅</summary><div class="chips" id="chBlush"></div><div class="clab">腮紅顏色</div><div class="sw" id="swBlush"></div><div class="sl" data-g="blush"></div></details>
   <div class="crow2"><button class="qb lav" id="cRand">🎲 隨機</button><button class="qb pink" id="cDone">出發！✨</button></div>
 </div></div>
 
@@ -548,20 +551,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261114r"></script>
-<script src="firebase-config.js?v=20261114r"></script>
+<script src="config.js?v=20261114t"></script>
+<script src="firebase-config.js?v=20261114t"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261114r"></script>
-<script src="js/audio.js?v=20261114r"></script>
-<script src="js/items.js?v=20261114r"></script>
-<script src="js/critter.js?v=20261114r"></script>
-<script src="js/world.js?v=20261114r"></script>
-<script src="js/game.js?v=20261114s"></script>
-<script src="js/ui.js?v=20261114r"></script>
-<script src="js/extra.js?v=20261114r"></script>
-<script src="js/net.js?v=20261114r"></script>
-<script src="js/cloud.js?v=20261114r"></script>
-<script src="js/skills.js?v=20261114r"></script>
-<script src="js/party.js?v=20261114r"></script>
+<script src="js/engine.js?v=20261114t"></script>
+<script src="js/audio.js?v=20261114t"></script>
+<script src="js/items.js?v=20261114t"></script>
+<script src="js/critter.js?v=20261114t"></script>
+<script src="js/world.js?v=20261114t"></script>
+<script src="js/game.js?v=20261114t"></script>
+<script src="js/ui.js?v=20261114t"></script>
+<script src="js/extra.js?v=20261114t"></script>
+<script src="js/net.js?v=20261114t"></script>
+<script src="js/cloud.js?v=20261114t"></script>
+<script src="js/skills.js?v=20261114t"></script>
+<script src="js/party.js?v=20261114t"></script>
 </body>
 </html>

@@ -205,8 +205,8 @@ const HAT_IDS=['hat_bow','hat_sprout','hat_jelly','hat_party','hat_bucket'];
 const BAG_ORDER=[...HAT_IDS,'skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
   'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem','crystal',...Object.keys(BUGS)];
 for(const k in ITEMS)if(!BAG_ORDER.includes(k))BAG_ORDER.push(k);
-const BAG_TABS=[['all','全部'],['gear','裝備'],['hat','時裝'],['use','食物種子'],['furn','家具'],['mat','素材']];
-const tabOf=k=>{const t=ITEMS[k].k;return t==='hat'?'hat':t==='weapon'||t==='tool'||t==='held'||t==='skin'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
+const BAG_TABS=[['all','全部'],['gear','裝備'],['tool','工具'],['hat','時裝'],['use','食物種子'],['furn','家具'],['mat','素材']];
+const tabOf=k=>{const t=ITEMS[k].k;return t==='hat'||t==='skin'?'hat':t==='tool'||t==='held'?'tool':t==='weapon'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
 let bagTab='all',bagPick=null,drag=null;
 function renderBag(anim=true){const keys=BAG_ORDER.filter(k=>(inv[k]||0)>0&&(bagTab==='all'||tabOf(k)===bagTab));
   $('bagTabs').innerHTML=BAG_TABS.map(([k,t])=>`<button class="tab ${k===bagTab?'on':''}" data-bt="${k}">${t}</button>`).join('');
@@ -394,7 +394,7 @@ const SLD={eye:[['eyeSize','大小',0.6,1.9,0.05],['eyeGap','距離',0.13,0.4,0.
   brow:[['browSize','大小',0.5,1.8,0.05],['browGap','距離',0.12,0.4,0.01],['browY','位置',0.08,0.32,0.01]],
   lash:[['lashSize','大小',0.5,2,0.05],['lashGap','距離',0.2,1.3,0.05],['lashY','位置',0,1,0.05]],
   mouth:[['mouthSize','大小',0.6,1.7,0.05],['mouthW','寬度',0.6,1.8,0.05],['mouthY','位置',0.08,0.28,0.01]],
-  ear:[['earSize','大小',0.6,1.6,0.05],['earGap','距離',0.6,1.4,0.02],['earY','高低',-0.25,0.2,0.01]],
+  ear:[['earSize','大小',0.6,1.6,0.05],['earGap','距離',0.6,1.4,0.02],['earY','高低',-0.5,0.4,0.01],['earZ','前後',-0.35,0.35,0.01]],
   tail:[['tailSize','大小',0.6,1.8,0.05],['tailY','高低',-0.3,0.4,0.01],['tailZ','前後',-0.15,0.25,0.01]],
   blush:[['blushSize','大小',0.5,1.8,0.05],['blushGap','距離',0.25,0.6,0.01],['blushY','位置',0,0.3,0.01]]};
 function normLook(){look=Object.assign({},DEF_LOOK,look);look.hat=hatStyle();if(look.blush===true&&(!look.blushShape||look.blushShape==='none'))look.blushShape='oval';look.blush=false;
@@ -405,7 +405,7 @@ document.querySelectorAll('#creator .sl').forEach(el=>{el.innerHTML=SLD[el.datas
 function renderCreator(){normLook();swatches($('swBody'),BODY_SW,'body');swatches($('swAcc'),ACC_SW,'accent');swatches($('swEye'),EYE_SW,'eyeColor');swatches($('swMouth'),EYE_SW,'mouthColor');swatches($('swBlush'),BLUSH_SW,'blushColor');
   chips($('chSpecies'),OPTS.species,'species');chips($('chEars'),OPTS.ears,'ears');chips($('chEyes'),OPTS.eyes,'eyes');chips($('chTail'),look.species==='lobster'?OPTS.tail:OPTS.tail.filter(t=>t[0]!=='seg'),'tail');
   chips($('chBrow'),OPTS.brow,'brow');chips($('chLash'),OPTS.lash,'lash');chips($('chMouth'),OPTS.mouth,'mouth');chips($('chBlush'),OPTS.blushShape,'blushShape');
-  $('earWrap').style.display=look.species==='lobster'?'none':'block';$('labAcc').textContent=look.species==='lobster'?'角的顏色':'耳朵／腳的顏色';$('labEarSl').textContent=look.species==='lobster'?'角的大小／位置':'耳朵大小／位置';
+  $('earWrap').style.display=look.species==='lobster'?'none':'block';$('labAcc').textContent=look.species==='lobster'?'角的顏色':'耳朵／腳的顏色';$('labEarSl').textContent=look.species==='lobster'?'角的大小／位置':'耳朵大小／位置';$('sumEar').textContent=look.species==='lobster'?'🦞 角':'🐹 耳朵';
   document.querySelectorAll('#creator input[data-k]').forEach(i=>i.value=look[i.dataset.k]);$('cName').value=look.name;}
 [['swBody','body'],['swAcc','accent'],['swEye','eyeColor'],['swMouth','mouthColor'],['swBlush','blushColor'],['chEyes','eyes'],['chTail','tail'],['chSpecies','species'],['chEars','ears'],['chBrow','brow'],['chLash','lash'],['chMouth','mouth'],['chBlush','blushShape']].forEach(([id,key])=>
   $(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;look[key]=b.dataset.v;if(key==='species')look.tail=look.species==='lobster'?'seg':'pom';

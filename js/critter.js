@@ -67,7 +67,7 @@ const G={body:new THREE.SphereGeometry(0.8,32,24),leg:new THREE.CylinderGeometry
   horn:(()=>{const pts=[];const Hh=0.82,Rr=0.3;for(let i=20;i>=0;i--){const th=Math.PI*i/20;pts.push(new THREE.Vector2(Math.max(0.0001,Rr*Math.sin(th)*Math.sin(th/2)),Hh/2*Math.cos(th)+Hh/2));}return new THREE.LatheGeometry(pts,18);})(),
   hornTip:(()=>{const pts=[];const Hh=0.82,Rr=0.3;for(let i=6;i>=0;i--){const th=Math.PI*i/20;pts.push(new THREE.Vector2(Math.max(0.0001,Rr*1.06*Math.sin(th)*Math.sin(th/2)),Hh/2*Math.cos(th)+Hh/2+0.005));}return new THREE.LatheGeometry(pts,18);})(),
   nub:new THREE.SphereGeometry(0.14,10,8),tailSeg:new THREE.SphereGeometry(0.12,10,8),tailBall:new THREE.SphereGeometry(0.17,12,10),slime:new THREE.SphereGeometry(0.8,28,20)};
-const DEF_LOOK={earSize:1,earGap:1,earY:0,tailSize:1,tailY:0,tailZ:0,name:'小蝦',species:'lobster',eyes:'round',tail:'seg',body:'#f0874f',accent:'#6e3428',ears:'round',eyeSize:1.1,eyeGap:0.22,eyeY:1.0,eyeColor:'#2a1c18',mouthColor:'#2a1c18',brow:'none',browSize:1,browGap:0.22,browY:0.17,lash:'none',lashSize:1,lashGap:0.6,lashY:0.5,mouth:'zigzag',mouthSize:1,mouthW:1,mouthY:0.15,blush:false,blushShape:'none',blushColor:'#ff8ca0',blushSize:1,blushGap:0.42,blushY:0.14,hat:'none'};
+const DEF_LOOK={earSize:1,earGap:1,earY:0,earZ:0,tailSize:1,tailY:0,tailZ:0,name:'小蝦',species:'lobster',eyes:'round',tail:'seg',body:'#f0874f',accent:'#6e3428',ears:'round',eyeSize:1.1,eyeGap:0.22,eyeY:1.0,eyeColor:'#2a1c18',mouthColor:'#2a1c18',brow:'none',browSize:1,browGap:0.22,browY:0.17,lash:'none',lashSize:1,lashGap:0.6,lashY:0.5,mouth:'zigzag',mouthSize:1,mouthW:1,mouthY:0.15,blush:false,blushShape:'none',blushColor:'#ff8ca0',blushSize:1,blushGap:0.42,blushY:0.14,hat:'none'};
 // ---------- 寶箱武器外觀 ----------
 let SKM=null;
 function buildSkins(T,G2){if(!SKM)SKM={dark:toon(0x3a3238),iron:toon(0x6a6470),flame:basic(0xff6a10),core:basic(0xffb83a),ember:basic(0xff3a10),
@@ -215,7 +215,7 @@ function makeCritter(o,withTools){
   const hold=new THREE.Group();hold.position.set(0,-0.22,0.02);hold.rotation.x=1.2;arms[0].add(hold);
   let tail=null;const earMs=[];
   if(lob){
-    for(const s of[-1,1]){const h=new THREE.Group();h.position.set(s*0.8*sx*o.earGap,cy-0.02+o.earY,0.3);h.scale.setScalar(0.86*o.earSize);
+    for(const s of[-1,1]){const h=new THREE.Group();h.position.set(s*0.8*sx*o.earGap,cy-0.02+o.earY,0.3+o.earZ);h.scale.setScalar(0.86*o.earSize);
       h.add(mk(G.horn,accM));h.add(mk(G.hornTip,felt(o.patch||'#c98a4a')));
       const pt=mk(G.patch,felt(o.patch||'#c98a4a'),0,0.27,0.23);pt.scale.set(1.3,1.3,0.6);pt.rotation.set(-0.1,0,Math.PI/4);h.add(pt);
       h.rotation.set(0,s*0.12,s*0.2);m.add(h);}
@@ -228,7 +228,7 @@ function makeCritter(o,withTools){
       else if(ears==='bunny'){const e=mk(new THREE.SphereGeometry(0.14,12,10),accM,s*0.25,topY+0.16,-0.05);e.scale.set(1,1.8,0.6);e.rotation.z=-s*0.15;m.add(e);}
       else if(ears==='bear'){const e=mk(new THREE.SphereGeometry(0.18,12,10),accM,s*0.48,topY-0.08,0);e.scale.z=0.7;m.add(e);}}
     if(ears==='sprout'){m.add(mk(new THREE.CylinderGeometry(0.025,0.03,0.25,6),felt('#7cc48f'),0,topY+0.1,0));for(const s of[-1,1]){const l=mk(new THREE.SphereGeometry(0.11,10,6),felt('#8fdcb4'),s*0.1,topY+0.24,0);l.scale.set(1.4,0.5,0.8);l.rotation.z=s*0.4;m.add(l);}}
-    for(let q=n0;q<m.children.length;q++){const e=m.children[q];e.position.x*=o.earGap;e.position.y=topY+(e.position.y-topY)*o.earSize+o.earY;e.scale.multiplyScalar(o.earSize);earMs.push(e);}
+    for(let q=n0;q<m.children.length;q++){const e=m.children[q];e.position.x*=o.earGap;e.position.y=topY+(e.position.y-topY)*o.earSize+o.earY;e.position.z+=o.earZ;e.scale.multiplyScalar(o.earSize);earMs.push(e);}
   }
   {let tt=o.tail||(lob?'seg':'pom');if(!lob&&tt==='seg')tt='pom';if(tt!=='none'){tail=new THREE.Group();tail.position.set(0,0.4+o.tailY,-0.72*sz-o.tailZ);tail.scale.setScalar(o.tailSize);const tm=tt==='fox'||tt==='heart'?accM:bodyM;
     if(tt==='seg'){[[0,0,-0.12],[0,0.02,-0.33],[0,0.08,-0.52]].forEach(([x,y,z])=>tail.add(mk(G.tailSeg,bodyM,x,y,z)));tail.add(mk(G.tailBall,bodyM,0,0.2,-0.68));}
