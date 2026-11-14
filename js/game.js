@@ -687,7 +687,7 @@ function step(dt,T){
   const fx=-Math.sin(camYaw),fz=-Math.cos(camYaw),rx=Math.cos(camYaw),rz=-Math.sin(camYaw);
   const mx=fx*-iz+rx*ix,mz=fz*-iz+rz*ix;
   let moving=false;
-  if(P.tail)P.tail.visible=!ply.sitting;// 坐著時藏起尾巴，避免穿模
+  if(P.tail)P.tail.visible=!ply.sitting&&!(ply.riding&&ply.riding.kind==='teacup');// 坐著時藏起尾巴，避免穿模
   if(ply.downed){const gy=ply.cave?0:standY(ply.x,ply.z,ply.y);ply.y=gy;P.g.position.set(ply.x,gy,ply.z);P.g.rotation.y=ply.face;P.m.rotation.set(-Math.PI/2,0,0);P.m.position.set(0,0.6,0.45);P.m.scale.set(1,1+Math.sin(T*1.2)*0.03,1);if(P.tail)P.tail.rotation.y=Math.sin(T)*0.1;}
   else if(ply.sleeping){const p=ply.sleeping.p,b=furnBase(p);const fs=fsOf(p.id);P.g.position.set(p.x,b+0.62*fs,p.z);P.g.rotation.y=p.ry;P.m.rotation.set(-Math.PI/2,0,0);P.m.position.set(0,0.72,0.45*fs);
     P.m.scale.set(1,1+Math.sin(T*1.5)*0.035,1);ply.x=p.x;ply.z=p.z;ply.y=b;if(P.tail)P.tail.rotation.y=Math.sin(T*1.2)*0.2;}
