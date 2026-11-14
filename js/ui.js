@@ -205,8 +205,8 @@ const HAT_IDS=['hat_bow','hat_sprout','hat_jelly','hat_party','hat_bucket'];
 const BAG_ORDER=[...HAT_IDS,'skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
   'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem','crystal',...Object.keys(BUGS)];
 for(const k in ITEMS)if(!BAG_ORDER.includes(k))BAG_ORDER.push(k);
-const BAG_TABS=[['all','全部'],['gear','裝備'],['tool','工具'],['hat','時裝'],['use','食物種子'],['furn','家具'],['mat','素材']];
-const tabOf=k=>{const t=ITEMS[k].k;return t==='hat'||t==='skin'?'hat':t==='tool'||t==='held'?'tool':t==='weapon'?'gear':t==='food'||t==='seed'?'use':t==='furn'||t==='block'?'furn':'mat';};
+const BAG_TABS=[['all','全部'],['gear','裝備'],['tool','工具'],['hat','時裝'],['food','食物'],['seed','種子'],['furn','家具'],['mat','素材']];
+const tabOf=k=>{const t=ITEMS[k].k;return t==='hat'||t==='skin'?'hat':t==='tool'||t==='held'?'tool':t==='weapon'?'gear':t==='food'?'food':t==='seed'?'seed':t==='furn'||t==='block'?'furn':'mat';};
 let bagTab='all',bagPick=null,drag=null;
 function renderBag(anim=true){const keys=BAG_ORDER.filter(k=>(inv[k]||0)>0&&(bagTab==='all'||tabOf(k)===bagTab));
   $('bagTabs').innerHTML=BAG_TABS.map(([k,t])=>`<button class="tab ${k===bagTab?'on':''}" data-bt="${k}">${t}</button>`).join('');
