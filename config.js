@@ -4,5 +4,6 @@
 window.LOBSTER_CONFIG = {
   SUPABASE_URL: 'https://uqzyofxutwummtemynqk.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_Mhu2NGV4J32UyCBAlDlgYA_Zyav2JRU',
+WS_URL: 'https://lobster-net.asaifrit.workers.dev',
   ROOM: 'lob-worldv2'
 };
