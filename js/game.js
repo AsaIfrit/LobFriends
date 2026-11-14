@@ -688,7 +688,7 @@ function step(dt,T){
     if(bath){const ry=p.ry+Math.PI/2;P.g.position.set(p.x+Math.sin(ry)*0.55,b+0.32,p.z+Math.cos(ry)*0.55);P.g.rotation.y=ry;}else{P.g.position.set(p.x,b+(p.id==='sofa'?0.32:0.38)*fsOf(p.id),p.z);P.g.rotation.y=p.ry;}applyPose(P,playerPose(T,false,false),dt);}
   else{
   if(mag>0.05){ply.x+=mx*spd*dt;ply.z+=mz*spd*dt;moving=true;
-    if(!busy&&!fpMode&&!(ply.held==='hoe'||carry))ply.face+=angDiff(ply.face,Math.atan2(mx,mz))*Math.min(1,dt*12);ply.walk+=dt*spd*1.5;}
+    if(!busy&&!fpMode&&!(ply.held==='hoe'||carry||isBlk(ply.held)))ply.face+=angDiff(ply.face,Math.atan2(mx,mz))*Math.min(1,dt*12);ply.walk+=dt*spd*1.5;}
   ply.moving=moving;if(fpMode)ply.face=camYaw+Math.PI;
   if(ply.dashT>0){ply.dashT-=dt;ply.x+=ply.dvx*dt;ply.z+=ply.dvz*dt;if(Math.random()<0.6)puff(ply.x,ply.y,ply.z);}
   ply.x+=ply.kx*dt;ply.z+=ply.kz*dt;ply.kx*=Math.pow(0.02,dt);ply.kz*=Math.pow(0.02,dt);
