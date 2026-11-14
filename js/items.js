@@ -95,7 +95,7 @@ const TALENTS={
  ['w_combo','warrior','連段鬥志','💗','sword',0,null,['劍第三段命中時回復 1 HP','回復 2 HP','回復 3 HP']],
  ['w_finisher','warrior','終結斬','💥','sword',0,null,['劍第三段傷害 +30%','第三段傷害 +60%','第三段傷害 +100%']],
  ['w_rush','warrior','疾風連劍','🌪️','sword',0,['w_combo',1],['劍的攻擊速度 +10%','攻擊速度 +20%']],
- ['w_bleed','warrior','裂傷','🩸','sword',0,['w_finisher',1],['劍第三段讓敵人流血 3 秒，每秒 1 傷害','每秒 2 傷害']],
+ ['w_bleed','warrior','裂傷','🩸','sword',0,['w_finisher',1],['劍第三段讓敵人流血 3 秒，每秒 30% 攻擊力傷害','每秒 60% 攻擊力']],
  ['w_charge','warrior','先制突擊','⚡','spear',0,null,['長槍「開戰第一擊」（4 秒沒攻擊後）傷害 ×2 並暈眩 1 秒','傷害 ×3、暈眩 1.5 秒','傷害 ×4、暈眩 2 秒']],
  ['w_pierce','warrior','長槍專精','📏','spear',0,null,['長槍攻擊距離 +1m、傷害 +1','距離 +2m、傷害 +2']],
  ['w_swift','warrior','疾槍','🌬️','spear',0,['w_pierce',1],['長槍攻擊速度 +12%','攻擊速度 +25%']],
@@ -112,7 +112,7 @@ const TALENTS={
  ['r_crit','ranger','鷹眼','🦅','bow',0,['r_steady',1],['箭有 10% 機率暴擊（×2 傷害）','暴擊率 20%','暴擊率 30%']],
  ['r_rain','ranger','箭雨','🌧️','bow',1,['r_rapid',1],['【主動】在前方降下 3 秒箭雨，每 0.25 秒 0.6× 傷害','每 0.25 秒 0.9× 傷害、範圍更大']],
  ['r_twin','ranger','雙刃','🗡️','dagger',0,null,['匕首連砍兩下的機率 +15%（共 45%）','共 60%','共 75%']],
- ['r_venom','ranger','淬毒','🧪','dagger',0,null,['匕首命中讓敵人中毒 2 秒，每秒 1 傷害','每秒 2 傷害']],
+ ['r_venom','ranger','淬毒','🧪','dagger',0,null,['匕首命中讓敵人中毒 2 秒，每秒 30% 攻擊力傷害','每秒 60% 攻擊力']],
  ['r_stealth','ranger','隱身','👻','dagger',1,['r_twin',1],['【主動】隱身 3 秒，怪物會忽略你；隱身中第一擊 ×3 傷害','隱身 4 秒','隱身 5 秒']],
  ['r_blink','ranger','瞬步','💨','dagger',1,null,['【主動】往前瞬間衝刺 6m，衝刺中無敵（冷卻 6 秒）','衝刺 9m、冷卻 4 秒']],
  ['r_escape','ranger','脫身術','🫥',null,0,['r_stealth',1],['血量低於 30% 時自動隱身 2 秒（冷卻 30 秒）']],
@@ -135,7 +135,7 @@ const TALENTS={
  ['m_mana','mage','魔力泉源','🌊',null,0,null,['攻擊與技能消耗的精神 -20%','消耗 -35%','消耗 -50%']],
  ['m_wisdom','mage','智慧','📚',null,0,['m_mana',1],['所有主動技能冷卻 -10%','冷卻 -20%']],
  // ===== 商人 =====
- ['c_rain','merchant','撒錢模式','💸',null,1,null,['【主動・開關】攻擊力 +40%，命中會灑出金幣，每次命中花 🪙2','攻擊力 +70%','攻擊力 +100%，每次命中只花 🪙1']],
+ ['c_rain','merchant','撒錢模式','💸',null,1,null,['【主動・開關】攻擊力 +40%，命中會灑出金幣，每次命中花 🪙10','攻擊力 +70%','攻擊力 +100%，每次命中只花 🪙5']],
  ['c_bribe','merchant','金錢護盾','💰',null,0,['c_rain',1],['撒錢模式中受到的傷害 -20%','受到的傷害 -40%']],
  ['c_jackpot','merchant','中大獎','🎰',null,0,['c_rain',2],['撒錢模式命中有 5% 機率造成 5× 傷害','機率 10%']],
  ['c_lucky','merchant','招財','🐱',null,0,null,['打倒怪物掉的金幣 +20%','金幣 +40%','金幣 +60%']],
@@ -156,7 +156,7 @@ const TALENTS={
  ['p_bash','priest','盾擊','👊','shield',0,null,['盾牌推擊傷害 +30%，並暈眩 0.5 秒','傷害 +60%、暈眩 0.8 秒','傷害 +100%、暈眩 1.2 秒']],
  ['p_taunt','priest','挑釁','😤','shield',1,['p_wall',1],['【主動】讓附近敵人優先攻擊你 6 秒，期間減傷再 +10%','持續 9 秒']],
  ['p_guardf','priest','守護領域','🛡️','shield',1,['p_wall',1],['【主動】詠唱 1.2 秒，製造回血與精神的領域 10 秒，每秒 1 HP、2 精神','每秒 1.5 HP、3 精神','每秒 2 HP、4 精神']],
- ['p_thorns','priest','荊棘之盾','🌵','shield',0,['p_bash',1],['拿盾牌被攻擊時，反彈 1× 攻擊力的傷害','反彈 2× 攻擊力']],
+ ['p_thorns','priest','荊棘之盾','🌵','shield',0,['p_bash',1],['拿盾牌被攻擊時，反彈 1× 盾牌攻擊力的傷害','反彈 2× 盾牌攻擊力']],
  ['p_grace','priest','恩典','🙏',null,0,null,['所有回復效果 +15%','回復 +30%','回復 +50%']],
  ['p_faith','priest','信仰','🕊️',null,0,['p_grace',1],['最大血量 +3，每秒自然回 0.1 HP','最大血量 +6，每秒回 0.2 HP']],
  ['p_revive','priest','神聖救助','💖',null,0,null,['救起倒地隊友的時間 -40%','時間 -70%']],
@@ -168,15 +168,37 @@ const classKeys=c=>Object.keys(TALENTS).filter(k=>TALENTS[k].c===c);
 const classPts=c=>classKeys(c).reduce((a,k)=>a+tal[k],0);
 const classMax=c=>classKeys(c).reduce((a,k)=>a+TALENTS[k].nodes.length,0);
 const noviceDone=()=>classPts('novice')>=classMax('novice');
-// 武器倍率：攻速慢的武器每下比較痛，快的比較輕
+// ===== 素質系統 =====
+const STATS=['str','agi','vit','int','dex','luk'];
+const STAT_INFO={str:['力量','💪','近距離物理攻擊 +1／點，遠距離物理傷害 +0.5%／點'],agi:['敏捷','🪶','迴避 +0.5%／點（上限 50%），每 10 點普攻速度 +5%（最多 +50%）'],
+  vit:['體質','❤️','最大生命 +1／點，每 10 點精神消耗 -5%'],int:['智力','🔮','魔法攻擊 +1／點；與靈巧一起縮短詠唱'],
+  dex:['靈巧','🎯','遠距離物理攻擊 +1／點；縮短詠唱（智力÷2＋靈巧＝265 時免詠唱）'],luk:['幸運','🍀','每 5 點爆擊率 +2%，每 10 點迴避 +1%（不受 50% 上限）']};
+const STAT_PER_LV=1;
+const statPts=(lv=ply.lv)=>lv*STAT_PER_LV;
+const stv=k=>(ply.st&&ply.st[k])||0;
+const statUsed=st=>STATS.reduce((a,k)=>a+((st||ply.st||{})[k]||0),0);
+const fleeRate=()=>Math.min(0.5,stv('agi')*0.005)+Math.floor(stv('luk')/10)*0.01;
+const agiSpd=()=>Math.min(0.5,Math.floor(stv('agi')/10)*0.05);          // 普攻頻率加成
+const vitEn=()=>Math.min(0.8,Math.floor(stv('vit')/10)*0.05);           // 精神消耗減少
+const castCut=()=>Math.min(1,(stv('int')/2+stv('dex'))/265);            // 詠唱縮減
+const critRate=()=>Math.floor(stv('luk')/5)*0.02;
+// 武器判定：[近距離物理, 遠距離物理, 魔法]
 const WNAME={sword:'劍',spear:'長槍',greatsword:'大劍',bow:'弓',dagger:'匕首',lute:'樂器',staff:'法杖',orb:'法器',book:'書',shield:'盾牌'};
-const WMUL={stick:1,sword:1,spear:1,bow:1,staff:1,greatsword:2.4,dagger:0.55,lute:0.6,orb:0.9,book:1.2,shield:1.3};
+const ATK_F={stick:[1,0,0],sword:[1,0,0],spear:[1,0.2,0],greatsword:[2,0,0],bow:[0,0.8,0],dagger:[0.6,0.2,0],lute:[0,0.5,0.5],staff:[0,0,0.6],orb:[0,0,0.6],book:[0,0.1,0.6],shield:[0.4,0,0],golem:[1,0,1],jelly:[0.5,0,0.5]};
 const xpNeed=lv=>30+(lv-1)*25;
-function weaponAtk(raw){const w=ply.weapon;let a=w==='stick'?1:ITEMS[w].atk;a+=Math.floor((ply.lv-1)/3);
+const lvBase=(lv=ply.lv)=>2+Math.floor((lv-1)/3);
+function wBase(w){let a=w==='stick'?1:(ITEMS[w]&&ITEMS[w].atk)||2;a+=Math.floor((ply.lv-1)/3);
   if(w==='sword'&&TL('sword',1))a++;if(w==='spear'&&TL('spear',1))a++;if(w==='bow'&&TL('bow',1))a++;if(w==='staff'&&TL('staff',1))a++;
-  if(w==='spear')a+=TV('w_pierce');
-  a*=WMUL[w]||1;if(typeof atkMul==='function')a*=atkMul(w);
+  if(w==='spear')a+=TV('w_pierce');return a;}
+function atkParts(w){const b=wBase(w||'stick');return{mel:b+stv('str'),rng:(b+stv('dex'))*(1+0.005*stv('str')),mag:b+stv('int')};}
+// w：武器（或 golem／jelly）；技能請傳技能對應的武器
+function atkOf(w,raw){const f=ATK_F[w]||ATK_F.stick;const P=atkParts(w);let a=f[0]*P.mel+f[1]*P.rng+f[2]*P.mag;
+  if(w==='shield')a+=0.5*(ply.max||10);
+  if(typeof atkMul==='function')a*=atkMul(w);
   if(ply.en<=0)a*=0.5;return raw?a:Math.max(1,Math.round(a));}
+function weaponAtk(raw){return atkOf(ply.weapon,raw);}
+// 怪物血量倍率：讓「一半點數投入主屬性」的角色維持原本的手感
+const monScale=(lv=ply.lv)=>(lvBase(lv)+0.5*statPts(lv))/lvBase(lv);
 function chopPow(){let p=has('axe2')?4:has('axe1')?2:1;if(TL('wood',1))p++;if(TL('wood',2))p*=2;return p;}
 function minePow(){let p=has('pick2')?2:has('pick1')?1:(TL('mine',2)?1:0);if(p===0)return 0;if(TL('mine',1))p++;if(TL('mine',2))p*=2;return p;}
 

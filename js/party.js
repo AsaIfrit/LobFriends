@@ -82,7 +82,7 @@ function mirrorTick(m,dt){const k=1-Math.exp(-10*dt);m.x+=(m.tx-m.x)*k;m.z+=(m.t
   let jx=0,jz=0;if(m.shake>0){m.shake-=dt;jx=Math.sin(m.shake*90)*0.1;jz=Math.cos(m.shake*70)*0.08;}m.g.position.set(m.x+jx,m.y,m.z+jz);m.g.rotation.y+=angDiff(m.g.rotation.y,m.dirT||0)*Math.min(1,dt*8);
   m.ifr-=dt;m.cool-=dt;const dx=ply.x-m.x,dz=ply.z-m.z,d=Math.hypot(dx,dz)||0.01;
   if(!ply.downed&&!ply.riding&&ply.cave&&!(ply.stealthT>0)&&d<1.1+m.size*0.35&&m.cool<=0&&ply.ifr<=0&&m.flash<0.3&&m.y<1){m.cool=1;hurtMe(m.dmg||2,dx/d,dz/d,m);}}
-function hurtMe(dmg,nx,nz,m){ply.ifr=0.9;ply.hp-=takeDmg(dmg,m||null);ply.kx=nx*10;ply.kz=nz*10;ply.vy=4;ply.ground=false;SFX.hurt();P.sqv-=5;burst(ply.x,ply.y+0.8,ply.z,[0xff9ec7,0xffffff],8,3);hurtFX();updateHUD();
+function hurtMe(dmg,nx,nz,m){if(tryDodge(m))return;ply.ifr=0.9;ply.hp-=takeDmg(dmg,m||null);ply.kx=nx*10;ply.kz=nz*10;ply.vy=4;ply.ground=false;SFX.hurt();P.sqv-=5;burst(ply.x,ply.y+0.8,ply.z,[0xff9ec7,0xffffff],8,3);hurtFX();updateHUD();
   if(ply.hp<=0){ply.hp=0;playerKO('被果凍怪打倒了… 💫');}}
 function onHit(o){if(caveFollower())return;const m=monsters.find(m=>m.id===o.id&&!m.mirror&&m.dead<0);if(!m)return;m.ifr=0;damageMonster(m,+o.d||1,+o.nx||0,+o.nz||0,!!o.c,true);}
 function partyOnKill(m){const out={t:'kill',id:m.id||0,x:+m.x.toFixed(1),z:+m.z.toFixed(1),ar:m.cave?'cave':'out',lv:caveLv,
@@ -129,7 +129,7 @@ function doSlam(x,z,r,d){ring(x,0.12,z,0xff6f9f,0.5,r,0.5);ring(x,0.15,z,0xfffff
 function onSlam(o){if(!ply.cave||caveLv!==5)return;doSlam(+o.x,+o.z,+o.r||5,+o.d||4);}
 function spawnBoss(){const c=makeBossVis();const g=c.g;const size=3.0;g.scale.setScalar(size);
   const bar=new THREE.Group(),bg=mk(new THREE.PlaneGeometry(1,0.14),hpBgM),fg=mk(new THREE.PlaneGeometry(1,0.14),hpFgM,0,0,0.001);bg.renderOrder=fg.renderOrder=9;bar.add(bg,fg);bar.position.y=1.75;bar.visible=false;g.add(bar);
-  const n=inParty()?party.members.length:1;const hp=Math.round((260+ply.lv*14)*(1+0.6*(n-1)));const x=CAVE.x,z=CAVE.z-2;g.position.set(x,0,z);c.m.scale.setScalar(0.01);scene.add(g);
+  const n=inParty()?party.members.length:1;const hp=Math.round((260+ply.lv*14)*(1+0.6*(n-1))*monScale());const x=CAVE.x,z=CAVE.z-2;g.position.set(x,0,z);c.m.scale.setScalar(0.01);scene.add(g);
   monsters.push({g,c,mat:c.mat,bar,fg,x,z,y:0,vy:0,hp,max:hp,size,t:0,dir:0,wt:0,kx:0,kz:0,cool:1,dead:-1,flash:0,spawn:0,ifr:0,hop:1.5,shake:0,night:true,sq:0,sqv:0,cave:true,boss:true,dmg:4,spd:0.75,coin:120,xpv:120,slamT:4,sumT:7,tyI:0});
   toast('👑 果凍王出現了！小心牠的跳躍重壓！');SFX.lock();ring(x,0.1,z,0xffd36e,0.5,8,0.8);}
 function updateBossBar(){const b=ply.cave&&caveLv===5?monsters.find(m=>m.boss&&m.dead<0):null;const el=$('bossBar');if(!b){el.classList.remove('on');return;}el.classList.add('on');$('bossFill').style.width=Math.max(0,b.hp/b.max*100)+'%';$('bossHp').textContent=`${Math.max(0,Math.ceil(b.hp))} / ${b.max}`;}

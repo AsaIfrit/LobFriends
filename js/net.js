@@ -4,8 +4,8 @@ const remotes=new Map();
 function netArea(){return ply.cave?'cave':'out';}
 function netAnim(){if(ply.downed)return'down';if(ply.reviving)return'act';if(ply.sleeping)return'sleep';if(ply.sitting)return ply.sitting.kind==='bath'?'bath':'sit';if(ply.fishing)return'fish';if(ply.atkT>=0)return'atk';if(ply.act)return'act';if(!ply.ground)return'air';
   const k=keys,mv=(joy.id!==null&&Math.hypot(joy.x,joy.y)>0.05)||k.KeyW||k.KeyA||k.KeyS||k.KeyD||k.ArrowUp||k.ArrowDown||k.ArrowLeft||k.ArrowRight;
-  if(!mv)return'idle';return(k.ShiftLeft||k.ShiftRight||(joy.id!==null&&Math.hypot(joy.x,joy.y)>0.95))?'run':'walk';}
-const LOOK_KEYS=['hat','earSize','earGap','earY','earZ','tailSize','tailY','tailZ','species','body','accent','ears','tail','eyes','eyeSize','eyeGap','eyeY','eyeColor','brow','browSize','browGap','browY','lash','lashSize','lashGap','lashY','mouth','mouthSize','mouthW','mouthY','blushShape','blushColor','blushSize','blushGap','blushY'];
+  if(!mv)return'idle';return(typeof plyRun!=='undefined'&&plyRun)?'run':'walk';}
+const LOOK_KEYS=['eyeW','eyeH','browW','browH','mouthH','lipW','lipH','blushW','blushH','lip','lipX','lipY','lipR','lipSize','hat','earSize','earGap','earY','earZ','tailSize','tailY','tailZ','species','body','accent','ears','tail','eyes','eyeSize','eyeGap','eyeY','eyeColor','brow','browSize','browGap','browY','lash','lashSize','lashGap','lashY','mouth','mouthSize','mouthW','mouthY','blushShape','blushColor','blushSize','blushGap','blushY'];
 function compactLook(){const o={};for(const k of LOOK_KEYS)o[k]=look[k];return o;}
 const cleanTxt=(s,n)=>String(s||'').replace(/[\u0000-\u001f\u007f​-‏‪-‮⁠-⁤﻿]/g,'').slice(0,n);
 
@@ -114,9 +114,12 @@ function netFrame(dt,T){
     }else{c.g.position.set(r.x,r.y,r.z);c.g.rotation.y=r.f;if(r.lastAn==='sleep'||r.lastAn==='down'){c.m.rotation.set(0,0,0);c.m.position.set(0,0,0);}c.setFace('open');
       let ps=walkPose(newPose(),r.walk,moving,T,r.x);if(an==='run'){ps.lean=0.3;ps.legs=[Math.sin(r.walk)*0.9,-Math.sin(r.walk)*0.9];ps.arms[0][0]=-Math.sin(r.walk)*1.1;ps.arms[1][0]=Math.sin(r.walk)*1.1;}
       if(an==='air'){ps.sq=0.12;ps.legs=[-0.6,0.35];ps.arms[0][2]=-1.25;ps.arms[1][2]=1.25;}
-      if(an==='atk'||an==='act'){if(r.lastAn!==an)r.atkT=0;r.atkT+=dt;const s=(r.atkT%0.35)/0.35;ps.arms[0]=[-1.5,0,lerp(1.4,-1.3,easeOut(s))];ps.hold=Math.PI*0.95;ps.k=40;if(an==='act'){ps.arms[0]=[s<0.45?-2.8:-0.6,0,-0.2];ps.hold=2.3;ps.k=30;}}
+      const bw=MODEL_W[show]||show;r.q=r.q||new THREE.Quaternion();
+      if(an!=='atk'&&an!=='act'&&an!=='fish'&&typeof IDLE_W!=='undefined'&&IDLE_W[bw])idleWeaponPose(ps,bw,moving,an==='run',r.walk,r.q);
+      if(an==='atk'&&typeof ATK3!=='undefined'&&ATK3[bw]){const cb=Math.max(1,pr.cb||1);if(r.lastAn!==an||r.cb!==cb){r.atkT=0;r.cb=cb;}r.atkT+=dt;const st=(ATK3[bw][cb-1]||ATK3[bw][0]);atkPoseFor(ps,bw,cb,r.atkT/st.d,r.q);}
+      else if(an==='atk'||an==='act'){if(r.lastAn!==an)r.atkT=0;r.atkT+=dt;const s=(r.atkT%0.35)/0.35;ps.arms[0]=[-1.5,0,lerp(1.4,-1.3,easeOut(s))];ps.hold=Math.PI*0.95;ps.k=40;if(an==='act'){ps.arms[0]=[s<0.45?-2.8:-0.6,0,-0.2];ps.hold=2.3;ps.k=30;}}
       if(an==='fish'){ps.arms[0]=[-1.25,0,-0.15];ps.hold=1.35;}
-      applyPose(c,ps,dt);}
+      applyPose(c,ps,dt);if(typeof updateMountedC==='function'){updateMountedC(c,ps,dt,T,an==='atk'&&r.cb===3);weaponSafety(c);}}
     if(c.tail)c.tail.rotation.y=Math.sin(T*(moving?10:3)+r.x)*0.35;
     r.lastAn=an;
     if(Array.isArray(pr.em)&&pr.em[1]!==r.emTs){const first=r.emTs===0;r.emTs=pr.em[1];if(!first||Date.now()-pr.em[1]<3000){remoteBubble(r,cleanTxt(pr.em[0],4),true);c.sqv+=6;}}

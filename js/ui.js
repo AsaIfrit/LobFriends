@@ -227,6 +227,33 @@ addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;const d=
   else{bagPick=bagPick===d.k?null:d.k;SFX.click();renderBag(false);}});
 $('pRot').addEventListener('click',carryRotate);$('pStore').addEventListener('click',carryStore);$('pCancel').addEventListener('click',carryCancel);
 
+
+// ---------- 素質配點 ----------
+let stDraft=null;
+function openStats(){if(!started||ply.sleeping)return;stDraft=Object.assign({},ply.st);renderStats(true);openPanel('stats');}
+function withSt(st,fn){const o=ply.st,om=ply.max;ply.st=st;ply.max=maxHP();try{return fn();}finally{ply.st=o;ply.max=om;}}
+function statDerived(st){return withSt(st,()=>{const P=atkParts(ply.weapon);const w=ply.weapon;
+  return{mel:Math.round(P.mel),rng:Math.round(P.rng),mag:Math.round(P.mag),wpn:weaponAtk(),hp:maxHP(),flee:Math.round(fleeRate()*1000)/10,aspd:Math.round(agiSpd()*100),en:Math.round(vitEn()*100),cast:Math.round(castCut()*100),crit:Math.round(critRate()*100)};});}
+function renderStats(full){const left=statPts()-statUsed(stDraft);$('stLeft').textContent=left;
+  if(!full&&$('stList').children.length===STATS.length){STATS.forEach((k,i)=>{const r=$('stList').children[i];const v=stDraft[k]||0;const sv=r.querySelector('.stv');sv.textContent=v;sv.classList.toggle('chg',v!==(ply.st[k]||0));r.querySelectorAll('button[data-st]').forEach(b=>b.disabled=+b.dataset.d<0?v<=0:left<=0);});}
+  else $('stList').innerHTML=STATS.map((k,i)=>{const[n,ic,d]=STAT_INFO[k];const v=stDraft[k]||0,chg=v!==(ply.st[k]||0);
+    return`<div class="strow stg" style="--i:${i}"><div class="sti">${ic}</div><div class="stn"><b>${n}</b><small>${d}</small></div><div class="stc">
+      <button class="x10" data-st="${k}" data-d="-10" ${v<=0?'disabled':''}>-10</button><button data-st="${k}" data-d="-1" ${v<=0?'disabled':''}>−</button>
+      <span class="stv ${chg?'chg':''}">${v}</span><button data-st="${k}" data-d="1" ${left<=0?'disabled':''}>＋</button><button class="x10" data-st="${k}" data-d="10" ${left<=0?'disabled':''}>+10</button></div></div>`;}).join('');
+  const a=statDerived(ply.st),b=statDerived(stDraft);const wn=ply.weapon==='stick'?'空手':(WNAME[ply.weapon]||ITEMS[ply.weapon].n);
+  const row=(lbl,k,suf='',full)=>{const c=b[k]>a[k]?'up':b[k]<a[k]?'dn':'';return`<div class="${full?'full':''}"><span>${lbl}</span><b class="${c}">${b[k]}${suf}</b></div>`;};
+  $('stDer').innerHTML=row(`目前武器（${wn}）攻擊`,'wpn','',true)+row('近距離物攻','mel')+row('遠距離物攻','rng')+row('魔法攻擊','mag')+row('最大生命','hp')+row('迴避率','flee','%')+row('普攻速度','aspd','%')+row('爆擊率','crit','%')+row('精神消耗','en','%')+row('詠唱縮減','cast','%');
+  $('stDer').querySelectorAll('div').forEach(d=>{const t=d.querySelector('span').textContent;if(t==='普攻速度'||t==='精神消耗'){const bb=d.querySelector('b');if(bb.textContent!=='0%')bb.textContent=(t==='普攻速度'?'+':'-')+bb.textContent;}});
+  $('stOk').disabled=!STATS.some(k=>(stDraft[k]||0)!==(ply.st[k]||0));$('stUndo').disabled=$('stOk').disabled;}
+function stStep(k,d){const left=statPts()-statUsed(stDraft);const v=stDraft[k]||0;let nv=d>0?v+Math.min(d,left):Math.max(0,v+d);if(nv===v)return false;stDraft[k]=nv;renderStats();SFX.blip(d>0?1.3:1);return true;}
+{let rep=null;const stop=()=>{clearTimeout(rep);clearInterval(rep);rep=null;};
+ $('stList').addEventListener('pointerdown',e=>{const b=e.target.closest('button[data-st]');if(!b||b.disabled)return;e.preventDefault();const k=b.dataset.st,d=+b.dataset.d;stStep(k,d);stop();
+   rep=setTimeout(()=>{rep=setInterval(()=>{if(!stStep(k,d))stop();},70);},380);});
+ ['pointerup','pointercancel','pointerleave'].forEach(ev=>$('stList').addEventListener(ev,stop));window.addEventListener('pointerup',stop);}
+$('stReset').addEventListener('click',()=>{for(const k of STATS)stDraft[k]=0;renderStats();});
+$('stUndo').addEventListener('click',()=>{stDraft=Object.assign({},ply.st);renderStats();});
+$('stOk').addEventListener('click',()=>{const ratio=ply.hp/ply.max;ply.st=Object.assign({},stDraft);recalcMax();ply.hp=Math.min(ply.max,Math.max(1,Math.round(ply.max*ratio*10)/10));updateHUD();save();renderStats();
+  sparkle(innerWidth/2,innerHeight*0.4,14);P.sqv+=5;SFX.levelup();toast('📊 素質已套用！');});
 // ---------- 遊戲按鈕 ----------
 function bindHold(id,down,setHold){const b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();if(paused)return;setHold(true);down();});
   ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>setHold(false)));}
@@ -247,6 +274,7 @@ $('fab').addEventListener('click',()=>{const o=!$('fab').classList.contains('ope
 document.querySelectorAll('.fan').forEach(b=>b.addEventListener('click',()=>{const f=b.dataset.f;
   if(f==='craft'){closeFab();openCraft();}
   else if(f==='tal'){closeFab();openTalents();}
+  else if(f==='stat'){closeFab();openStats();}
   else if(f==='deco'){decoMode=!decoMode;document.body.classList.toggle('deco',decoMode);$('decoLbl').textContent=decoMode?'結束布置':'布置';if(!decoMode&&carry)carryCancel();toast(decoMode?'布置模式開啟 🛋️':'布置模式關閉');}
   else if(f==='bag'){closeFab();openBag();}
   else if(f==='full'){toggleFull();}
@@ -260,7 +288,9 @@ const VOL={m:1,b:1,s:1};try{Object.assign(VOL,JSON.parse(localStorage.getItem('l
 function applyVol(){if(master)master.gain.value=VOL.m;if(sfxG)sfxG.gain.value=0.75*VOL.s;for(const k of['M','B','S']){const v=VOL[k.toLowerCase()];$('v'+k).value=v;$('v'+k+'v').textContent=Math.round(v*100)+'%';}}
 window.musicVol=()=>VOL.b;
 ['M','B','S'].forEach(k=>$('v'+k).addEventListener('input',e=>{VOL[k.toLowerCase()]=+e.target.value;applyVol();try{localStorage.setItem('lobster-vol',JSON.stringify(VOL));}catch(_){}if(k==='S')SFX.coin();}));
-function openSettings(){applyVol();openPanel('settings');}
+function renderRunMode(){document.querySelectorAll('#runChips [data-rm]').forEach(b=>b.classList.toggle('on',b.dataset.rm===runMode));}
+document.querySelectorAll('#runChips [data-rm]').forEach(b=>b.addEventListener('click',()=>{runMode=b.dataset.rm;runLatch=false;try{localStorage.setItem('lobster-run',runMode);}catch(e){}renderRunMode();SFX.click&&SFX.click();toast(runMode==='toggle'?'🏃 按一下跑步鍵就會一直跑，停下來才結束':'🏃 長按跑步鍵才會跑');}));
+function openSettings(){applyVol();renderRunMode();openPanel('settings');}
 $('setBtn').addEventListener('click',()=>{initAudio();openSettings();});
 $('setSave').addEventListener('click',()=>{if(started){save(true);toast('存檔完成 💾');}else toast('開始遊戲後才能存檔喔');});
 $('setFs').addEventListener('click',toggleFull);$('fsBtn').addEventListener('click',toggleFull);
@@ -299,10 +329,10 @@ let lastHp=10;
 function updateHUD(){
   const h=Math.floor(hour()),mm=Math.floor(tmin%60);
   $('timeIco').textContent=isNight()?'🌙':(h<17?'☀️':'🌇');$('timeTxt').textContent=`第 ${day} 天 ${String(h).padStart(2,'0')}:${String(mm-mm%10).padStart(2,'0')}`;
-  $('hpFill').style.width=(ply.hp/ply.max*100)+'%';$('enFill').style.width=ply.en+'%';$('enTxt').textContent=ply.en<25?'好睏…':'';
+  $('hpFill').style.width=(ply.hp/ply.max*100)+'%';$('enFill').style.width=ply.en+'%';{const h=Math.max(0,Math.ceil(ply.hp)),e=Math.max(0,Math.ceil(ply.en));$('hpTxt').textContent=`${h}/${ply.max}`;$('hpTxt').classList.toggle('low',h<=ply.max*0.3);$('enTxt').textContent=`${e}/100`;$('enTxt').classList.toggle('low',e<25);}
   $('lvBadge').textContent=ply.lv;const need=xpNeed(ply.lv);$('xpFill').style.width=(ply.xp/need*100)+'%';$('xpTxt').textContent=`${Math.floor(ply.xp)} / ${need}`;
   if(Math.ceil(ply.hp)<lastHp)bump($('statBox'),'shake');lastHp=Math.ceil(ply.hp);
-  $('spDot').textContent=ply.sp;document.querySelector('.fan[data-f="tal"]').classList.toggle('has',ply.sp>0);$('fab').classList.toggle('dot',ply.sp>0);
+  $('spDot').textContent=ply.sp;document.querySelector('.fan[data-f="tal"]').classList.toggle('has',ply.sp>0);{const sl=statPts()-statUsed();$('stDot').textContent=sl;document.querySelector('.fan[data-f="stat"]').classList.toggle('has',sl>0);$('fab').classList.toggle('dot',ply.sp>0||sl>0);}
   const ql=Object.values(Q).filter(q=>q.state!=='none');const qd=$('qdrop');qd.style.display=ql.length?'block':'none';$('qCount').textContent=`(${ql.length})`;
   const html=ql.map((q,i)=>`<div style="transition-delay:${i*60}ms">${q.state==='ready'?`✅ ${q.name}：回告示板`:`${q.icon} ${q.name} ${q.prog}/${q.need}`}</div>`).join('');
   if($('qlistMini').innerHTML!==html)$('qlistMini').innerHTML=html;
@@ -364,7 +394,7 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0,p.stored?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff,p.stored?1:0]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,st:ply.st,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0,p.stored?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff,p.stored?1:0]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]).concat(carry&&carry.orig?[[carry.id,carry.orig.x,carry.orig.z,carry.orig.ry,+(carry.orig.y||0).toFixed(3)]]:[]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
@@ -375,7 +405,7 @@ function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
   for(const[type,name,f,a,st]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f&&!st;p.stored=!!st;if(!p.follow)sendHome(p);p.x=p.tx;p.z=p.tz;}
   for(const[gx,gz,wet,type,stage,g]of d.farm||[]){const t=till(gx,gz,false);setWet(t,!!wet);if(type){t.crop={type,stage,g};setCropStage(t,stage);t.crop.pop=1;t.crop.mesh.scale.setScalar(1);}}
-  ply.iday=d.iday;ply.skEq=Array.isArray(d.skEq)?d.skEq.slice(0,2):[];recalcMax();if(d.hp!==undefined)ply.hp=Math.min(ply.max,d.hp);
+  ply.iday=d.iday;ply.skEq=Array.isArray(d.skEq)?d.skEq.slice(0,2):[];{const st={};for(const k of STATS)st[k]=Math.max(0,Math.floor(+(d.st&&d.st[k])||0));ply.st=statUsed(st)<=statPts()?st:Object.fromEntries(STATS.map(k=>[k,0]));}recalcMax();if(d.hp!==undefined)ply.hp=Math.min(ply.max,d.hp);
   ply.hat=d.hat&&ITEMS[d.hat]&&inv[d.hat]>0?d.hat:null;look.hat=hatStyle();
   ply.y=ply.cave?0:standY(ply.x,ply.z,99);}
 
@@ -385,19 +415,21 @@ const ACC_SW=['#6e3428','#5a3022','#8a3a3a','#4a3268','#3f6e55','#f2c49a','#ff9e
 const EYE_SW=['#2a1c18','#000000','#6a3a2a','#5a3a8a','#2a5aa8','#2a7a5a','#a83a3a','#c86a20','#e05a9a'];
 const BLUSH_SW=['#ff8ca0','#ff6f8f','#ffa070','#ff9ad8','#c8a0ff','#ff5a5a','#ffb84a'];
 const OPTS={species:[['lobster','龍蝦精靈'],['hamster','倉鼠精靈']],ears:[['round','圓耳'],['cat','貓耳'],['bunny','兔耳'],['bear','熊耳'],['sprout','嫩芽'],['none','沒有']],
-  eyes:[['round','圓圓'],['big','閃亮大眼'],['star','星星眼'],['dot','豆豆眼'],['oval','長橢圓'],['heart','愛心眼'],['smile','笑瞇瞇'],['line','瞇瞇眼']],
+  eyes:[['round','圓圓'],['big','閃亮大眼'],['star','星星眼'],['dot','豆豆眼'],['oval','長橢圓'],['heart','愛心眼'],['smile','笑瞇瞇'],['line','瞇瞇眼'],['dotsmile','微笑豆眼'],['moonR','月牙眼・右'],['moonL','月牙眼・左'],['tilt','水汪汪斜眼'],['blank','白眼珠']],
   tail:[['seg','一節節'],['pom','毛球'],['none','無']],
-  brow:[['none','無'],['thin','細眉'],['thick','粗眉'],['round','麻呂眉'],['angry','生氣眉'],['worried','八字眉']],
+  brow:[['none','無'],['thin','細眉'],['thick','粗眉'],['round','麻呂眉'],['angry','生氣眉'],['worried','八字眉'],['arch','彎彎細眉'],['block','粗方眉']],
   lash:[['none','無'],['one','一根'],['two','兩根'],['three','三根']],
-  mouth:[['zigzag','〰'],['smile','‿'],['w','ω'],['open','▽'],['v','▼'],['o','o'],['line','ー']],
+  mouth:[['zigzag','〰'],['smile','‿'],['w','ω'],['open','▽'],['v','▼'],['o','o'],['line','ー'],['cat2','貓咪嘴'],['beak','小鳥嘴'],['dshape','開口笑'],['curl','鬍子嘴']],
+  lip:[['none','無'],['dash','一字'],['curve','小微笑'],['frown','小嘟嘟'],['dot','點點'],['pill','小橢圓']],
   blushShape:[['none','無'],['oval','橢圓'],['round','圓形'],['heart','愛心'],['lines','斜線'],['star','星星']]};
-const SLD={eye:[['eyeSize','大小',0.6,1.9,0.05],['eyeGap','距離',0.13,0.4,0.01],['eyeY','位置',0.86,1.16,0.01]],
-  brow:[['browSize','大小',0.5,1.8,0.05],['browGap','距離',0.12,0.4,0.01],['browY','位置',0.08,0.32,0.01]],
+const SLD={eye:[['eyeSize','大小',0.6,1.9,0.05],['eyeW','寬度',0.5,1.8,0.05],['eyeH','長度',0.5,1.8,0.05],['eyeGap','距離',0.13,0.4,0.01],['eyeY','位置',0.86,1.16,0.01]],
+  brow:[['browSize','大小',0.5,1.8,0.05],['browW','寬度',0.4,2,0.05],['browH','長度',0.4,2.5,0.05],['browGap','距離',0.12,0.4,0.01],['browY','位置',0.08,0.32,0.01]],
   lash:[['lashSize','大小',0.5,2,0.05],['lashGap','距離',0.2,1.3,0.05],['lashY','位置',0,1,0.05]],
-  mouth:[['mouthSize','大小',0.6,1.7,0.05],['mouthW','寬度',0.6,1.8,0.05],['mouthY','位置',0.08,0.28,0.01]],
+  lip:[['lipSize','大小',0.4,2.5,0.05],['lipW','寬度',0.4,2.2,0.05],['lipH','長度',0.4,2.2,0.05],['lipX','左右',-0.2,0.2,0.01],['lipY','上下',-0.04,0.2,0.01],['lipR','旋轉',-3.14,3.14,0.05]],
+  mouth:[['mouthSize','大小',0.6,1.7,0.05],['mouthW','寬度',0.6,1.8,0.05],['mouthH','長度',0.5,2.2,0.05],['mouthY','位置',0.08,0.28,0.01]],
   ear:[['earSize','大小',0.6,1.6,0.05],['earGap','距離',0.6,1.4,0.02],['earY','高低',-0.5,0.4,0.01],['earZ','前後',-0.35,0.35,0.01]],
   tail:[['tailSize','大小',0.6,1.8,0.05],['tailY','高低',-0.3,0.4,0.01],['tailZ','前後',-0.15,0.25,0.01]],
-  blush:[['blushSize','大小',0.5,1.8,0.05],['blushGap','距離',0.25,0.6,0.01],['blushY','位置',0,0.3,0.01]]};
+  blush:[['blushSize','大小',0.5,1.8,0.05],['blushW','寬度',0.4,2,0.05],['blushH','長度',0.4,2,0.05],['blushGap','距離',0.25,0.6,0.01],['blushY','位置',0,0.3,0.01]]};
 function normLook(){look=Object.assign({},DEF_LOOK,look);look.hat=hatStyle();if(look.blush===true&&(!look.blushShape||look.blushShape==='none'))look.blushShape='oval';look.blush=false;
   if(!['seg','pom','none'].includes(look.tail))look.tail=look.species==='lobster'?'seg':'pom';if(look.species!=='lobster'&&look.tail==='seg')look.tail='pom';}
 function swatches(el,list,key){el.innerHTML=list.map(c=>`<button data-v="${c}" style="background:${c}" class="${look[key]===c?'on':''}"></button>`).join('');}
@@ -405,18 +437,18 @@ function chips(el,list,key){el.innerHTML=list.map(([v,t])=>`<button data-v="${v}
 document.querySelectorAll('#creator .sl').forEach(el=>{el.innerHTML=SLD[el.dataset.g].map(([k,t,a,b,st])=>`<div class="clab">${t}</div><input type="range" data-k="${k}" min="${a}" max="${b}" step="${st}">`).join('');});
 function renderCreator(){normLook();swatches($('swBody'),BODY_SW,'body');swatches($('swAcc'),ACC_SW,'accent');swatches($('swEye'),EYE_SW,'eyeColor');swatches($('swMouth'),EYE_SW,'mouthColor');swatches($('swBlush'),BLUSH_SW,'blushColor');
   chips($('chSpecies'),OPTS.species,'species');chips($('chEars'),OPTS.ears,'ears');chips($('chEyes'),OPTS.eyes,'eyes');chips($('chTail'),look.species==='lobster'?OPTS.tail:OPTS.tail.filter(t=>t[0]!=='seg'),'tail');
-  chips($('chBrow'),OPTS.brow,'brow');chips($('chLash'),OPTS.lash,'lash');chips($('chMouth'),OPTS.mouth,'mouth');chips($('chBlush'),OPTS.blushShape,'blushShape');
+  chips($('chBrow'),OPTS.brow,'brow');chips($('chLash'),OPTS.lash,'lash');chips($('chMouth'),OPTS.mouth,'mouth');chips($('chLip'),OPTS.lip,'lip');chips($('chBlush'),OPTS.blushShape,'blushShape');
   $('earWrap').style.display=look.species==='lobster'?'none':'block';$('labAcc').textContent=look.species==='lobster'?'角的顏色':'耳朵／腳的顏色';$('labEarSl').textContent=look.species==='lobster'?'角的大小／位置':'耳朵大小／位置';$('sumEar').textContent=look.species==='lobster'?'🦞 角':'🐹 耳朵';
   document.querySelectorAll('#creator input[data-k]').forEach(i=>i.value=look[i.dataset.k]);$('cName').value=look.name;}
-[['swBody','body'],['swAcc','accent'],['swEye','eyeColor'],['swMouth','mouthColor'],['swBlush','blushColor'],['chEyes','eyes'],['chTail','tail'],['chSpecies','species'],['chEars','ears'],['chBrow','brow'],['chLash','lash'],['chMouth','mouth'],['chBlush','blushShape']].forEach(([id,key])=>
+[['swBody','body'],['swAcc','accent'],['swEye','eyeColor'],['swMouth','mouthColor'],['swBlush','blushColor'],['chEyes','eyes'],['chTail','tail'],['chSpecies','species'],['chEars','ears'],['chBrow','brow'],['chLash','lash'],['chMouth','mouth'],['chLip','lip'],['chBlush','blushShape']].forEach(([id,key])=>
   $(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;look[key]=b.dataset.v;if(key==='species')look.tail=look.species==='lobster'?'seg':'pom';
     if(key==='blushColor'&&look.blushShape==='none')look.blushShape='oval';renderCreator();rebuildPlayer();P.sqv+=6;}));
 document.querySelector('#creator .sheet').addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;look[k]=+e.target.value;rebuildPlayer();});
 $('cName').addEventListener('input',e=>{look.name=e.target.value||'小蝦';});
 $('cRand').addEventListener('click',()=>{const pick=a=>a[Math.floor(Math.random()*a.length)];look.body=pick(BODY_SW);look.accent=pick(ACC_SW);look.species=pick(OPTS.species)[0];look.ears=pick(OPTS.ears)[0];
-  look.mouth=pick(OPTS.mouth)[0];look.eyes=pick(OPTS.eyes)[0];look.tail=pick(look.species==='lobster'?OPTS.tail:OPTS.tail.filter(t=>t[0]!=='seg'))[0];look.eyeColor=pick(EYE_SW);look.mouthColor=pick(EYE_SW);look.brow=pick(OPTS.brow)[0];look.lash=pick(OPTS.lash)[0];
+  look.mouth=pick(OPTS.mouth)[0];look.eyes=pick(OPTS.eyes)[0];look.tail=pick(look.species==='lobster'?OPTS.tail:OPTS.tail.filter(t=>t[0]!=='seg'))[0];look.eyeColor=pick(EYE_SW);look.mouthColor=pick(EYE_SW);look.brow=pick(OPTS.brow)[0];look.lash=pick(OPTS.lash)[0];look.lip=Math.random()<0.6?'none':pick(OPTS.lip)[0];
   look.blushShape=pick(OPTS.blushShape)[0];look.blushColor=pick(BLUSH_SW);
-  for(const g of Object.values(SLD))for(const[k,,a,b]of g)look[k]=+(a+(b-a)*R(0.25,0.75)).toFixed(2);renderCreator();rebuildPlayer();P.sqv+=8;SFX.craft();});
+  for(const g of Object.values(SLD))for(const[k,,a,b]of g)look[k]=/^(eye|brow|mouth|lip|blush)[WH]$/.test(k)?+R(0.85,1.15).toFixed(2):+(a+(b-a)*R(0.25,0.75)).toFixed(2);renderCreator();rebuildPlayer();P.sqv+=8;SFX.craft();});
 function reveal(x,y,mid){const r=$('reveal');r.style.setProperty('--cx',x+'px');r.style.setProperty('--cy',y+'px');r.classList.add('on');SFX.open();setTimeout(()=>{mid();setTimeout(()=>r.classList.remove('on'),80);},560);}
 $('cDone').addEventListener('click',e=>{reveal(e.clientX,e.clientY,()=>{creatorOpen=false;const c=$('creator');c.classList.remove('show');c.style.display='none';try{localStorage.setItem('lobster-look',JSON.stringify(look));}catch(_){}refreshHeld();creatorThen&&creatorThen();});SFX.craft();});
 function openCreator(then,ev){reveal(ev?ev.clientX:innerWidth/2,ev?ev.clientY:innerHeight/2,()=>{creatorOpen=true;creatorThen=then;renderCreator();$('start').style.display='none';previewYaw=0;rebuildPlayer();

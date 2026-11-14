@@ -29,6 +29,7 @@ body.sleeping #spdTag{display:inline-block}
 .stat{display:flex;align-items:center;gap:5px;font-size:12px}
 .bar{width:92px;height:10px;background:#fbe6dc;border-radius:8px;overflow:hidden;border:2px solid #f2d4c2;position:relative}
 .bar>div{height:100%;width:100%;border-radius:6px;transition:width .35s var(--soft)}
+.sNum{font-size:11px;font-weight:900;white-space:nowrap;min-width:44px;font-variant-numeric:tabular-nums}.sNum.low{color:#e0607a}
 #hpFill{background:linear-gradient(90deg,#ff8fb0,#ffc0d4)}
 #enFill{background:linear-gradient(90deg,#9f8ff0,#cfc4ff)}
 #xpFill{background:linear-gradient(90deg,#7fe0b0,#c4f7dc)}
@@ -259,6 +260,14 @@ body.sleeping #sleepUI{display:flex}
 .qb{border:3px solid #fff;border-radius:16px;padding:8px 16px;font-weight:900;font-size:14px;background:linear-gradient(160deg,#a8ecc8,#7fd4a8);color:#fff;box-shadow:0 4px 0 rgba(90,170,130,.45);transition:transform .12s;white-space:nowrap}
 .qb.claim{background:linear-gradient(160deg,#ffd98a,#ffbf5a);box-shadow:0 4px 0 rgba(220,150,60,.45)}
 .qb.pink{background:linear-gradient(160deg,#ffb79a,#ff8f73);box-shadow:0 4px 0 rgba(220,110,80,.45)}
+#stList .strow{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #f6e4da;border-radius:16px;padding:7px 8px;margin:6px 0}
+#stList .sti{font-size:24px;width:30px;text-align:center}#stList .stn{flex:1;min-width:0}#stList .stn b{display:block;font-size:14.5px}#stList .stn small{display:block;font-size:10.5px;opacity:.7;line-height:1.3}
+#stList .stc{display:flex;align-items:center;gap:3px}#stList .stc button{width:30px;height:30px;border-radius:50%;border:2px solid #fff;font-weight:900;font-size:15px;padding:0;background:linear-gradient(160deg,#ffd0c0,#ffa78f);color:#fff;box-shadow:0 2px 0 rgba(220,110,80,.4)}
+#stList .stc button.x10{font-size:10px;background:linear-gradient(160deg,#e2d8ff,#b9a6f2);box-shadow:0 2px 0 rgba(130,100,200,.4)}#stList .stc button:disabled{opacity:.35}
+#stList .stv{min-width:34px;text-align:center;font-weight:900;font-size:17px}#stList .stv.chg{color:#ff6f8f}
+#stDer{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;background:#fff8f2;border:2px dashed #f2d6c8;border-radius:16px;padding:9px 12px;margin:8px 0;font-size:12.5px}
+#stDer div{display:flex;justify-content:space-between;gap:6px}#stDer span{opacity:.75}#stDer b.up{color:#2fae6a}#stDer b.dn{color:#e0607a}#stDer .full{grid-column:1/3}
+.stBtns{display:flex;gap:6px;justify-content:center;margin:6px 0 4px}.stBtns .qb{padding:7px 12px;font-size:13px}
 .qb.lav{background:linear-gradient(160deg,#e2d8ff,#b9a6f2);box-shadow:0 4px 0 rgba(130,100,200,.4)}
 .qb[disabled]{background:#ece0da;box-shadow:none;color:#a58c84}
 .close{width:100%;margin-top:6px}
@@ -455,8 +464,8 @@ body.ingame #start{display:none!important}
   <div class="card" id="timeBox"><span id="timeIco">☀️</span><span id="timeTxt">第 1 天 07:00</span><span id="spdTag">×5</span></div>
   <div class="card" id="statBox">
     <div class="lvrow"><div id="lvBadge">1</div><div class="xpwrap"><div class="bar" id="xpBar"><div id="xpFill"></div></div><small id="xpTxt">0 / 30</small></div></div>
-    <div class="stat"><span id="heart">💗</span><div class="bar"><div id="hpFill"></div></div></div>
-    <div class="stat"><span>⚡</span><div class="bar"><div id="enFill"></div></div><span id="enTxt" style="font-size:11px"></span></div>
+    <div class="stat"><span id="heart">💗</span><div class="bar"><div id="hpFill"></div></div><span class="sNum" id="hpTxt"></span></div>
+    <div class="stat"><span>⚡</span><div class="bar"><div id="enFill"></div></div><span class="sNum" id="enTxt"></span></div>
   </div>
   <div style="display:flex;gap:6px;align-self:flex-start"><div class="card" id="coinPill">🪙 <b id="coins">0</b></div><div class="card" id="netBadge"><i></i><span id="netTxt">連線中…</span></div></div>
   <div class="card" id="qdrop"><div class="qh">📜 委託 <span id="qCount"></span><span class="chev">▾</span></div><div id="qlistMini"></div></div>
@@ -466,12 +475,13 @@ body.ingame #start{display:none!important}
   <button id="fab"><span></span><span></span><span></span><i></i></button>
   <button class="fan" data-f="craft" style="--i:0">🔨<b>合成</b></button>
   <button class="fan" data-f="tal" style="--i:1">⭐<b>天賦</b><em class="dotS" id="spDot">0</em></button>
-  <button class="fan" data-f="bag" style="--i:2">🎒<b>背包</b></button>
-  <button class="fan" data-f="pet" style="--i:3">🐾<b>寵物</b></button>
-  <button class="fan" data-f="deco" style="--i:4">🛋️<b id="decoLbl">布置</b></button>
-  <button class="fan" data-f="dex" style="--i:5">📖<b>圖鑑</b></button>
-  <button class="fan" data-f="full" style="--i:6">⛶<b>全螢幕</b></button>
-  <button class="fan" data-f="set" style="--i:7">⚙️<b>設置</b></button>
+  <button class="fan" data-f="stat" style="--i:2">📊<b>素質</b><em class="dotS" id="stDot">0</em></button>
+  <button class="fan" data-f="bag" style="--i:3">🎒<b>背包</b></button>
+  <button class="fan" data-f="pet" style="--i:4">🐾<b>寵物</b></button>
+  <button class="fan" data-f="deco" style="--i:5">🛋️<b id="decoLbl">布置</b></button>
+  <button class="fan" data-f="dex" style="--i:6">📖<b>圖鑑</b></button>
+  <button class="fan" data-f="full" style="--i:7">⛶<b>全螢幕</b></button>
+  <button class="fan" data-f="set" style="--i:8">⚙️<b>設置</b></button>
 </div>
 <div id="decoTag">🛋️ 布置模式・靠近家具按「搬動」</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
@@ -507,6 +517,12 @@ body.ingame #start{display:none!important}
   <div class="tabs" id="shopTabs"></div>
   <div class="grid" id="shopGrid"></div><button class="qb lav close" data-close="shop">關閉</button></div></div>
 
+<div class="panel drawer" id="stats"><div class="sheet">
+  <h2>📊 素質</h2><div class="sub">每升 1 級得到 1 點（與天賦分開）。可以隨時自由加減，按「確認套用」才會生效。剩餘 <b id="stLeft">0</b> 點</div>
+  <div id="stList"></div><div id="stDer"></div>
+  <div class="stBtns"><button class="qb lav" id="stReset">全部歸零</button><button class="qb" id="stUndo">復原</button><button class="qb pink" id="stOk">確認套用</button></div>
+  <button class="qb lav close" data-close="stats">關閉</button></div></div>
+
 <div class="panel drawer" id="talent"><div class="sheet">
   <h2>⭐ 天賦</h2><div class="sub">升級可以拿到技能點數。剩餘 <span id="spInfo">0</span> 點</div>
   <div id="tList"></div><button class="qb lav close" data-close="talent">關閉</button></div></div>
@@ -525,6 +541,7 @@ body.ingame #start{display:none!important}
   <details class="cfold"><summary>〰️ 眉毛</summary><div class="chips" id="chBrow"></div><div class="sl" data-g="brow"></div></details>
   <details class="cfold"><summary>✨ 睫毛</summary><div class="chips" id="chLash"></div><div class="sl" data-g="lash"></div></details>
   <details class="cfold"><summary>👄 嘴巴</summary><div class="chips" id="chMouth"></div><div class="clab">嘴巴顏色</div><div class="sw" id="swMouth"></div><div class="sl" data-g="mouth"></div></details>
+  <details class="cfold"><summary>💋 嘴唇</summary><div class="chips" id="chLip"></div><div class="sl" data-g="lip"></div></details>
   <details class="cfold"><summary>🌸 腮紅</summary><div class="chips" id="chBlush"></div><div class="clab">腮紅顏色</div><div class="sw" id="swBlush"></div><div class="sl" data-g="blush"></div></details>
   <div class="crow2"><button class="qb lav" id="cRand">🎲 隨機</button><button class="qb pink" id="cDone">出發！✨</button></div>
 </div></div>
@@ -578,6 +595,8 @@ body.ingame #start{display:none!important}
   <div class="clab">音效 <span id="vSv"></span></div><input type="range" id="vS" min="0" max="1" step="0.05">
   <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此，每頻道最多 30 人）</div><div class="chips" id="chChips"></div></div>
   <div id="cloudWrap" style="display:none"><div class="clab">☁️ 雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
+  <div class="clab">🏃 跑步方式</div><div class="chips" id="runChips"><button class="chip" data-rm="hold">長按跑步鍵</button><button class="chip" data-rm="toggle">按一下就跑（停下才結束）</button></div>
+  <div class="sub" style="margin:2px 0 8px;font-size:11px">手機搖桿推到底也適用：「按一下」模式推到底一次後就會一直跑，放開搖桿才停下</div>
   <div id="kbWrap"><div class="clab" style="display:flex;justify-content:space-between;align-items:center">⌨️ 快捷鍵設定 <button class="qb" id="kbReset" style="padding:3px 10px;font-size:12px">恢復預設</button></div><div class="sub" style="margin:0 0 4px">點按鈕後按下想要的鍵盤按鍵（Esc 取消）。重複的按鍵會自動互換。</div><div id="kbList"></div></div>
   <div class="crow2"><button class="qb lav" id="setFs">⛶ 全螢幕</button><button class="qb" id="setSave">💾 立即存檔</button></div>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
@@ -598,20 +617,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261115j"></script>
-<script src="firebase-config.js?v=20261115j"></script>
+<script src="config.js?v=20261115u"></script>
+<script src="firebase-config.js?v=20261115u"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261115j"></script>
-<script src="js/audio.js?v=20261115j"></script>
-<script src="js/items.js?v=20261115j"></script>
-<script src="js/critter.js?v=20261115j"></script>
-<script src="js/world.js?v=20261115j"></script>
-<script src="js/game.js?v=20261115j"></script>
-<script src="js/ui.js?v=20261115j"></script>
-<script src="js/extra.js?v=20261115j"></script>
-<script src="js/net.js?v=20261115j"></script>
-<script src="js/cloud.js?v=20261115j"></script>
-<script src="js/skills.js?v=20261115j"></script>
-<script src="js/party.js?v=20261115j"></script>
+<script src="js/engine.js?v=20261115u"></script>
+<script src="js/audio.js?v=20261115u"></script>
+<script src="js/items.js?v=20261115u"></script>
+<script src="js/critter.js?v=20261115u"></script>
+<script src="js/world.js?v=20261115u"></script>
+<script src="js/game.js?v=20261115u"></script>
+<script src="js/ui.js?v=20261115u"></script>
+<script src="js/extra.js?v=20261115u"></script>
+<script src="js/net.js?v=20261115u"></script>
+<script src="js/cloud.js?v=20261115u"></script>
+<script src="js/skills.js?v=20261115u"></script>
+<script src="js/party.js?v=20261115u"></script>
 </body>
 </html>
