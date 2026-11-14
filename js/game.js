@@ -253,7 +253,7 @@ function context(){
   const fr=nearestUse(1.3);
   if(!decoMode&&!ply.cave){const dr=nearestFurn('door',2.0);if(dr)return'door';}
   if(ply.fishing)return ply.fishing.phase==='bite'?'reel':'wait';
-  if(ply.cave){if(Math.hypot(ply.x-CAVE_EXIT.x,ply.z-CAVE_EXIT.z)<4)return'leave';if(caveLv<5&&Math.hypot(ply.x-CAVE_DOWN.x,ply.z-CAVE_DOWN.z)<3.2)return'deeper';if(nearestOre())return'ore';return'none';}
+  if(ply.cave){if(nearestOre())return'ore';return'none';}
   if(Math.hypot(ply.x-BOARD.x,ply.z-BOARD.z)<3.3)return'board';
   {let b=null,bd=2.2;for(const g of GACHAS){const d=Math.hypot(ply.x-g.front.x,ply.z-g.front.z);if(d<bd){bd=d;b=g;}}if(b)return b.kind==='hat'?'fgacha':'gacha';}
   if(Math.hypot(ply.x-PARKV.ferris.board.x,ply.z-PARKV.ferris.board.z)<2.6)return'ferris';
@@ -262,7 +262,6 @@ function context(){
   if(nearestNpc())return'talk';
   {const r=nearestRemote();if(r&&!(party&&party.members.includes(r.nid))&&(!inParty()||party.leader===myNetId))return'pinvite';}
   {const pt=nearestPet(1.8);if(pt&&!pt.follow){if(pt.aff>=100)return'invite';if(hasFoodFor(pt))return'feed';}}
-  if(Math.hypot(ply.x-CAVE_FRONT.x,ply.z-CAVE_FRONT.z)<4)return'cave';
 
   if(ply.held==='rod'&&Math.hypot(ply.x-POND.x,ply.z-POND.z)<POND.r+2.4)return'fish';
   if(fr){const it=ITEMS[fr.id];if(fr.id==='bench')return'bench';if(it.bed)return'sleep';if(it.sit)return'sit';if(it.bath)return'bath';}
@@ -369,8 +368,8 @@ function sitOn(p,kind){if(fpMode)setFP(false);const it=ITEMS[p.id];ply.sitting={
 function standUp(){const s=ply.sitting;if(!s)return;const p=s.p;ply.sitting=null;setTimeout(refreshHeld,0);const off=ITEMS[p.id].r*fsOf(p.id)+0.9;ply.x=p.x+Math.sin(p.ry)*off;ply.z=p.z+Math.cos(p.ry)*off;ply.y=furnBase(p);ply.face=p.ry;P.setFace('open');SFX.jump();}
 function quickFade(mid){const f=$('fade');f.style.transition='opacity .28s';f.textContent='';f.style.opacity=1;paused=true;
   setTimeout(()=>{mid();setTimeout(()=>{f.style.opacity=0;paused=false;setTimeout(()=>f.style.transition='',300);},120);},300);}
-function enterCave(){SFX.door();if(carry)carryCancel();setCaveLv(1);quickFade(()=>{ply.cave=true;ply.x=CAVE_EXIT.x;ply.z=CAVE_EXIT.z-2;ply.y=0;ply.vy=0;ply.face=Math.PI;camYaw=0;snapCam=true;toast('⛰️ 果凍怪洞窟…小心兇猛的果凍怪！');});}
-function leaveCave(){SFX.door();quickFade(()=>{ply.cave=false;ply.x=CAVE_FRONT.x+Math.sin(CAVE_FRONT.ry)*1.5;ply.z=CAVE_FRONT.z+Math.cos(CAVE_FRONT.ry)*1.5;ply.y=H(ply.x,ply.z);ply.vy=0;ply.face=CAVE_FRONT.ry;camYaw=CAVE_FRONT.ry+Math.PI;snapCam=true;});}
+function enterCave(){SFX.door();if(carry)carryCancel();setCaveLv(1);quickFade(()=>{ply.cave=true;ply.x=CAVE_EXIT.x;ply.z=CAVE_EXIT.z-3.2;ply.y=0;ply.vy=0;ply.face=Math.PI;camYaw=0;snapCam=true;toast('⛰️ 果凍怪洞窟…小心兇猛的果凍怪！');});}
+function leaveCave(){SFX.door();quickFade(()=>{ply.cave=false;ply.x=CAVE_FRONT.x+Math.sin(CAVE_FRONT.ry)*3.4;ply.z=CAVE_FRONT.z+Math.cos(CAVE_FRONT.ry)*3.4;ply.y=H(ply.x,ply.z);ply.vy=0;ply.face=CAVE_FRONT.ry;camYaw=CAVE_FRONT.ry+Math.PI;snapCam=true;});}
 let zzT=0;
 function lieDown(p){if(fpMode)setFP(false);ply.sleeping={p};setTimeout(refreshHeld,0);ply.act=null;ply.atkT=-1;holdAtk=holdAct=false;document.body.classList.add('sleeping');SFX.lie();P.setFace('sleep');
   if(joy.id!==null){joy.id=null;joy.x=joy.y=0;$('joyBase').style.display='none';}toast('躺下了…時間 ×5 流動 💤');}
@@ -725,7 +724,7 @@ function step(dt,T){
   // ---- 鎖定 ----
   const lt=(ply.riding||ply.sitting||ply.sleeping)?null:nearestMonster(LOCKR[ply.weapon]||9);if(lt!==lockT){lockT=lt;if(lt)SFX.lock();}
   if(lockT){reticle.visible=true;reticle.position.set(lockT.x,H(lockT.x,lockT.z)+0.08,lockT.z);reticle.rotation.z=T*2;reticle.scale.setScalar(lockT.size*(1+Math.sin(T*8)*0.08));}else reticle.visible=false;
-  updateFX2(dt);skillTick(dt,T);updatePets(dt,T);separateChars();updateFishing(dt,T);updateHoePreview(T);updatePark(dt,T);updateBuildGhost(T);updateOres(dt);
+  updateFX2(dt);skillTick(dt,T);updatePets(dt,T);separateChars();updateFishing(dt,T);updateHoePreview(T);updatePark(dt,T);updateBuildGhost(T);updateOres(dt);updatePortals(dt,T);updateFountainFX(dt,T);
   caveLight.intensity=ply.cave?1.1:0;if(ply.cave)caveLight.position.set(ply.x,ply.y+4,ply.z);
   // 回復
   if(!ply.downed&&!ply.indoor&&(Math.hypot(ply.x,ply.z)<22||Math.hypot(ply.x-V2.x,ply.z-V2.z)<30)&&ply.hp<ply.max)ply.hp=Math.min(ply.max,ply.hp+dt*0.5);

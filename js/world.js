@@ -234,15 +234,34 @@ const V2EXTRA=[[-38,12],[-37,-14],[-22,-35],[22,-33],[36,-6],[37,18],[27,34],[4,
   const x=V2.x+dx,z=V2.z+dz,ry=Math.atan2(V2.x-x,V2.z-z)-Math.PI/2;return medievalHouse(x,z,ry,{seed:i+20,turret:i%2?1:0,roof:i%4===3?'slate':'tile',W:7+(i%3)*0.8,D:6+(i%2)*0.6});});
 // 中央噴水池
 const FOUNTAINS=[];
+// 噴泉水花：從頂端噴出、從上層水盆邊流下，落水處泛起漣漪
+const DROP_TEX=canvasTex(32,32,(g)=>{const gr=g.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.5,'rgba(220,245,255,0.8)');gr.addColorStop(1,'rgba(200,235,255,0)');g.clearRect(0,0,32,32);g.fillStyle=gr;g.fillRect(0,0,32,32);});
+const FFX=[];
+function fountainFX(x,y,z,s){const N=220,pos=new Float32Array(N*3),vel=new Float32Array(N*3),kind=new Uint8Array(N);const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({map:DROP_TEX,size:0.45,transparent:true,depthWrite:false,color:0xf2fbff,opacity:0.95}));pts.frustumCulled=false;
+  const g=new THREE.Group();g.add(pts);g.position.set(x,y,z);g.scale.setScalar(s);scene.add(g);
+  const rings=[];for(let i=0;i<14;i++){const r=new THREE.Mesh(new THREE.RingGeometry(0.8,1,32),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide}));r.rotation.x=-Math.PI/2;g.add(r);rings.push({m:r,t:1});}
+  const f={g,pts,pos,vel,kind,N,rings,ri:0,x,z};for(let i=0;i<N;i++)fRespawn(f,i,Math.random());FFX.push(f);}
+function fRespawn(f,i,pre=0){const p=f.pos,v=f.vel,k=i*3;const a=Math.random()*Math.PI*2;
+  if(i%3!==0){f.kind[i]=0;p[k]=Math.cos(a)*0.1;p[k+1]=5.2;p[k+2]=Math.sin(a)*0.1;const out=0.7+Math.random()*0.9;v[k]=Math.cos(a)*out;v[k+1]=3.2+Math.random()*1.6;v[k+2]=Math.sin(a)*out;}
+  else{f.kind[i]=1;p[k]=Math.cos(a)*2.05;p[k+1]=2.72;p[k+2]=Math.sin(a)*2.05;const out=0.5+Math.random()*0.7;v[k]=Math.cos(a)*out;v[k+1]=0.3+Math.random()*0.5;v[k+2]=Math.sin(a)*out;}
+  if(pre){for(let s=0;s<pre*12;s++){p[k]+=v[k]*0.06;p[k+1]+=v[k+1]*0.06;p[k+2]+=v[k+2]*0.06;v[k+1]-=9.8*0.06;}}}
+function fRipple(f,x,z,big){const r=f.rings[f.ri++%f.rings.length];r.t=0;r.big=big;r.m.position.set(x,big?0.75:2.73,z);}
+function updateFountainFX(dt,T){for(const f of FFX){const vis=!ply.cave&&!ply.indoor&&Math.hypot(ply.x-f.x,ply.z-f.z)<70;f.g.visible=vis;if(!vis)continue;const p=f.pos,v=f.vel;dt=Math.min(dt,0.05);
+    for(let i=0;i<f.N;i++){const k=i*3;v[k+1]-=9.8*dt;p[k]+=v[k]*dt;p[k+1]+=v[k+1]*dt;p[k+2]+=v[k+2]*dt;const rr=Math.hypot(p[k],p[k+2]);
+      if(f.kind[i]===0&&v[k+1]<0&&p[k+1]<2.72&&rr<1.85){if(Math.random()<0.18)fRipple(f,p[k],p[k+2],false);fRespawn(f,i);}
+      else if(p[k+1]<0.74&&v[k+1]<0){if(rr<3.7&&Math.random()<0.25)fRipple(f,p[k],p[k+2],true);fRespawn(f,i);}}
+    f.pts.geometry.attributes.position.needsUpdate=true;
+    for(const r of f.rings){if(r.t>=1){r.m.visible=false;continue;}r.t+=dt*(r.big?1.4:2);r.m.visible=true;const sc=(r.big?0.15:0.1)+r.t*(r.big?0.75:0.45);r.m.scale.setScalar(sc);r.m.material.opacity=(1-r.t)*0.7;}}}
 function fountain(x,z,s=1){const b=MB();const y=H(x,z);
   const oct=(r,h,yy)=>{b.add('stone',scaleUV(new THREE.CylinderGeometry(r,r*1.04,h,8),r*2,0.5),M4(0,yy+h/2,0,0,Math.PI/8,0));};
   oct(4.2,0.8,0);oct(1.0,1.8,0.8);oct(2.0,0.35,2.4);oct(0.5,1.4,2.75);oct(1.1,0.3,4.0);b.add('gold',new THREE.SphereGeometry(0.35,10,8),M4(0,4.6,0));
   const g=b.build();const wm=toon(0x8fd8f8,{transparent:true,opacity:0.85});
   const w1=mk(new THREE.CircleGeometry(3.8,8),wm,0,0.72,0);w1.rotation.x=-Math.PI/2;w1.rotation.z=Math.PI/8;g.add(w1);const w2=mk(new THREE.CircleGeometry(1.8,8),wm,0,2.7,0);w2.rotation.x=-Math.PI/2;g.add(w2);
-  const sp=new THREE.Group();const spm=basic(0xe8f8ff,{transparent:true,opacity:0.55,depthWrite:false});
+  const sp=new THREE.Group();const spm=basic(0xe8f8ff,{transparent:true,opacity:0.16,depthWrite:false});
   sp.add(mk(new THREE.CylinderGeometry(0.12,0.2,1.2,8,1,true),spm,0,5.2,0));const c1=mk(new THREE.CylinderGeometry(1.9,0.4,1.7,16,1,true),spm,0,3.4,0);sp.add(c1);const c2=mk(new THREE.CylinderGeometry(3.9,1.7,1.9,20,1,true),spm,0,1.6,0);sp.add(c2);g.add(sp);
   for(let i=0;i<8;i++){const a=i/8*Math.PI*2+Math.PI/8;const pot=mk(new THREE.SphereGeometry(0.32,8,6),HM[i%2?'flower':'flower2'],Math.cos(a)*4.1,1.0,Math.sin(a)*4.1);g.add(pot);}
-  sp.userData.dyn=true;g.position.set(x,y,z);g.scale.setScalar(s);scene.add(g);batchStatic(g);obstacles.push({x,z,r:4.4*s});FOUNTAINS.push({sp,t:Math.random()*5});}
+  sp.userData.dyn=true;g.position.set(x,y,z);g.scale.setScalar(s);scene.add(g);batchStatic(g);obstacles.push({x,z,r:4.4*s});FOUNTAINS.push({sp,t:Math.random()*5});fountainFX(x,y,z,s);}
 fountain(V2.x,V2.z);
 // 鎮公所（大鐘塔）
 {const x=V2.x+0,z=V2.z-37,ry=Math.atan2(V2.x-x,V2.z-z)-Math.PI/2;const b=MB();
