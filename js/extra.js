@@ -73,7 +73,7 @@ function updatePark(dt,T){const F=PARKV.ferris,K=PARKV.carousel,TC=PARKV.teacups
   K.ang-=dt*0.45;K.rot.rotation.y=K.ang;K.horses.forEach((h,i)=>{h.h.position.y=1.6+Math.sin(T*2.4+i*1.3)*0.28;});
   // 雲霄飛車
   {const CO=PARKV.coaster;const i0=Math.floor(CO.s*CO.N)%CO.N;const v=CO.v[i0];const ds=v*dt/CO.L;CO.s=(CO.s+ds)%1;CO.lap=(CO.lap||0)+ds;
-   for(let k=0;k<CO.cars.length;k++){const u=((CO.s-k*3.0/CO.L)%1+1)%1;const p=CO.curve.getPointAt(u),q=CO.curve.getPointAt((u+0.004)%1);const car=CO.cars[k];car.position.copy(p);car.position.y+=0.15;car.lookAt(q.x,q.y+0.15,q.z);}}
+   for(let k=0;k<CO.cars.length;k++){const u=((CO.s-k*3.0/CO.L)%1+1)%1;const p=CO.curve.getPointAt(u),q=CO.curve.getPointAt((u+0.004)%1);const car=CO.cars[k];car.position.copy(p);car.position.y+=0.15;car.lookAt(q.x,q.y+0.15,q.z);const so=CO.carSolids&&CO.carSolids[k];if(so){so.x=p.x;so.z=p.z;so.ry=Math.atan2(q.x-p.x,q.z-p.z);so.y0=p.y-0.3;so.top=p.y+1.25;}}}
   // 城堡餐廳
   {const CV=PARKV.castle;const nearC=CV.interior.visible;
    if(nearC){for(const d of CV.diners){const p=d.pose;const ph=(T*1.6+d.ph)%(Math.PI*2);p.sq=Math.sin(T*3+d.ph)*0.05;p.k=12;const bite=Math.sin(ph)>0.2;

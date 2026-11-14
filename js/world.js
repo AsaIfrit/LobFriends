@@ -10,7 +10,7 @@ function solidIn(o,x,z,pad){const[lx,lz]=solidLocal(o,x,z);if(o.r!==undefined)re
 function solidPush(o,p,pad){const[lx,lz]=solidLocal(o,p.x,p.z);let nx=lx,nz=lz;
   if(o.r!==undefined){const d=Math.hypot(lx,lz)||1e-4,R=o.r+pad;if(d>=R)return;nx=lx/d*R;nz=lz/d*R;}
   else if(o.a!==undefined){const a=o.a+pad,b=o.b+pad,k=Math.sqrt((lx/a)**2+(lz/b)**2)||1e-4;if(k>=1)return;nx=lx/k;nz=lz/k;}
-  else{const ex=o.hw+pad-Math.abs(lx),ez=o.hd+pad-Math.abs(lz);if(ex<=0||ez<=0)return;if(ex<ez)nx=Math.sign(lx||1)*(o.hw+pad);else nz=Math.sign(lz||1)*(o.hd+pad);}
+  else{const ex=o.hw+pad-Math.abs(lx),ez=o.hd+pad-Math.abs(lz);if(ex<=0||ez<=0)return;if(o.lat||ex<ez)nx=Math.sign(lx||1)*(o.hw+pad);else nz=Math.sign(lz||1)*(o.hd+pad);}
   if(!o.ry){p.x=o.x+nx;p.z=o.z+nz;return;}const c=Math.cos(o.ry),s=Math.sin(o.ry);p.x=o.x+nx*c+nz*s;p.z=o.z-nx*s+nz*c;}
 function solidTopAt(x,z,y,pad=0.25){let best=-1e9;for(const o of SOLIDS){if(o.on&&!o.on())continue;if(o.top>y+0.32||o.top<=best)continue;if(solidIn(o,x,z,pad))best=o.top;}return best;}
 function pushSolids(p,y,pad=0.8){for(const o of SOLIDS){if(o.on&&!o.on())continue;if(o.top<=y+0.32||o.y0>=y+1.3)continue;if(solidIn(o,p.x,p.z,pad))solidPush(o,p,pad);}}const fsOf=id=>FS[id]??1.5;
@@ -542,6 +542,9 @@ const PARKV={};
   for(let i=0;i<N;i+=2){const p=sp[i];o3.position.copy(p).y-=0.12;o3.lookAt(tmp.copy(sp[(i+1)%N]).setY(sp[(i+1)%N].y-0.12));o3.updateMatrix();ties.push([new THREE.BoxGeometry(1.9,0.12,0.32),o3.matrix.clone()]);}
   for(let i=0;i<N;i+=9){const p=sp[i];if(p.y<1.6)continue;const h=p.y-0.3;sups.push([new THREE.CylinderGeometry(0.16,0.24,h,8),M4(p.x,h/2,p.z)]);sups.push([new THREE.CylinderGeometry(0.4,0.5,0.3,8),M4(p.x,0.15,p.z)]);obstacles.push({x:p.x,z:p.z,r:0.45});}
   g.add(new THREE.Mesh(mergeGeos(ties),tmat));g.add(new THREE.Mesh(mergeGeos(sups),smat));
+  // 軌道實體：沿軌道放置有方向的方塊，玩家無法穿過，可以站上去
+  for(let i=0;i<N;i+=2){const a=sp[i],c2=sp[(i+2)%N];const dx=c2.x-a.x,dz=c2.z-a.z;const len=Math.hypot(dx,dz);
+    addSolid({x:(a.x+c2.x)/2,z:(a.z+c2.z)/2,ry:Math.atan2(dx,dz),hw:0.95,hd:len/2+0.05,top:Math.max(a.y,c2.y)+0.05,y0:Math.min(a.y,c2.y)-0.6,lat:1});}
   // 車站
   const st=sp[Math.floor(N*0.03)],sl=lat[Math.floor(N*0.03)];const sx=st.x+sl.x*3.2,sz=st.z+sl.z*3.2;const syaw=Math.atan2(sp[Math.floor(N*0.03)+1].x-st.x,sp[Math.floor(N*0.03)+1].z-st.z);
   {const sg=new THREE.Group();sg.add(mk(new THREE.BoxGeometry(3.6,0.9,12),toon(0xffe0ea),0,0.45,0));for(const zz of[-5.5,5.5])for(const xx of[-1.5,1.5])sg.add(mk(new THREE.CylinderGeometry(0.15,0.15,4,8),toon(0xffffff),xx,2.5,zz));
@@ -555,9 +558,10 @@ const PARKV={};
   for(let k=0;k<4;k++){const car=new THREE.Group();const c=toon(cc[k]);
     car.add(mk(new THREE.BoxGeometry(2.5,0.35,2.7),c,0,0.2,0));for(const s of[-1,1])car.add(mk(new THREE.BoxGeometry(0.18,0.85,2.7),c,s*1.16,0.75,0));
     car.add(mk(new THREE.BoxGeometry(2.5,0.85,0.2),c,0,0.75,-1.25));const fr=mk(new THREE.CylinderGeometry(1.25,1.25,0.5,16,1,false,0,Math.PI),c,0,0.6,1.25);fr.rotation.z=Math.PI/2;fr.rotation.y=Math.PI/2;fr.scale.set(1,1,0.7);car.add(fr);
-    car.add(mk(new THREE.BoxGeometry(2.1,0.9,0.25),toon(0xfff6ea),0,0.85,-0.95));car.add(mk(new THREE.TorusGeometry(0.5,0.07,6,16,Math.PI),tmat,0,1.25,0.35)).rotation&&0;car.children[car.children.length-1].rotation.y=Math.PI/2;
+    car.add(mk(new THREE.BoxGeometry(2.1,0.9,0.25),toon(0xfff6ea),0,0.85,-0.95));
     for(const s of[-1,1])for(const zz of[-0.9,0.9]){const w=mk(new THREE.CylinderGeometry(0.22,0.22,0.15,10),toon(0x7a6c8c),s*1.0,-0.05,zz);w.rotation.z=Math.PI/2;car.add(w);}
     shadowAll(car);scene.add(car);batchStatic(car);CO.cars.push(car);}
+  CO.carSolids=CO.cars.map(()=>addSolid({x:0,z:0,ry:0,hw:1.3,hd:1.6,top:-1e9,y0:-1e9,on:()=>!(ply.riding&&ply.riding.kind==='coaster')}));
   shadowAll(g);scene.add(g);}
  // ===== 樂園商店 =====
  {const sp=P(30,10),ft=P(30,0);makeStall('park',sp.x,sp.z,yawTo(sp.x,sp.z,ft.x,ft.z),{abs:true,label:'🎁 樂園商店',roof:'#ff8fb8',top:0xfff0f6,extra:g=>{
