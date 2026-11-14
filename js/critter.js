@@ -127,6 +127,59 @@ function buildSkins(T,G2){if(!SKM)SKM={dark:toon(0x3a3238),iron:toon(0x6a6470),f
   {const g=G2();g.add(mk(new THREE.CylinderGeometry(0.045,0.06,1.25,6),M.handle,0,0.52,0));const st=mk(new THREE.OctahedronGeometry(0.15),M.iceW,0,1.32,0);st.scale.y=1.6;g.add(st);g.userData.gem=st;
    for(let i=0;i<7;i++){const s=i%2?1:-1,k=(i/2)|0;const c=mk(new THREE.OctahedronGeometry(0.1),i%3?M.ice:M.iceD,s*(0.1+k*0.03),1.12+k*0.12,0);c.scale.set(0.7,2.4,0.45);c.rotation.z=-s*(0.5+k*0.08);g.add(c);}
    const tp=mk(new THREE.OctahedronGeometry(0.09),M.ice,0,1.62,0);tp.scale.y=2;g.add(tp);T.icestaff=g;}
+  buildBossSkins(T,G2);
+}
+// ===== 果凍怪洞穴 B5 王掉落的武器外觀 =====
+function buildBossSkins(T,G2){
+  const bone=toon(0xe8cf9a),boneD=toon(0xc8a46a),redV=basic(0xd81c1c),dark=toon(0x2e2a34),rope=toon(0xc81e2a),gold=toon(0xd8b060);
+  // 龍牙劍（大劍）：雙叉骨刃、紅色紋路、鋸齒、黑色護手、紅繩
+  {const g=G2();g.add(mk(new THREE.CylinderGeometry(0.065,0.07,0.52,8),toon(0x5a1a22),0,0.38,0));for(let i=0;i<5;i++){const r=mk(new THREE.TorusGeometry(0.07,0.018,5,10),rope,0,0.18+i*0.1,0);r.rotation.x=Math.PI/2;g.add(r);}
+   g.add(mk(new THREE.CylinderGeometry(0.08,0.08,0.06,6),gold,0,0.1,0));g.add(mk(new THREE.CylinderGeometry(0.06,0.09,0.08,6),gold,0,0.62,0));
+   g.add(mk(new THREE.BoxGeometry(0.46,0.36,0.16),dark,0,0.8,0));g.add(mk(new THREE.BoxGeometry(0.48,0.04,0.17),redV,0,0.72,0));g.add(mk(new THREE.BoxGeometry(0.48,0.04,0.17),redV,0,0.88,0));
+   for(const s of[-1,1]){const sp=mk(new THREE.ConeGeometry(0.07,0.32,4),bone,s*0.3,0.82,0);sp.rotation.z=s*2.5;sp.scale.z=0.4;g.add(sp);}
+   g.add(mk(new THREE.BoxGeometry(0.44,1.45,0.08),bone,0,1.7,0));g.add(mk(new THREE.BoxGeometry(0.1,1.2,0.1),dark,0,1.55,0));
+   for(const s of[-1,1]){const pr=mk(new THREE.BoxGeometry(0.16,0.55,0.08),bone,s*0.14,2.67,0);g.add(pr);const tp=mk(new THREE.ConeGeometry(0.1,0.22,4),bone,s*0.14,3.02,0);tp.rotation.y=Math.PI/4;tp.scale.z=0.5;g.add(tp);}
+   for(let i=0;i<8;i++){const t=mk(new THREE.ConeGeometry(0.05,0.16,4),boneD,0.25,1.1+i*0.2,0);t.rotation.z=-1.2;t.scale.z=0.5;g.add(t);}
+   for(let i=0;i<6;i++){for(const z of[-0.045,0.045]){const v=mk(new THREE.BoxGeometry(0.035,0.22,0.01),redV,(i%2?0.1:-0.1)+Math.sin(i)*0.04,1.15+i*0.24,z);v.rotation.z=(i%2?-0.5:0.5);g.add(v);}}
+   for(const z of[-0.045,0.045])for(const s of[-1,1]){const v=mk(new THREE.BoxGeometry(0.03,0.4,0.01),redV,s*0.14,2.55,z);g.add(v);}
+   T.dragonGS=g;}
+  // 影子匕首：藍寶石雙刃、圓環護手、黑色握把
+  {const g=G2();const blue=basic(0x3448e0),blueD=basic(0x1a2490),blk=toon(0x18161e);
+   g.add(mk(new THREE.CylinderGeometry(0.045,0.05,0.3,8),blk,0,0.12,0));for(let i=0;i<4;i++){const r=mk(new THREE.TorusGeometry(0.05,0.012,5,10),blueD,0,0.02+i*0.07,0);r.rotation.x=Math.PI/2;g.add(r);}
+   const ring=mk(new THREE.TorusGeometry(0.075,0.026,6,14),blue,0,0.34,0);g.add(ring);
+   g.add(mk(new THREE.BoxGeometry(0.15,0.2,0.04),blue,0,0.5,0));const tip=mk(new THREE.ConeGeometry(0.1,0.42,4),blue,0,0.81,0);tip.rotation.y=Math.PI/4;tip.scale.z=0.32;g.add(tip);
+   g.add(mk(new THREE.BoxGeometry(0.02,0.5,0.045),basic(0x9aa8ff),0,0.65,0));for(let i=0;i<3;i++)g.add(mk(new THREE.SphereGeometry(0.018,6,4),blk,0.04,0.46+i*0.06,0.02));
+   T.shadowDg=g;}
+  // 白色彗星（樂器）：白色電吉他、金色護板
+  {const g=G2();const wh=toon(0xf6f6f2),gp=toon(0xe8d8a8),nk=toon(0x6a4630),bk=toon(0x1c1a20);
+   const bd=mk(new THREE.SphereGeometry(0.3,16,12),wh,0,0.28,0);bd.scale.set(1.05,1.15,0.32);g.add(bd);
+   const h1=mk(new THREE.SphereGeometry(0.12,10,8),wh,0.16,0.56,0);h1.scale.set(0.7,1.6,0.8);h1.rotation.z=-0.4;g.add(h1);const h2=mk(new THREE.SphereGeometry(0.1,10,8),wh,-0.15,0.5,0);h2.scale.set(0.7,1.3,0.8);h2.rotation.z=0.3;g.add(h2);
+   const pg=mk(new THREE.SphereGeometry(0.2,14,10),gp,-0.03,0.32,0.07);pg.scale.set(1,1.2,0.15);g.add(pg);for(const y of[0.24,0.4])g.add(mk(new THREE.BoxGeometry(0.16,0.05,0.04),bk,0,y,0.1));g.add(mk(new THREE.BoxGeometry(0.2,0.04,0.03),bk,0,0.12,0.1));
+   g.add(mk(new THREE.BoxGeometry(0.08,0.85,0.05),nk,0,0.95,0.02));for(let i=0;i<6;i++){const t=mk(new THREE.ConeGeometry(0.02,0.04,3),wh,0,0.7+i*0.12,0.05);t.rotation.x=Math.PI/2;g.add(t);}
+   const hd=mk(new THREE.BoxGeometry(0.12,0.24,0.04),wh,0.02,1.48,0);hd.rotation.z=-0.25;g.add(hd);for(let i=0;i<3;i++)g.add(mk(new THREE.SphereGeometry(0.022,6,4),bk,0.07,1.4+i*0.06,0.03));
+   for(const x of[-0.025,0,0.025])g.add(mk(new THREE.BoxGeometry(0.005,1.15,0.005),toon(0xd8d8e0),x,0.85,0.08));
+   g.userData.mount={p:[-0.37,0.4,0.84],r:[0,0,-1.35],s:0.75};T.cometLute=g;}
+  // 智慧之眼（法器）：青色光球＋眼睛＋環繞的塔羅牌＋彩虹光環
+  {const g=G2();const core=mk(new THREE.SphereGeometry(0.22,18,14),basic(0x7fe8f0,{transparent:true,opacity:0.55,depthWrite:false}));core.renderOrder=3;g.add(core);
+   {const cr=mk(new THREE.OctahedronGeometry(0.11),basic(0xffffff),0,0,0);cr.scale.y=1.5;g.add(cr);const cr2=mk(new THREE.OctahedronGeometry(0.06),basic(0xe8fbff),0.05,-0.05,0.03);cr2.scale.y=1.4;cr2.rotation.z=0.5;g.add(cr2);g.userData.core=cr;}
+   const cards=new THREE.Group();cards.rotation.x=Math.PI/2;const cm=toon(0xe8dcb8),cb=basic(0x3a6a9a);for(let i=0;i<6;i++){const a=i/6*Math.PI*2;const c=new THREE.Group();c.add(mk(new THREE.BoxGeometry(0.1,0.015,0.15),cm));c.add(mk(new THREE.BoxGeometry(0.06,0.017,0.09),cb));c.position.set(Math.cos(a)*0.34,Math.sin(a)*0.34,0);c.rotation.z=a;cards.add(c);}
+   const spinA=new THREE.Group();spinA.add(cards);g.add(spinA);
+   const halo=mk(new THREE.TorusGeometry(0.4,0.012,6,32),basic(0xc8fff8,{transparent:true,opacity:0.7}));halo.rotation.y=0.3;const spinB=new THREE.Group();spinB.add(halo);g.add(spinB);
+   g.userData.gem=core;g.userData.spin=[spinA,spinB];g.userData.mount={p:[-1.15,1.05,0.9],r:[0,0,0],bob:1};T.wisdomEye=g;}
+  // 星辰之書：藍色封面、金邊書頁、上方漂浮的水晶星星
+  {const g=G2();const cv=toon(0x3a58b0),pg=toon(0xfff4dc),gd=toon(0xe0b050),B=new THREE.Group();
+   for(const s of[-1,1]){const c=mk(new THREE.BoxGeometry(0.38,0.03,0.5),cv,s*0.19,0,0);c.rotation.z=-s*0.16;B.add(c);const pp=mk(new THREE.BoxGeometry(0.34,0.06,0.46),pg,s*0.18,0.04,0);pp.rotation.z=-s*0.2;B.add(pp);
+     const tr=mk(new THREE.BoxGeometry(0.38,0.035,0.03),gd,s*0.19,0.005,0.24);tr.rotation.z=-s*0.16;B.add(tr);}
+   const sh=new THREE.Shape();for(let k=0;k<10;k++){const a=k/10*Math.PI*2+Math.PI/2,r=k%2?0.045:0.11;sh[k?'lineTo':'moveTo'](Math.cos(a)*r,Math.sin(a)*r);}
+   const st=mk(new THREE.ExtrudeGeometry(sh,{depth:0.04,bevelEnabled:false}),basic(0xbfe6ff),0,0.34,0);st.geometry.center();B.add(st);
+   B.add(mk(new THREE.SphereGeometry(0.15,12,10),basic(0x9fd0ff,{transparent:true,opacity:0.25,depthWrite:false}),0,0.34,0));B.rotation.set(0.75,0,0);g.add(B);
+   g.userData.gem=st;g.userData.star=st;g.userData.mount={p:[-1.12,0.98,0.85],r:[0,0.35,0],bob:1};T.starBook=g;}
+  // 守護結晶（盾）：銀框、淺藍水晶盾面、中央小盾徽
+  {const g=G2();const S=new THREE.Shape();S.moveTo(-0.42,0.42);S.lineTo(-0.2,0.36);S.lineTo(0,0.46);S.lineTo(0.2,0.36);S.lineTo(0.42,0.42);S.quadraticCurveTo(0.44,-0.1,0,-0.5);S.quadraticCurveTo(-0.44,-0.1,-0.42,0.42);
+   const mkS=(sc,d,mat,y)=>{const ge=new THREE.ExtrudeGeometry(S,{depth:d,bevelEnabled:false});ge.translate(0,0,-d/2);ge.scale(sc,sc,1);ge.rotateX(-Math.PI/2);ge.rotateY(Math.PI/2);const m=mk(ge,mat,0,y,0);return m;};
+   const sh=new THREE.Group();sh.add(mkS(1.12,0.08,toon(0xe6eef6),0));sh.add(mkS(0.95,0.1,basic(0x7fd8ff,{transparent:true,opacity:0.8}),0.01));sh.add(mkS(0.4,0.12,toon(0xd8e4f0),0.04));
+   for(let i=0;i<5;i++){const c=mk(new THREE.OctahedronGeometry(0.08),basic(0xbff2ff,{transparent:true,opacity:0.7}),R(-0.25,0.25),0.05,R(-0.3,0.25));c.scale.y=0.4;sh.add(c);}
+   g.add(sh);g.userData.mount={p:[1.16,0.72,0.12],r:[0,0,-Math.PI/2]};T.guardCrystal=g;}
 }
 function buildTools(hold){
   const T={},wood=toon(0xe0b48f),stoneC=toon(0xcfc6dc),pinkC=toon(0xff9f8a),cream=toon(0xffe9cf);

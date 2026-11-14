@@ -45,6 +45,12 @@ const ITEMS={
   skin_thunder:{n:'雷電長槍',i:'⚡',k:'skin',for:'spear',model:'thunder',d:'長槍的外觀・紫色雷電'},
   skin_wind:{n:'旋風之弓',i:'🍃',k:'skin',for:'bow',model:'windbow',d:'弓的外觀・淺綠光束箭'},
   skin_ice:{n:'冰凍之杖',i:'❄️',k:'skin',for:'staff',model:'icestaff',d:'法杖的外觀・冰晶法球'},
+  skin_dragon:{n:'龍牙劍',i:'🐉',k:'skin',for:'greatsword',model:'dragonGS',d:'大劍的外觀・紅色閃電與岩石炸裂（果凍王掉落）'},
+  skin_shadow:{n:'影子匕首',i:'🌑',k:'skin',for:'dagger',model:'shadowDg',d:'匕首的外觀・深藍火焰與光粒子（果凍王掉落）'},
+  skin_comet:{n:'白色彗星',i:'🎸',k:'skin',for:'lute',model:'cometLute',d:'樂器的外觀・金色音符、金色光粒子，還會落下白色小流星（果凍王掉落）'},
+  skin_eye:{n:'智慧之眼',i:'👁️',k:'skin',for:'orb',model:'wisdomEye',d:'法器的外觀・淺藍結晶，打中敵人會炸開（果凍王掉落）'},
+  skin_star:{n:'星辰之書',i:'🌟',k:'skin',for:'book',model:'starBook',d:'書的外觀・藍色光粒子，打中敵人會炸開（果凍王掉落）'},
+  skin_guard:{n:'守護結晶',i:'💠',k:'skin',for:'shield',model:'guardCrystal',d:'盾的外觀・淺藍粒子與透明水晶炸裂（果凍王掉落）'},
   hat_bow:{n:'粉紅大蝴蝶結',i:'🎀',k:'hat',hat:'bigbow',d:'時裝・軟綿綿的粉紅大蝴蝶結'},
   hat_sprout:{n:'嫩芽小黃帽',i:'👒',k:'hat',hat:'sprout',d:'時裝・頭頂冒出小嫩芽、繡了紅蘋果的小黃帽'},
   hat_jelly:{n:'果凍怪貝雷帽',i:'🍮',k:'hat',hat:'jellyberet',d:'時裝・酒紅貝雷帽，上面趴著一隻小果凍怪'},
@@ -74,7 +80,7 @@ function addItem(k,n=1){inv[k]=(inv[k]||0)+n;if(typeof renderHotbar==='function'
 
 // ---------- 天賦（初學者 + 五大職業） ----------
 const CLASSES={
-  novice:{n:'初學者',i:'🌱',d:'基礎的武器、生活技能。全部學滿才能開啟五大職業！'},
+  novice:{n:'初學者',i:'🌱',d:'基礎的武器、生活技能。每項練到紫框的等級（原本的滿等）就能開啟五大職業！'},
   warrior:{n:'戰士',i:'⚔️',d:'擅長劍、長槍、大劍的近戰職業'},
   ranger:{n:'遊俠',i:'🏹',d:'擅長弓、匕首、樂器的靈巧職業'},
   mage:{n:'法師',i:'🪄',d:'擅長法杖、法器的魔法職業'},
@@ -162,12 +168,45 @@ const TALENTS={
  ['p_revive','priest','神聖救助','💖',null,0,null,['救起倒地隊友的時間 -40%','時間 -70%']],
 ].forEach(([k,c,n,i,w,act,req,r])=>TALENTS[k]={c,n,i,w,act:!!act,req,nodes:r.map((d,j)=>['Lv'+(j+1),d])});
 const tal={};for(const k in TALENTS)tal[k]=0;
-const TL=(k,n)=>tal[k]>=n;
-const TV=k=>tal[k]||0;
+// ===== 天賦等級換算 =====
+// 原本 3 等的天賦 → 最高 10 等；原本 2 等 → 最高 3 等。
+// 新等級 r 換算成「舊版等級值」：1→1、3→2、5→3（舊版滿等），之後每等 +0.5（10 等＝舊版 5.5 等的強度）
+const talOld=r=>r<=1?r:1+(r-1)/2;
+const TV=k=>{const t=TALENTS[k],r=tal[k]||0;return t&&t.om>1?talOld(r):r;};
+const TL=(k,n)=>TV(k)>=n;
+// 依舊版數值表內插／外插：LK([0,a,b,c], TV(k))
+function LK(arr,x){const n=arr.length-1;if(x<=0)return arr[0];if(x>=n){const d=arr[n]-arr[n-1];return arr[n]+d*(x-n);}const i=Math.floor(x),f=x-i;return arr[i]+(arr[i+1]-arr[i])*f;}
+// 初學者第一階的數值加成：1 等就有，舊版滿等之後每 2 等再 +1
+const novB=k=>{const v=TV(k);return v>=1?1+Math.max(0,v-3):0;};
+// 舊版等級 → 新版等級（存檔轉換用）
+const talNewRank=(om,r)=>om===3?[0,1,3,5][r]??r:om===2?[0,1,3][r]??r:r;
+// 超過舊版滿等後放慢成長的天賦（避免太強）：talCap(等級值, 舊版數值表, 每 1 舊版等級的成長)
+function talCap(x,arr,slope){const n=arr.length-1;return x<=n?LK(arr,x):arr[n]+slope*(x-n);}
+const TAL_EXT={p_wall:[1.2],m_mana:[6],r_twin:[6],c_rain:[16,0]};
+const talFull=k=>{const t=TALENTS[k];return t.om===3?5:t.om===2?3:t.nodes.length;};
+// 依新等級產生每一等的說明（數字依舊版數值內插／外插）
+{const fmt=(v,pct)=>pct&&Math.abs(v)>=10?String(Math.round(v)):String(Math.round(v*100)/100);
+ const nums=t=>[...t.matchAll(/(\d+(?:\.\d+)?)(\s*%)?(\s*(?:顆|隻|支|個|根))?/g)];
+ const fill=(tpl,fn)=>{let i=0;return tpl.replace(/(\d+(?:\.\d+)?)(\s*%)?(\s*(?:顆|隻|支|個|根))?/g,(m,n,p,c)=>{let v=fn(i++,+n);if(c)v=Math.floor(v+1e-6);return fmt(v,!!p)+(p||'')+(c||'');});};
+ // 依數字前後的字（×、秒、m、%…）與數值大小，配對兩段說明裡對應的數字
+ const ctx=(t,m)=>{const pre=t.slice(0,m.index).replace(/\s+$/,'');const post=t.slice(m.index+m[1].length).replace(/^\s+/,'');return[pre.slice(-1),post.slice(0,1)];};
+ const pair=(A,At,B,Bt)=>{const used=new Set();return B.map(m=>{const[bp,bn]=ctx(Bt,m),bv=+m[1];let best=-1,bs=0.9;A.forEach((a,j)=>{if(used.has(j))return;const[ap,an]=ctx(At,a),av=+a[1];
+   let sc=(ap===bp?2:0)+(an===bn?1:0);if(!sc)return;sc+=0.5/(1+Math.abs(Math.log((av||0.01)/(bv||0.01))));if(sc>bs){bs=sc;best=j;}});if(best<0)return null;used.add(best);return A[best];});};
+ const gen=(D,x,ext)=>{const om=D.length;if(Number.isInteger(x)&&x>=1&&x<=om)return D[x-1];
+   if(x<om){const lo=Math.floor(x),hi=lo+1,B=nums(D[hi-1]),M=pair(nums(D[lo-1]),D[lo-1],B,D[hi-1]);return fill(D[hi-1],(i,v)=>M[i]?+M[i][1]+(v-+M[i][1])*(x-lo):v);}
+   const L=nums(D[om-1]),M=om>1?pair(nums(D[om-2]),D[om-2],L,D[om-1]):L.map(()=>null);return fill(D[om-1],(i,v)=>ext&&ext[i]!==undefined?v+ext[i]*(x-om):M[i]?v+(v-+M[i][1])*(x-om):(om>1?v:v*x/om));};
+ for(const k in TALENTS){const t=TALENTS[k];const om=t.nodes.length;t.om=om;if(om!==2&&om!==3)continue;const old=t.nodes;t.old=old;const N=om===3?10:3;const out=[];
+   for(let r=1;r<=N;r++){const x=talOld(r);
+     if(t.c==='novice'){if(Number.isInteger(x)&&x<=om)out.push(old[x-1]);else if(x<om){const nx=old[Math.ceil(x)-1];out.push(['Lv'+r,`再升 1 等就能學會「${nx[0]}」`]);}
+       else out.push([old[0][0]+' +'+(r-5),fill(old[0][1],(i,v)=>v*(1+(x-om)))]);}
+     else out.push(['Lv'+r,gen(old.map(n=>n[1]),x,TAL_EXT[k])]);}
+   t.nodes=out;}}
 const classKeys=c=>Object.keys(TALENTS).filter(k=>TALENTS[k].c===c);
 const classPts=c=>classKeys(c).reduce((a,k)=>a+tal[k],0);
 const classMax=c=>classKeys(c).reduce((a,k)=>a+TALENTS[k].nodes.length,0);
-const noviceDone=()=>classPts('novice')>=classMax('novice');
+const noviceNeed=()=>classKeys('novice').reduce((a,k)=>a+talFull(k),0);
+const noviceHave=()=>classKeys('novice').reduce((a,k)=>a+Math.min(tal[k],talFull(k)),0);
+const noviceDone=()=>noviceHave()>=noviceNeed();
 // ===== 素質系統 =====
 const STATS=['str','agi','vit','int','dex','luk'];
 const STAT_INFO={str:['力量','💪','近距離物理攻擊 +1／點，遠距離物理傷害 +0.5%／點'],agi:['敏捷','🪶','迴避 +0.5%／點（上限 50%），每 10 點普攻速度 +5%（最多 +50%）'],
@@ -188,7 +227,7 @@ const ATK_F={stick:[1,0,0],sword:[1,0,0],spear:[1,0.2,0],greatsword:[2,0,0],bow:
 const xpNeed=lv=>30+(lv-1)*25;
 const lvBase=(lv=ply.lv)=>2+Math.floor((lv-1)/3);
 function wBase(w){let a=w==='stick'?1:(ITEMS[w]&&ITEMS[w].atk)||2;a+=Math.floor((ply.lv-1)/3);
-  if(w==='sword'&&TL('sword',1))a++;if(w==='spear'&&TL('spear',1))a++;if(w==='bow'&&TL('bow',1))a++;if(w==='staff'&&TL('staff',1))a++;
+  if(w==='sword'||w==='spear'||w==='bow'||w==='staff')a+=novB(w);
   if(w==='spear')a+=TV('w_pierce');return a;}
 function atkParts(w){const b=wBase(w||'stick');return{mel:b+stv('str'),rng:(b+stv('dex'))*(1+0.005*stv('str')),mag:b+stv('int')};}
 // w：武器（或 golem／jelly）；技能請傳技能對應的武器
@@ -199,7 +238,7 @@ function atkOf(w,raw){const f=ATK_F[w]||ATK_F.stick;const P=atkParts(w);let a=f[
 function weaponAtk(raw){return atkOf(ply.weapon,raw);}
 // 怪物血量倍率：讓「一半點數投入主屬性」的角色維持原本的手感
 const monScale=(lv=ply.lv)=>(lvBase(lv)+0.5*statPts(lv))/lvBase(lv);
-function chopPow(){let p=has('axe2')?4:has('axe1')?2:1;if(TL('wood',1))p++;if(TL('wood',2))p*=2;return p;}
-function minePow(){let p=has('pick2')?2:has('pick1')?1:(TL('mine',2)?1:0);if(p===0)return 0;if(TL('mine',1))p++;if(TL('mine',2))p*=2;return p;}
+function chopPow(){let p=has('axe2')?4:has('axe1')?2:1;p+=Math.round(novB('wood'));if(TL('wood',2))p*=2;return p;}
+function minePow(){let p=has('pick2')?2:has('pick1')?1:(TL('mine',2)?1:0);if(p===0)return 0;p+=Math.round(novB('mine'));if(TL('mine',2))p*=2;return p;}
 
 const isBlk=k=>!!k&&!!ITEMS[k]&&ITEMS[k].k==='block';

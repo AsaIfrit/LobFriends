@@ -146,7 +146,7 @@ function nearestChest(){let b=null,bd=2.4;for(const c of chests){if(c.open)conti
 function updateChests(dt){for(let i=chests.length-1;i>=0;i--){const c=chests[i];c.t+=dt;if(c.pop<1){c.pop=Math.min(1,c.pop+dt*2);c.g.scale.setScalar(easeOutBack(c.pop));}
   c.glow.material.opacity=0.25+Math.sin(c.t*4)*0.12;if(!c.open&&Math.random()<dt*3)burst(c.x+R(-0.6,0.6),1.1,c.z,[0xffe680,0xffffff],1,1.2,partG,0.6,-1);
   if(c.open){c.lid.rotation.x=Math.max(-1.9,c.lid.rotation.x-dt*6);c.ot+=dt;if(c.ot>8){scene.remove(c.g);chests.splice(i,1);}}}}
-const CHEST_SKINS=['skin_flame','skin_thunder','skin_wind','skin_ice'];
+const CHEST_SKINS=['skin_flame','skin_thunder','skin_wind','skin_ice','skin_dragon','skin_shadow','skin_comet','skin_eye','skin_star','skin_guard'];
 function openChest(c){c.open=true;c.ot=0;SFX.craft();burst(c.x,1.2,c.z,PAST.map(h=>parseInt(h.slice(1),16)),30,6);ring(c.x,0.1,c.z,0xffd36e,0.4,3,0.6);
   const coins=100+((Math.random()*60)|0),cry=2+((Math.random()*3)|0);ply.coins+=coins;addItem('crystal',cry);addItem('gem',1);updateHUD();
   let skin=null;if(Math.random()<0.45){const pool=CHEST_SKINS.filter(k=>!has(k));if(pool.length){skin=pool[(Math.random()*pool.length)|0];addItem(skin,1);}else{ply.coins+=200;}}

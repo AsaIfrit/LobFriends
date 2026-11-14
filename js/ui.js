@@ -115,17 +115,20 @@ function renderTalents(anim=true){$('spInfo').textContent=ply.sp;const nd=novice
   const eqL=(typeof skillList==='function'?skillList():[]);
   let h=`<div id="tEq"><b>⚔️ 攜帶技能</b>${[0,1].map(i=>{const k=eqL[i];return k?`<span class="teqs" data-uneq="${k}">${TALENTS[k].i} ${TALENTS[k].n} ✕</span>`:'<span class="teqs empty">空</span>';}).join('')}</div><div id="tTree">${box('novice')}<svg viewBox="0 0 500 22" preserveAspectRatio="none"><path d="M250 0V11M50 11H450${xs.map(x=>`M${x} 11V22`).join('')}" stroke="#6b4a3e" stroke-width="3" fill="none" vector-effect="non-scaling-stroke"/></svg><div class="trow">${CLS_ORDER.map(box).join('')}</div></div>`;
   const C=CLASSES[talCls],lock=!clsOpen(talCls);
-  h+=`<div id="tDesc">${C.i} ${C.d}${lock?`<br>🔒 把初學者的天賦全部學滿才會開啟（目前 ${classPts('novice')}/${classMax('novice')}）`:talCls!=='novice'?'<br>不用選職業，每個職業的天賦都可以學！':''}</div>`;
+  h+=`<div id="tDesc">${C.i} ${C.d}${lock?`<br>🔒 初學者天賦都練到原本的滿等（3 段的練到 Lv5、2 段的練到 Lv3）才會開啟（目前 ${noviceHave()}/${noviceNeed()}）`:talCls!=='novice'?'<br>不用選職業，每個職業的天賦都可以學！':''}</div>`;
   h+=classKeys(talCls).map((k,i)=>{const t=TALENTS[k];const rq=reqOK(k);
     const tags=(t.w&&!t.act?`<span class="ttag">${ITEMS[t.w].i} ${WNAME[t.w]}</span>`:'')+(t.act?'<span class="ttag act">主動技能</span>':'')+(!rq?`<span class="ttag req">需要：${TALENTS[t.req[0]].n} Lv${t.req[1]}</span>`:'')+(t.act&&tal[k]>0?`<button class="teq ${eqL.includes(k)?'on':''}" data-eq="${k}">${eqL.includes(k)?'✅ 已攜帶':'攜帶'}</button>`:'');
-    return`<div class="tbranch stg" style="--i:${Math.min(i,14)}"><div class="th">${t.i} ${t.n}${tags}</div><div class="tnodes">${t.nodes.map(([n,d],j)=>{
-    const got=tal[k]>j,can=!got&&tal[k]===j&&ply.sp>0&&!lock&&rq;return`<div class="tnode ${got?'got':can?'can':(tal[k]<j||lock||!rq)?'lock':''}" data-t="${k}" data-j="${j}"><b>${got?'✅':can?'✨':'🔒'} ${n}</b>${d}</div>`;}).join('')}</div></div>`;}).join('');
+    const L=tal[k],M=t.nodes.length,full=L>=M,can=!full&&ply.sp>0&&!lock&&rq;const nd=([n,d])=>(t.c==='novice'&&!/^Lv\d/.test(n)?`<b>${n}</b>　`:'')+d;
+    const pips=`<div class="tpips">${t.nodes.map((_,j)=>`<i class="${j<L?'on':''} ${t.om>1&&j===talFull(k)-1?'mk':''}"></i>`).join('')}</div>`;
+    return`<div class="tbranch stg" style="--i:${Math.min(i,14)}"><div class="th">${t.i} ${t.n}${tags}<span class="tlv">Lv ${L}/${M}</span></div>${pips}
+      <div class="tinfo"><div class="tcur"><em>目前</em>${L?nd(t.nodes[L-1]):'尚未學習'}</div>${full?'<div class="tnext max">✨ 已經滿級了！</div>':`<div class="tnext"><em>下一等</em>${nd(t.nodes[L])}</div>`}</div>
+      ${full?'':`<div class="tnode tup ${can?'can':'lock'}" data-t="${k}">${can?'✨ 升級（1 點）':lock?'🔒 尚未開放':!rq?'🔒 需要前置天賦':'🔒 沒有天賦點數'}</div>`}</div>`;}).join('');
   $('tList').innerHTML=h;if(!anim)noAnim($('tList'));}
-$('tList').addEventListener('click',e=>{const eb=e.target.closest('[data-eq],[data-uneq]');if(eb){toggleEquip(eb.dataset.eq||eb.dataset.uneq);renderTalents(false);return;}const cb=e.target.closest('.tcls');if(cb){const c=cb.dataset.c;if(!clsOpen(c)){SFX.deny();toast(`🔒 先把初學者天賦全部學滿（${classPts('novice')}/${classMax('novice')}）`);return;}talCls=c;SFX.click();renderTalents();return;}
+$('tList').addEventListener('click',e=>{const eb=e.target.closest('[data-eq],[data-uneq]');if(eb){toggleEquip(eb.dataset.eq||eb.dataset.uneq);renderTalents(false);return;}const cb=e.target.closest('.tcls');if(cb){const c=cb.dataset.c;if(!clsOpen(c)){SFX.deny();toast(`🔒 先把初學者天賦練到原本的滿等（${noviceHave()}/${noviceNeed()}）`);return;}talCls=c;SFX.click();renderTalents();return;}
   const n=e.target.closest('.tnode.can');if(!n)return;const k=n.dataset.t;const wasNd=noviceDone();tal[k]++;ply.sp--;SFX.craft();const r=n.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,16);
-  const t=TALENTS[k];toast(t.c==='novice'?`學會了「${t.nodes[tal[k]-1][0]}」！`:`「${t.n}」提升到 Lv${tal[k]}！`);if(t.act&&tal[k]===1){skillList();if(ply.skEq.length<2){ply.skEq.push(k);setTimeout(()=>toast(`已自動攜帶「${t.n}」，技能按鈕在攻擊鍵旁邊`),300);}else setTimeout(()=>toast('技能欄已滿（最多 2 招），可以在這裡按「攜帶」替換'),300);}
+  const t=TALENTS[k];toast(t.c==='novice'&&!/^Lv\d|\+/.test(t.nodes[tal[k]-1][0])?`學會了「${t.nodes[tal[k]-1][0]}」！`:`「${t.n}」提升到 Lv${tal[k]}！`);if(t.act&&tal[k]===1){skillList();if(ply.skEq.length<2){ply.skEq.push(k);setTimeout(()=>toast(`已自動攜帶「${t.n}」，技能按鈕在攻擊鍵旁邊`),300);}else setTimeout(()=>toast('技能欄已滿（最多 2 招），可以在這裡按「攜帶」替換'),300);}
   if(!wasNd&&noviceDone()){setTimeout(()=>{toast('🎉 初學者畢業！五大職業天賦開啟了！');SFX.levelup();},400);}
-  recalcMax();renderTalents(false);bump(document.querySelector(`.tnode[data-t="${k}"][data-j="${tal[k]-1}"]`));if(typeof renderSkillBar==='function')renderSkillBar(true);updateHUD();save();});
+  recalcMax();renderTalents(false);bump(document.querySelector(`.tnode[data-t="${k}"]`)||document.querySelector('.tbranch'));if(typeof renderSkillBar==='function')renderSkillBar(true);updateHUD();save();});
 function openTalents(){if(!started||ply.sleeping)return;renderTalents();openPanel('talent');}
 
 // ---------- 對話 ----------
@@ -145,7 +148,7 @@ $('dlg').addEventListener('click',()=>{if(!dlg)return;
 function endTalk(){clearInterval(typeTimer);if(dlg)dlg.n.talking=false;dlg=null;$('dlg').style.display='none';paused=false;SFX.close();}
 
 // ---------- 物品欄 ----------
-const HB_ORDER=['skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
+const HB_ORDER=['skin_flame','skin_thunder','skin_wind','skin_ice','skin_dragon','skin_shadow','skin_comet','skin_eye','skin_star','skin_guard','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem',...Object.keys(BUGS),'axe2','axe1','pick2','pick1'];
 // 10 格快捷欄（1~0）＋背包
 let hb=new Array(10).fill(null),hbKeys=hb;
 const AUTO_HB=k=>['weapon','held','seed','furn','food','block','skin'].includes(ITEMS[k].k);
@@ -170,8 +173,8 @@ function useSlot(k){const it=ITEMS[k];if(!it)return;
   else if(it.k==='held'||it.k==='seed'||it.k==='block'){if(carry)carryCancel();ply.held=ply.held===k?null:k;if(isBlk(ply.held))showHbLabel(`${it.i} ${it.n}：對準位置按「蓋方塊」，可按 👁️ 切第一人稱`);refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
   else if(it.k==='furn'){if(carry&&carry.id===k&&!carry.orig)carryCancel();else{if(carry)carryCancel();ply.held=null;startCarry(k,null);showHbLabel(`${it.i} ${it.n}：按「放置」放下`);}}
   else if(it.k==='hat'){ply.hat=ply.hat===k?null:k;applyHat();showHbLabel(ply.hat?`${it.i} 戴上「${it.n}」！`:'脫下帽子');SFX.click();if(ply.hat&&P){P.sqv-=4;const p=P.g.position;burst(p.x,p.y+P.topY+0.4,p.z,[0xff9ec4,0xffd36e,0x8fd0ff],10,2.5);}save();}
-  else if(it.k==='skin'){const w=it.for;ply.skins=ply.skins||{};ply.skins[w]=ply.skins[w]===k?null:k;refreshHeld();const WN={sword:'🗡️ 木劍',spear:'🔱 長槍',bow:'🏹 弓箭',staff:'🪄 法杖'}[w];showHbLabel(ply.skins[w]?`${it.i} ${WN}換成「${it.n}」外觀！`:`換回${WN}原本的外觀`);updateAtkIcon();SFX.click();if(ply.skins[w]&&!has(w))toast(`先做一把${WN}，裝備時就會變成${it.n}喔`);save();}
-  else if(it.k==='food'){inv[k]--;const pm=1+[0,0.3,0.6,1][TV('a_potion')];ply.hp=Math.min(ply.max,ply.hp+(it.hp||2)*pm);ply.en=Math.min(100,ply.en+(it.en||5)*pm);SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);healFx(true,true);updateHUD();save();}
+  else if(it.k==='skin'){const w=it.for;ply.skins=ply.skins||{};ply.skins[w]=ply.skins[w]===k?null:k;refreshHeld();const WN={sword:'🗡️ 木劍',spear:'🔱 長槍',bow:'🏹 弓箭',staff:'🪄 法杖',greatsword:'⚔️ 大劍',dagger:'🔪 匕首',lute:'🪕 魯特琴',orb:'🔮 水晶法器',book:'📖 祈禱書',shield:'🛡️ 盾牌'}[w];showHbLabel(ply.skins[w]?`${it.i} ${WN}換成「${it.n}」外觀！`:`換回${WN}原本的外觀`);updateAtkIcon();SFX.click();if(ply.skins[w]&&!has(w))toast(`先做一把${WN}，裝備時就會變成${it.n}喔`);save();}
+  else if(it.k==='food'){inv[k]--;const pm=1+LK([0,0.3,0.6,1],TV('a_potion'));ply.hp=Math.min(ply.max,ply.hp+(it.hp||2)*pm);ply.en=Math.min(100,ply.en+(it.en||5)*pm);SFX.eat();P.setFace('happy');setTimeout(()=>P.setFace('open'),800);healFx(true,true);updateHUD();save();}
   else toast(`${it.i} ${it.n}${it.d?'：'+it.d:''}${inv[k]>1?' ×'+inv[k]:''}`);
   renderHotbar();}
 function useHb(i){const k=hb[i];if(!k){showHbLabel(`第 ${(i+1)%10} 格是空的`);return;}const el=$('hotbar').querySelector(`[data-i="${i}"]`);useSlot(k);const el2=$('hotbar').querySelector(`[data-i="${i}"]`);if(el2)bump(el2);}
@@ -202,7 +205,7 @@ const itIcon=k=>{const it=ITEMS[k];if(it.k==='hat'){const u=hatThumb(k);if(u)ret
 
 // ---------- 背包 ----------
 const HAT_IDS=['hat_bow','hat_sprout','hat_jelly','hat_party','hat_bucket'];
-const BAG_ORDER=[...HAT_IDS,'skin_flame','skin_thunder','skin_wind','skin_ice','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
+const BAG_ORDER=[...HAT_IDS,'skin_flame','skin_thunder','skin_wind','skin_ice','skin_dragon','skin_shadow','skin_comet','skin_eye','skin_star','skin_guard','churro','sword','spear','bow','staff','greatsword','dagger','lute','orb','book','shield','hoe','can','net','rod','axe2','axe1','pick2','pick1',...Object.keys(CROPS).map(k=>'seed_'+k),'cake',...Object.keys(CROPS),...Object.keys(FRUITS),...Object.keys(FISH),
   'plank','plush','bench','bed','sofa','bathtub','chair','table','shelf','rug','campfire','lantern','pot','fence','wood','stone','weed','gem','crystal',...Object.keys(BUGS)];
 for(const k in ITEMS)if(!BAG_ORDER.includes(k))BAG_ORDER.push(k);
 const BAG_TABS=[['all','全部'],['gear','裝備'],['tool','工具'],['hat','時裝'],['food','食物'],['seed','種子'],['furn','家具'],['mat','素材']];
@@ -290,7 +293,21 @@ window.musicVol=()=>VOL.b;
 ['M','B','S'].forEach(k=>$('v'+k).addEventListener('input',e=>{VOL[k.toLowerCase()]=+e.target.value;applyVol();try{localStorage.setItem('lobster-vol',JSON.stringify(VOL));}catch(_){}if(k==='S')SFX.coin();}));
 function renderRunMode(){document.querySelectorAll('#runChips [data-rm]').forEach(b=>b.classList.toggle('on',b.dataset.rm===runMode));}
 document.querySelectorAll('#runChips [data-rm]').forEach(b=>b.addEventListener('click',()=>{runMode=b.dataset.rm;runLatch=false;try{localStorage.setItem('lobster-run',runMode);}catch(e){}renderRunMode();SFX.click&&SFX.click();toast(runMode==='toggle'?'🏃 按一下跑步鍵就會一直跑，停下來才結束':'🏃 長按跑步鍵才會跑');}));
-function openSettings(){applyVol();renderRunMode();openPanel('settings');}
+function openSettings(){applyVol();renderRunMode();$('gmBtn').style.display=(typeof isGM==='function'&&isGM())?'block':'none';openPanel('settings');}
+// ---------- GM 倉庫：遊戲裡所有道具（含時裝），點一下就放進背包 ----------
+let gmTab='all',gmAmt=1;const GM_NOSTACK=['weapon','tool','skin','hat','held'];
+function openGMStore(){if(!(typeof isGM==='function'&&isGM())){SFX.deny();toast('需要 GM 權限（請先用 GM 的 Google 帳號登入）');return;}closePanel('settings');setTimeout(()=>{renderGM();openPanel('gmStore');},200);}
+function renderGM(anim=true){const all=[...new Set([...BAG_ORDER,...Object.keys(ITEMS)])].filter(k=>ITEMS[k]&&(gmTab==='all'||tabOf(k)===gmTab));
+  $('gmTabs').innerHTML=BAG_TABS.map(([k,t])=>`<button class="tab ${k===gmTab?'on':''}" data-gt="${k}">${t}</button>`).join('');
+  $('gmAmt').innerHTML=[1,10,99].map(n=>`<button data-ga="${n}" class="${gmAmt===n?'on':''}">×${n}</button>`).join('');
+  $('gmGrid').innerHTML=all.map((k,i)=>{const it=ITEMS[k];const n=inv[k]||0;return`<div class="bi stg" style="--i:${Math.min(i,20)}" data-gk="${k}" title="${it.n}"><span class="ic">${itIcon(k)}</span>${n?`<i>${n}</i>`:''}</div>`;}).join('');
+  $('gmInfo').textContent=`共 ${all.length} 種道具・裝備／工具／時裝類只會給 1 個`;if(!anim)noAnim($('gmGrid'));}
+$('gmBtn').addEventListener('click',openGMStore);
+$('gmTabs').addEventListener('click',e=>{const b=e.target.closest('[data-gt]');if(!b)return;gmTab=b.dataset.gt;SFX.click();renderGM();});
+$('gmAmt').addEventListener('click',e=>{const b=e.target.closest('[data-ga]');if(!b)return;gmAmt=+b.dataset.ga;SFX.click();renderGM(false);});
+$('gmGrid').addEventListener('click',e=>{const c=e.target.closest('[data-gk]');if(!c||!(typeof isGM==='function'&&isGM()))return;const k=c.dataset.gk,it=ITEMS[k];
+  if(GM_NOSTACK.includes(it.k)){if(inv[k]>0){toast(`${it.i} ${it.n} 已經有了`);SFX.deny();return;}addItem(k,1);}else addItem(k,gmAmt);
+  SFX.coin(4);bump(c);const r=c.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,8);$('gmInfo').textContent=`領取了 ${it.i} ${it.n}${GM_NOSTACK.includes(it.k)?'':' ×'+gmAmt}`;renderGM(false);updateHUD();save();});
 $('setBtn').addEventListener('click',()=>{initAudio();openSettings();});
 $('setSave').addEventListener('click',()=>{if(started){save(true);toast('存檔完成 💾');}else toast('開始遊戲後才能存檔喔');});
 $('setFs').addEventListener('click',toggleFull);$('fsBtn').addEventListener('click',toggleFull);
@@ -394,13 +411,13 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,st:ply.st,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0,p.stored?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff,p.stored?1:0]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,st:ply.st,inv,tal,tv3:1,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0,p.stored?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff,p.stored?1:0]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]).concat(carry&&carry.orig?[[carry.id,carry.orig.x,carry.orig.z,carry.orig.ry,+(carry.orig.y||0).toFixed(3)]]:[]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',skins:d.skins||(d.skin?{sword:d.skin}:{}),indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
   (d.pets||[]).forEach(([a,f,st],i)=>{if(pets[i]){setAff(pets[i],a);pets[i].follow=!!f&&!st;pets[i].stored=!!st;}});
-  Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});coinShown=ply.coins;$('coins').textContent=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
+  Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});if(!d.tv3){let back=0;for(const k in tal){back+=tal[k]||0;tal[k]=0;}ply.sp=(d.sp||0)+back;d.skEq=[];if(back>0)setTimeout(()=>{toast(`⭐ 天賦改版！已退還全部 ${back} 點天賦點數，請重新分配～`);},1500);}coinShown=ply.coins;$('coins').textContent=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
   for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const b of d.blocks||[])blocks.set(bKey(b[0],b[1],b[2]),{i:b[0],j:b[1],k:b[2],c:b[3]&&ITEMS[b[3]]?b[3]:undefined});rebuildBlocks();
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
   for(const[type,name,f,a,st]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f&&!st;p.stored=!!st;if(!p.follow)sendHome(p);p.x=p.tx;p.z=p.tz;}

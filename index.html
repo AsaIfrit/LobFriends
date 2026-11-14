@@ -326,6 +326,10 @@ body.sleeping #sleepUI{display:flex}
 .tnode.can{border-color:#ff9f80;background:#fff0e8;cursor:pointer;animation:canPulse 1.2s ease-in-out infinite}
 @keyframes canPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,143,115,.4)}50%{box-shadow:0 0 0 5px rgba(255,143,115,0)}}
 .tnode.lock{opacity:.5}
+.tbranch .th{display:flex;align-items:center;flex-wrap:wrap;gap:4px}.tbranch .tlv{margin-left:auto;font-size:12px;color:#c0705a;background:#fff0e8;border-radius:10px;padding:1px 8px}
+.tpips{display:flex;gap:3px;margin:2px 0 6px}.tpips i{flex:1;height:7px;border-radius:4px;background:#f3e6de}.tpips i.on{background:linear-gradient(90deg,#ffc94a,#ff9f80)}.tpips i.mk{box-shadow:0 0 0 1.5px #c9a0ff inset}.tpips i.on.mk{box-shadow:0 0 0 1.5px #a070f0 inset}
+.tinfo{font-size:12px;line-height:1.45}.tinfo em{font-style:normal;font-size:10.5px;font-weight:900;color:#fff;background:#d8b8a8;border-radius:8px;padding:0 6px;margin-right:5px}.tnext em{background:#ff9f80}.tnext.max{color:#c08a20;font-weight:900}.tinfo>div{margin:2px 0}
+.tnode.tup{margin-top:6px;padding:6px;font-size:13px;font-weight:900}
 /* 對話 */
 #dlg{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(94vw,520px);box-sizing:border-box;background:var(--cream);border:3px solid var(--line);border-radius:22px;padding:14px 16px 12px;z-index:31;display:none;box-shadow:0 6px 0 rgba(200,140,110,.4),0 12px 30px rgba(100,50,40,.25);animation:dlgIn .4s var(--spring)}
 @keyframes dlgIn{0%{transform:translate(-50%,40px) scale(.8);opacity:0}100%{transform:translateX(-50%);opacity:1}}
@@ -391,6 +395,7 @@ input[type=range]{width:100%;accent-color:#ff8f73;height:22px}
 body.ingame #start{display:none!important}
 @media (max-aspect-ratio:1/1){.tBtns{top:46%}.mbtn.side{right:50%;transform:translateX(50%);bottom:max(9vh,calc(env(safe-area-inset-bottom) + 46px))}.tName{display:none}.splash{right:-4%;bottom:-18px}}
 /* ===== 背包 ===== */
+#gmGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:7px;margin-bottom:8px;max-height:46vh;overflow:auto;padding:2px}#gmGrid .bi{cursor:pointer}#gmGrid .bi i{font-style:normal}
 #bagGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:7px;margin-bottom:8px;max-height:42vh;overflow:auto;padding:2px}
 .bi{position:relative;aspect-ratio:1;border:2.5px solid #fbe3d8;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:grab;touch-action:none;transition:transform .15s var(--spring)}
 .bi.pick{border-color:#ff8f73;background:#fff0e8;transform:scale(1.08)}
@@ -598,9 +603,15 @@ body.ingame #start{display:none!important}
   <div class="clab">🏃 跑步方式</div><div class="chips" id="runChips"><button class="chip" data-rm="hold">長按跑步鍵</button><button class="chip" data-rm="toggle">按一下就跑（停下才結束）</button></div>
   <div class="sub" style="margin:2px 0 8px;font-size:11px">手機搖桿推到底也適用：「按一下」模式推到底一次後就會一直跑，放開搖桿才停下</div>
   <div id="kbWrap"><div class="clab" style="display:flex;justify-content:space-between;align-items:center">⌨️ 快捷鍵設定 <button class="qb" id="kbReset" style="padding:3px 10px;font-size:12px">恢復預設</button></div><div class="sub" style="margin:0 0 4px">點按鈕後按下想要的鍵盤按鍵（Esc 取消）。重複的按鍵會自動互換。</div><div id="kbList"></div></div>
+  <button class="qb" id="gmBtn" style="display:none;width:100%;margin:6px 0;background:linear-gradient(160deg,#ffd98a,#ff9f5a)">🛠️ GM 倉庫（所有道具）</button>
   <div class="crow2"><button class="qb lav" id="setFs">⛶ 全螢幕</button><button class="qb" id="setSave">💾 立即存檔</button></div>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
   <button class="qb lav close" data-close="settings">關閉</button></div></div>
+
+<div class="panel" id="gmStore"><div class="sheet"><div class="grab"></div>
+  <h2>🛠️ GM 倉庫</h2><div class="sub">點一下就會放進背包。數量：<span class="chips" id="gmAmt" style="display:inline-flex;gap:4px"></span></div>
+  <div class="tabs" id="gmTabs"></div><div id="gmGrid"></div><div id="gmInfo" class="sub"></div>
+  <button class="qb lav close" data-close="gmStore">關閉</button></div></div>
 
 <div class="panel" id="bag"><div class="sheet"><div class="grab"></div>
   <h2>🎒 背包</h2>
@@ -617,20 +628,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261115u"></script>
-<script src="firebase-config.js?v=20261115u"></script>
+<script src="config.js?v=20261116a"></script>
+<script src="firebase-config.js?v=20261116a"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261115u"></script>
-<script src="js/audio.js?v=20261115u"></script>
-<script src="js/items.js?v=20261115u"></script>
-<script src="js/critter.js?v=20261115u"></script>
-<script src="js/world.js?v=20261115u"></script>
-<script src="js/game.js?v=20261115u"></script>
-<script src="js/ui.js?v=20261115u"></script>
-<script src="js/extra.js?v=20261115u"></script>
-<script src="js/net.js?v=20261115u"></script>
-<script src="js/cloud.js?v=20261115u"></script>
-<script src="js/skills.js?v=20261115u"></script>
-<script src="js/party.js?v=20261115u"></script>
+<script src="js/engine.js?v=20261116a"></script>
+<script src="js/audio.js?v=20261116a"></script>
+<script src="js/items.js?v=20261116a"></script>
+<script src="js/critter.js?v=20261116a"></script>
+<script src="js/world.js?v=20261116a"></script>
+<script src="js/game.js?v=20261116a"></script>
+<script src="js/ui.js?v=20261116a"></script>
+<script src="js/extra.js?v=20261116a"></script>
+<script src="js/net.js?v=20261116a"></script>
+<script src="js/cloud.js?v=20261116a"></script>
+<script src="js/skills.js?v=20261116a"></script>
+<script src="js/party.js?v=20261116a"></script>
 </body>
 </html>
