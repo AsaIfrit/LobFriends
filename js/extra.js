@@ -65,7 +65,8 @@ const parkRiders=[];
  [['ferris',1],['ferris',4],['ferris',7],['carousel',0],['carousel',3],['carousel',5],['ferris',9],['coaster',2],['coaster',3]].forEach(([kind,i],n)=>{const c=makeCritter(Object.assign({species:'lobster',blush:true},looks[n]),false);c.setFace('happy');c.g.scale.setScalar(0.85);scene.add(c.g);parkRiders.push({kind,i,c,pose:newPose()});});}
 const _wp=new THREE.Vector3();
 function seatPos(kind,i,off=-0.75){if(kind==='coaster'){const car=PARKV.coaster.cars[i];const v=new THREE.Vector3(0,0.38,-0.2);car.localToWorld(v);return{x:v.x,y:v.y,z:v.z,ry:car.rotation.y,q:car.quaternion};}if(kind==='ferris'){const F=PARKV.ferris;F.cars[i].getWorldPosition(_wp);const c=Math.cos(F.yaw),s=Math.sin(F.yaw);return{x:_wp.x+c*off,y:_wp.y-F.drop,z:_wp.z-s*off,ry:F.yaw};}
-  const K=PARKV.carousel,h=K.horses[i];h.h.getWorldPosition(_wp);return{x:_wp.x,y:_wp.y+0.12,z:_wp.z,ry:K.ang-h.a};}
+  if(kind==='teacup'){const cup=PARKV.teacups.cups[i];const v=new THREE.Vector3(off===-0.75?-0.38:0.52,0.53,0);cup.localToWorld(v);cup.getWorldPosition(_wp);return{x:v.x,y:v.y,z:v.z,ry:Math.atan2(_wp.x-v.x,_wp.z-v.z)};}
+  const K=PARKV.carousel,h=K.horses[i];h.h.getWorldPosition(_wp);const ry=K.ang-h.a;return{x:_wp.x-Math.sin(ry)*0.38,y:_wp.y+0.36,z:_wp.z-Math.cos(ry)*0.38,ry};}
 function sitPoseOn(p,kind,T){p.legs=kind==='ferris'?[-0.2,0.2]:[-0.5,-0.5];p.sq=Math.sin(T*2.2)*0.04;p.arms=kind==='ferris'?[[-0.3+Math.sin(T*1.7)*0.2,0,-0.5],[-2.4+Math.sin(T*3)*0.3,0,0.4]]:[[-1.0,0,-0.3],[-1.0,0,0.3]];p.k=10;return p;}
 function updatePark(dt,T){const F=PARKV.ferris,K=PARKV.carousel,TC=PARKV.teacups;const near=Math.hypot(ply.x-PARK.x,ply.z-PARK.z)<95;
   F.ang+=dt*0.1;F.wheel.rotation.z=F.ang;for(let i=0;i<F.n;i++){const a=F.ang+i/F.n*Math.PI*2;F.cars[i].position.set(Math.cos(a)*F.R,F.cy+Math.sin(a)*F.R,0);F.cars[i].rotation.z=Math.sin(T*1.3+i)*0.04;}
@@ -90,10 +91,13 @@ function rideFerris(){const F=PARKV.ferris;let bi=0,bd=1e9;for(let i=0;i<F.n;i++
 function rideCoaster(){if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'coaster',i:0,lap0:PARKV.coaster.lap||0};ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;const pt=pets.find(p=>p.follow);if(pt)pt.happy=1.5;toast('🎢 雲霄飛車出發！抓緊囉～跑一圈會自動下車');}
 function rideCarousel(){const K=PARKV.carousel;let bi=0,bd=1e9;K.horses.forEach((h,i)=>{h.h.getWorldPosition(_wp);const d=Math.hypot(_wp.x-ply.x,_wp.z-ply.z);if(d<bd){bd=d;bi=i;}});
   if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'carousel',i:bi};ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;toast('🎠 騎上木馬了！');}
+function rideTeacup(){const T=PARKV.teacups;let bi=0,bd=1e9;T.cups.forEach((c,i)=>{c.getWorldPosition(_wp);const d=Math.hypot(_wp.x-ply.x,_wp.z-ply.z);if(d<bd){bd=d;bi=i;}});
+  if(fpMode)setFP(false);if(carry)carryCancel();ply.riding={kind:'teacup',i:bi,t0:performance.now()};const pt=pets.find(p=>p.follow);if(pt)pt.happy=1.5;ply.atkT=-1;ply.act=null;refreshHeld();SFX.jump();P.sqv+=4;toast(pt?`☕ 和 ${pt.d.name} 一起搭咖啡杯！轉 20 秒會自動下來`:'☕ 咖啡杯轉轉轉～20 秒會自動下來');}
 function getOff(){const r=ply.riding;if(!r)return;ply.riding=null;refreshHeld();for(const p of pets)p.rideY=undefined;
-  P.g.rotation.set(0,ply.face,0);if(r.kind==='coaster'){const e=PARKV.coaster.exit;ply.x=e.x;ply.z=e.z;}else if(r.kind==='ferris'){const e=PARKV.ferris.exit;ply.x=e.x;ply.z=e.z;}else{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);ply.x=K.x+Math.cos(a)*(K.r+1.4);ply.z=K.z+Math.sin(a)*(K.r+1.4);}
+  P.g.rotation.set(0,ply.face,0);if(r.kind==='coaster'){const e=PARKV.coaster.exit;ply.x=e.x;ply.z=e.z;}else if(r.kind==='ferris'){const e=PARKV.ferris.exit;ply.x=e.x;ply.z=e.z;}else if(r.kind==='teacup'){const T=PARKV.teacups;const a=Math.atan2(ply.z-T.z,ply.x-T.x);ply.x=T.x+Math.cos(a)*(T.R+1.6);ply.z=T.z+Math.sin(a)*(T.R+1.6);}else{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);ply.x=K.x+Math.cos(a)*(K.r+1.6);ply.z=K.z+Math.sin(a)*(K.r+1.6);}
   ply.y=H(ply.x,ply.z)+0.4;ply.vy=4;ply.ground=false;P.m.rotation.set(0,0,0);P.m.position.set(0,0,0);SFX.jump();}
 function updateRide(dt,T){const r=ply.riding;const s=seatPos(r.kind,r.i);
+  if(r.kind==='teacup'){const pt=pets.find(p=>p.follow);if(pt){const q=seatPos('teacup',r.i,1);pt.x=q.x;pt.z=q.z;pt.rideY=q.y-0.1;pt.face=q.ry;}if(performance.now()-r.t0>20000){getOff();toast('☕ 轉得頭暈暈～好好玩！');return;}}
   if(r.kind==='ferris'){const pt=pets.find(p=>p.follow);if(pt){const q=seatPos('ferris',r.i,0.95);pt.x=q.x;pt.z=q.z;pt.ry=q.y;pt.rideY=q.y;pt.face=q.ry+0.4;}}
   if(r.kind==='coaster'){const pt=pets.find(p=>p.follow);if(pt){const q=seatPos('coaster',1);pt.x=q.x;pt.z=q.z;pt.rideY=q.y;pt.face=q.ry;}
     ply.x=s.x;ply.z=s.z;ply.y=s.y;ply.vy=0;ply.face=s.ry;P.g.position.set(s.x,s.y,s.z);P.g.quaternion.copy(s.q);const p=newPose();p.legs=[-1.4,-1.4];p.arms=[[-2.8,0,-0.5],[-2.8,0,0.5]];p.sq=Math.sin(T*8)*0.04;applyPose(P,p,dt);
@@ -205,6 +209,7 @@ function markTarget(c){const g=(x,z,dy)=>({x,z,y:(ply.cave?0:H(x,z))+dy});
     case'gacha':case'fgacha':{let b=null,bd=1e9;for(const m of GACHAS){const d=Math.hypot(m.x-ply.x,m.z-ply.z);if(d<bd){bd=d;b=m;}}return b&&g(b.x,b.z,3.5);}
     case'ferris':return g(PARKV.ferris.board.x,PARKV.ferris.board.z,2.6);
     case'coaster':return g(PARKV.coaster.board.x,PARKV.coaster.board.z,2.6);
+    case'teacup':{const T=PARKV.teacups;const a=Math.atan2(ply.z-T.z,ply.x-T.x);return g(T.x+Math.cos(a)*T.R,T.z+Math.sin(a)*T.R,3.0);}
     case'carousel':{const K=PARKV.carousel;const a=Math.atan2(ply.z-K.z,ply.x-K.x);return g(K.x+Math.cos(a)*K.r,K.z+Math.sin(a)*K.r,3.2);}
     case'bench':case'sleep':case'sit':case'bath':{const p=nearestUse(1.3);return p&&{x:p.x,z:p.z,y:p.y+2.2};}
     case'move':{const p=nearestFurn(null,1.3);return p&&{x:p.x,z:p.z,y:p.y+2.2};}

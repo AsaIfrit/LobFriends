@@ -250,7 +250,7 @@ const FOUNTAINS=[];
 const DROP_TEX=canvasTex(32,32,(g)=>{const gr=g.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.5,'rgba(220,245,255,0.8)');gr.addColorStop(1,'rgba(200,235,255,0)');g.clearRect(0,0,32,32);g.fillStyle=gr;g.fillRect(0,0,32,32);});
 const FFX=[];
 function fountainFX(x,y,z,s){const N=220,pos=new Float32Array(N*3),vel=new Float32Array(N*3),kind=new Uint8Array(N);const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  const pts=new THREE.Points(geo,new THREE.PointsMaterial({map:DROP_TEX,size:0.45,transparent:true,depthWrite:false,color:0xf2fbff,opacity:0.95}));pts.frustumCulled=false;
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({map:DROP_TEX,size:0.3,transparent:true,depthWrite:false,color:0xf2fbff,opacity:0.95}));pts.frustumCulled=false;
   const g=new THREE.Group();g.add(pts);g.position.set(x,y,z);g.scale.setScalar(s);scene.add(g);
   const rings=[];for(let i=0;i<14;i++){const r=new THREE.Mesh(new THREE.RingGeometry(0.8,1,32),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide}));r.rotation.x=-Math.PI/2;g.add(r);rings.push({m:r,t:1});}
   const f={g,pts,pos,vel,kind,N,rings,ri:0,x,z};for(let i=0;i<N;i++)fRespawn(f,i,Math.random());FFX.push(f);}
@@ -358,7 +358,7 @@ const STAGE={x:V2.x,z:V2.z+18};
  for(const h of[...V2HOUSES,...V2EXTRA]){const path=astar(h.door.x,h.door.z);if(!path){window.ROADFAIL=(window.ROADFAIL||0)+1;continue;}
    const pts=[path[0]];let cur=0;while(cur<path.length-1){let nx=path.length-1;while(nx>cur+1&&!freeSeg(path[cur][0],path[cur][1],path[nx][0],path[nx][1]))nx--;pts.push(path[nx]);cur=nx;}
    pts[0]=[h.door.x,h.door.z];for(let k=0;k<pts.length-1;k++)road(pts[k][0],pts[k][1],pts[k+1][0],pts[k+1][1]);}
- for(let i=0;i<10;i++){const a=i/10*Math.PI*2+0.3;lampPost(V2.x+Math.cos(a)*15.5,V2.z+Math.sin(a)*15.5,false);}}
+ for(let i=0;i<10;i++){const a=i/10*Math.PI*2+0.3;if(Math.abs(angDiff(a,Math.PI/2))<0.4)continue;/* 舞台正前方不放路燈 */lampPost(V2.x+Math.cos(a)*15.5,V2.z+Math.sin(a)*15.5,false);}}
 // ---------- 倉鼠精靈村 ----------
 const V3HOUSES=[[-18,-10],[18,-10],[-19,9],[19,8],[0,-21],[-9,21]].map(([dx,dz],i)=>{
   const x=V3.x+dx,z=V3.z+dz,ry=Math.atan2(V3.x-x,V3.z-z)-Math.PI/2;return medievalHouse(x,z,ry,{seed:i+40,roof:'slate',turret:i%2?-1:0,W:6.8,D:5.8,s:0.95});});
@@ -484,21 +484,21 @@ const PARKV={};
   rot.add(mk(new THREE.CylinderGeometry(K.r+0.6,K.r+0.6,0.6,32,1,true),toon(0xffffff,{map:st,side:THREE.DoubleSide}),0,4.85,0));
   rot.add(mk(new THREE.SphereGeometry(0.4,12,10),toon(0xffd36e),0,7.4,0));
   K.horses=[];const hc=[0xffffff,0xffd6e6,0xd6ecff,0xfff3c0];
-  for(let i=0;i<K.n;i++){const a=i/K.n*Math.PI*2,rr=K.r-1.3;const pole=mk(new THREE.CylinderGeometry(0.05,0.05,4.2,6),toon(0xffd36e),Math.cos(a)*rr,2.7,Math.sin(a)*rr);rot.add(pole);
+  for(let i=0;i<K.n;i++){const a=i/K.n*Math.PI*2,rr=K.r-1.3;const pa=a+1.15/rr;const pole=mk(new THREE.CylinderGeometry(0.05,0.05,4.2,6),toon(0xffd36e),Math.cos(pa)*rr,2.7,Math.sin(pa)*rr);rot.add(pole);
     const h=new THREE.Group();const c=toon(hc[i%4]);const b=mk(new THREE.SphereGeometry(0.42,14,10),c,0,0,0);b.scale.set(0.8,0.75,1.4);h.add(b);
     const nk=mk(new THREE.SphereGeometry(0.26,12,8),c,0,0.45,0.48);nk.scale.set(0.8,1.2,1);h.add(nk);const hd=mk(new THREE.SphereGeometry(0.24,12,8),c,0,0.75,0.68);hd.scale.set(0.75,0.75,1.2);h.add(hd);
     h.add(mk(new THREE.SphereGeometry(0.13,8,6),toon(0xff9ec4),0,0.92,0.45));for(const s of[-1,1])for(const zz of[-0.35,0.35]){const lg=mk(new THREE.CylinderGeometry(0.06,0.05,0.5,6),c,s*0.18,-0.4,zz);lg.rotation.x=zz>0?0.5:-0.5;h.add(lg);}
     h.add(mk(new THREE.BoxGeometry(0.5,0.08,0.45),toon(0xff6f9f),0,0.32,-0.05));
-    h.position.set(Math.cos(a)*rr,1.6,Math.sin(a)*rr);h.rotation.y=-a;h.userData.dyn=true;rot.add(h);K.horses.push({h,a,rr});}
+    h.scale.setScalar(1.6);h.position.set(Math.cos(a)*rr,1.6,Math.sin(a)*rr);h.rotation.y=-a;h.userData.dyn=true;rot.add(h);K.horses.push({h,a,rr});}
   shadowAll(g);scene.add(g);rot.userData.dyn=true;batchStatic(g);batchStatic(rot);for(const h of K.horses)batchStatic(h.h);obstacles.push({x:K.x,z:K.z,r:K.r+0.75});}
  // 咖啡杯
- {const T=Object.assign(P(27,-10),{ang:0});PARKV.teacups=T;const g=new THREE.Group();g.position.set(T.x,0,T.z);
-  g.add(mk(new THREE.CylinderGeometry(4.2,4.4,0.3,32),toon(0xd6ecff),0,0.15,0));const plate=new THREE.Group();g.add(plate);T.plate=plate;T.cups=[];
+ {const T=Object.assign(P(27,-10),{ang:0,R:5.2});PARKV.teacups=T;const g=new THREE.Group();g.position.set(T.x,0,T.z);
+  g.add(mk(new THREE.CylinderGeometry(5.2,5.4,0.3,36),toon(0xd6ecff),0,0.15,0));const plate=new THREE.Group();g.add(plate);T.plate=plate;T.cups=[];
   [0xff9ec4,0xffd36e,0x8fdcb4,0xb9a6f2].forEach((c,i)=>{const a=i/4*Math.PI*2;const cup=new THREE.Group();const m=toon(c);
     cup.add(mk(new THREE.CylinderGeometry(1.05,0.75,0.95,20,1,true),toon(c,{side:THREE.DoubleSide}),0,0.75,0));cup.add(mk(new THREE.CylinderGeometry(0.75,0.75,0.08,20),m,0,0.3,0));
     {const tr=mk(new THREE.TorusGeometry(1.05,0.08,6,24),toon(0xffffff),0,1.22,0);tr.rotation.x=Math.PI/2;cup.add(tr);}const hd=mk(new THREE.TorusGeometry(0.3,0.08,6,14),m,1.15,0.8,0);cup.add(hd);
-    cup.position.set(Math.cos(a)*2.4,0,Math.sin(a)*2.4);cup.userData.dyn=true;plate.add(cup);T.cups.push(cup);});
-  shadowAll(g);scene.add(g);plate.userData.dyn=true;batchStatic(g);for(const c of T.cups)batchStatic(c);obstacles.push({x:T.x,z:T.z,r:4.2});}
+    cup.scale.setScalar(1.5);cup.position.set(Math.cos(a)*3.0,0,Math.sin(a)*3.0);cup.userData.dyn=true;plate.add(cup);T.cups.push(cup);});
+  shadowAll(g);scene.add(g);plate.userData.dyn=true;batchStatic(g);for(const c of T.cups)batchStatic(c);obstacles.push({x:T.x,z:T.z,r:5.6});}
  // 氣球攤、爆米花車、長椅、路燈、花圃、彩旗
  {const g=new THREE.Group();const bal=[0xff9ec4,0xffd36e,0x8fdcb4,0x8fd0ff,0xb9a6f2,0xff8f7a];
   const bp=at(dir+0.5,C.r-4);g.add(mk(new THREE.CylinderGeometry(0.5,0.6,1.0,12),toon(0xffffff),bp.x,0.5,bp.z));
