@@ -140,7 +140,7 @@ body:not(.ingame) #skillBar,body.sleeping #skillBar,body.downed #skillBar,body.c
 #decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:linear-gradient(140deg,#ffd36e,#ffb38a);color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35)}
 body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 /* 擺放中按鈕 */
-#rotSl{position:fixed;left:0;top:0;z-index:6;display:none;align-items:center;gap:8px;transform:translate(-50%,0);background:rgba(255,250,243,.95);border:3px solid #fff;border-radius:18px;padding:6px 12px;box-shadow:0 4px 0 rgba(200,140,110,.4)}
+#rotSl{position:fixed;left:50%;bottom:calc(var(--sl,44px) + 76px);z-index:6;display:none;align-items:center;gap:8px;transform:translateX(-50%);background:rgba(255,250,243,.95);border:3px solid #fff;border-radius:18px;padding:6px 12px;box-shadow:0 4px 0 rgba(200,140,110,.4)}
 #rotSl.on{display:flex}#rotSl input{width:min(56vw,240px);accent-color:#ff9ec7}#rotSl b{min-width:40px;text-align:right;font-weight:900;font-size:13px;color:var(--ink)}
 #placeBar{position:fixed;left:50%;bottom:66px;transform:translateX(-50%);display:none;gap:8px;z-index:5}
 body.carrying #placeBar{display:flex;animation:popIn .4s var(--spring)}
@@ -394,7 +394,7 @@ body.ingame #start{display:none!important}
   #notes{bottom:calc(var(--sl) + 92px + env(safe-area-inset-bottom));left:8px;gap:4px}.note{width:auto;max-width:46vw;padding:3px 10px 3px 3px;border-radius:14px;gap:6px;border-width:1.5px}.nav{width:24px;height:24px;font-size:14px;border-width:1.5px}.ntop{display:none}.nmsg{font-size:12px}
   #chatLog{bottom:auto;top:46vh;max-width:56vw}
   #notes .note:nth-last-child(n+4){display:none}
-  #placeBar{bottom:calc(var(--sl) + 116px)}#placeBar button{padding:6px 9px;font-size:12px}
+  #placeBar{bottom:calc(var(--sl) + 116px)}#rotSl{bottom:calc(var(--sl) + 166px)}#placeBar button{padding:6px 9px;font-size:12px}
   #toast{top:30%}.tmsg{font-size:13px;padding:6px 12px}
   #dlg{bottom:calc(var(--sl) + 24px)}#qdrop{font-size:12px}
   #hbLabel{bottom:calc(var(--sl) + 26px)}
@@ -561,8 +561,8 @@ body.ingame #start{display:none!important}
 <script src="js/items.js?v=20261114y"></script>
 <script src="js/critter.js?v=20261114y"></script>
 <script src="js/world.js?v=20261114y"></script>
-<script src="js/game.js?v=20261114y"></script>
-<script src="js/ui.js?v=20261114y"></script>
+<script src="js/game.js?v=20261114z"></script>
+<script src="js/ui.js?v=20261114z"></script>
 <script src="js/extra.js?v=20261114y"></script>
 <script src="js/net.js?v=20261114y"></script>
 <script src="js/cloud.js?v=20261114y"></script>

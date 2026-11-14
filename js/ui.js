@@ -364,7 +364,7 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
 function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
-  Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]),
+  Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]).concat(carry&&carry.orig?[[carry.id,carry.orig.x,carry.orig.z,carry.orig.ry,+(carry.orig.y||0).toFixed(3)]]:[]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',skins:d.skins||(d.skin?{sword:d.skin}:{}),indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
@@ -461,3 +461,5 @@ addEventListener('keydown',e=>{if(!kbWait)return;e.preventDefault();e.stopPropag
   KB[a]=e.code;try{localStorage.setItem('lobster-keys',JSON.stringify(KB));}catch(_){}SFX.craft();setTimeout(()=>{kbWait=null;renderKB();},0);},true);
 addEventListener('keyup',e=>{if(kbWait){e.stopImmediatePropagation();}},true);
 renderKB();
+// 關閉／切換頁面時立即存檔
+addEventListener('pagehide',()=>save());document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save();});
