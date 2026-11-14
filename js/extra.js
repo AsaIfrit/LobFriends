@@ -1,10 +1,10 @@
 // ===================== extra.js：第一人稱、木方塊建築、遊樂園、轉蛋 =====================
 // ---------- 第一人稱 ----------
-function fpAllowed(){return decoMode||!!carry||ply.held==='plank';}
+function fpAllowed(){return decoMode||!!carry||isBlk(ply.held);}
 function setFP(on){if(on===fpMode)return;fpMode=on;document.body.classList.toggle('fp',on);$('fpBtn').classList.toggle('on',on);snapCam=true;
   if(on){fpPitch=0.45;camYaw=ply.face+Math.PI;}else{P.g.visible=true;camYaw=ply.face+Math.PI;}SFX.click();showHbLabel(on?'👁️ 第一人稱（拖曳畫面轉視角）':'🎥 第三人稱');}
 $('fpBtn').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!paused&&fpAllowed())setFP(!fpMode);});
-addEventListener('keydown',e=>{if(e.code==='KeyV'&&!paused&&started&&e.target.tagName!=='INPUT'){if(fpMode||fpAllowed())setFP(!fpMode);}});
+addEventListener('keydown',e=>{if(e.code===KB.fp&&!kbWait&&!paused&&started&&e.target.tagName!=='INPUT'){if(fpMode||fpAllowed())setFP(!fpMode);}});
 
 // ---------- 射線（第一人稱瞄準） ----------
 const _rd=new THREE.Vector3();
@@ -31,13 +31,15 @@ function buildTarget(){if(ply.cave)return null;let i,j,k;
 function blockTarget(){if(ply.cave)return null;
   if(fpMode){const h=fpHit;return h&&h.type==='block'?{i:h.i,j:h.j,k:h.k}:null;}
   const x=ply.x+Math.sin(ply.face)*1.25,z=ply.z+Math.cos(ply.face)*1.25;const[i,k]=bCell(x,z);const t=colTopJ(i,k);if(t<=-1e9||t*BLK>ply.y+2.6)return null;return{i,j:t,k};}
-function placeBlock(){const t=buildTarget();if(!t||!t.ok||!(inv.plank>0)){SFX.deny();return;}addBlock(t.i,t.j,t.k);inv.plank--;SFX.place();P.sqv+=3;
-  burst(t.i*BLK,t.j*BLK+BLK,t.k*BLK,[0xe2b07c,0xffffff,0xf3d3b8],7,2.5,cubeG);if(!(inv.plank>0)){ply.held=null;refreshHeld();toast('木塊用完了～用木材在合成選單做更多吧');}renderHotbar();save();}
-function removeBlock(){const t=blockTarget();if(!t)return;delBlock(t.i,t.j,t.k);inv.plank=(inv.plank||0)+1;renderHotbar('plank');SFX.chop();
-  burst(t.i*BLK,t.j*BLK+BLK/2,t.k*BLK,[0xe2b07c,0xc98d58,0xffffff],10,3.5,cubeG);save();}
+function placeBlock(){const t=buildTarget(),bk=ply.held;if(!t||!t.ok||!isBlk(bk)||!(inv[bk]>0)){SFX.deny();return;}addBlock(t.i,t.j,t.k,bk);inv[bk]--;SFX.place();P.sqv+=3;
+  burst(t.i*BLK,t.j*BLK+BLK,t.k*BLK,[BLK_HEX[bk]??0xe2b07c,0xffffff,0xf3d3b8],7,2.5,cubeG);if(!(inv[bk]>0)){ply.held=null;refreshHeld();toast(`${ITEMS[bk].n}用完了～可以在合成選單的「方塊」做更多`);}renderHotbar();save();}
+function removeBlock(){const t=blockTarget();if(!t)return;const c=delBlock(t.i,t.j,t.k);inv[c]=(inv[c]||0)+1;renderHotbar(c);SFX.chop();
+  burst(t.i*BLK,t.j*BLK+BLK/2,t.k*BLK,[BLK_HEX[c]??0xe2b07c,0xc98d58,0xffffff],10,3.5,cubeG);save();}
 $('btnDel').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!paused&&!ply.act)removeBlock();});
-addEventListener('keydown',e=>{if(e.code==='KeyX'&&!paused&&started&&ply.held==='plank'&&e.target.tagName!=='INPUT')removeBlock();});
-addEventListener('contextmenu',e=>{if(fpMode&&ply.held==='plank'){e.preventDefault();removeBlock();}});
+addEventListener('keydown',e=>{if(e.code===KB.del&&!e.repeat&&!paused&&started&&isBlk(ply.held)&&e.target.tagName!=='INPUT'&&!kbWait)removeBlock();});
+// 只有滑鼠右鍵才拆方塊（手機長按也會觸發 contextmenu，以前會誤拆）
+let lastPtrType='mouse';addEventListener('pointerdown',e=>{lastPtrType=e.pointerType;},true);
+addEventListener('contextmenu',e=>{if(fpMode&&isBlk(ply.held)){e.preventDefault();if(lastPtrType==='mouse'&&e.button===2)removeBlock();}});
 // 方塊預覽外框
 const bGhost=(()=>{const g=new THREE.Group();const m=new THREE.Mesh(new THREE.BoxGeometry(BLK*1.02,BLK*1.02,BLK*1.02),basic(0x8fdcb4,{transparent:true,opacity:0.35,depthWrite:false}));g.add(m);
   const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(BLK*1.04,BLK*1.04,BLK*1.04)),new THREE.LineBasicMaterial({color:0xffffff}));g.add(e);g.visible=false;scene.add(g);g.userData={m,e};return g;})();
@@ -45,10 +47,10 @@ const bGhostDel=(()=>{const e=new THREE.LineSegments(new THREE.EdgesGeometry(new
 function updateBuildGhost(T){
   fpHit=fpMode?castRay():null;
   if(fpMode&&!fpAllowed())setFP(false);
-  document.body.classList.toggle('canfp',fpAllowed()&&!ply.sitting&&!ply.sleeping&&!ply.riding);document.body.classList.toggle('building',ply.held==='plank');
+  document.body.classList.toggle('canfp',fpAllowed()&&!ply.sitting&&!ply.sleeping&&!ply.riding);document.body.classList.toggle('building',isBlk(ply.held));
   let t=null,mode=null;
-  if(ply.held==='plank'){t=buildTarget();mode='build';}else if(decoMode&&!carry&&!nearestFurn(null,1.3)){t=blockTarget();mode='del';}
-  {const dt2=ply.held==='plank'?blockTarget():null;bGhostDel.visible=!!dt2;if(dt2)bGhostDel.position.set(dt2.i*BLK,dt2.j*BLK+BLK/2,dt2.k*BLK);$('btnDel').classList.toggle('dim',!dt2);}
+  if(isBlk(ply.held)){t=buildTarget();mode='build';}
+  {const dt2=isBlk(ply.held)?blockTarget():null;bGhostDel.visible=!!dt2;if(dt2)bGhostDel.position.set(dt2.i*BLK,dt2.j*BLK+BLK/2,dt2.k*BLK);$('btnDel').classList.toggle('dim',!dt2);}
   if(!t){bGhost.visible=false;return;}
   bGhost.visible=true;bGhost.position.set(t.i*BLK,t.j*BLK+BLK/2,t.k*BLK);const ok=mode==='del'||t.ok;
   bGhost.userData.m.material.color.setHex(mode==='del'?0xff9e6f:ok?0x8fdcb4:0xff6f6f);bGhost.userData.m.material.opacity=0.28+Math.sin(T*6)*0.08;bGhost.userData.e.material.color.setHex(mode==='del'?0xffd0b0:0xffffff);}

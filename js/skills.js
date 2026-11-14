@@ -251,4 +251,4 @@ function layoutSkills(){const btns=[...document.querySelectorAll('#skillBar .sk'
     if(!p)p=[cx-R1,cy-R1];taken.push(p);b.style.left=(p[0]-w/2)+'px';b.style.top=(p[1]-w/2)+'px';});}
 addEventListener('resize',()=>{skKey='';setTimeout(()=>renderSkillBar(true),120);});
 $('skillBar').addEventListener('pointerdown',e=>{const b=e.target.closest('.sk');if(!b)return;e.preventDefault();e.stopPropagation();useSkill(b.dataset.k);bump(b);});
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.repeat||!started||paused)return;const i=SK_KEYS.indexOf(e.key.toUpperCase());if(i<0||!/^Key[KLUIO]$/.test(e.code))return;const L=skillList();if(L[i])useSkill(L[i]);});
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.repeat||!started||paused||kbWait)return;const i=e.code===KB.sk1?0:e.code===KB.sk2?1:-1;if(i<0)return;const L=skillList();if(L[i])useSkill(L[i]);});

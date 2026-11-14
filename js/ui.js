@@ -167,7 +167,7 @@ function renderHotbar(changed){
 function updateAtkIcon(){$('atkIcon').textContent={flame:'🔥',thunder:'⚡',windbow:'🍃',icestaff:'❄️',churro:'🥖',stick:'⚔️',sword:'🗡️',spear:'🔱',bow:'🏹',staff:'🪄',greatsword:'⚔️',dagger:'🔪',lute:'🪕',orb:'🔮',book:'📖',shield:'🛡️'}[wpnModel()];}
 function useSlot(k){const it=ITEMS[k];if(!it)return;
   if(it.k==='weapon'){ply.weapon=ply.weapon===k?'stick':k;ply.held=null;if(carry)carryCancel();refreshHeld();updateAtkIcon();showHbLabel(ply.weapon==='stick'?'收起武器':`${it.i} ${it.n}`);SFX.click();}
-  else if(it.k==='held'||it.k==='seed'||it.k==='block'){if(carry)carryCancel();ply.held=ply.held===k?null:k;if(ply.held==='plank')showHbLabel('🟫 木塊：對準位置按「蓋方塊」，可按 👁️ 切第一人稱');refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
+  else if(it.k==='held'||it.k==='seed'||it.k==='block'){if(carry)carryCancel();ply.held=ply.held===k?null:k;if(isBlk(ply.held))showHbLabel(`${it.i} ${it.n}：對準位置按「蓋方塊」，可按 👁️ 切第一人稱`);refreshHeld();showHbLabel(ply.held?`${it.i} ${it.n}`:'空手');SFX.click();}
   else if(it.k==='furn'){if(carry&&carry.id===k&&!carry.orig)carryCancel();else{if(carry)carryCancel();ply.held=null;startCarry(k,null);showHbLabel(`${it.i} ${it.n}：按「放置」放下`);}}
   else if(it.k==='hat'){ply.hat=ply.hat===k?null:k;applyHat();showHbLabel(ply.hat?`${it.i} 戴上「${it.n}」！`:'脫下帽子');SFX.click();if(ply.hat&&P){P.sqv-=4;const p=P.g.position;burst(p.x,p.y+P.topY+0.4,p.z,[0xff9ec4,0xffd36e,0x8fd0ff],10,2.5);}save();}
   else if(it.k==='skin'){const w=it.for;ply.skins=ply.skins||{};ply.skins[w]=ply.skins[w]===k?null:k;refreshHeld();const WN={sword:'🗡️ 木劍',spear:'🔱 長槍',bow:'🏹 弓箭',staff:'🪄 法杖'}[w];showHbLabel(ply.skins[w]?`${it.i} ${WN}換成「${it.n}」外觀！`:`換回${WN}原本的外觀`);updateAtkIcon();SFX.click();if(ply.skins[w]&&!has(w))toast(`先做一把${WN}，裝備時就會變成${it.n}喔`);save();}
@@ -185,7 +185,7 @@ let hbLabelT=null;
 function showHbLabel(txt){let el=$('hbLabel');if(!el){el=document.createElement('div');el.id='hbLabel';document.body.appendChild(el);}el.textContent=txt;el.classList.remove('hide');bump(el,'lblIn');clearTimeout(hbLabelT);hbLabelT=setTimeout(()=>el.classList.add('hide'),1200);}
 $('hotbar').addEventListener('click',e=>{const b=e.target.closest('.slot');if(!b)return;if(b.id==='bagBtn'){openBag();return;}const i=+b.dataset.i;if(hb[i])useHb(i);else openBag();});
 // ---------- 時裝帽子 ----------
-const hatStyle=()=>ply.hat&&ITEMS[ply.hat]&&inv[ply.hat]>0?ITEMS[ply.hat].hat:'none';
+const hatStyle=()=>{let h=ply.hat,iv=inv;if(!started&&typeof existing!=='undefined'&&existing){h=existing.hat;iv=existing.inv||{};}return h&&ITEMS[h]&&iv[h]>0?ITEMS[h].hat:'none';};
 function applyHat(){look.hat=hatStyle();if(P&&P.setHat)P.setHat(look.hat);renderHotbar();}
 const HAT_THUMB={};
 function hatThumb(k){if(HAT_THUMB[k]!==undefined)return HAT_THUMB[k];let url=null;
@@ -363,14 +363,14 @@ function updateSky(){if(typeof MOUNTAINS!=='undefined'){const out=!ply.cave;MOUN
 
 // ---------- 存檔 ----------
 const SAVE_KEY='lobster-save-v4';
-function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>[b.i,b.j,b.k]),x:ply.x,z:ply.z,
+function save(force){if(!started)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify({day,tmin,coins:ply.coins,hp:ply.hp,max:ply.max,en:ply.en,lv:ply.lv,xp:ply.xp,sp:ply.sp,inv,tal,weapon:ply.weapon,hb,ver:5,skins:ply.skins||{},hat:ply.hat||null,iday:ply.iday,skEq:ply.skEq||[],cave:!!ply.cave,pets:pets.filter(p=>!p.d.gacha).map(p=>[p.aff,p.follow?1:0]),gp:pets.filter(p=>p.d.gacha).map(p=>[p.d.type,p.d.name,p.follow?1:0,p.aff]),blocks:[...blocks.values()].map(b=>b.c?[b.i,b.j,b.k,b.c]:[b.i,b.j,b.k]),x:ply.x,z:ply.z,
   Q:Object.fromEntries(Object.entries(Q).map(([k,q])=>[k,[q.state,q.prog,q.times]])),placed:placed.map(p=>[p.id,p.x,p.z,p.ry,+p.y.toFixed(3)]),
   farm:[...farm.values()].map(t=>[t.gx,t.gz,t.wet?1:0,t.crop?t.crop.type:'',t.crop?t.crop.stage:0,t.crop?t.crop.g:0])}));localStorage.setItem('lobster-look',JSON.stringify(look));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function applySave(d){day=d.day;tmin=d.tmin;Object.assign(ply,{coins:d.coins,hp:d.hp,max:d.max||10,en:d.en,lv:d.lv||1,xp:d.xp||0,sp:d.sp||0,weapon:d.weapon||'stick',skins:d.skins||(d.skin?{sword:d.skin}:{}),indoor:false,cave:!!d.cave,x:d.x,z:d.z});if(d.indoor){ply.x=HOME.x;ply.z=HOME.z+1;}
   (d.pets||[]).forEach(([a,f],i)=>{if(pets[i]){setAff(pets[i],a);pets[i].follow=!!f;}});
   Object.assign(inv,d.inv);Object.assign(tal,d.tal||{});coinShown=ply.coins;$('coins').textContent=ply.coins;if(Array.isArray(d.hb))for(let i=0;i<10;i++)hb[i]=d.hb[i]||null;else for(const k of BAG_ORDER)if(inv[k]>0)hbAuto(k);
-  for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const b of d.blocks||[])blocks.set(bKey(b[0],b[1],b[2]),{i:b[0],j:b[1],k:b[2]});rebuildBlocks();
+  for(const k in d.Q)if(Q[k])[Q[k].state,Q[k].prog,Q[k].times]=d.Q[k];for(const b of d.blocks||[])blocks.set(bKey(b[0],b[1],b[2]),{i:b[0],j:b[1],k:b[2],c:b[3]&&ITEMS[b[3]]?b[3]:undefined});rebuildBlocks();
   for(const[id,x,z,ry,yv]of d.placed){if(d.ver>=5)placeFurn(id,x,z,ry,false,yv);else if(yv){const nx=clamp(HOME.x+(x-400)*(HOME.w-0.6)/8,HOME.x-HOME.w+0.9,HOME.x+HOME.w-0.9),nz=clamp(HOME.z+(z-0)*(HOME.d-0.6)/6.5,HOME.z-HOME.d+0.9,HOME.z+HOME.d-0.9);placeFurn(id,nx,nz,ry,false);}else placeFurn(id,x,z,ry,false);}
   for(const[type,name,f,a]of d.gp||[]){if(!PET_TYPES[type])continue;const p=hatchPet(type,name,true);setAff(p,a);p.follow=!!f;if(!f)sendHome(p);p.x=p.tx;p.z=p.tz;}
   for(const[gx,gz,wet,type,stage,g]of d.farm||[]){const t=till(gx,gz,false);setWet(t,!!wet);if(type){t.crop={type,stage,g};setCropStage(t,stage);t.crop.pop=1;t.crop.mesh.scale.setScalar(1);}}
@@ -447,3 +447,17 @@ function fitHud(){const hbE=$('hotbar');if(!hbE||!hbE.offsetWidth)return;documen
   for(let i=0;i<20&&hits()&&sl>24;i++){sl-=1.5;document.documentElement.style.setProperty('--sl',sl+'px');}
   if(typeof renderSkillBar==='function')renderSkillBar(true);}
 addEventListener('resize',()=>setTimeout(fitHud,150));addEventListener('orientationchange',()=>setTimeout(fitHud,400));setInterval(fitHud,3000);
+
+// ---------- 快捷鍵設定 ----------
+const KEY_LBL={Space:'空白鍵',ShiftLeft:'左 Shift',ShiftRight:'右 Shift',ControlLeft:'左 Ctrl',ControlRight:'右 Ctrl',AltLeft:'左 Alt',AltRight:'右 Alt',ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→',Tab:'Tab',CapsLock:'Caps',Backquote:'`',Minus:'-',Equal:'=',BracketLeft:'[',BracketRight:']',Semicolon:';',Quote:"'",Comma:',',Period:'.',Slash:'/',Backslash:'\\'};
+const keyLabel=c=>KEY_LBL[c]||(c.startsWith('Key')?c.slice(3):c.startsWith('Numpad')?'數字鍵盤 '+c.slice(6):c);
+function renderKB(){const L=$('kbList');if(!L)return;L.innerHTML=Object.keys(KB_DEF).map(a=>`<div class="kbr"><span>${KB_NAME[a]}</span><button data-kb="${a}" class="${kbWait===a?'wait':''}">${kbWait===a?'請按鍵…':keyLabel(KB[a])}</button></div>`).join('');}
+$('kbList').addEventListener('click',e=>{const b=e.target.closest('[data-kb]');if(!b)return;kbWait=kbWait===b.dataset.kb?null:b.dataset.kb;SFX.click();renderKB();});
+$('kbReset').addEventListener('click',()=>{KB=Object.assign({},KB_DEF);kbWait=null;try{localStorage.removeItem('lobster-keys');}catch(e){}SFX.click();renderKB();toast('⌨️ 快捷鍵已恢復預設');});
+addEventListener('keydown',e=>{if(!kbWait)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const a=kbWait;
+  if(e.code==='Escape'){kbWait=null;renderKB();return;}
+  if(e.code==='Enter'||/^Digit[0-9]$/.test(e.code)||e.code.startsWith('Meta')||!e.code){SFX.deny();toast('這個按鍵不能設定（Enter、數字鍵、Esc 是固定的）');return;}
+  const other=Object.keys(KB).find(k=>k!==a&&KB[k]===e.code);if(other){KB[other]=KB[a];toast(`「${KB_NAME[other]}」換成 ${keyLabel(KB[other])}`);}
+  KB[a]=e.code;try{localStorage.setItem('lobster-keys',JSON.stringify(KB));}catch(_){}SFX.craft();setTimeout(()=>{kbWait=null;renderKB();},0);},true);
+addEventListener('keyup',e=>{if(kbWait){e.stopImmediatePropagation();}},true);
+renderKB();

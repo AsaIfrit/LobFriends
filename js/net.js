@@ -133,4 +133,4 @@ $('chatForm').addEventListener('submit',e=>{e.preventDefault();sendChat($('chatI
 function openSocial(focus){const s=$('social');s.style.display='flex';void s.offsetWidth;s.classList.add('show');paused=true;holdAtk=holdAct=false;closeFab();if(focus)setTimeout(()=>$('chatIn').focus(),60);}
 function closeSocial(){const s=$('social');s.classList.remove('show');setTimeout(()=>s.style.display='none',250);paused=!started;$('chatIn').blur();}
 $('social').addEventListener('pointerdown',e=>{if(e.target.id==='social')closeSocial();});
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.code==='KeyQ'&&started&&!paused)openSocial();});
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.code===KB.chat&&!kbWait&&started&&!paused)openSocial();});

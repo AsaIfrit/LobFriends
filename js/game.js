@@ -183,23 +183,30 @@ function carryCancel(){if(!carry)return;if(carry.orig){const o=carry.orig;placeF
 
 // ---------- 輸入 ----------
 const keys={};let holdAtk=false,holdAct=false;
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.repeat&&['KeyJ','KeyE','KeyF'].includes(e.code))return;keys[e.code]=true;
-  const act=e.code==='KeyE'||e.code==='KeyF';
+// ---------- 快捷鍵設定 ----------
+const KB_DEF={up:'KeyW',down:'KeyS',left:'KeyA',right:'KeyD',run:'ShiftLeft',jump:'Space',atk:'KeyJ',act:'KeyE',sk1:'KeyK',sk2:'KeyL',bag:'KeyB',craft:'KeyC',tal:'KeyT',chat:'KeyQ',fp:'KeyV',del:'KeyX',rot:'KeyR'};
+const KB_NAME={up:'往前走',down:'往後走',left:'往左走',right:'往右走',run:'奔跑（按住）',jump:'跳躍',atk:'攻擊',act:'互動',sk1:'技能 1',sk2:'技能 2',bag:'背包',craft:'合成',tal:'天賦',chat:'表情／聊天',fp:'第一人稱',del:'拆方塊',rot:'旋轉家具'};
+let KB=Object.assign({},KB_DEF);try{const k=JSON.parse(localStorage.getItem('lobster-keys')||'{}');for(const a in KB_DEF)if(typeof k[a]==='string')KB[a]=k[a];}catch(e){}
+let kbWait=null;
+const kIs=(e,a)=>e.code===KB[a]||(a==='act'&&e.code==='KeyF'&&!Object.values(KB).includes('KeyF'))||(a==='run'&&KB.run==='ShiftLeft'&&e.code==='ShiftRight');
+const kDown=a=>!!keys[KB[a]]||(a==='run'&&KB.run==='ShiftLeft'&&!!keys.ShiftRight);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||kbWait)return;if(e.repeat&&(kIs(e,'atk')||kIs(e,'act')))return;keys[e.code]=true;
+  const act=kIs(e,'act');
   if(e.code==='Enter'&&started&&!paused&&!dlg&&!ply.sleeping&&typeof openSocial==='function'){e.preventDefault();openSocial(true);return;}
-  if(e.code==='KeyB'&&$('bag').classList.contains('show')){closePanel('bag');return;}
+  if(kIs(e,'bag')&&$('bag').classList.contains('show')){closePanel('bag');return;}
   if(e.code==='Escape'){if(typeof closeSocial==='function'&&$('social').classList.contains('show'))closeSocial();closeAllPanels();if(dlg)endTalk();if(carry)carryCancel();return;}
-  if(dlg&&(act||e.code==='Space')){$('dlg').click();e.preventDefault();return;}
-  if(ply.sleeping&&(act||e.code==='Space')){wakeUp();return;}
+  if(dlg&&(act||kIs(e,'jump')||e.code==='Space')){$('dlg').click();e.preventDefault();return;}
+  if(ply.sleeping&&(act||kIs(e,'jump'))){wakeUp();return;}
   if(paused)return;
-  if(e.code==='Space'){jump();e.preventDefault();}
-  if(e.code==='KeyJ'){holdAtk=true;attack();}
+  if(kIs(e,'jump')){jump();e.preventDefault();}
+  if(kIs(e,'atk')){holdAtk=true;attack();}
   if(act){holdAct=true;doAction();}
-  if(e.code==='KeyR')carryRotate();
-  if(e.code==='KeyC')openCraft();
-  if(e.code==='KeyT')openTalents();
+  if(kIs(e,'rot'))carryRotate();
+  if(kIs(e,'craft'))openCraft();
+  if(kIs(e,'tal'))openTalents();
   if(/^Digit[0-9]$/.test(e.code)){const d=+e.code.slice(5);useHb(d===0?9:d-1);}
-  if(e.code==='KeyB')openBag();});
-addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyJ')holdAtk=false;if(['KeyE','KeyF'].includes(e.code))holdAct=false;});
+  if(kIs(e,'bag'))openBag();});
+addEventListener('keyup',e=>{keys[e.code]=false;if(kIs(e,'atk'))holdAtk=false;if(kIs(e,'act'))holdAct=false;});
 let camYaw=0,camPitch=0.42,camDist=10,previewYaw=0;
 const joy={id:null,ox:0,oy:0,x:0,y:0},look2={id:null,lx:0,ly:0,sx:0,sy:0,t:0,mouse:false};
 const cv=$('c');
@@ -241,10 +248,10 @@ function context(){
   if(ply.riding)return'getoff';
   if(ply.sitting)return'stand';
   if(carry)return'place';
-  if(ply.held==='plank'){const t=buildTarget();return t&&t.ok?'build':'none';}
+  if(isBlk(ply.held)){const t=buildTarget();return t&&t.ok?'build':'none';}
   if(decoMode&&nearestFurn(null,1.3))return'move';
-  if(decoMode){const t=blockTarget();if(t)return'unblock';}
   const fr=nearestUse(1.3);
+  if(!decoMode&&!ply.cave){const dr=nearestFurn('door',2.0);if(dr)return'door';}
   if(ply.fishing)return ply.fishing.phase==='bite'?'reel':'wait';
   if(ply.cave){if(Math.hypot(ply.x-CAVE_EXIT.x,ply.z-CAVE_EXIT.z)<4)return'leave';if(caveLv<5&&Math.hypot(ply.x-CAVE_DOWN.x,ply.z-CAVE_DOWN.z)<3.2)return'deeper';if(nearestOre())return'ore';return'none';}
   if(Math.hypot(ply.x-BOARD.x,ply.z-BOARD.z)<3.3)return'board';
@@ -271,7 +278,7 @@ function context(){
   if(nearestRock())return'rock';
   return'none';
 }
-const CTX={getoff:['🚶','下來'],revive:['💖','救助'],chest:['🎁','打開寶箱'],pinvite:['🤝','邀請組隊'],deeper:['🕳️','往下一層'],ore:['💎','採水晶'],build:['🧱','蓋方塊'],unblock:['🔨','拆方塊'],gacha:['🥚','轉蛋'],fgacha:['🎀','時裝轉蛋'],ferris:['🎡','搭摩天輪'],coaster:['🎢','搭雲霄飛車'],carousel:['🎠','騎木馬'],place:['✨','放置'],move:['🫳','搬動'],stand:['🧍','起來'],board:['📋','告示板'],talk:['💬','對話'],enter:['🚪','進屋'],exit:['🚪','出門'],sleep:['🛏️','躺下'],sit:['🪑','坐下'],bath:['🛁','泡澡'],
+const CTX={door:['🚪','開／關門'],getoff:['🚶','下來'],revive:['💖','救助'],chest:['🎁','打開寶箱'],pinvite:['🤝','邀請組隊'],deeper:['🕳️','往下一層'],ore:['💎','採水晶'],build:['🧱','蓋方塊'],unblock:['🔨','拆方塊'],gacha:['🥚','轉蛋'],fgacha:['🎀','時裝轉蛋'],ferris:['🎡','搭摩天輪'],coaster:['🎢','搭雲霄飛車'],carousel:['🎠','騎木馬'],place:['✨','放置'],move:['🫳','搬動'],stand:['🧍','起來'],board:['📋','告示板'],talk:['💬','對話'],enter:['🚪','進屋'],exit:['🚪','出門'],sleep:['🛏️','躺下'],sit:['🪑','坐下'],bath:['🛁','泡澡'],
   catch:['🥅','捕捉'],harvest:['🧺','收成'],till:['🟫','翻土'],water:['💧','澆水'],plant:['🌱','播種'],bench:['🧰','合成'],cave:['⛰️','進入洞窟'],leave:['🌤️','離開洞窟'],fish:['🎣','釣魚'],wait:['🎣','收竿'],reel:['❗','拉竿！'],feed:['🍎','餵食'],invite:['💕','邀請'],pat:['🤲','摸摸'],untill:['🟩','剷平'],weed:['🌿','拔草'],tree:['🪓','砍樹'],rock:['⛏️','挖礦'],none:['🤚','互動']};
 const ACT_DUR={pull:0.4,chop:0.42,mine:0.38,till:0.45,water:0.7,plant:0.45,catch:0.45,harvest:0.5};
 const ACT_HIT={pull:0.5,chop:0.6,mine:0.6,till:0.62,water:0.5,plant:0.55,catch:0.55,harvest:0.5};
@@ -285,6 +292,7 @@ function doAction(){
   const c=context();
   switch(c){
     case'place':carryPlace();break;
+    case'door':{const p=nearestFurn('door',2.0);if(p){p.open=!p.open;p.o.r=p.open?0:p.o.r0;SFX.door();P.sqv+=2;}break;}
     case'move':{const p=nearestFurn(null,1.3);const orig={x:p.x,z:p.z,ry:p.ry,y:p.y};removeFurn(p);SFX.pickup(2);startCarry(p.id,orig);break;}
     case'stand':standUp();break;
     case'board':renderBoard();openPanel('board');break;
@@ -378,7 +386,7 @@ function faint(reason){if(ply.downed)clearDown();ply.reviving=null;const lost=Ma
     for(const m of monsters)scene.remove(m.g);monsters.length=0;warnLv=0;updateHUD();save();},()=>toast(lost?`在家裡醒來…掉了 🪙${lost}`:'在家裡醒來…'));}
 
 // ---------- 戰鬥 ----------
-function attack(){if(ply.downed||ply.reviving||ply.cast||ply.chan||ply.leap)return;if(paused||ply.act||ply.sleeping||ply.sitting||ply.riding||carry||ply.held==='plank')return;if(ply.cool>0)return;
+function attack(){if(ply.downed||ply.reviving||ply.cast||ply.chan||ply.leap)return;if(paused||ply.act||ply.sleeping||ply.sitting||ply.riding||carry||isBlk(ply.held))return;if(ply.cool>0)return;
   const w=ply.weapon;if(ply.atkT>=0){if((w==='sword'||w==='stick')&&ply.atkT>ply.atkDur*0.35)ply.queued=true;return;}startAttack();}
 function lockOn(range=9){const t=nearestMonster(range);if(t)faceTo(t.x,t.z);return t;}
 const LOCKR={bow:16,staff:14,orb:14,book:14,lute:6,greatsword:6,shield:6,dagger:8};
@@ -661,12 +669,12 @@ function step(dt,T){
       if(c.stage===3)c.mesh.rotation.z=Math.sin(T*2+t.gx)*0.05;}}
   // ---- 移動 ----
   let ix=0,iz=0;
-  if(!ply.sleeping&&!ply.downed&&!ply.reviving){if(keys.KeyW||keys.ArrowUp)iz-=1;if(keys.KeyS||keys.ArrowDown)iz+=1;if(keys.KeyA||keys.ArrowLeft)ix-=1;if(keys.KeyD||keys.ArrowRight)ix+=1;
+  if(!ply.sleeping&&!ply.downed&&!ply.reviving){if(kDown('up')||keys.ArrowUp)iz-=1;if(kDown('down')||keys.ArrowDown)iz+=1;if(kDown('left')||keys.ArrowLeft)ix-=1;if(kDown('right')||keys.ArrowRight)ix+=1;
     if(joy.id!==null){ix+=joy.x;iz+=joy.y;}}
   let mag=Math.hypot(ix,iz);if(mag>1){ix/=mag;iz/=mag;mag=1;}
   if(ply.sitting&&mag>0.3)standUp();
   if(ply.fishing&&mag>0.3)endFishing('收竿了');
-  const run=(keys.ShiftLeft||keys.ShiftRight||(joy.id!==null&&mag>0.95))&&!fpMode;
+  const run=(kDown('run')||(joy.id!==null&&mag>0.95))&&!fpMode;
   const busy=ply.act||ply.atkT>=0;
   const spd=(run?11:5.5)*(1-sleepy*0.4)*(busy?0.25:1)*(fpMode?0.7:1)*moveMul();
   const fx=-Math.sin(camYaw),fz=-Math.cos(camYaw),rx=Math.cos(camYaw),rz=-Math.sin(camYaw);
@@ -680,7 +688,7 @@ function step(dt,T){
     if(bath){const ry=p.ry+Math.PI/2;P.g.position.set(p.x+Math.sin(ry)*0.55,b+0.32,p.z+Math.cos(ry)*0.55);P.g.rotation.y=ry;}else{P.g.position.set(p.x,b+(p.id==='sofa'?0.32:0.38)*fsOf(p.id),p.z);P.g.rotation.y=p.ry;}applyPose(P,playerPose(T,false,false),dt);}
   else{
   if(mag>0.05){ply.x+=mx*spd*dt;ply.z+=mz*spd*dt;moving=true;
-    if(!busy&&!fpMode)ply.face+=angDiff(ply.face,Math.atan2(mx,mz))*Math.min(1,dt*12);ply.walk+=dt*spd*1.5;}
+    if(!busy&&!fpMode&&!(ply.held==='hoe'||carry))ply.face+=angDiff(ply.face,Math.atan2(mx,mz))*Math.min(1,dt*12);ply.walk+=dt*spd*1.5;}
   ply.moving=moving;if(fpMode)ply.face=camYaw+Math.PI;
   if(ply.dashT>0){ply.dashT-=dt;ply.x+=ply.dvx*dt;ply.z+=ply.dvz*dt;if(Math.random()<0.6)puff(ply.x,ply.y,ply.z);}
   ply.x+=ply.kx*dt;ply.z+=ply.kz*dt;ply.kx*=Math.pow(0.02,dt);ply.kz*=Math.pow(0.02,dt);
@@ -746,6 +754,7 @@ function step(dt,T){
     if(r.state==='gone'){r.t+=dt*mult;if(r.t>100&&Math.hypot(r.x-ply.x,r.z-ply.z)>4){r.state='alive';r.hp=r.max;r.m.visible=true;r.o.r=0.7*r.s;r.pop=0;}}
     if(r.pop!==undefined&&r.pop<1){r.pop=Math.min(1,r.pop+dt*2.5);const e=easeOutBack(r.pop);r.m.scale.set(r.s*e+0.001,r.s*0.75*e+0.001,r.s*e+0.001);}}
   for(const p of placed){if(p.pop<1){p.pop=Math.min(1,p.pop+dt*3);p.g.scale.setScalar(easeOutBack(p.pop)+0.001);}
+    if(p.g.userData.panel){const pn=p.g.userData.panel,tg=p.open?-1.7:0;pn.rotation.y+=(tg-pn.rotation.y)*Math.min(1,dt*8);}
     if(p.g.userData.flame){const f=p.g.userData.flame;f.scale.set(1+Math.sin(T*13)*0.1,1+Math.sin(T*17)*0.15,1+Math.cos(T*11)*0.1);if(Math.random()<dt*6)burst(p.x,H(p.x,p.z)+1.3,p.z,[0xffd36e,0xffa36e],1,1.2,partG,0.6);}}
   if(ghost){const[x,z]=ghostSpot();const gy=supportY(x,z);ghost.position.set(x,gy+Math.sin(T*5)*0.05+0.05,z);ghost.rotation.y=carry.ry;
     const r=ITEMS[carry.id].r*fsOf(carry.id),rr=Math.max(r*0.8,0.3);ghostOK=(r===0||!obstacles.some(o=>o.r>0&&(o.y===undefined||Math.abs(o.y-gy)<0.9)&&Math.hypot(o.x-x,o.z-z)<o.r+r*0.9))&&!hitsWall(x-rr,x+rr,z-rr,z+rr)&&Math.hypot(x-BOARD.x,z-BOARD.z)>2&&Math.hypot(x-ply.x,z-ply.z)<9;

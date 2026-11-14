@@ -261,6 +261,16 @@ body.sleeping #sleepUI{display:flex}
 .qb[disabled]{background:#ece0da;box-shadow:none;color:#a58c84}
 .close{width:100%;margin-top:6px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:6px}
+ #kbList{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}
+.kbr{display:flex;justify-content:space-between;align-items:center;gap:4px;background:#fff;border:2px solid #fbe3d8;border-radius:10px;padding:3px 4px 3px 8px;font-size:12px;font-weight:800}
+.kbr button{min-width:58px;border:2px solid #b9a6f2;border-radius:8px;background:#f4f0ff;color:#5a4690;font-weight:900;font-size:12px;padding:2px 6px;cursor:pointer}
+.kbr button.wait{background:#ffe3ee;border-color:#ff9ec7;color:#c0507a;animation:canPulse 1s ease-in-out infinite}
+@media (pointer:coarse){#kbWrap{display:none}}
+#craftGrid{grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:5px}
+#craftGrid .rc{padding:5px 4px 6px;border-radius:13px;gap:1px;border-width:2px}
+#craftGrid .rc .ic{font-size:22px}#craftGrid .rc .nm{font-size:12px}
+#craftGrid .rc .ds{font-size:9.5px;line-height:1.25;min-height:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#craftGrid .rc .cost{font-size:10.5px}#craftGrid .rc .qb{padding:3px 8px;font-size:11px;margin-top:2px}
 .rc{background:#fff;border:2.5px solid #fbe3d8;border-radius:18px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
 .rc .ic{font-size:30px;line-height:1.1}.rc .nm{font-weight:900;font-size:14px}.rc .ds{font-size:11px;opacity:.75;min-height:15px}
 .rc .cost{font-size:12px;font-weight:900}.rc .cost .no{color:#ff6f6f}.rc .qb{padding:5px 12px;font-size:13px}
@@ -455,7 +465,7 @@ body.ingame #start{display:none!important}
 
 <div class="panel" id="craft"><div class="sheet"><div class="grab"></div>
   <h2>🔨 合成</h2><div class="sub" id="craftSub"></div>
-  <div class="tabs"><button class="tab on" data-tab="tool">🪓 工具</button><button class="tab" data-tab="weapon">⚔️ 武器</button><button class="tab" data-tab="furn">🪑 家具</button></div>
+  <div class="tabs"><button class="tab on" data-tab="tool">🪓 工具</button><button class="tab" data-tab="weapon">⚔️ 武器</button><button class="tab" data-tab="block">🧱 方塊</button><button class="tab" data-tab="furn">🪑 家具</button></div>
   <div class="grid" id="craftGrid"></div><button class="qb lav close" data-close="craft">關閉</button></div></div>
 
 <div class="panel" id="shop"><div class="sheet"><div class="grab"></div>
@@ -518,6 +528,7 @@ body.ingame #start{display:none!important}
   <div class="clab">音效 <span id="vSv"></span></div><input type="range" id="vS" min="0" max="1" step="0.05">
   <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此，每頻道最多 30 人）</div><div class="chips" id="chChips"></div></div>
   <div id="cloudWrap" style="display:none"><div class="clab">☁️ 雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
+  <div id="kbWrap"><div class="clab" style="display:flex;justify-content:space-between;align-items:center">⌨️ 快捷鍵設定 <button class="qb" id="kbReset" style="padding:3px 10px;font-size:12px">恢復預設</button></div><div class="sub" style="margin:0 0 4px">點按鈕後按下想要的鍵盤按鍵（Esc 取消）。重複的按鍵會自動互換。</div><div id="kbList"></div></div>
   <div class="crow2"><button class="qb lav" id="setFs">⛶ 全螢幕</button><button class="qb" id="setSave">💾 立即存檔</button></div>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
   <button class="qb lav close" data-close="settings">關閉</button></div></div>
@@ -537,20 +548,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261114q"></script>
-<script src="firebase-config.js?v=20261114q"></script>
+<script src="config.js?v=20261114r"></script>
+<script src="firebase-config.js?v=20261114r"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261114q"></script>
-<script src="js/audio.js?v=20261114q"></script>
-<script src="js/items.js?v=20261114q"></script>
-<script src="js/critter.js?v=20261114q"></script>
-<script src="js/world.js?v=20261114q"></script>
-<script src="js/game.js?v=20261114q"></script>
-<script src="js/ui.js?v=20261114q"></script>
-<script src="js/extra.js?v=20261114q"></script>
-<script src="js/net.js?v=20261114q"></script>
-<script src="js/cloud.js?v=20261114q"></script>
-<script src="js/skills.js?v=20261114q"></script>
-<script src="js/party.js?v=20261114q"></script>
+<script src="js/engine.js?v=20261114r"></script>
+<script src="js/audio.js?v=20261114r"></script>
+<script src="js/items.js?v=20261114r"></script>
+<script src="js/critter.js?v=20261114r"></script>
+<script src="js/world.js?v=20261114r"></script>
+<script src="js/game.js?v=20261114r"></script>
+<script src="js/ui.js?v=20261114r"></script>
+<script src="js/extra.js?v=20261114r"></script>
+<script src="js/net.js?v=20261114r"></script>
+<script src="js/cloud.js?v=20261114r"></script>
+<script src="js/skills.js?v=20261114r"></script>
+<script src="js/party.js?v=20261114r"></script>
 </body>
 </html>

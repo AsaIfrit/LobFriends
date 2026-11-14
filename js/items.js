@@ -52,17 +52,21 @@ const ITEMS={
   hat_bucket:{n:'黑色漁夫帽',i:'🎩',k:'hat',hat:'bucket',d:'時裝・很酷的黑色漁夫帽'},
   plush:{n:'龍蝦精靈娃娃',i:'🦞',k:'furn',d:'軟綿綿的龍蝦精靈布偶擺設',r:0.45},
   crystal:{n:'水晶',i:'🔷',k:'mat',price:30,d:'洞窟深處的閃亮礦物，可以賣錢'},
-  plank:{n:'木塊',i:'🟫',k:'block',d:'拿在手上可以蓋木方塊，會自動對齊'}
+  plank:{n:'木塊',i:'🟫',k:'block',d:'拿在手上可以蓋木方塊，會自動對齊'},
+  door:{n:'門',i:'🚪',k:'furn',d:'靠近按「互動」可以開門、關門',r:0.45,door:true}
 };
 for(const[k,c]of Object.entries(CROPS)){ITEMS[k]={n:c.n,i:c.i,k:'food',d:`吃掉回精神 ${c.en}`,en:c.en,price:c.price};ITEMS['seed_'+k]={n:c.n+'種子',i:'🌱',k:'seed',crop:k,d:`種下去會長出${c.n}`};}
 for(const[k,f]of Object.entries(FRUITS))ITEMS[k]={n:f.n,i:f.i,k:'food',d:'吃掉回精神 12',en:12,price:10};
 for(const[k,f]of Object.entries(FISH))ITEMS[k]={n:f.n,i:f.i,k:'fish',d:'可以賣錢，也是貓咪的最愛',price:f.price};
 for(const[k,b]of Object.entries(BUGS))ITEMS[k]={n:b.n,i:'🦋',k:'bug',d:'可以賣給小栗',price:b.price,col:b.col};
+const BLK_COLORS=[['red','紅','🟥',0xff6b6b],['orange','橙','🟧',0xffa04a],['yellow','黃','🟨',0xffdf5a],['green','綠','🟩',0x74cf74],['blue','藍','🟦',0x5f9cff],['purple','紫','🟪',0xb085ff],['black','黑','⬛',0x45404c],['white','白','⬜',0xffffff]];
+for(const[c,n,i]of BLK_COLORS)ITEMS['blk_'+c]={n:n+'色木塊',i,k:'block',d:`${n}色的方塊，用法跟木塊一樣`};
 const RECIPES={
   tool:[['axe1',{wood:3},0],['pick1',{wood:3},1],['axe2',{wood:2,stone:3},1],['pick2',{wood:2,stone:3},1],['hoe',{wood:3,stone:1},1],['can',{wood:2,stone:2},1],['net',{wood:4},1],['rod',{wood:3,weed:3},1]],
   weapon:[['sword',{wood:4},1],['spear',{wood:5,stone:1},1],['bow',{wood:5},1],['staff',{wood:3,stone:3},1],
     ['greatsword',{wood:3,stone:8},1],['dagger',{wood:1,stone:4},1],['lute',{wood:6,weed:5},1],['orb',{stone:5,gem:1},1],['book',{wood:6,weed:4},1],['shield',{wood:6,stone:4},1]],
-  furn:[['plank',{wood:1},0,5],['bench',{wood:4},0],['fence',{wood:2},1,3],['chair',{wood:3},1],['table',{wood:4},1],['pot',{wood:1,stone:2},1],['lantern',{wood:2,stone:2},1],['campfire',{wood:4,stone:3},1],['bed',{wood:8},1]]
+  block:[['plank',{wood:1},0,5],...BLK_COLORS.map(([c])=>['blk_'+c,{plank:1},0,1])],
+  furn:[['bench',{wood:4},0],['door',{wood:5},1],['fence',{wood:2},1,3],['chair',{wood:3},1],['table',{wood:4},1],['pot',{wood:1,stone:2},1],['lantern',{wood:2,stone:2},1],['campfire',{wood:4,stone:3},1],['bed',{wood:8},1]]
 };
 const inv={};
 const has=k=>(inv[k]||0)>0;
@@ -175,3 +179,5 @@ function weaponAtk(raw){const w=ply.weapon;let a=w==='stick'?1:ITEMS[w].atk;a+=M
   if(ply.en<=0)a*=0.5;return raw?a:Math.max(1,Math.round(a));}
 function chopPow(){let p=has('axe2')?4:has('axe1')?2:1;if(TL('wood',1))p++;if(TL('wood',2))p*=2;return p;}
 function minePow(){let p=has('pick2')?2:has('pick1')?1:(TL('mine',2)?1:0);if(p===0)return 0;if(TL('mine',1))p++;if(TL('mine',2))p*=2;return p;}
+
+const isBlk=k=>!!k&&!!ITEMS[k]&&ITEMS[k].k==='block';

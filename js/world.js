@@ -1,7 +1,7 @@
 // ===================== world.js：場景、樹、村莊、室內、蝴蝶、農田、家具 =====================
 const obstacles=[];
 function farFrom(x,z,r,list=obstacles){for(const o of list){if(o.r>0&&Math.hypot(o.x-x,o.z-z)<o.r+r)return false;}return true;}
-const FS={bathtub:1};const fsOf=id=>FS[id]??1.5;
+const FS={bathtub:1,door:1};const fsOf=id=>FS[id]??1.5;
 function textTex(lines,bg='#fff1e0',fg='#7a4a34',w=256,h=128,font=40){return canvasTex(w,h,(c)=>{c.fillStyle=bg;c.fillRect(0,0,w,h);c.fillStyle=fg;c.font=`900 ${font}px "Zen Maru Gothic",sans-serif`;c.textAlign='center';c.textBaseline='middle';
   lines.forEach((l,i)=>c.fillText(l,w/2,h/(lines.length+1)*(i+1)));});}
 // ---------- 房屋 ----------
@@ -771,12 +771,19 @@ function buildFurnInner(id){
     c.g.scale.setScalar(0.42);c.legs.forEach((l,i)=>{l.rotation.x=-1.3;});g.add(c.g);g.add(mk(new THREE.CylinderGeometry(0.42,0.46,0.06,16),toon(0xffd6e6),0,0.03,0));}
   else if(id==='shelf'){g.add(mk(new THREE.BoxGeometry(1.6,2,0.5),wd,0,1,0));const bc=[0xff9ec7,0x8fdcb4,0xb9a6f2,0xffd36e,0x8fd0ff];
     for(let r=0;r<2;r++)for(let i=0;i<5;i++)g.add(mk(new THREE.BoxGeometry(0.2,0.5,0.35),toon(bc[(i+r*2)%5]),-0.55+i*0.27,0.6+r*0.75,0.08));}
+  else if(id==='door'){const fr=toon(0xc98d58,{map:TEX.wood}),pn=toon(0xf3c9a0,{map:TEX.wood});
+    for(const x of[-0.84,0.84])g.add(mk(new THREE.BoxGeometry(0.16,2.7,0.26),fr,x,1.35,0));g.add(mk(new THREE.BoxGeometry(1.84,0.18,0.28),fr,0,2.72,0));
+    const pv=new THREE.Group();pv.position.set(-0.76,0,0);g.add(pv);pv.add(mk(new THREE.BoxGeometry(1.5,2.55,0.1),pn,0.76,1.3,0));
+    for(const z of[-0.06,0.06]){pv.add(mk(new THREE.BoxGeometry(1.2,0.08,0.03),fr,0.76,0.7,z));pv.add(mk(new THREE.BoxGeometry(1.2,0.08,0.03),fr,0.76,1.9,z));
+      pv.add(mk(new THREE.CircleGeometry(0.22,16),basic(0xbfe6ff),0.76,2.15,z*1.5)).rotation.y=z<0?Math.PI:0;
+      pv.add(mk(new THREE.SphereGeometry(0.07,10,8),toon(0xffd36e),1.35,1.2,z*1.6));}
+    g.userData.panel=pv;}
   return g;
 }
 function placeFurn(id,x,z,ry,fx=true,y=null){
   if(y===null||y===true||y===false)y=supportY(x,z);
   const g=buildFurn(id);g.position.set(x,y,z);g.rotation.y=ry;shadowAll(g);scene.add(g);
-  const o={x,z,r:ITEMS[id].r*fsOf(id),y};obstacles.push(o);const p={id,x,z,y,ry,g,o,pop:fx?0:1,indoor:false};placed.push(p);
+  const o={x,z,r:ITEMS[id].r*fsOf(id),y};if(ITEMS[id].door){o.box={ry,hw:0.92,hd:0.18};o.r0=o.r;}obstacles.push(o);const p={id,x,z,y,ry,g,o,pop:fx?0:1,indoor:false};placed.push(p);
   if(id==='lantern'||id==='campfire'){const L=lightPool.find(l=>!l.used);if(L){L.used=p;p.light=L.L;L.L.position.set(x,y+(id==='lantern'?2.4:1.2),z);}}
   if(fx){g.scale.setScalar(0.01);}
   return p;
@@ -795,14 +802,21 @@ const BLK=0.8,blocks=new Map(),bKey=(i,j,k)=>i+','+j+','+k;
 const blockTex=canvasTex(64,64,(g)=>{g.fillStyle='#e2b07c';g.fillRect(0,0,64,64);g.fillStyle='#d49c66';for(let y=0;y<64;y+=16)g.fillRect(0,y+14,64,2);
   g.fillStyle='#c98d58';for(let y=0;y<64;y+=16)g.fillRect(((y*7)%48)+8,y,2,14);g.strokeStyle='#b97e4c';g.lineWidth=4;g.strokeRect(2,2,60,60);});
 blockTex.wrapS=blockTex.wrapT=THREE.ClampToEdgeWrapping;blockTex.magFilter=THREE.NearestFilter;
+const blockTex2=canvasTex(64,64,(g)=>{g.fillStyle='#f6f6f6';g.fillRect(0,0,64,64);g.fillStyle='#e2e2e2';for(let y=0;y<64;y+=16)g.fillRect(0,y+14,64,2);
+  g.fillStyle='#d8d8d8';for(let y=0;y<64;y+=16)g.fillRect(((y*7)%48)+8,y,2,14);g.strokeStyle='#c4c4c4';g.lineWidth=4;g.strokeRect(2,2,60,60);});
+blockTex2.wrapS=blockTex2.wrapT=THREE.ClampToEdgeWrapping;blockTex2.magFilter=THREE.NearestFilter;
+const BLK_HEX={};for(const[c,,,h]of BLK_COLORS)BLK_HEX['blk_'+c]=h;
+const blockIM2=new THREE.InstancedMesh(new THREE.BoxGeometry(BLK,BLK,BLK),toon(0xffffff,{map:blockTex2}),3000);blockIM2.setColorAt(0,new THREE.Color(1,1,1));blockIM2.count=0;blockIM2.castShadow=blockIM2.receiveShadow=true;blockIM2.frustumCulled=false;scene.add(blockIM2);
 const blockIM=new THREE.InstancedMesh(new THREE.BoxGeometry(BLK,BLK,BLK),toon(0xffffff,{map:blockTex}),3000);blockIM.count=0;blockIM.castShadow=blockIM.receiveShadow=true;blockIM.frustumCulled=false;scene.add(blockIM);
-function rebuildBlocks(){const m=new THREE.Matrix4();let n=0;for(const b of blocks.values()){if(n>=3000)break;m.makeTranslation(b.i*BLK,b.j*BLK+BLK/2,b.k*BLK);blockIM.setMatrixAt(n++,m);}blockIM.count=n;blockIM.instanceMatrix.needsUpdate=true;}
+function rebuildBlocks(){const m=new THREE.Matrix4(),col=new THREE.Color();let n=0,n2=0;for(const b of blocks.values()){m.makeTranslation(b.i*BLK,b.j*BLK+BLK/2,b.k*BLK);
+  if(BLK_HEX[b.c]!==undefined){if(n2>=3000)continue;blockIM2.setMatrixAt(n2,m);blockIM2.setColorAt(n2++,col.setHex(BLK_HEX[b.c]));}else{if(n>=3000)continue;blockIM.setMatrixAt(n++,m);}}
+  blockIM.count=n;blockIM.instanceMatrix.needsUpdate=true;blockIM2.count=n2;blockIM2.instanceMatrix.needsUpdate=true;if(blockIM2.instanceColor)blockIM2.instanceColor.needsUpdate=true;}
 const bCell=(x,z)=>[Math.round(x/BLK),Math.round(z/BLK)];
 function baseJ(i,k){const x=i*BLK,z=k*BLK,h=BLK*0.45;const mn=Math.min(H(x-h,z-h),H(x+h,z-h),H(x-h,z+h),H(x+h,z+h),H(x,z));return Math.floor((mn+0.03)/BLK);}
 function colTopJ(i,k){let t=-1e9;for(const b of blocks.values())if(b.i===i&&b.k===k&&b.j>t)t=b.j;return t;}
 function supportY(x,z){const[i,k]=bCell(x,z);const t=colTopJ(i,k);const g=Math.max(H(x,z),inHouse(x,z)?0.02:-1e9);return t>-1e9?Math.max(g,(t+1)*BLK):g;}
-function addBlock(i,j,k){blocks.set(bKey(i,j,k),{i,j,k});rebuildBlocks();}
-function delBlock(i,j,k){blocks.delete(bKey(i,j,k));rebuildBlocks();for(const p of placed){const y=supportY(p.x,p.z);if(Math.abs(y-p.y)>0.01&&Math.round(p.x/BLK)===i&&Math.round(p.z/BLK)===k){p.y=y;p.o.y=y;p.g.position.y=y;}}}
+function addBlock(i,j,k,c){blocks.set(bKey(i,j,k),{i,j,k,c:c&&c!=='plank'?c:undefined});rebuildBlocks();}
+function delBlock(i,j,k){const ob=blocks.get(bKey(i,j,k));blocks.delete(bKey(i,j,k));rebuildBlocks();for(const p of placed){const y=supportY(p.x,p.z);if(Math.abs(y-p.y)>0.01&&Math.round(p.x/BLK)===i&&Math.round(p.z/BLK)===k){p.y=y;p.o.y=y;p.g.position.y=y;}}return ob&&ob.c||'plank';}
 // 角色站立高度（含方塊）
 function standY(x,z,y,r=0.28){let best=Math.max(H(x,z),inHouse(x,z)?0.02:-1e9);if(!blocks.size)return best;
   const i0=Math.round((x-r)/BLK),i1=Math.round((x+r)/BLK),k0=Math.round((z-r)/BLK),k1=Math.round((z+r)/BLK);
