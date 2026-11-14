@@ -165,6 +165,7 @@ body:not(.ingame) #notes{display:none}
 #netBadge{display:none;align-items:center;gap:5px;font-size:12.5px;pointer-events:auto;cursor:pointer}
 #netBadge i{width:9px;height:9px;border-radius:50%;background:#5fd38a;box-shadow:0 0 0 3px rgba(95,211,138,.25);animation:beat 1.6s infinite}
 #netBadge.off i{background:#c8b8b0;box-shadow:none;animation:none}
+#visitBar{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translate(-50%,-140%);z-index:30;display:flex;align-items:center;gap:8px;background:var(--cream);border:3px solid var(--line);border-radius:18px;padding:6px 8px 6px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,140,110,.4);transition:transform .35s var(--spring);max-width:94vw}#visitBar.on{transform:translate(-50%,0)}#visitBar .qb{padding:5px 12px;font-size:13px}body:not(.ingame) #visitBar{display:none}
 #chatLog{position:fixed;left:10px;bottom:300px;display:flex;flex-direction:column;gap:4px;z-index:7;pointer-events:none;max-width:60vw}
 #chatLog div{background:rgba(70,45,40,.7);color:#fff;border-radius:12px;padding:3px 10px;font-size:13px;font-weight:700;animation:noteIn .4s var(--spring);transition:opacity .4s}
 #chatLog div.out{opacity:0}#chatLog b{color:#ffd9a0;margin-right:2px}
@@ -494,7 +495,7 @@ body.ingame #start{display:none!important}
 </div>
 <div id="decoTag">🛋️ 布置模式・靠近家具按「搬動」</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
-<div id="toast"></div><div id="notes"></div><div id="chatLog"></div>
+<div id="visitBar"><span id="visitTxt"></span><button class="qb pink" id="visitEnd">結束參觀</button></div><div id="toast"></div><div id="notes"></div><div id="chatLog"></div>
 <div id="social"><div class="sbox"><div class="chT">💬 對話紀錄</div><div id="chatHist"></div><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
 <div id="hotbar"></div>
@@ -582,7 +583,7 @@ body.ingame #start{display:none!important}
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
   <h2>🌐 線上玩家</h2><div class="sub" id="plSub"></div><div id="plList"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
-<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="gift"><div class="sheet"><div class="grab"></div>
   <h2>🎁 送禮</h2><div class="sub" id="giftSub"></div>
   <div class="giftCoin"><span>🪙 送金幣</span><input type="number" id="giftCoin" min="1" step="1" placeholder="數量" inputmode="numeric"><button class="qb pink" id="giftCoinBtn">送出</button></div>
@@ -632,20 +633,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261116r"></script>
-<script src="firebase-config.js?v=20261116r"></script>
+<script src="config.js?v=20261116s"></script>
+<script src="firebase-config.js?v=20261116s"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261116r"></script>
-<script src="js/audio.js?v=20261116r"></script>
-<script src="js/items.js?v=20261116r"></script>
-<script src="js/critter.js?v=20261116r"></script>
-<script src="js/world.js?v=20261116r"></script>
-<script src="js/game.js?v=20261116r"></script>
-<script src="js/ui.js?v=20261116r"></script>
-<script src="js/extra.js?v=20261116r"></script>
-<script src="js/net.js?v=20261116r"></script>
-<script src="js/cloud.js?v=20261116r"></script>
-<script src="js/skills.js?v=20261116r"></script>
-<script src="js/party.js?v=20261116r"></script>
+<script src="js/engine.js?v=20261116s"></script>
+<script src="js/audio.js?v=20261116s"></script>
+<script src="js/items.js?v=20261116s"></script>
+<script src="js/critter.js?v=20261116s"></script>
+<script src="js/world.js?v=20261116s"></script>
+<script src="js/game.js?v=20261116s"></script>
+<script src="js/ui.js?v=20261116s"></script>
+<script src="js/extra.js?v=20261116s"></script>
+<script src="js/net.js?v=20261116s"></script>
+<script src="js/cloud.js?v=20261116s"></script>
+<script src="js/skills.js?v=20261116s"></script>
+<script src="js/party.js?v=20261116s"></script>
 </body>
 </html>
