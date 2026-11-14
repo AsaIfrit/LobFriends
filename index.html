@@ -173,6 +173,9 @@ body:not(.ingame) #chatLog{display:none}
 #social.show{background:rgba(90,50,40,.25)}
 #social .sbox{background:var(--cream);border:3px solid var(--line);border-radius:24px;padding:12px;margin-bottom:90px;width:min(94vw,460px);box-sizing:border-box;box-shadow:0 6px 0 rgba(200,140,110,.4);transform:translateY(30px) scale(.85);opacity:0;transition:transform .4s var(--spring),opacity .2s}
 #social.show .sbox{transform:none;opacity:1}
+.chT{font-weight:900;font-size:13px;margin:0 0 4px 2px;color:#8a5a4a}
+#chatHist{max-height:min(34vh,260px);overflow-y:auto;background:#fff;border:2px solid #f6e4da;border-radius:16px;padding:6px 8px;margin-bottom:8px;font-size:13px;line-height:1.45;display:flex;flex-direction:column;gap:3px}
+#chatHist>div{word-break:break-all}#chatHist i{font-style:normal;font-size:10.5px;color:#b8a098;margin-right:5px}#chatHist b{color:#e0708a;margin-right:4px}#chatHist b::after{content:'：'}#chatHist .me b{color:#4aa07a}#chatHist .ch0{color:#b8a098;text-align:center;padding:8px 0}
 #emoBar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
 #emoBar button{font-size:26px;border:2.5px solid #fbe3d8;background:#fff;border-radius:14px;padding:6px 0;transition:transform .15s var(--spring)}
 #chatForm{display:flex;gap:6px}#chatIn{flex:1;min-width:0;border:2.5px solid #fbe3d8;border-radius:14px;padding:8px 10px;font-family:inherit;font-weight:700;font-size:15px;color:var(--ink);background:#fff}
@@ -491,7 +494,7 @@ body.ingame #start{display:none!important}
 <div id="decoTag">🛋️ 布置模式・靠近家具按「搬動」</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
 <div id="toast"></div><div id="notes"></div><div id="chatLog"></div>
-<div id="social"><div class="sbox"><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
+<div id="social"><div class="sbox"><div class="chT">💬 對話紀錄</div><div id="chatHist"></div><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
 <div id="hotbar"></div>
 <button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><span>👁️</span></button><div id="invBox"><span id="invTxt"></span><div><button class="qb pink" id="invYes">接受</button><button class="qb lav" id="invNo">拒絕</button></div></div>
@@ -628,20 +631,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261116e"></script>
-<script src="firebase-config.js?v=20261116e"></script>
+<script src="config.js?v=20261116f"></script>
+<script src="firebase-config.js?v=20261116f"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261116e"></script>
-<script src="js/audio.js?v=20261116e"></script>
-<script src="js/items.js?v=20261116e"></script>
-<script src="js/critter.js?v=20261116e"></script>
-<script src="js/world.js?v=20261116e"></script>
-<script src="js/game.js?v=20261116e"></script>
-<script src="js/ui.js?v=20261116e"></script>
-<script src="js/extra.js?v=20261116e"></script>
-<script src="js/net.js?v=20261116e"></script>
-<script src="js/cloud.js?v=20261116e"></script>
-<script src="js/skills.js?v=20261116e"></script>
-<script src="js/party.js?v=20261116e"></script>
+<script src="js/engine.js?v=20261116f"></script>
+<script src="js/audio.js?v=20261116f"></script>
+<script src="js/items.js?v=20261116f"></script>
+<script src="js/critter.js?v=20261116f"></script>
+<script src="js/world.js?v=20261116f"></script>
+<script src="js/game.js?v=20261116f"></script>
+<script src="js/ui.js?v=20261116f"></script>
+<script src="js/extra.js?v=20261116f"></script>
+<script src="js/net.js?v=20261116f"></script>
+<script src="js/cloud.js?v=20261116f"></script>
+<script src="js/skills.js?v=20261116f"></script>
+<script src="js/party.js?v=20261116f"></script>
 </body>
 </html>
