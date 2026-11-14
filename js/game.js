@@ -685,12 +685,14 @@ function step(dt,T){
   const fx=-Math.sin(camYaw),fz=-Math.cos(camYaw),rx=Math.cos(camYaw),rz=-Math.sin(camYaw);
   const mx=fx*-iz+rx*ix,mz=fz*-iz+rz*ix;
   let moving=false;
+  if(P.tail)P.tail.visible=!ply.sitting;// 坐著時藏起尾巴，避免穿模
   if(ply.downed){const gy=ply.cave?0:standY(ply.x,ply.z,ply.y);ply.y=gy;P.g.position.set(ply.x,gy,ply.z);P.g.rotation.y=ply.face;P.m.rotation.set(-Math.PI/2,0,0);P.m.position.set(0,0.6,0.45);P.m.scale.set(1,1+Math.sin(T*1.2)*0.03,1);if(P.tail)P.tail.rotation.y=Math.sin(T)*0.1;}
   else if(ply.sleeping){const p=ply.sleeping.p,b=furnBase(p);const fs=fsOf(p.id);P.g.position.set(p.x,b+0.62*fs,p.z);P.g.rotation.y=p.ry;P.m.rotation.set(-Math.PI/2,0,0);P.m.position.set(0,0.72,0.45*fs);
     P.m.scale.set(1,1+Math.sin(T*1.5)*0.035,1);ply.x=p.x;ply.z=p.z;ply.y=b;if(P.tail)P.tail.rotation.y=Math.sin(T*1.2)*0.2;}
   else if(ply.riding){updateRide(dt,T);}
   else if(ply.sitting){const p=ply.sitting.p,b=furnBase(p),bath=ply.sitting.kind==='bath';ply.x=p.x;ply.z=p.z;ply.y=b;ply.face=p.ry;
-    if(bath){const ry=p.ry+Math.PI/2;P.g.position.set(p.x+Math.sin(ry)*0.55,b+0.32,p.z+Math.cos(ry)*0.55);P.g.rotation.y=ry;}else{P.g.position.set(p.x,b+(p.id==='sofa'?0.32:0.38)*fsOf(p.id),p.z);P.g.rotation.y=p.ry;}applyPose(P,playerPose(T,false,false),dt);}
+    const fs=fsOf(p.id);if(bath){const ry=p.ry+Math.PI/2;P.g.position.set(p.x+Math.sin(ry)*0.55*fs,b+0.3*fs,p.z+Math.cos(ry)*0.55*fs);P.g.rotation.y=ry;}
+    else{const fw=(p.id==='sofa'?0.17:0.12)*fs;P.g.position.set(p.x+Math.sin(p.ry)*fw,b+(p.id==='sofa'?0.675:0.56)*fs-0.12,p.z+Math.cos(p.ry)*fw);P.g.rotation.y=p.ry;}applyPose(P,playerPose(T,false,false),dt);}
   else{
   if(mag>0.05){ply.x+=mx*spd*dt;ply.z+=mz*spd*dt;moving=true;
     if(!busy&&!fpMode&&!(ply.held==='hoe'||carry||isBlk(ply.held)))ply.face+=angDiff(ply.face,Math.atan2(mx,mz))*Math.min(1,dt*12);ply.walk+=dt*spd*1.5;}
@@ -698,8 +700,8 @@ function step(dt,T){
   if(ply.dashT>0){ply.dashT-=dt;ply.x+=ply.dvx*dt;ply.z+=ply.dvz*dt;if(Math.random()<0.6)puff(ply.x,ply.y,ply.z);}
   ply.x+=ply.kx*dt;ply.z+=ply.kz*dt;ply.kx*=Math.pow(0.02,dt);ply.kz*=Math.pow(0.02,dt);
   const obs=ply.cave?caveObs:obstacles;
-  for(const o of obs){if(o.r<=0||o.navOnly)continue;if(o.y!==undefined&&Math.abs(o.y-ply.y)>0.9)continue;if(o.box){pushBox(ply,o,0.6);continue;}const dx=ply.x-o.x,dz=ply.z-o.z,d=Math.hypot(dx,dz),r=o.r+0.6;if(d<r&&d>0.001){ply.x=o.x+dx/d*r;ply.z=o.z+dz/d*r;}}
-  if(!ply.cave){pushWalls(ply,0.45);pushBlocks(ply,ply.y);}
+  for(const o of obs){if(o.r<=0||o.navOnly||o.solid)continue;if(o.y!==undefined&&Math.abs(o.y-ply.y)>0.9)continue;if(o.box){pushBox(ply,o,0.6);continue;}const dx=ply.x-o.x,dz=ply.z-o.z,d=Math.hypot(dx,dz),r=o.r+0.6;if(d<r&&d>0.001){ply.x=o.x+dx/d*r;ply.z=o.z+dz/d*r;}}
+  if(!ply.cave){pushWalls(ply,0.45);pushBlocks(ply,ply.y);pushSolids(ply,ply.y);}
   if(!ply.cave)for(const n of npcs){if(n.away)continue;const dx=ply.x-n.x,dz=ply.z-n.z,d=Math.hypot(dx,dz);if(d<1.4&&d>0.001){ply.x=n.x+dx/d*1.4;ply.z=n.z+dz/d*1.4;}}
   if(ply.cave){const dx=ply.x-CAVE.x,dz=ply.z-CAVE.z,d=Math.hypot(dx,dz);if(d>CAVE.r-0.8){ply.x=CAVE.x+dx/d*(CAVE.r-0.8);ply.z=CAVE.z+dz/d*(CAVE.r-0.8);}}
   else{ply.x=clamp(ply.x,-112,112);ply.z=clamp(ply.z,-112,112);}
