@@ -290,6 +290,10 @@ body.sleeping #sleepUI{display:flex}
 #giftConfirm .gci{font-size:46px;line-height:1.1}#giftConfirm .gci img{width:56px;height:56px}#giftConfirm p{font-weight:900;font-size:15px;margin:6px 0 10px}
 #giftConfirm .gcq{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px;font-weight:900}#giftConfirm .gcq input{width:64px;text-align:center;border:2px solid #f2e0d4;border-radius:10px;padding:5px;font-size:15px;font-weight:800}
 #giftConfirm .gcq .qb{padding:4px 12px}#giftConfirm .pcb{display:flex;gap:8px;justify-content:center}
+#idleOv{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;background:rgba(60,40,60,.4);backdrop-filter:blur(3px);cursor:pointer}#idleOv.on{display:flex}
+#idleOv .card2{background:#fffaf4;border:4px solid #fff;border-radius:26px;padding:18px 26px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}#idleOv h3{margin:6px 0;color:#7a5aa0}#idleOv p{font-weight:800;font-size:14px;margin:4px 0}
+#updBar{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:120;display:none;align-items:center;gap:10px;background:#fffaf4;border:3px solid #ffd36e;border-radius:18px;padding:6px 8px 6px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,140,110,.35);max-width:94vw}
+#updBar.on{display:flex}#updBar .qb{padding:5px 12px;font-size:12.5px;white-space:nowrap}
 #kickOv{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(60,40,60,.55);backdrop-filter:blur(4px)}#kickOv.on{display:flex}
 #kickOv .card2{background:#fffaf4;border:4px solid #fff;border-radius:26px;padding:20px 26px;text-align:center;max-width:300px;box-shadow:0 10px 30px rgba(0,0,0,.25)}#kickOv h3{margin:6px 0;font-size:19px;color:#c0507a}#kickOv p{font-weight:800;font-size:14px;line-height:1.6;margin:6px 0 14px}
 .plr.gm{cursor:pointer}.plr.gm:hover{border-color:#ffb8c8;background:#fff4f8}
@@ -559,6 +563,8 @@ body.ingame #start{display:none!important}
   <div class="clab">點一下想送的道具（裝備中的不能送）</div><div id="giftGrid"></div>
   <button class="qb lav close" data-close="gift">關閉</button></div></div>
 <div id="giftConfirm"><div class="card2"><div id="gcIcon" class="gci"></div><p id="gcTxt"></p><div id="gcQtyRow" class="gcq"><button class="qb" id="gcMinus">－</button><input type="number" id="gcQty" min="1" value="1" inputmode="numeric"><span id="gcMax"></span><button class="qb" id="gcPlus">＋</button></div><div class="pcb"><button class="qb pink" id="gcYes">送出</button><button class="qb lav" id="gcNo">取消</button></div></div></div>
+<div id="idleOv"><div class="card2"><div style="font-size:48px">💤</div><h3>閒置太久，已暫時離線</h3><p>點一下畫面任何地方就會回到遊戲</p></div></div>
+<div id="updBar"><span id="updTxt"></span><button class="qb pink" id="updNow">現在更新</button></div>
 <div id="kickOv"><div class="card2"><div style="font-size:52px">🚪</div><h3>你已被 GM 請下線</h3><p>進度已經自動存檔了。<br>重新整理網頁就能再進入遊戲。</p><button class="qb pink" id="kickReload">🔄 重新整理</button></div></div>
 <div id="petChoice"><div class="card2"><h3 id="pcName"></h3><div class="pcb"><button class="qb pink" id="pcInvite">🐾 邀請</button><button class="qb" id="pcStore">📦 收納</button><button class="qb lav" id="pcCancel">取消</button></div></div></div>
 <div class="panel" id="dex"><div class="sheet"><div class="grab"></div>
@@ -592,20 +598,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261115c"></script>
-<script src="firebase-config.js?v=20261115c"></script>
+<script src="config.js?v=20261115e"></script>
+<script src="firebase-config.js?v=20261115e"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261115c"></script>
-<script src="js/audio.js?v=20261115c"></script>
-<script src="js/items.js?v=20261115c"></script>
-<script src="js/critter.js?v=20261115c"></script>
-<script src="js/world.js?v=20261115c"></script>
-<script src="js/game.js?v=20261115c"></script>
-<script src="js/ui.js?v=20261115c"></script>
-<script src="js/extra.js?v=20261115c"></script>
-<script src="js/net.js?v=20261115c"></script>
-<script src="js/cloud.js?v=20261115d"></script>
-<script src="js/skills.js?v=20261115c"></script>
-<script src="js/party.js?v=20261115c"></script>
+<script src="js/engine.js?v=20261115e"></script>
+<script src="js/audio.js?v=20261115e"></script>
+<script src="js/items.js?v=20261115e"></script>
+<script src="js/critter.js?v=20261115e"></script>
+<script src="js/world.js?v=20261115e"></script>
+<script src="js/game.js?v=20261115e"></script>
+<script src="js/ui.js?v=20261115e"></script>
+<script src="js/extra.js?v=20261115e"></script>
+<script src="js/net.js?v=20261115e"></script>
+<script src="js/cloud.js?v=20261115e"></script>
+<script src="js/skills.js?v=20261115e"></script>
+<script src="js/party.js?v=20261115e"></script>
 </body>
 </html>

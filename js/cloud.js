@@ -73,6 +73,7 @@ function isGM(){return!!(CLOUD.user&&GM_UIDS.includes(CLOUD.user.uid));}
 async function gmKick(nid,name){if(!isGM())return;const r=await cloudAsk(`請 ${name} 下線？`,'對方會自動存檔並離開遊戲，<br>要重新整理網頁才能再進來。','🚪 請下線','取消');
   if(r!=='a')return;
   // 寫進 Firestore 的 kicks/{對方的連線ID}；Firestore 規則會在 Google 伺服器上檢查「寫入的人是不是 GM」，假冒的寫入會被拒絕
+  netPost({t:'kick',to:nid,uid:CLOUD.user.uid});// 給還沒更新的舊版玩家（舊版只認這種訊息）
   try{await CLOUD.db.collection('kicks').doc(String(nid)).set({by:CLOUD.user.uid,t:firebase.firestore.FieldValue.serverTimestamp()});toast(`🚪 已請 ${name} 下線`);SFX.thud();}
   catch(e){console.warn(e);toast(e&&e.code==='permission-denied'?'⚠️ 被 Firestore 規則拒絕了：請確認規則裡有加上 kicks 的設定':'⚠️ 請下線失敗：'+((e&&e.code)||e));}}
 // 舊的廣播踢人訊息不再採信（任何人都能假冒）
@@ -97,3 +98,23 @@ function gmTeleport(pr){if(carry)carryCancel();if(ply.sitting)standUp();if(ply.s
   quickFade(()=>{const toCave=pr.ar==='cave';if(toCave){if(!ply.cave||caveLv!==(pr.lv||1))setCaveLv(pr.lv||1);ply.cave=true;}else ply.cave=false;
     ply.indoor=false;ply.x=pr.x+1.2;ply.z=pr.z;ply.y=ply.cave?0:standY(ply.x,ply.z,99);ply.vy=0;ply.kx=ply.kz=0;snapCam=true;if(typeof portalLock!=='undefined')portalLock=1;});
   toast('✨ 傳送中…');}
+
+// ---------- 閒置自動離線：太久沒操作就先斷開連線，省 Supabase 用量 ----------
+const IDLE_MS=10*60*1000,HIDDEN_MS=2*60*1000;let lastInput=Date.now(),hiddenAt=0,idleOff=false;
+['pointerdown','keydown','touchstart','wheel'].forEach(ev=>addEventListener(ev,()=>{lastInput=Date.now();if(idleOff)idleResume();},{passive:true,capture:true}));
+document.addEventListener('visibilitychange',()=>{hiddenAt=document.visibilityState==='hidden'?Date.now():0;});
+function idleDisconnect(){if(idleOff||window.__kicked||!sbClient)return;idleOff=true;try{save();}catch(e){}
+  try{if(sbCh)sbClient.removeChannel(sbCh);}catch(e){}sbCh=null;netConn=false;
+  try{if(typeof partyCh!=='undefined'&&partyCh){sbClient.removeChannel(partyCh);partyCh=null;partyChId='';}}catch(e){}
+  try{sbClearRemotes();}catch(e){}updNetBadge();$('idleOv').classList.add('on');}
+function idleResume(){if(!idleOff||window.__kicked)return;idleOff=false;$('idleOv').classList.remove('on');try{sbJoin(sbShard||1,!sbPref());}catch(e){}try{if(typeof syncPartyChannel==='function')syncPartyChannel();}catch(e){}toast('👋 歡迎回來！已重新連線');}
+setInterval(()=>{if(!started||idleOff)return;const now=Date.now();if(now-lastInput>IDLE_MS||(hiddenAt&&now-hiddenAt>HIDDEN_MS))idleDisconnect();},15000);
+// ---------- 新版本自動更新：每 5 分鐘看一下網站上的版本號 ----------
+const MY_VER=((document.querySelector('script[src*="js/engine.js"]')||{}).src||'').split('v=')[1]||'';
+let updT=null;
+async function checkUpdate(){if(!MY_VER||location.protocol==='file:'||updT||window.__kicked)return;
+  try{const r=await fetch('index.html?_='+Date.now(),{cache:'no-store'});const t=await r.text();const m=t.match(/js\/engine\.js\?v=([0-9a-z]+)/);
+    if(m&&m[1]!==MY_VER){let n=60;$('updBar').classList.add('on');const tick=()=>{$('updTxt').textContent=`🆕 遊戲更新了！${n} 秒後自動重新整理（進度會自動存檔）`;if(n--<=0)doUpdate();};tick();updT=setInterval(tick,1000);}}catch(e){}}
+async function doUpdate(){clearInterval(updT);try{save();}catch(e){}try{if(CLOUD.user){CLOUD.busy=false;await cloudUpload(true);}}catch(e){}location.reload();}
+$('updNow').addEventListener('click',doUpdate);
+setInterval(checkUpdate,5*60*1000);setTimeout(checkUpdate,60*1000);
