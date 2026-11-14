@@ -488,11 +488,12 @@ $('pcCancel').addEventListener('click',closePetChoice);
 // ---------- 玩家互動：邀請／送禮 ----------
 let plPick=null;
 const canInvite=r=>r&&!(party&&party.members.includes(r.nid))&&(!inParty()||party.leader===myNetId);
-function openPlayerChoice(r){if(!r)return;plPick=r;faceTo(r.x,r.z);$('pcpName').textContent=`🦞 ${r.name}`;const ok=canInvite(r);const b=$('pcpInvite');b.disabled=!ok;b.title=ok?'':(party&&party.members.includes(r.nid)?'已經是隊友了':'只有隊長可以邀請');b.textContent=party&&party.members.includes(r.nid)?'🤝 已是隊友':'🤝 邀請';$('plChoice').classList.add('on');SFX.open();}
+function openPlayerChoice(r){if(!r)return;plPick=r;faceTo(r.x,r.z);$('pcpName').textContent=`🦞 ${r.name}`;const ok=canInvite(r);const b=$('pcpInvite');b.disabled=!ok;b.title=ok?'':(party&&party.members.includes(r.nid)?'已經是隊友了':'只有隊長可以邀請');b.textContent=party&&party.members.includes(r.nid)?'🤝 已是隊友':'🤝 邀請';$('pcpKick').style.display=isGM()?'':'none';$('plChoice').classList.add('on');SFX.open();}
 function closePlayerChoice(){$('plChoice').classList.remove('on');}
 $('pcpInvite').addEventListener('click',()=>{const r=plPick;closePlayerChoice();if(r&&canInvite(r))sendInvite(r.nid);});
 $('pcpGift').addEventListener('click',()=>{closePlayerChoice();if(plPick)openGift(plPick);});
 $('pcpCancel').addEventListener('click',()=>{closePlayerChoice();plPick=null;});
+$('pcpKick').addEventListener('click',()=>{const r=plPick;closePlayerChoice();if(r)gmKick(r.nid,r.name);});
 let giftTo=null,giftK=null;
 const isEquipped=k=>ply.weapon===k||ply.hat===k||ply.held===k||(ply.skins&&Object.values(ply.skins).includes(k))||(carry&&carry.id===k);
 function openGift(r){giftTo={nid:r.nid,name:r.name};renderGift();openPanel('gift');}

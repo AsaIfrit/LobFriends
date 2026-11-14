@@ -290,6 +290,9 @@ body.sleeping #sleepUI{display:flex}
 #giftConfirm .gci{font-size:46px;line-height:1.1}#giftConfirm .gci img{width:56px;height:56px}#giftConfirm p{font-weight:900;font-size:15px;margin:6px 0 10px}
 #giftConfirm .gcq{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px;font-weight:900}#giftConfirm .gcq input{width:64px;text-align:center;border:2px solid #f2e0d4;border-radius:10px;padding:5px;font-size:15px;font-weight:800}
 #giftConfirm .gcq .qb{padding:4px 12px}#giftConfirm .pcb{display:flex;gap:8px;justify-content:center}
+#kickOv{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(60,40,60,.55);backdrop-filter:blur(4px)}#kickOv.on{display:flex}
+#kickOv .card2{background:#fffaf4;border:4px solid #fff;border-radius:26px;padding:20px 26px;text-align:center;max-width:300px;box-shadow:0 10px 30px rgba(0,0,0,.25)}#kickOv h3{margin:6px 0;font-size:19px;color:#c0507a}#kickOv p{font-weight:800;font-size:14px;line-height:1.6;margin:6px 0 14px}
+.plr.gm{cursor:pointer}.plr.gm:hover{border-color:#ffb8c8;background:#fff4f8}
 #petChoice{position:fixed;inset:0;z-index:30;display:none;align-items:flex-end;justify-content:center;padding-bottom:calc(var(--sl,44px) + 120px);pointer-events:none}
 #petChoice.on{display:flex}#petChoice .card2{pointer-events:auto;background:#fffaf4;border:3px solid #fff;border-radius:22px;padding:12px 16px;box-shadow:0 6px 0 rgba(220,140,160,.3),0 10px 30px rgba(200,100,140,.2);text-align:center;animation:popIn .4s var(--spring)}
 #petChoice h3{margin:0 0 8px;font-size:16px}#petChoice .pcb{display:flex;gap:8px}#petChoice .qb{padding:8px 14px;font-size:14px}
@@ -549,13 +552,14 @@ body.ingame #start{display:none!important}
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
   <h2>🌐 線上玩家</h2><div class="sub" id="plSub"></div><div id="plList"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
-<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="gift"><div class="sheet"><div class="grab"></div>
   <h2>🎁 送禮</h2><div class="sub" id="giftSub"></div>
   <div class="giftCoin"><span>🪙 送金幣</span><input type="number" id="giftCoin" min="1" step="1" placeholder="數量" inputmode="numeric"><button class="qb pink" id="giftCoinBtn">送出</button></div>
   <div class="clab">點一下想送的道具（裝備中的不能送）</div><div id="giftGrid"></div>
   <button class="qb lav close" data-close="gift">關閉</button></div></div>
 <div id="giftConfirm"><div class="card2"><div id="gcIcon" class="gci"></div><p id="gcTxt"></p><div id="gcQtyRow" class="gcq"><button class="qb" id="gcMinus">－</button><input type="number" id="gcQty" min="1" value="1" inputmode="numeric"><span id="gcMax"></span><button class="qb" id="gcPlus">＋</button></div><div class="pcb"><button class="qb pink" id="gcYes">送出</button><button class="qb lav" id="gcNo">取消</button></div></div></div>
+<div id="kickOv"><div class="card2"><div style="font-size:52px">🚪</div><h3>你已被 GM 請下線</h3><p>進度已經自動存檔了。<br>重新整理網頁就能再進入遊戲。</p><button class="qb pink" id="kickReload">🔄 重新整理</button></div></div>
 <div id="petChoice"><div class="card2"><h3 id="pcName"></h3><div class="pcb"><button class="qb pink" id="pcInvite">🐾 邀請</button><button class="qb" id="pcStore">📦 收納</button><button class="qb lav" id="pcCancel">取消</button></div></div></div>
 <div class="panel" id="dex"><div class="sheet"><div class="grab"></div>
   <h2>📖 圖鑑</h2><div class="sub" id="dexSub"></div>
@@ -588,20 +592,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261115b"></script>
-<script src="firebase-config.js?v=20261115b"></script>
+<script src="config.js?v=20261115c"></script>
+<script src="firebase-config.js?v=20261115c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261115b"></script>
-<script src="js/audio.js?v=20261115b"></script>
-<script src="js/items.js?v=20261115b"></script>
-<script src="js/critter.js?v=20261115b"></script>
-<script src="js/world.js?v=20261115b"></script>
-<script src="js/game.js?v=20261115b"></script>
-<script src="js/ui.js?v=20261115b"></script>
-<script src="js/extra.js?v=20261115b"></script>
-<script src="js/net.js?v=20261115b"></script>
-<script src="js/cloud.js?v=20261115b"></script>
-<script src="js/skills.js?v=20261115b"></script>
-<script src="js/party.js?v=20261115b"></script>
+<script src="js/engine.js?v=20261115c"></script>
+<script src="js/audio.js?v=20261115c"></script>
+<script src="js/items.js?v=20261115c"></script>
+<script src="js/critter.js?v=20261115c"></script>
+<script src="js/world.js?v=20261115c"></script>
+<script src="js/game.js?v=20261115c"></script>
+<script src="js/ui.js?v=20261115c"></script>
+<script src="js/extra.js?v=20261115c"></script>
+<script src="js/net.js?v=20261115c"></script>
+<script src="js/cloud.js?v=20261115d"></script>
+<script src="js/skills.js?v=20261115c"></script>
+<script src="js/party.js?v=20261115c"></script>
 </body>
 </html>

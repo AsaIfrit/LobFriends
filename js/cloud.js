@@ -19,7 +19,7 @@ async function cloudInit(){const FB=window.LOBSTER_FIREBASE;if(!FB||!FB.apiKey||
   catch(e){console.warn('Firebase 載入失敗',e);return;}
   try{firebase.initializeApp(FB);CLOUD.auth=firebase.auth();CLOUD.db=firebase.firestore();}catch(e){console.warn(e);return;}
   if(FB.googleClientId)loadJs('https://accounts.google.com/gsi/client').catch(()=>{});
-  CLOUD.ready=true;cloudUI();CLOUD.auth.getRedirectResult().catch(e=>cloudErr(e));
+  CLOUD.ready=true;cloudUI();setTimeout(kickWatch,1500);CLOUD.auth.getRedirectResult().catch(e=>cloudErr(e));
   CLOUD.auth.onAuthStateChanged(u=>{CLOUD.user=u;cloudUI();if(u&&CLOUD.checked!==u.uid){CLOUD.checked=u.uid;cloudOnLogin(u);}});}
 function cloudErr(e){if(!e)return;const c=e.code||'';if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return;
   toast(c==='auth/unauthorized-domain'?'⚠️ 這個網址還沒加進 Firebase 的授權網域':c==='permission-denied'?'⚠️ 雲端存檔被拒絕，請檢查 Firestore 規則':'⚠️ 雲端錯誤：'+(c||e.message||e));console.warn(e);}
@@ -66,3 +66,34 @@ addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&
 $('cloudBtn').addEventListener('click',()=>{if(CLOUD.user)openSettings();else cloudLogin();});
 $('cloudIn').addEventListener('click',cloudLogin);$('cloudOut').addEventListener('click',cloudLogout);$('cloudUp').addEventListener('click',()=>cloudUpload());
 cloudInit();
+
+// ---------- GM 特權（依 Firebase UID） ----------
+const GM_UIDS=['vB3gw0XvrrUtjuw5soOc01CgEH22'];
+function isGM(){return!!(CLOUD.user&&GM_UIDS.includes(CLOUD.user.uid));}
+async function gmKick(nid,name){if(!isGM())return;const r=await cloudAsk(`請 ${name} 下線？`,'對方會自動存檔並離開遊戲，<br>要重新整理網頁才能再進來。','🚪 請下線','取消');
+  if(r!=='a')return;
+  // 寫進 Firestore 的 kicks/{對方的連線ID}；Firestore 規則會在 Google 伺服器上檢查「寫入的人是不是 GM」，假冒的寫入會被拒絕
+  try{await CLOUD.db.collection('kicks').doc(String(nid)).set({by:CLOUD.user.uid,t:firebase.firestore.FieldValue.serverTimestamp()});toast(`🚪 已請 ${name} 下線`);SFX.thud();}
+  catch(e){console.warn(e);toast(e&&e.code==='permission-denied'?'⚠️ 被 Firestore 規則拒絕了：請確認規則裡有加上 kicks 的設定':'⚠️ 請下線失敗：'+((e&&e.code)||e));}}
+// 舊的廣播踢人訊息不再採信（任何人都能假冒）
+function onKickMsg(o){}
+// 每位玩家只監看「自己這次連線」的那一筆 kicks 文件：開始時讀 1 次，被請下線時再讀 1 次
+let kickUnsub=null;
+function kickWatch(){if(!CLOUD.db||kickUnsub||typeof myNetId==='undefined'||!myNetId)return;
+  try{kickUnsub=CLOUD.db.collection('kicks').doc(String(myNetId)).onSnapshot(d=>{if(!d.exists)return;const v=d.data()||{};if(GM_UIDS.includes(v.by)&&!isGM())beKicked();},e=>console.warn('kick watch',e));}catch(e){console.warn(e);}}
+async function beKicked(){if(window.__kicked)return;try{save();}catch(e){}
+  try{if(CLOUD.user){CLOUD.busy=false;await cloudUpload(true);}}catch(e){}
+  window.__kicked=true;paused=true;CLOUD.dirty=false;try{if(kickUnsub){kickUnsub();kickUnsub=null;}}catch(e){}try{sessionStorage.removeItem('lobster-netid');}catch(e){}
+  try{if(sbClient){if(sbCh)sbClient.removeChannel(sbCh);if(typeof partyCh!=='undefined'&&partyCh)sbClient.removeChannel(partyCh);if(sbClient.removeAllChannels)sbClient.removeAllChannels();}}catch(e){}
+  try{sbCh=null;netConn=false;room=null;}catch(e){}
+  try{if(CLOUD.db&&CLOUD.db.terminate)CLOUD.db.terminate();}catch(e){}CLOUD.user=null;
+  $('kickOv').classList.add('on');}
+$('kickReload').addEventListener('click',()=>location.reload());
+// GM：在線上玩家列表點名字傳送
+$('plList').addEventListener('click',async e=>{if(!isGM())return;const row=e.target.closest('.plr[data-nid]');if(!row)return;const nid=row.dataset.nid;const pr=presOf(nid);if(!pr)return;
+  const name=cleanTxt(pr.n,10)||'旅人';const r=await cloudAsk(`傳送到 ${name} 身邊？`,pr.ar==='cave'?`對方在 ⛰️ 洞窟 B${pr.lv||1}`:'對方在 🌳 野外','✨ 傳送','取消');if(r!=='a')return;
+  const p2=presOf(nid)||pr;closePanel('players');gmTeleport(p2);});
+function gmTeleport(pr){if(carry)carryCancel();if(ply.sitting)standUp();if(ply.sleeping)wakeUp();if(ply.riding&&typeof getOff==='function')getOff();SFX.cast();
+  quickFade(()=>{const toCave=pr.ar==='cave';if(toCave){if(!ply.cave||caveLv!==(pr.lv||1))setCaveLv(pr.lv||1);ply.cave=true;}else ply.cave=false;
+    ply.indoor=false;ply.x=pr.x+1.2;ply.z=pr.z;ply.y=ply.cave?0:standY(ply.x,ply.z,99);ply.vy=0;ply.kx=ply.kz=0;snapCam=true;if(typeof portalLock!=='undefined')portalLock=1;});
+  toast('✨ 傳送中…');}

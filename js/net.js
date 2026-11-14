@@ -62,13 +62,13 @@ function updNetBadge(){const b=$('netBadge');if(!b)return;if(!room&&!sbClient){b
   const n=others().length;b.classList.toggle('off',!netConn);const pre=sbClient?`頻道${sbShard}・`:'';$('netTxt').textContent=netConn?pre+(n?`線上 ${n+1} 人`:'只有你'):(sbErr||pre+'連線中…');}
 function renderPlayers(){const o=others();const ar=pr=>pr.ar==='cave'?`⛰️ 洞窟 B${pr.lv||1}`:pr.ar==='in'?'🏠 室內':'🌳 野外';
   const inP=nid=>typeof party!=='undefined'&&party&&party.members.includes(nid);
-  $('plSub').textContent=`${sbClient?'頻道 '+sbShard+'・':''}共 ${o.length+1} 人在線上`;
-  $('plList').innerHTML=`<div class="plr me"><span>🦞 ${cleanTxt(look.name,10)}（你）</span><small>${ply.cave?'⛰️ 洞窟 B'+caveLv:ply.indoor?'🏠 室內':'🌳 野外'}</small></div>`+
-    (o.length?o.map(p=>{const pr=p.presence,nid=pr.id||p.peer;return`<div class="plr"><span>${inP(nid)?'🤝':'🦞'} ${cleanTxt(pr.n,10)||'旅人'}${pr.dn?' 💫':''}</span><small>${ar(pr)}</small></div>`;}).join(''):'<div class="sub" style="text-align:center;margin:10px 0">目前只有你在這個頻道，邀請朋友一起玩吧！</div>');}
+  $('plSub').textContent=`${sbClient?'頻道 '+sbShard+'・':''}共 ${o.length+1} 人在線上${isGM()?'・🛡️ GM：點玩家名字可以傳送過去':''}`;
+  const html=`<div class="plr me"><span>🦞 ${cleanTxt(look.name,10)}（你）</span><small>${ply.cave?'⛰️ 洞窟 B'+caveLv:ply.indoor?'🏠 室內':'🌳 野外'}</small></div>`+
+    (o.length?o.map(p=>{const pr=p.presence,nid=pr.id||p.peer;return`<div class="plr ${isGM()?'gm':''}" data-nid="${nid}"><span>${inP(nid)?'🤝':'🦞'} ${cleanTxt(pr.n,10)||'旅人'}${pr.dn?' 💫':''}</span><small>${ar(pr)}</small></div>`;}).join(''):'<div class="sub" style="text-align:center;margin:10px 0">目前只有你在這個頻道，邀請朋友一起玩吧！</div>');if($('plList')._h!==html){$('plList')._h=html;$('plList').innerHTML=html;}}
 let plT=null;
 $('netBadge').addEventListener('click',()=>{renderPlayers();openPanel('players');clearInterval(plT);plT=setInterval(()=>{if($('players').classList.contains('show'))renderPlayers();else clearInterval(plT);},1000);});
 
-function netSend(){if(!room||!started)return;
+function netSend(){if(!room||!started||window.__kicked)return;
   const p={v:1,n:cleanTxt(look.name,10),x:+ply.x.toFixed(2),z:+ply.z.toFixed(2),y:+ply.y.toFixed(2),f:+ply.face.toFixed(2),ar:netArea(),an:netAnim(),
     w:(toolShow||ply.held&&P.T[ply.held]&&ply.held||wpnModel())||'stick',cb:ply.combo||0,id:myNetId,pt:(typeof party!=='undefined'&&party)?party.pid:0,hp:+(Math.max(0,ply.hp)/ply.max).toFixed(2),dn:ply.downed?1:0,lv:ply.cave?caveLv:0,tn:ply.tauntT>0?1:0,st:ply.stealthT>0?1:0};
   if(!sbClient&&typeof outbox!=='undefined'){const now=performance.now();const mq=outbox.filter(x=>now-x[2]<3000).map(x=>[x[0],x[1]]);if(mq.length)p.mq=mq;if(roomMon)p.mon=roomMon;}

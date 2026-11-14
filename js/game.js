@@ -512,7 +512,7 @@ function walkPose(p,w,moving,T,ph=0){if(moving){p.legs=[Math.sin(w)*0.6,-Math.si
 const clock=new THREE.Clock();let miniT=0,hudT=0,saveT=0,snapCam=true,warnLv=0,bfT=0;
 const camPos=new THREE.Vector3(),camTgt=new THREE.Vector3();
 function loop(){
-  requestAnimationFrame(loop);
+  if(window.__kicked)return;requestAnimationFrame(loop);
   const rawDt=Math.min(clock.getDelta(),0.05);let dt=rawDt;const T=clock.elapsedTime;
   if(hitStop>0){hitStop-=dt;dt*=0.08;}
   if(!paused&&started)step(dt,T);else{npcUpdate(rawDt,T);danceUpdate(rawDt,T);}
