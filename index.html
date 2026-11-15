@@ -139,7 +139,7 @@ body:not(.ingame) #skillBar,body.sleeping #skillBar,body.downed #skillBar,body.c
 #bossBar{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:7;display:none;width:min(60vw,420px);text-align:center;font-weight:900;color:#fff;text-shadow:0 2px 0 #8a2a4a}
 #bossBar.on{display:block;animation:popIn .5s var(--spring)}#bossBar i{display:block;height:14px;border-radius:8px;background:rgba(60,30,50,.6);border:2px solid #fff;overflow:hidden;margin-top:3px}#bossFill{display:block;height:100%;background:linear-gradient(90deg,#ff6f9f,#ffb36e)}
 #bossBar small{font-size:11px}
-#decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:linear-gradient(140deg,#ffd36e,#ffb38a);color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35)}
+#decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:linear-gradient(140deg,#ffd36e,#ffb38a);color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35);cursor:pointer;pointer-events:auto;touch-action:manipulation}
 body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 /* 擺放中按鈕 */
 #rotSl{position:fixed;left:50%;bottom:calc(var(--sl,44px) + 76px);z-index:6;display:none;align-items:center;gap:8px;transform:translateX(-50%);background:rgba(255,250,243,.95);border:3px solid #fff;border-radius:18px;padding:6px 12px;box-shadow:0 4px 0 rgba(200,140,110,.4)}
@@ -509,7 +509,7 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="fan" data-f="full" style="--i:7">⛶<b>全螢幕</b></button>
   <button class="fan" data-f="set" style="--i:8">⚙️<b>設置</b></button>
 </div>
-<div id="decoTag">🛋️ 布置模式・靠近家具按「搬動」</div>
+<div id="decoTag">🛋️ 點擊關閉布置模式</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
 <div id="visitBar"><span id="visitTxt"></span><button class="qb pink" id="visitEnd">結束參觀</button></div><div id="toast"></div><div id="notes"></div><div id="chatLog"></div>
 <div id="social"><div class="sbox"><div class="chT">💬 對話紀錄</div><div id="chatHist"></div><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
@@ -650,20 +650,20 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261117b"></script>
-<script src="firebase-config.js?v=20261117b"></script>
+<script src="config.js?v=20261117c"></script>
+<script src="firebase-config.js?v=20261117c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261117b"></script>
-<script src="js/audio.js?v=20261117b"></script>
-<script src="js/items.js?v=20261117b"></script>
-<script src="js/critter.js?v=20261117b"></script>
-<script src="js/world.js?v=20261117b"></script>
-<script src="js/game.js?v=20261117b"></script>
-<script src="js/ui.js?v=20261117b"></script>
-<script src="js/extra.js?v=20261117b"></script>
-<script src="js/net.js?v=20261117b"></script>
-<script src="js/cloud.js?v=20261117b"></script>
-<script src="js/skills.js?v=20261117b"></script>
-<script src="js/party.js?v=20261117b"></script>
+<script src="js/engine.js?v=20261117c"></script>
+<script src="js/audio.js?v=20261117c"></script>
+<script src="js/items.js?v=20261117c"></script>
+<script src="js/critter.js?v=20261117c"></script>
+<script src="js/world.js?v=20261117c"></script>
+<script src="js/game.js?v=20261117c"></script>
+<script src="js/ui.js?v=20261117c"></script>
+<script src="js/extra.js?v=20261117c"></script>
+<script src="js/net.js?v=20261117c"></script>
+<script src="js/cloud.js?v=20261117c"></script>
+<script src="js/skills.js?v=20261117c"></script>
+<script src="js/party.js?v=20261117c"></script>
 </body>
 </html>
