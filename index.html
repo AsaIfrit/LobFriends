@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#6b4a3e;--line:#f2d4c2;--cream:#fffaf3;--spring:cubic-bezier(.2,1.5,.45,1);--soft:cubic-bezier(.3,1.25,.5,1)}
-html,body{margin:0;height:100%;overflow:hidden;background:#cfeaff;font-family:"Zen Maru Gothic","PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;color:var(--ink)}
+html,body{margin:0;height:100%;overflow:hidden;background:#cfeaff;font-family:"Zen Maru Gothic","PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;touch-action:pan-x pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;color:var(--ink)}
 canvas#c{display:block;width:100vw;height:100vh;touch-action:none}
 button{font-family:inherit;color:var(--ink);-webkit-tap-highlight-color:transparent;cursor:pointer}
 .card{background:rgba(255,250,243,.94);border:2.5px solid var(--line);border-radius:18px;padding:5px 11px;box-shadow:0 4px 0 rgba(200,140,110,.28),0 6px 14px rgba(110,70,50,.1);font-weight:900}
@@ -465,6 +465,21 @@ body.ingame #start{display:none!important}
   #hbLabel{bottom:calc(var(--sl) + 22px)}#dlg{bottom:calc(var(--sl) + 20px)}
   #castBar,#revBar{bottom:calc(var(--sl) + 60px)}
 }
+/* ===== 觸控捲動：介面裡可以用手指滑動捲動（遊戲畫面本身仍然不會被拖動） ===== */
+.sheet,#plList,#giftGrid,#gmGrid,#bagGrid,#chatHist,.scroll{touch-action:pan-x pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.sheet .bi{touch-action:pan-x pan-y}
+.panel,.panel *{touch-action:pan-x pan-y}.panel input[type=range]{touch-action:pan-y}
+#hud,#topR,#hotbar,.btn,#skillBar,#joyBase,#notes{touch-action:none}
+/* 介面大小：手機橫放、矮螢幕自動縮小面板，讓一次看到更多內容；玩家也能在設置裡自己調 */
+.sheet{zoom:var(--uiz,1)}
+@media (max-height:500px) and (orientation:landscape){:root{--uiz-auto:.82}}
+@media (max-width:560px) and (max-height:700px){:root{--uiz-auto:.9}}
+body.uiz-auto .sheet{zoom:var(--uiz-auto,1)}.drawer .sheet{height:calc(100% / var(--uiz,1))}body.uiz-auto .drawer .sheet{height:calc(100% / var(--uiz-auto,1))}
+@media (max-width:560px){#toast{top:38%}}
+.sheet input[type=range]{touch-action:pan-y}
+/* ===== 介面縮小：小螢幕一次看到更多內容 ===== */
+@media (max-width:560px){.sheet{max-height:86vh;padding:8px 12px 14px}.sheet h2{font-size:19px}.sheet .sub{font-size:12px;margin-bottom:8px}.drawer .sheet{max-height:none}}
+@media (max-height:500px) and (orientation:landscape){.sheet{max-height:94vh;width:min(94vw,760px);padding:6px 14px 10px}.sheet h2{font-size:18px}.sheet .sub{font-size:11.5px;margin-bottom:6px}.grab{margin-bottom:4px}.drawer .sheet{max-height:none;width:min(60vw,460px)}}
 </style>
 </head>
 <body>
@@ -606,6 +621,7 @@ body.ingame #start{display:none!important}
   <div class="clab">音效 <span id="vSv"></span></div><input type="range" id="vS" min="0" max="1" step="0.05">
   <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此）</div><div class="chips" id="chChips"></div><div class="clab">⚡ 效能模式（覺得卡的時候可以調整）</div><div class="sub" style="margin:2px 0 4px">顯示附近的玩家</div><div class="chips" id="perfNear"><button class="chip" data-pn="0">全部</button><button class="chip" data-pn="10">最近 10 位</button><button class="chip" data-pn="5">最近 5 位</button></div><div class="sub" style="margin:6px 0 4px">別人的攻擊特效</div><div class="chips" id="perfFx"><button class="chip" data-pf="1">顯示</button><button class="chip" data-pf="0">關閉</button></div><div class="chips" style="margin-top:6px"><button class="chip" id="perfLeast">🔀 切換到人最少的分流</button></div></div>
   <div id="cloudWrap" style="display:none"><div class="clab">☁️ 雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
+  <div class="clab">🔍 介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
   <div class="clab">🏃 跑步方式</div><div class="chips" id="runChips"><button class="chip" data-rm="hold">長按跑步鍵</button><button class="chip" data-rm="toggle">按一下就跑（停下才結束）</button></div>
   <div class="sub" style="margin:2px 0 8px;font-size:11px">手機搖桿推到底也適用：「按一下」模式推到底一次後就會一直跑，放開搖桿才停下</div>
   <div id="kbWrap"><div class="clab" style="display:flex;justify-content:space-between;align-items:center">⌨️ 快捷鍵設定 <button class="qb" id="kbReset" style="padding:3px 10px;font-size:12px">恢復預設</button></div><div class="sub" style="margin:0 0 4px">點按鈕後按下想要的鍵盤按鍵（Esc 取消）。重複的按鍵會自動互換。</div><div id="kbList"></div></div>
@@ -634,20 +650,20 @@ body.ingame #start{display:none!important}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261116z"></script>
-<script src="firebase-config.js?v=20261116z"></script>
+<script src="config.js?v=20261117a"></script>
+<script src="firebase-config.js?v=20261117a"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261116z"></script>
-<script src="js/audio.js?v=20261116z"></script>
-<script src="js/items.js?v=20261116z"></script>
-<script src="js/critter.js?v=20261116z"></script>
-<script src="js/world.js?v=20261116z"></script>
-<script src="js/game.js?v=20261116z"></script>
-<script src="js/ui.js?v=20261116z"></script>
-<script src="js/extra.js?v=20261116z"></script>
-<script src="js/net.js?v=20261116z"></script>
-<script src="js/cloud.js?v=20261116z"></script>
-<script src="js/skills.js?v=20261116z"></script>
-<script src="js/party.js?v=20261116z"></script>
+<script src="js/engine.js?v=20261117a"></script>
+<script src="js/audio.js?v=20261117a"></script>
+<script src="js/items.js?v=20261117a"></script>
+<script src="js/critter.js?v=20261117a"></script>
+<script src="js/world.js?v=20261117a"></script>
+<script src="js/game.js?v=20261117a"></script>
+<script src="js/ui.js?v=20261117a"></script>
+<script src="js/extra.js?v=20261117a"></script>
+<script src="js/net.js?v=20261117a"></script>
+<script src="js/cloud.js?v=20261117a"></script>
+<script src="js/skills.js?v=20261117a"></script>
+<script src="js/party.js?v=20261117a"></script>
 </body>
 </html>
