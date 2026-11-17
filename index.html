@@ -29,7 +29,28 @@ body.sleeping #spdTag{display:inline-block}
 .xpwrap small{font-size:10px;opacity:.75}
 .stat{display:flex;align-items:center;gap:5px;font-size:12px}
 .bar{width:92px;height:10px;background:#fbe6dc;border-radius:8px;overflow:hidden;border:2px solid #f2d4c2;position:relative}
-.bar>div{height:100%;width:100%;border-radius:6px;transition:width .35s var(--soft)}
+.bar>div{height:100%;width:100%;border-radius:6px;transition:width .45s cubic-bezier(.22,1,.36,1);position:relative;z-index:1}
+/* 血條：白色殘影（延遲後才追上）、受傷閃白＋抖動、低血量變色 */
+.bar>.ghost{position:absolute;left:0;top:0;z-index:0;background:#fff4ea;transition:width .9s cubic-bezier(.22,1,.36,1) .4s}
+.bar.hit{animation:barShake .22s linear}.bar.hit>div:not(.ghost){animation:barFlash .2s ease-out}
+@keyframes barShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}45%{transform:translateX(3px)}70%{transform:translateX(-2px)}}
+@keyframes barFlash{0%{filter:brightness(2.4) saturate(.2)}100%{filter:none}}
+.bar.warn>#hpFill,.bar.warn>.pbHp{background:linear-gradient(90deg,#ffa95a,#ffd08a)!important}
+.bar.danger>#hpFill,.bar.danger>.pbHp{background:linear-gradient(90deg,#ff4f6a,#ff8a9a)!important;animation:barPulse .8s ease-in-out infinite}
+.bar.danger>#enFill,.bar.danger>.pbEn{background:linear-gradient(90deg,#ffa95a,#ffd08a)!important}
+@keyframes barPulse{50%{filter:brightness(1.35)}}
+/* 角色腳下的小血條 */
+#plyBars{position:fixed;z-index:3;display:none;flex-direction:column;gap:2px;transform:translateX(-50%);pointer-events:none}
+#plyBars .bar.pb{border-width:1.5px;border-color:rgba(255,255,255,.85);background:rgba(60,40,50,.45);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+#plyBars .pbHp{background:linear-gradient(90deg,#ff8fb0,#ffc0d4)}#plyBars .pbEn{background:linear-gradient(90deg,#9f8ff0,#cfc4ff)}
+#plyBars.pb-s .bar.pb{width:40px;height:4px}#plyBars.pb-m .bar.pb{width:58px;height:6px}#plyBars.pb-l .bar.pb{width:84px;height:8px}
+#plyBars.pb-off{display:none!important}
+/* 篝火長按提示（在篝火上方）＋互動鍵上的進度圈 */
+#holdTip{position:fixed;z-index:3;display:none;align-items:center;gap:6px;transform:translate(-50%,-100%);pointer-events:none;background:rgba(30,20,20,.72);color:#fff;border-radius:999px;padding:4px 12px 4px 4px;font-weight:900;font-size:13px;white-space:nowrap}
+#holdTip .hk{position:relative;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(#ffb040 var(--p,0deg),rgba(255,255,255,.25) 0)}
+#holdTip .hk i{position:absolute;inset:3px;border-radius:50%;background:#2a1c18}#holdTip .hk b{position:relative;font-size:13px}
+#holdTip.on .ht{color:#ffd08a}
+#btnAct.holding::after{content:'';position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(#ffb040 var(--hold,0deg),transparent 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));pointer-events:none}
 .sNum{font-size:11px;font-weight:900;white-space:nowrap;min-width:44px;font-variant-numeric:tabular-nums}.sNum.low{color:#e0607a}
 #hpFill{background:linear-gradient(90deg,#ff8fb0,#ffc0d4)}
 #enFill{background:linear-gradient(90deg,#9f8ff0,#cfc4ff)}
@@ -94,6 +115,36 @@ body.building #btnAtk{display:none!important}
 #gMach.shake{animation:gShake .12s linear 8}
 @keyframes gShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg) scale(1.05)}75%{transform:rotate(8deg) scale(1.05)}}
 #gEgg{position:absolute;font-size:96px;opacity:0;transform:scale(.2)}
+/* ===== 轉蛋開蛋動畫（畫面中央） ===== */
+#gOv{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(circle,rgba(40,24,48,.55),rgba(20,10,30,.78))}
+#gOv.on{display:flex;animation:gOvIn .2s ease-out}#gOv.out{animation:gOvOut .3s ease-in forwards}
+@keyframes gOvIn{from{opacity:0}}@keyframes gOvOut{to{opacity:0}}
+#gOv .gCap{position:absolute;width:128px;height:160px;transform:translateY(-120vh);animation:gCapDrop .38s cubic-bezier(.5,0,.75,0) forwards}
+#gOv .gTop{position:absolute;left:0;right:0;top:0;height:52%;border-radius:64px 64px 14px 14px/70px 70px 14px 14px;background:linear-gradient(160deg,#ffffff,#eae4ee);box-shadow:inset -10px -8px 0 rgba(0,0,0,.07),inset 12px 10px 0 rgba(255,255,255,.6)}
+#gOv.hat .gBot{background:linear-gradient(160deg,#ffb36a,#ff8a3a)}
+#gOv .gBot{position:absolute;left:0;right:0;bottom:0;height:50%;border-radius:14px 14px 64px 64px/14px 14px 70px 70px;background:linear-gradient(160deg,#ffb36a,#ff8a3a);box-shadow:inset -10px -10px 0 rgba(0,0,0,.08),inset 10px 6px 0 rgba(255,255,255,.25)}
+#gOv .gBand{position:absolute;left:2px;right:2px;top:calc(50% - 3px);height:6px;border-radius:3px;background:rgba(120,70,100,.35)}
+#gOv .gCrack{position:absolute;inset:0;width:100%;height:100%;opacity:0}#gOv .gCrack path{fill:none;stroke:#ffd84a;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px #ffe680);stroke-dasharray:120;stroke-dashoffset:120}
+#gOv.land .gCap{animation:gCapLand .16s ease-out forwards}
+#gOv.shake .gCap{animation:gCapShake .1s linear infinite;transform:translateY(0)}
+#gOv.shake .gCrack{opacity:1}#gOv.shake .gCrack path:first-child{transition:stroke-dashoffset .25s;stroke-dashoffset:40}#gOv.crack2 .gCrack path{transition:stroke-dashoffset .22s;stroke-dashoffset:0}
+#gOv.burst .gCap{display:none}
+@keyframes gCapDrop{to{transform:translateY(0)}}
+@keyframes gCapLand{0%{transform:translateY(0) scale(1.18,.78)}60%{transform:translateY(-14px) scale(.94,1.08)}100%{transform:translateY(0) scale(1)}}
+@keyframes gCapShake{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-5px,1px) rotate(-6deg)}75%{transform:translate(5px,-1px) rotate(6deg)}}
+#gOv .gShards{position:absolute;width:0;height:0}#gOv .gShards i{position:absolute;width:26px;height:20px;margin:-10px -13px;border-radius:5px;opacity:0;background:#ff9a4a;clip-path:polygon(0 30%,60% 0,100% 55%,40% 100%)}
+#gOv .gShards i.w{background:#fff}
+#gOv.burst .gShards i{animation:gShard .65s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes gShard{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(.6)}}
+#gOv .gRays{position:absolute;width:520px;height:520px;border-radius:50%;opacity:0;background:repeating-conic-gradient(rgba(255,236,170,.55) 0 8deg,transparent 8deg 22deg);-webkit-mask:radial-gradient(circle,#000 20%,transparent 70%);mask:radial-gradient(circle,#000 20%,transparent 70%)}
+#gOv.burst .gRays{animation:gRays 1.4s ease-out forwards,gSpin 6s linear infinite}
+@keyframes gRays{0%{opacity:0;transform:scale(.3)}20%{opacity:1}100%{opacity:.7;transform:scale(1)}}@keyframes gSpin{to{rotate:360deg}}
+#gOv .gFlash{position:absolute;inset:0;background:#fff;opacity:0}#gOv.burst .gFlash{animation:gFlash .35s ease-out}@keyframes gFlash{0%{opacity:.9}100%{opacity:0}}
+#gOv .gItem{position:absolute;font-size:110px;line-height:1;opacity:0;transform:scale(.2);filter:drop-shadow(0 0 18px rgba(255,236,170,.9))}#gOv .gItem img{width:120px;height:120px}
+#gOv.reveal .gItem{animation:gItem .5s cubic-bezier(.34,1.56,.64,1) forwards,gBob 1.6s ease-in-out .5s infinite}
+@keyframes gItem{to{opacity:1;transform:scale(1)}}@keyframes gBob{50%{translate:0 -8px}}
+#gOv .gStars{position:absolute;transform:translateY(-110px);font-size:34px;letter-spacing:6px;color:#ffd84a;text-shadow:0 0 10px #ffe680,0 3px 0 #b8862a;opacity:0}
+#gOv.reveal .gStars{animation:gStars .5s ease-out .15s forwards}@keyframes gStars{from{opacity:0;transform:translateY(-60px) scale(.5)}to{opacity:1;transform:translateY(-110px) scale(1)}}
 #gEgg.drop{animation:gDrop .7s var(--spring) forwards}#gEgg.crack{animation:gCrack .5s linear 2}
 @keyframes gDrop{0%{opacity:1;transform:translateY(-80px) scale(.3)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes gCrack{0%,100%{transform:rotate(0)}30%{transform:rotate(-14deg)}70%{transform:rotate(14deg)}}
@@ -642,6 +693,7 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此）</div><div class="chips" id="chChips"></div><div class="clab">⚡ 效能模式（覺得卡的時候可以調整）</div><div class="sub" style="margin:2px 0 4px">顯示附近的玩家</div><div class="chips" id="perfNear"><button class="chip" data-pn="0">全部</button><button class="chip" data-pn="10">最近 10 位</button><button class="chip" data-pn="5">最近 5 位</button></div><div class="sub" style="margin:6px 0 4px">別人的攻擊特效</div><div class="chips" id="perfFx"><button class="chip" data-pf="1">顯示</button><button class="chip" data-pf="0">關閉</button></div><div class="chips" style="margin-top:6px"><button class="chip" id="perfLeast">🔀 切換到人最少的分流</button></div></div>
   <div id="cloudWrap" style="display:none"><div class="clab">☁️ 雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
   <div class="clab">🔍 介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
+  <div class="clab">❤️ 角色腳下顯示血條／精神條</div><div class="chips" id="pbarChips"><button class="chip" data-pb="off">關閉</button><button class="chip" data-pb="s">小</button><button class="chip" data-pb="m">中</button><button class="chip" data-pb="l">大</button></div>
   <div class="clab">🏷️ 其他玩家的名稱</div><div class="chips" id="nameChips"><button class="chip" data-nm="all">全部顯示</button><button class="chip" data-nm="party">只顯示隊友</button><button class="chip" data-nm="none">全部隱藏</button></div>
   <div class="clab">🏃 跑步方式</div><div class="chips" id="runChips"><button class="chip" data-rm="hold">長按跑步鍵</button><button class="chip" data-rm="toggle">按一下就跑（停下才結束）</button></div>
   <div class="sub" style="margin:2px 0 8px;font-size:11px">手機搖桿推到底也適用：「按一下」模式推到底一次後就會一直跑，放開搖桿才停下</div>
@@ -671,22 +723,23 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261117s"></script>
-<script src="firebase-config.js?v=20261117s"></script>
+<script src="config.js?v=20261117t"></script>
+<script src="firebase-config.js?v=20261117t"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261117s"></script>
-<script src="js/audio.js?v=20261117s"></script>
-<script src="js/items.js?v=20261117s"></script>
-<script src="js/critter.js?v=20261117s"></script>
-<script src="js/cave.js?v=20261117s"></script>
-<script src="js/world.js?v=20261117s"></script>
-<script src="js/game.js?v=20261117s"></script>
-<script src="js/ui.js?v=20261117s"></script>
-<script src="js/extra.js?v=20261117s"></script>
-<script src="js/net.js?v=20261117s"></script>
-<script src="js/cloud.js?v=20261117s"></script>
-<script src="js/skills.js?v=20261117s"></script>
-<script src="js/photo.js?v=20261117s"></script>
-<script src="js/party.js?v=20261117s"></script>
+<script src="js/engine.js?v=20261117t"></script>
+<script src="js/audio.js?v=20261117t"></script>
+<script src="js/items.js?v=20261117t"></script>
+<script src="js/critter.js?v=20261117t"></script>
+<script src="js/cave.js?v=20261117t"></script>
+<script src="js/world.js?v=20261117t"></script>
+<script src="js/game.js?v=20261117t"></script>
+<script src="js/ui.js?v=20261117t"></script>
+<script src="js/extra.js?v=20261117t"></script>
+<script src="js/net.js?v=20261117t"></script>
+<script src="js/cloud.js?v=20261117t"></script>
+<script src="js/skills.js?v=20261117t"></script>
+<script src="js/bars.js?v=20261117t"></script>
+<script src="js/photo.js?v=20261117t"></script>
+<script src="js/party.js?v=20261117t"></script>
 </body>
 </html>
