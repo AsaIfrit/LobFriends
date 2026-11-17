@@ -195,6 +195,15 @@ body:not(.ingame) #chatLog{display:none}
 #btnJump{right:30px;bottom:176px;width:56px;height:56px;font-size:22px;background:linear-gradient(160deg,#e2d8ff,#b9a6f2);color:#fff}
 #hotbar{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);display:flex;gap:5px;padding:5px;background:rgba(255,250,243,.9);border:2.5px solid var(--line);border-radius:18px;max-width:94vw;overflow-x:auto;z-index:4;box-shadow:0 4px 0 rgba(200,140,110,.3)}
 #hotbar:empty{display:none}
+.rc .qrow{display:flex;gap:4px;align-items:center;justify-content:center;flex-wrap:wrap}.rc input.qty{width:54px;padding:5px 4px;border:2px solid #f3d3c4;border-radius:10px;font:inherit;font-weight:900;text-align:center;color:#6b4a3e;background:#fffaf3}
+.pcard .pbtns{display:flex;flex-direction:column;gap:4px}.pcard .qb.pfree{background:#ece0da;color:#8a6e66;box-shadow:none;font-size:11px;padding:4px 8px}
+/* 拍照模式：只留 3D 畫面和拍照面板；photoClean 連面板也藏起來 */
+#photoBar{position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;display:none;flex-direction:column;gap:6px;width:min(94vw,440px);background:rgba(255,250,243,.94);border:3px solid var(--line);border-radius:20px;padding:10px 14px;box-shadow:0 4px 0 rgba(200,140,110,.35);font-weight:800;font-size:13px;color:#6b4a3e}
+#photoBar .phRow{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}#photoBar input[type=range]{flex:1;min-width:140px}#photoBar .qb{flex:1;padding:8px 10px;font-size:13px}#photoBar .chips{flex-wrap:wrap}
+body.photo #photoBar{display:flex}body.photo.photoClean #photoBar{display:none}
+body.photo>*:not(#c):not(#photoBar):not(#phBack):not(script){visibility:hidden!important}
+#phBack{position:fixed;left:max(10px,env(safe-area-inset-left));top:max(10px,env(safe-area-inset-top));z-index:61;width:42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:rgba(60,40,40,.28);color:#fff;font-size:19px;display:none;align-items:center;justify-content:center;opacity:.55;cursor:pointer;padding:0}
+#phBack:hover{opacity:.9}body.photo.photoClean #phBack{display:flex}
 .slot{position:relative;flex:0 0 auto;width:44px;height:44px;border-radius:13px;border:2.5px solid #fbe3d8;background:#fff;font-size:23px;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .15s var(--spring)}
 .slot.sel{border-color:#ff9f80;background:#fff0e8;transform:translateY(-5px)}
 .slot.eq{border-color:#b9a6f2;background:#f4f0ff}
@@ -402,12 +411,13 @@ body.ingame #start{display:none!important}
 @media (max-aspect-ratio:1/1){.tBtns{top:46%}.mbtn.side{right:50%;transform:translateX(50%);bottom:max(9vh,calc(env(safe-area-inset-bottom) + 46px))}.tName{display:none}.splash{right:-4%;bottom:-18px}}
 /* ===== 背包 ===== */
 #gmGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:7px;margin-bottom:8px;max-height:46vh;overflow:auto;padding:2px}#gmGrid .bi{cursor:pointer}#gmGrid .bi i{font-style:normal}
-#bagGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:7px;margin-bottom:8px;max-height:42vh;overflow:auto;padding:2px}
+#bagGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:7px;margin-bottom:8px;max-height:42vh;overflow:auto;padding:2px}
 .bi{position:relative;aspect-ratio:1;border:2.5px solid #fbe3d8;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:grab;touch-action:none;transition:transform .15s var(--spring)}
 .bi.pick{border-color:#ff8f73;background:#fff0e8;transform:scale(1.08)}
 .bi i{position:absolute;right:3px;bottom:1px;font-style:normal;font-size:11px;font-weight:900}
 .bi em{position:absolute;left:3px;top:1px;font-style:normal;font-size:10px;font-weight:900;background:#b9a6f2;color:#fff;border-radius:6px;padding:0 4px}
 #bagInfo{min-height:34px;margin:4px 0 8px}
+#bagGrid .bi{aspect-ratio:auto;min-height:64px;flex-direction:column;gap:1px;padding:5px 2px 4px}#bagGrid .bi .ic{line-height:1.1}#bagGrid .bi .bn{font-size:10px;font-weight:800;line-height:1.15;color:#6b4a3e;max-width:100%;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-all;margin-bottom:6px}
 #bagBar{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;background:#f6ebe2;border-radius:14px;padding:5px;margin-bottom:6px}
 .bs{position:relative;aspect-ratio:1;border:2px solid #e8d4c4;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,4.5vw,22px);cursor:pointer;transition:transform .15s var(--spring)}
 .bs.empty{background:#fbf6f2}.bs.hov{border-color:#ff8f73;transform:scale(1.15)}
@@ -506,8 +516,10 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="fan" data-f="pet" style="--i:4">🐾<b>寵物</b></button>
   <button class="fan" data-f="deco" style="--i:5">🛋️<b id="decoLbl">布置</b></button>
   <button class="fan" data-f="dex" style="--i:6">📖<b>圖鑑</b></button>
-  <button class="fan" data-f="full" style="--i:7">⛶<b>全螢幕</b></button>
-  <button class="fan" data-f="set" style="--i:8">⚙️<b>設置</b></button>
+  <button class="fan" data-f="beauty" style="--i:7">💄<b>美容</b></button>
+  <button class="fan" data-f="photo" style="--i:8">📷<b>拍照</b></button>
+  <button class="fan" data-f="full" style="--i:9">⛶<b>全螢幕</b></button>
+  <button class="fan" data-f="set" style="--i:10">⚙️<b>設置</b></button>
 </div>
 <div id="decoTag">🛋️ 點擊關閉布置模式</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
@@ -568,6 +580,8 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <details class="cfold"><summary>✨ 睫毛</summary><div class="chips" id="chLash"></div><div class="sl" data-g="lash"></div></details>
   <details class="cfold"><summary>👄 嘴巴</summary><div class="chips" id="chMouth"></div><div class="clab">嘴巴顏色</div><div class="sw" id="swMouth"></div><div class="sl" data-g="mouth"></div></details>
   <details class="cfold"><summary>💋 嘴唇</summary><div class="chips" id="chLip"></div><div class="sl" data-g="lip"></div></details>
+  <details class="cfold"><summary>🎀 飾品</summary><div id="hatNone" class="sub">目前沒有戴飾品。在背包點一下帽子就能戴上，再回來調整喔</div>
+    <div id="hatAdjWrap"><div class="clab" id="hatAdjName"></div><div class="sl" data-g="hat"></div><button class="qb lav" id="hatReset" style="margin-top:6px">↺ 恢復預設</button></div></details>
   <details class="cfold"><summary>🌸 腮紅</summary><div class="chips" id="chBlush"></div><div class="clab">腮紅顏色</div><div class="sw" id="swBlush"></div><div class="sl" data-g="blush"></div></details>
   <div class="crow2"><button class="qb lav" id="cRand">🎲 隨機</button><button class="qb pink" id="cDone">出發！✨</button></div>
 </div></div>
@@ -614,6 +628,12 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <h2>📖 圖鑑</h2><div class="sub" id="dexSub"></div>
   <div class="tabs" id="dexTabs"></div>
   <div class="grid" id="dexGrid"></div><button class="qb lav close" data-close="dex">關閉</button></div></div>
+<button id="phBack" title="叫回介面（Esc）">📷</button>
+<div id="photoBar"><div class="phRow"><b>📷 拍照模式</b><span class="sub">拖曳轉鏡頭・滾輪／雙指縮放</span></div>
+  <div class="phRow"><span>🕒 時間 <b id="phTv">12:00</b></span><input type="range" id="phTime" min="0" max="1439" step="5"></div>
+  <div class="chips" id="phChips"><button class="chip" data-ph="pl">隱藏玩家</button><button class="chip" data-ph="npc">隱藏 NPC</button><button class="chip" data-ph="mon">隱藏敵人</button><button class="chip" data-ph="me">隱藏自己</button></div>
+  <div class="phRow"><button class="qb pink" id="phClean">🙈 隱藏介面</button><button class="qb lav" id="phEnd">結束拍照（Esc）</button></div>
+  <div class="sub" style="font-size:11px">隱藏介面後，按 Esc 或左上角的 📷 就會回來；結束後時間會恢復</div></div>
 <div class="panel" id="settings"><div class="sheet"><div class="grab"></div>
   <h2>⚙️ 設置</h2>
   <div class="clab">主音量 <span id="vMv"></span></div><input type="range" id="vM" min="0" max="1" step="0.05">
@@ -622,6 +642,7 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此）</div><div class="chips" id="chChips"></div><div class="clab">⚡ 效能模式（覺得卡的時候可以調整）</div><div class="sub" style="margin:2px 0 4px">顯示附近的玩家</div><div class="chips" id="perfNear"><button class="chip" data-pn="0">全部</button><button class="chip" data-pn="10">最近 10 位</button><button class="chip" data-pn="5">最近 5 位</button></div><div class="sub" style="margin:6px 0 4px">別人的攻擊特效</div><div class="chips" id="perfFx"><button class="chip" data-pf="1">顯示</button><button class="chip" data-pf="0">關閉</button></div><div class="chips" style="margin-top:6px"><button class="chip" id="perfLeast">🔀 切換到人最少的分流</button></div></div>
   <div id="cloudWrap" style="display:none"><div class="clab">☁️ 雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
   <div class="clab">🔍 介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
+  <div class="clab">🏷️ 其他玩家的名稱</div><div class="chips" id="nameChips"><button class="chip" data-nm="all">全部顯示</button><button class="chip" data-nm="party">只顯示隊友</button><button class="chip" data-nm="none">全部隱藏</button></div>
   <div class="clab">🏃 跑步方式</div><div class="chips" id="runChips"><button class="chip" data-rm="hold">長按跑步鍵</button><button class="chip" data-rm="toggle">按一下就跑（停下才結束）</button></div>
   <div class="sub" style="margin:2px 0 8px;font-size:11px">手機搖桿推到底也適用：「按一下」模式推到底一次後就會一直跑，放開搖桿才停下</div>
   <div id="kbWrap"><div class="clab" style="display:flex;justify-content:space-between;align-items:center">⌨️ 快捷鍵設定 <button class="qb" id="kbReset" style="padding:3px 10px;font-size:12px">恢復預設</button></div><div class="sub" style="margin:0 0 4px">點按鈕後按下想要的鍵盤按鍵（Esc 取消）。重複的按鍵會自動互換。</div><div id="kbList"></div></div>
@@ -650,20 +671,21 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261117f"></script>
-<script src="firebase-config.js?v=20261117f"></script>
+<script src="config.js?v=20261117g"></script>
+<script src="firebase-config.js?v=20261117g"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261117f"></script>
-<script src="js/audio.js?v=20261117f"></script>
-<script src="js/items.js?v=20261117f"></script>
-<script src="js/critter.js?v=20261117f"></script>
-<script src="js/world.js?v=20261117f"></script>
-<script src="js/game.js?v=20261117f"></script>
-<script src="js/ui.js?v=20261117f"></script>
-<script src="js/extra.js?v=20261117f"></script>
-<script src="js/net.js?v=20261117f"></script>
-<script src="js/cloud.js?v=20261117f"></script>
-<script src="js/skills.js?v=20261117f"></script>
-<script src="js/party.js?v=20261117f"></script>
+<script src="js/engine.js?v=20261117g"></script>
+<script src="js/audio.js?v=20261117g"></script>
+<script src="js/items.js?v=20261117g"></script>
+<script src="js/critter.js?v=20261117g"></script>
+<script src="js/world.js?v=20261117g"></script>
+<script src="js/game.js?v=20261117g"></script>
+<script src="js/ui.js?v=20261117g"></script>
+<script src="js/extra.js?v=20261117g"></script>
+<script src="js/net.js?v=20261117g"></script>
+<script src="js/cloud.js?v=20261117g"></script>
+<script src="js/skills.js?v=20261117g"></script>
+<script src="js/photo.js?v=20261117g"></script>
+<script src="js/party.js?v=20261117g"></script>
 </body>
 </html>
