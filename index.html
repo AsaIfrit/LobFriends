@@ -546,18 +546,25 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
 #bagTabs,#gmTabs{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}#bagTabs::-webkit-scrollbar,#gmTabs::-webkit-scrollbar{display:none}#bagTabs .tab,#gmTabs .tab{flex:0 0 auto;white-space:nowrap;writing-mode:horizontal-tb}
 </style>
 <style>
-/* ===== 遊戲畫面按鈕＆左上角介面：75% 黑底、白字、圖示用白色剪影 ===== */
-.btn,#fab,.fan,#skillBar .sk{background:rgba(0,0,0,.75)!important;color:#fff!important;border-color:#fff!important;box-shadow:0 3px 10px rgba(0,0,0,.25)!important}
-.btn b,.fan b{color:#fff}
-.btn span,.fan>span,#skillBar .sk span,.btn svg{filter:brightness(0) invert(1)}
-#fab span{background:#fff!important}
-#fpBtn.on,#skillBar .sk.on{box-shadow:0 0 0 3px #ffd36e,0 3px 10px rgba(0,0,0,.25)!important}
-#btnAct.dim{filter:none;opacity:.6}
-#hud .card,#partyBox{background:rgba(0,0,0,.75)!important;border:none!important;box-shadow:none!important;color:#fff!important;animation:none}
-#hud .card *,#partyBox h4,#partyBox .pm{color:#fff}
-#hud .bar{background:rgba(255,255,255,.18);border-color:transparent}
-#hud .sNum.low{color:#ff9aae}
-#partyBox .pm i{background:rgba(255,255,255,.18)}
+/* ===== 深色介面（設置→畫面可切回舊版淺色）：遊戲按鈕、左上角、快捷欄改 50% 黑底白字，按鈕圖示用白色剪影 ===== */
+body.darkui .btn,body.darkui #fab,body.darkui .fan,body.darkui #skillBar .sk{background:rgba(0,0,0,.5)!important;color:#fff!important;border-color:#fff!important;box-shadow:0 3px 10px rgba(0,0,0,.2)!important}
+body.darkui .btn b,body.darkui .fan b{color:#fff}
+body.darkui .btn span,body.darkui .fan>span,body.darkui #skillBar .sk span,body.darkui .btn svg,body.darkui .slot.bagBtn>span{filter:brightness(0) invert(1)}
+body.darkui #fab span{background:#fff!important}
+body.darkui #fpBtn.on,body.darkui #skillBar .sk.on{box-shadow:0 0 0 3px #ffd36e,0 3px 10px rgba(0,0,0,.2)!important}
+body.darkui #btnAct.dim{filter:none;opacity:.6}
+body.darkui #hud .card,body.darkui #partyBox{background:rgba(0,0,0,.5)!important;border:none!important;box-shadow:none!important;color:#fff!important;animation:none}
+body.darkui #hud .card *,body.darkui #partyBox h4,body.darkui #partyBox .pm{color:#fff}
+body.darkui #hud .bar{background:rgba(255,255,255,.18);border-color:transparent}
+body.darkui #hud .sNum.low{color:#ff9aae}
+body.darkui #partyBox .pm i{background:rgba(255,255,255,.18)}
+body.darkui #hotbar{background:rgba(0,0,0,.5);border:none;box-shadow:none}
+body.darkui .slot{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.45);color:#fff}
+body.darkui .slot.empty{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.3)}
+body.darkui .slot.sel{background:rgba(255,255,255,.25);border-color:#fff}
+body.darkui .slot.eq{border-color:#cbbcff}
+body.darkui .slot.bagBtn{background:rgba(255,255,255,.1)}
+body.darkui .slot u{opacity:.8}
 </style>
 </head>
 <body>
@@ -717,6 +724,7 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <div class="clab">🔍 介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
   <div class="clab">❤️ 角色腳下顯示血條／精神條</div><div class="chips" id="pbarChips"><button class="chip" data-pb="off">關閉</button><button class="chip" data-pb="s">小</button><button class="chip" data-pb="m">中</button><button class="chip" data-pb="l">大</button></div>
   <div class="clab">🏷️ 其他玩家的名稱</div><div class="chips" id="nameChips"><button class="chip" data-nm="all">全部顯示</button><button class="chip" data-nm="party">只顯示隊友</button><button class="chip" data-nm="none">全部隱藏</button></div>
+  <div class="clab">🎨 介面配色</div><div class="chips" id="uiThChips"><button class="chip" data-th="dark">深色（半透明黑）</button><button class="chip" data-th="light">淺色（舊版）</button></div>
   <div class="clab">🏷️ NPC 的名稱</div><div class="chips" id="npcNameChips"><button class="chip" data-nn="on">顯示</button><button class="chip" data-nn="off">隱藏</button></div>
   <div class="crow2" style="margin-top:8px"><button class="qb lav" id="setFs">⛶ 全螢幕</button></div>
   </div>
@@ -758,26 +766,26 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261122r"></script>
-<script src="firebase-config.js?v=20261122r"></script>
+<script src="config.js?v=20261122s"></script>
+<script src="firebase-config.js?v=20261122s"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261122r"></script>
-<script src="js/audio.js?v=20261122r"></script>
-<script src="js/items.js?v=20261122r"></script>
-<script src="js/critter.js?v=20261122r"></script>
-<script src="js/cave.js?v=20261122r"></script>
-<script src="js/world.js?v=20261122r"></script>
-<script src="js/harbor.js?v=20261122r"></script>
-<script src="js/game.js?v=20261122r"></script>
-<script src="js/ui.js?v=20261122r"></script>
-<script src="js/extra.js?v=20261122r"></script>
-<script src="js/forest.js?v=20261122r"></script>
-<script src="js/net.js?v=20261122r"></script>
-<script src="js/cloud.js?v=20261122r"></script>
-<script src="js/skills.js?v=20261122r"></script>
-<script src="js/bars.js?v=20261122r"></script>
-<script src="js/photo.js?v=20261122r"></script>
-<script src="js/party.js?v=20261122r"></script>
-<script src="js/gfx.js?v=20261122r"></script>
+<script src="js/engine.js?v=20261122s"></script>
+<script src="js/audio.js?v=20261122s"></script>
+<script src="js/items.js?v=20261122s"></script>
+<script src="js/critter.js?v=20261122s"></script>
+<script src="js/cave.js?v=20261122s"></script>
+<script src="js/world.js?v=20261122s"></script>
+<script src="js/harbor.js?v=20261122s"></script>
+<script src="js/game.js?v=20261122s"></script>
+<script src="js/ui.js?v=20261122s"></script>
+<script src="js/extra.js?v=20261122s"></script>
+<script src="js/forest.js?v=20261122s"></script>
+<script src="js/net.js?v=20261122s"></script>
+<script src="js/cloud.js?v=20261122s"></script>
+<script src="js/skills.js?v=20261122s"></script>
+<script src="js/bars.js?v=20261122s"></script>
+<script src="js/photo.js?v=20261122s"></script>
+<script src="js/party.js?v=20261122s"></script>
+<script src="js/gfx.js?v=20261122s"></script>
 </body>
 </html>
