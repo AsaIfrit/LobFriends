@@ -197,7 +197,7 @@ body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 body.carrying #placeBar{display:flex;animation:popIn .4s var(--spring)}
 #placeBar button{border:3px solid #fff;border-radius:16px;padding:7px 12px;font-weight:900;font-size:13px;background:var(--cream);box-shadow:0 4px 0 rgba(200,140,110,.4)}
 /* ---------- LINE 風取得通知 ---------- */
-#notes{position:fixed;left:10px;bottom:70px;display:flex;flex-direction:column-reverse;gap:7px;z-index:8;pointer-events:none}
+#notes{position:fixed;left:10px;bottom:152px;/* 在 Talk 鍵（bottom 80＋高 60）上方 */display:flex;flex-direction:column-reverse;gap:7px;z-index:8;pointer-events:none}
 .note{width:min(54vw,215px);display:flex;gap:9px;align-items:center;background:rgba(255,255,255,.97);border-radius:18px;padding:8px 12px 8px 8px;box-shadow:0 6px 18px rgba(80,50,40,.22);border:2px solid #f2e4da;
   animation:noteIn .5s var(--spring);transition:transform .35s ease-in,opacity .35s,max-height .35s,margin .35s,padding .35s;max-height:70px;overflow:hidden}
 .note.out{transform:translateX(-120%);opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-top:-7px}
@@ -264,7 +264,7 @@ body.sleeping #btnAtk,body.sleeping #btnAct,body.sleeping #btnJump,body.sleeping
 body.sleeping #sleepUI{display:flex}
 #sleepUI .tag{background:rgba(70,50,110,.75);color:#fff;border-radius:16px;padding:5px 14px;font-weight:900;font-size:14px}
 #wakeBtn{position:static;width:auto;height:auto;border-radius:30px;padding:14px 34px;font-size:20px;background:linear-gradient(160deg,#ffe39a,#ffbf5a);color:#fff;flex-direction:row;gap:6px}
-.press{scale:.84}/* 用獨立的 scale，不會蓋掉按鈕原本的位移（手機上角色外型按鈕按下會跳走） */
+.press{scale:.84}.fan.press{scale:none}/* 選單按鈕本身就有 translate，獨立的 scale 會把位移一起縮小、按鈕往旁邊跑；選單按鈕改用下面那條 transform 縮放 *//* 用獨立的 scale，不會蓋掉按鈕原本的位移（手機上角色外型按鈕按下會跳走） */
 #topR.open .fan.press{transform:translate(var(--tx),var(--ty)) scale(.86)!important}
 #topR.open .fan.fboing{animation:fboing .45s var(--spring)}
 @keyframes fboing{0%{transform:translate(var(--tx),var(--ty)) scale(.86)}45%{transform:translate(var(--tx),var(--ty)) scale(1.12)}100%{transform:translate(var(--tx),var(--ty)) scale(1)}}
@@ -774,26 +774,26 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261122x"></script>
-<script src="firebase-config.js?v=20261122x"></script>
+<script src="config.js?v=20261122y"></script>
+<script src="firebase-config.js?v=20261122y"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261122x"></script>
-<script src="js/audio.js?v=20261122x"></script>
-<script src="js/items.js?v=20261122x"></script>
-<script src="js/critter.js?v=20261122x"></script>
-<script src="js/cave.js?v=20261122x"></script>
-<script src="js/world.js?v=20261122x"></script>
-<script src="js/harbor.js?v=20261122x"></script>
-<script src="js/game.js?v=20261122x"></script>
-<script src="js/ui.js?v=20261122x"></script>
-<script src="js/extra.js?v=20261122x"></script>
-<script src="js/forest.js?v=20261122x"></script>
-<script src="js/net.js?v=20261122x"></script>
-<script src="js/cloud.js?v=20261122x"></script>
-<script src="js/skills.js?v=20261122x"></script>
-<script src="js/bars.js?v=20261122x"></script>
-<script src="js/photo.js?v=20261122x"></script>
-<script src="js/party.js?v=20261122x"></script>
-<script src="js/gfx.js?v=20261122x"></script>
+<script src="js/engine.js?v=20261122y"></script>
+<script src="js/audio.js?v=20261122y"></script>
+<script src="js/items.js?v=20261122y"></script>
+<script src="js/critter.js?v=20261122y"></script>
+<script src="js/cave.js?v=20261122y"></script>
+<script src="js/world.js?v=20261122y"></script>
+<script src="js/harbor.js?v=20261122y"></script>
+<script src="js/game.js?v=20261122y"></script>
+<script src="js/ui.js?v=20261122y"></script>
+<script src="js/extra.js?v=20261122y"></script>
+<script src="js/forest.js?v=20261122y"></script>
+<script src="js/net.js?v=20261122y"></script>
+<script src="js/cloud.js?v=20261122y"></script>
+<script src="js/skills.js?v=20261122y"></script>
+<script src="js/bars.js?v=20261122y"></script>
+<script src="js/photo.js?v=20261122y"></script>
+<script src="js/party.js?v=20261122y"></script>
+<script src="js/gfx.js?v=20261122y"></script>
 </body>
 </html>
