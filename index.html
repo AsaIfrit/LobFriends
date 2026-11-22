@@ -424,6 +424,7 @@ body.sleeping #sleepUI{display:flex}
 .sw{display:flex;flex-wrap:wrap;gap:7px}
 .sw button{width:32px;height:32px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #f2d4c2;padding:0;transition:transform .2s var(--spring)}
 .sw button.on{box-shadow:0 0 0 3px #ff8f73;transform:scale(1.15)}
+.sw button.auto{background:repeating-linear-gradient(45deg,#fff 0 4px,#f2e6dc 4px 8px);font-size:11px;font-weight:900;color:#a07a62}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{border:2.5px solid #fbe3d8;background:#fff;border-radius:14px;padding:5px 11px;font-weight:900;font-size:13px;transition:transform .2s var(--spring)}
 .chips button.on{border-color:#ff8f73;background:#fff0e8;transform:translateY(-2px)}
@@ -623,7 +624,8 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <div class="sub" style="margin-bottom:4px">拖曳右邊畫面可以轉動角色</div>
   <div class="clab">名字</div><input id="cName" maxlength="8">
   <details class="cfold"><summary>🎨 身體顏色</summary><div class="clab">身體</div><div class="sw" id="swBody"></div>
-    <div class="clab" id="labAcc">頭部特徵／腳的顏色</div><div class="sw" id="swAcc"></div></details>
+    <div class="clab">手腳</div><div class="sw" id="swLimb"></div>
+    <div class="clab" id="labAcc">頭部特徵的顏色</div><div class="sw" id="swAcc"></div></details>
   <details class="cfold"><summary id="sumEar">頭部特徵</summary><div id="earWrap"><div class="clab">樣式</div><div class="chips" id="chEars"></div></div>
     <div class="clab" id="labEarSl">頭部特徵的大小／位置</div><div class="sl" data-g="ear"></div></details>
   <details class="cfold"><summary>🐾 尾巴</summary><div class="chips" id="chTail"></div><div class="sl" data-g="tail"></div></details>
@@ -740,26 +742,26 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261122l"></script>
-<script src="firebase-config.js?v=20261122l"></script>
+<script src="config.js?v=20261122m"></script>
+<script src="firebase-config.js?v=20261122m"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261122l"></script>
-<script src="js/audio.js?v=20261122l"></script>
-<script src="js/items.js?v=20261122l"></script>
-<script src="js/critter.js?v=20261122l"></script>
-<script src="js/cave.js?v=20261122l"></script>
-<script src="js/world.js?v=20261122l"></script>
-<script src="js/harbor.js?v=20261122l"></script>
-<script src="js/game.js?v=20261122l"></script>
-<script src="js/ui.js?v=20261122l"></script>
-<script src="js/extra.js?v=20261122l"></script>
-<script src="js/forest.js?v=20261122l"></script>
-<script src="js/net.js?v=20261122l"></script>
-<script src="js/cloud.js?v=20261122l"></script>
-<script src="js/skills.js?v=20261122l"></script>
-<script src="js/bars.js?v=20261122l"></script>
-<script src="js/photo.js?v=20261122l"></script>
-<script src="js/party.js?v=20261122l"></script>
-<script src="js/gfx.js?v=20261122l"></script>
+<script src="js/engine.js?v=20261122m"></script>
+<script src="js/audio.js?v=20261122m"></script>
+<script src="js/items.js?v=20261122m"></script>
+<script src="js/critter.js?v=20261122m"></script>
+<script src="js/cave.js?v=20261122m"></script>
+<script src="js/world.js?v=20261122m"></script>
+<script src="js/harbor.js?v=20261122m"></script>
+<script src="js/game.js?v=20261122m"></script>
+<script src="js/ui.js?v=20261122m"></script>
+<script src="js/extra.js?v=20261122m"></script>
+<script src="js/forest.js?v=20261122m"></script>
+<script src="js/net.js?v=20261122m"></script>
+<script src="js/cloud.js?v=20261122m"></script>
+<script src="js/skills.js?v=20261122m"></script>
+<script src="js/bars.js?v=20261122m"></script>
+<script src="js/photo.js?v=20261122m"></script>
+<script src="js/party.js?v=20261122m"></script>
+<script src="js/gfx.js?v=20261122m"></script>
 </body>
 </html>
