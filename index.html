@@ -545,6 +545,20 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
 #xpBoost{display:none;align-items:center;gap:4px;font-size:12px;font-weight:800;color:#b8742a;background:linear-gradient(160deg,#fff8d8,#ffe7a0);animation:xpbGlow 2s ease-in-out infinite}#xpBoost b{font-variant-numeric:tabular-nums;color:#8a4a1a}@keyframes xpbGlow{50%{box-shadow:0 0 0 3px rgba(255,211,110,.45)}}
 #bagTabs,#gmTabs{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}#bagTabs::-webkit-scrollbar,#gmTabs::-webkit-scrollbar{display:none}#bagTabs .tab,#gmTabs .tab{flex:0 0 auto;white-space:nowrap;writing-mode:horizontal-tb}
 </style>
+<style>
+/* ===== 遊戲畫面按鈕＆左上角介面：75% 黑底、白字、圖示用白色剪影 ===== */
+.btn,#fab,.fan,#skillBar .sk{background:rgba(0,0,0,.75)!important;color:#fff!important;border-color:#fff!important;box-shadow:0 3px 10px rgba(0,0,0,.25)!important}
+.btn b,.fan b{color:#fff}
+.btn span,.fan>span,#skillBar .sk span,.btn svg{filter:brightness(0) invert(1)}
+#fab span{background:#fff!important}
+#fpBtn.on,#skillBar .sk.on{box-shadow:0 0 0 3px #ffd36e,0 3px 10px rgba(0,0,0,.25)!important}
+#btnAct.dim{filter:none;opacity:.6}
+#hud .card,#partyBox{background:rgba(0,0,0,.75)!important;border:none!important;box-shadow:none!important;color:#fff!important;animation:none}
+#hud .card *,#partyBox h4,#partyBox .pm{color:#fff}
+#hud .bar{background:rgba(255,255,255,.18);border-color:transparent}
+#hud .sNum.low{color:#ff9aae}
+#partyBox .pm i{background:rgba(255,255,255,.18)}
+</style>
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -563,17 +577,17 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
 </div>
 <div id="topR"><canvas id="mini" width="208" height="208"></canvas>
   <button id="fab"><span></span><span></span><span></span><i></i></button>
-  <button class="fan" data-f="craft" style="--i:0">🔨<b>合成</b></button>
-  <button class="fan" data-f="tal" style="--i:1">⭐<b>天賦</b><em class="dotS" id="spDot">0</em></button>
-  <button class="fan" data-f="stat" style="--i:2">📊<b>素質</b><em class="dotS" id="stDot">0</em></button>
-  <button class="fan" data-f="bag" style="--i:3">🎒<b>背包</b></button>
-  <button class="fan" data-f="pet" style="--i:4">🐾<b>寵物</b></button>
-  <button class="fan" data-f="deco" style="--i:5">🛋️<b id="decoLbl">布置</b></button>
-  <button class="fan" data-f="dex" style="--i:6">📖<b>圖鑑</b></button>
-  <button class="fan" data-f="beauty" style="--i:7">💄<b>美容</b></button>
-  <button class="fan" data-f="photo" style="--i:8">📷<b>拍照</b></button>
-  <button class="fan" data-f="full" style="--i:9">⛶<b>全螢幕</b></button>
-  <button class="fan" data-f="set" style="--i:10">⚙️<b>設置</b></button>
+  <button class="fan" data-f="craft" style="--i:0"><span>🔨</span><b>合成</b></button>
+  <button class="fan" data-f="tal" style="--i:1"><span>⭐</span><b>天賦</b><em class="dotS" id="spDot">0</em></button>
+  <button class="fan" data-f="stat" style="--i:2"><span>💪</span><b>素質</b><em class="dotS" id="stDot">0</em></button>
+  <button class="fan" data-f="bag" style="--i:3"><span>🎒</span><b>背包</b></button>
+  <button class="fan" data-f="pet" style="--i:4"><span>🐾</span><b>寵物</b></button>
+  <button class="fan" data-f="deco" style="--i:5"><span>🪑</span><b id="decoLbl">布置</b></button>
+  <button class="fan" data-f="dex" style="--i:6"><span>📖</span><b>圖鑑</b></button>
+  <button class="fan" data-f="beauty" style="--i:7"><span>💄</span><b>美容</b></button>
+  <button class="fan" data-f="photo" style="--i:8"><span>📷</span><b>拍照</b></button>
+  <button class="fan" data-f="full" style="--i:9"><span>⛶</span><b>全螢幕</b></button>
+  <button class="fan" data-f="set" style="--i:10"><span>⚙️</span><b>設置</b></button>
 </div>
 <div id="decoTag">🛋️ 點擊關閉布置模式</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
@@ -585,7 +599,7 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
 <div id="downBox">💫 你倒下了<p>等待隊友來救助，或是直接返回重生點</p><div><button class="qb" disabled>⏳ 等待救援中…</button><button class="qb pink" id="downHome">返回重生點</button></div></div>
 <div id="skillBar"></div><div id="castBar"><span id="castTxt"></span><i><b id="castFill"></b></i></div><div id="revBar"><span id="revTxt"></span><i><b id="revFill"></b></i></div>
 <div id="bossBar">👑 果凍王 <small id="bossHp"></small><i><b id="bossFill"></b></i></div>
-<div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>😊</span>表情</button><button class="btn game" id="btnDel"><span>🔨</span>拆方塊</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
+<div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>💬</span>Talk</button><button class="btn game" id="btnDel"><span>🔨</span>拆方塊</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
 <button class="btn game" id="btnAct"><span id="actIcon">🤚</span><b id="actTxt">互動</b></button>
 <button class="btn game" id="btnAtk"><span id="atkIcon">⚔️</span><b>攻擊</b></button>
 <div id="sleepUI"><div class="tag">💤 睡覺中・時間 ×5 流動</div><button class="btn" id="wakeBtn"><span>☀️</span>起床</button></div>
@@ -744,26 +758,26 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261122q"></script>
-<script src="firebase-config.js?v=20261122q"></script>
+<script src="config.js?v=20261122r"></script>
+<script src="firebase-config.js?v=20261122r"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261122q"></script>
-<script src="js/audio.js?v=20261122q"></script>
-<script src="js/items.js?v=20261122q"></script>
-<script src="js/critter.js?v=20261122q"></script>
-<script src="js/cave.js?v=20261122q"></script>
-<script src="js/world.js?v=20261122q"></script>
-<script src="js/harbor.js?v=20261122q"></script>
-<script src="js/game.js?v=20261122q"></script>
-<script src="js/ui.js?v=20261122q"></script>
-<script src="js/extra.js?v=20261122q"></script>
-<script src="js/forest.js?v=20261122q"></script>
-<script src="js/net.js?v=20261122q"></script>
-<script src="js/cloud.js?v=20261122q"></script>
-<script src="js/skills.js?v=20261122q"></script>
-<script src="js/bars.js?v=20261122q"></script>
-<script src="js/photo.js?v=20261122q"></script>
-<script src="js/party.js?v=20261122q"></script>
-<script src="js/gfx.js?v=20261122q"></script>
+<script src="js/engine.js?v=20261122r"></script>
+<script src="js/audio.js?v=20261122r"></script>
+<script src="js/items.js?v=20261122r"></script>
+<script src="js/critter.js?v=20261122r"></script>
+<script src="js/cave.js?v=20261122r"></script>
+<script src="js/world.js?v=20261122r"></script>
+<script src="js/harbor.js?v=20261122r"></script>
+<script src="js/game.js?v=20261122r"></script>
+<script src="js/ui.js?v=20261122r"></script>
+<script src="js/extra.js?v=20261122r"></script>
+<script src="js/forest.js?v=20261122r"></script>
+<script src="js/net.js?v=20261122r"></script>
+<script src="js/cloud.js?v=20261122r"></script>
+<script src="js/skills.js?v=20261122r"></script>
+<script src="js/bars.js?v=20261122r"></script>
+<script src="js/photo.js?v=20261122r"></script>
+<script src="js/party.js?v=20261122r"></script>
+<script src="js/gfx.js?v=20261122r"></script>
 </body>
 </html>
