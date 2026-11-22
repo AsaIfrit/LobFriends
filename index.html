@@ -727,7 +727,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div class="clab">音效 <span id="vSv"></span></div><input type="range" id="vS" min="0" max="1" step="0.05">
   </div>
   <div class="setPg" data-sp="gfx">
-  <div class="clab">🖼️ 畫質預設（自動：PC 用高畫質、手機用手機畫質，幀數不夠時會自動省略效果）</div><div class="chips" id="gfxChips"><button class="chip" data-gq="auto">自動</button><button class="chip" data-gq="low">低</button><button class="chip" data-gq="mob">手機</button><button class="chip" data-gq="mid">標準</button><button class="chip" data-gq="high">高</button><button class="chip" data-gq="custom">自訂</button></div><div class="sub" id="gfxStat" style="font-size:11px;margin:4px 0"></div><details class="gfxMore"><summary class="clab" style="cursor:pointer">🔧 細部調整（點開；改任何一項會切到「自訂」）</summary><div id="gfxRows"></div></details>
+  <div class="clab">🖼️ 畫質預設（自動：PC 用高畫質、手機用手機畫質；畫質固定，不會自動降低）</div><div class="chips" id="gfxChips"><button class="chip" data-gq="auto">自動</button><button class="chip" data-gq="low">低</button><button class="chip" data-gq="mob">手機</button><button class="chip" data-gq="mid">標準</button><button class="chip" data-gq="high">高</button><button class="chip" data-gq="custom">自訂</button></div><div class="sub" id="gfxStat" style="font-size:11px;margin:4px 0"></div><details class="gfxMore"><summary class="clab" style="cursor:pointer">🔧 細部調整（點開；改任何一項會切到「自訂」）</summary><div id="gfxRows"></div></details>
+  <div class="clab">🔋 幀數上限（手機發燙或耗電時選 30；自動＝手機 60、電腦不限制）</div><div class="chips" id="fpsChips"><button class="chip" data-fc="auto">自動</button><button class="chip" data-fc="30">30</button><button class="chip" data-fc="60">60</button><button class="chip" data-fc="0">不限制</button></div>
   <div class="clab">🔍 介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
   <div class="clab">❤️ 角色腳下顯示血條／精神條</div><div class="chips" id="pbarChips"><button class="chip" data-pb="off">關閉</button><button class="chip" data-pb="s">小</button><button class="chip" data-pb="m">中</button><button class="chip" data-pb="l">大</button></div>
   <div class="clab">🏷️ 其他玩家的名稱</div><div class="chips" id="nameChips"><button class="chip" data-nm="all">全部顯示</button><button class="chip" data-nm="party">只顯示隊友</button><button class="chip" data-nm="none">全部隱藏</button></div>
@@ -773,26 +774,26 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="config.js?v=20261122v"></script>
-<script src="firebase-config.js?v=20261122v"></script>
+<script src="config.js?v=20261122w"></script>
+<script src="firebase-config.js?v=20261122w"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/engine.js?v=20261122v"></script>
-<script src="js/audio.js?v=20261122v"></script>
-<script src="js/items.js?v=20261122v"></script>
-<script src="js/critter.js?v=20261122v"></script>
-<script src="js/cave.js?v=20261122v"></script>
-<script src="js/world.js?v=20261122v"></script>
-<script src="js/harbor.js?v=20261122v"></script>
-<script src="js/game.js?v=20261122v"></script>
-<script src="js/ui.js?v=20261122v"></script>
-<script src="js/extra.js?v=20261122v"></script>
-<script src="js/forest.js?v=20261122v"></script>
-<script src="js/net.js?v=20261122v"></script>
-<script src="js/cloud.js?v=20261122v"></script>
-<script src="js/skills.js?v=20261122v"></script>
-<script src="js/bars.js?v=20261122v"></script>
-<script src="js/photo.js?v=20261122v"></script>
-<script src="js/party.js?v=20261122v"></script>
-<script src="js/gfx.js?v=20261122v"></script>
+<script src="js/engine.js?v=20261122w"></script>
+<script src="js/audio.js?v=20261122w"></script>
+<script src="js/items.js?v=20261122w"></script>
+<script src="js/critter.js?v=20261122w"></script>
+<script src="js/cave.js?v=20261122w"></script>
+<script src="js/world.js?v=20261122w"></script>
+<script src="js/harbor.js?v=20261122w"></script>
+<script src="js/game.js?v=20261122w"></script>
+<script src="js/ui.js?v=20261122w"></script>
+<script src="js/extra.js?v=20261122w"></script>
+<script src="js/forest.js?v=20261122w"></script>
+<script src="js/net.js?v=20261122w"></script>
+<script src="js/cloud.js?v=20261122w"></script>
+<script src="js/skills.js?v=20261122w"></script>
+<script src="js/bars.js?v=20261122w"></script>
+<script src="js/photo.js?v=20261122w"></script>
+<script src="js/party.js?v=20261122w"></script>
+<script src="js/gfx.js?v=20261122w"></script>
 </body>
 </html>
