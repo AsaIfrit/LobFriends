@@ -580,6 +580,9 @@ body.talking #hotbar,body.talking #hbLabel{visibility:hidden}/* 對話框是半�
 body.darkui #dlg{background:rgba(0,0,0,.5);border:none;box-shadow:none;color:#fff}
 body.darkui #dlgName{background:rgba(0,0,0,.5);border:2px solid #fff}
 body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
+.mallBal{font-weight:900;font-size:16px;margin:4px 0 10px}.mallAgree{display:block;font-size:12.5px;line-height:1.5;background:#fff3d6;border:2px solid #ffd36e;border-radius:12px;padding:8px 10px;margin:0 0 8px}.mallAgree input{transform:scale(1.3);margin-right:6px;vertical-align:-2px}.mallBal b{font-size:20px}
+.fan.gmOnly{display:none}body.isgm .fan.gmOnly{display:flex}
+#mallOwn button{margin-left:8px}
 </style>
 </head>
 <body>
@@ -622,6 +625,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="fan" data-f="beauty" style="--i:7"><span>💄</span><b>美容</b></button>
   <button class="fan" data-f="photo" style="--i:8"><span>📷</span><b>拍照</b></button>
   <button class="fan" data-f="full" style="--i:9"><span>⛶</span><b>全螢幕</b></button>
+  <button class="fan gmOnly" data-f="mall" style="--i:11"><span>💎</span><b>商城</b></button>
   <button class="fan" data-f="set" style="--i:10"><span>⚙️</span><b>設置</b></button>
 </div>
 <div id="decoTag">🧱 建造模式中・點擊關閉</div>
@@ -653,6 +657,15 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div class="tabs"><button class="tab on" data-tab="tool">🪓 工具</button><button class="tab" data-tab="weapon">⚔️ 武器</button><button class="tab" data-tab="block">🧱 方塊</button><button class="tab" data-tab="furn">🪑 家具</button></div>
   <div class="grid" id="craftGrid"></div><button class="qb lav close" data-close="craft">關閉</button></div></div>
 
+<div class="panel" id="mall"><div class="sheet"><div class="grab"></div>
+  <h2>💎 珍珠商城</h2><div class="sub">珍珠只能用來購買商城商品，不能換回現金。購買前請先閱讀<a href="terms.html" target="_blank">服務條款</a>。</div>
+  <div class="mallBal">💎 珍珠 <b id="mallPearls">－</b></div>
+  <label class="mallAgree"><input type="checkbox" id="mallAgree"> 我已閱讀並同意<a href="terms.html" target="_blank">服務條款與儲值說明</a>，並<b>同意付款完成後立即提供珍珠</b>。我了解珍珠屬於非以有形媒介提供之數位內容，提供後<b>不適用 7 天鑑賞期（無法以此理由退款）</b>。</label>
+  <div class="clab">儲值珍珠</div><div class="chips" id="mallPay"><button class="chip on" data-pm="ecpay">綠界（信用卡／ATM／超商）</button><button class="chip" data-pm="paypal">PayPal</button></div>
+  <div class="grid" id="mallPacks"></div>
+  <div class="clab">用珍珠購買</div><div class="grid" id="mallItems"></div>
+  <div class="clab">我的商城道具</div><div id="mallOwn" class="sub">－</div>
+  <button class="qb lav close" data-close="mall">關閉</button></div></div>
 <div class="panel" id="shop"><div class="sheet"><div class="grab"></div>
   <h2 id="shopTitle"></h2><div class="sub" id="shopSub"></div>
   <div class="tabs" id="shopTabs"></div>
@@ -795,29 +808,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261123w"></script>
-<script src="config.js?v=20261123w"></script>
-<script src="firebase-config.js?v=20261123w"></script>
+<script src="js/three.min.js?v=20261123x"></script>
+<script src="config.js?v=20261123x"></script>
+<script src="firebase-config.js?v=20261123x"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261123w"></script>
-<script src="js/engine.js?v=20261123w"></script>
-<script src="js/audio.js?v=20261123w"></script>
-<script src="js/items.js?v=20261123w"></script>
-<script src="js/critter.js?v=20261123w"></script>
-<script src="js/cave.js?v=20261123w"></script>
-<script src="js/world.js?v=20261123w"></script>
-<script src="js/harbor.js?v=20261123w"></script>
-<script src="js/game.js?v=20261123w"></script>
-<script src="js/ui.js?v=20261123w"></script>
-<script src="js/extra.js?v=20261123w"></script>
-<script src="js/forest.js?v=20261123w"></script>
-<script src="js/net.js?v=20261123w"></script>
-<script src="js/cloud.js?v=20261123w"></script>
-<script src="js/skills.js?v=20261123w"></script>
-<script src="js/bars.js?v=20261123w"></script>
-<script src="js/photo.js?v=20261123w"></script>
-<script src="js/party.js?v=20261123w"></script>
-<script src="js/gfx.js?v=20261123w"></script>
-<script src="js/upgrade.js?v=20261123w"></script>
+<script src="js/compat.js?v=20261123x"></script>
+<script src="js/engine.js?v=20261123x"></script>
+<script src="js/audio.js?v=20261123x"></script>
+<script src="js/items.js?v=20261123x"></script>
+<script src="js/critter.js?v=20261123x"></script>
+<script src="js/cave.js?v=20261123x"></script>
+<script src="js/world.js?v=20261123x"></script>
+<script src="js/harbor.js?v=20261123x"></script>
+<script src="js/game.js?v=20261123x"></script>
+<script src="js/ui.js?v=20261123x"></script>
+<script src="js/extra.js?v=20261123x"></script>
+<script src="js/forest.js?v=20261123x"></script>
+<script src="js/net.js?v=20261123x"></script>
+<script src="js/cloud.js?v=20261123x"></script>
+<script src="js/mall.js?v=20261123x"></script>
+<script src="js/skills.js?v=20261123x"></script>
+<script src="js/bars.js?v=20261123x"></script>
+<script src="js/photo.js?v=20261123x"></script>
+<script src="js/party.js?v=20261123x"></script>
+<script src="js/gfx.js?v=20261123x"></script>
+<script src="js/upgrade.js?v=20261123x"></script>
 </body>
 </html>
