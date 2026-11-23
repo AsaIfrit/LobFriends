@@ -105,6 +105,7 @@ body.building #btnMove{display:flex;animation:popIn .4s var(--spring)}#btnMove.d
 body.deco #btnAct.noplace{display:none!important}
 /* 建造模式開關：左下角 Talk 上方 */#btnBuild{left:16px;bottom:152px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#ffe9c8,#ffc98a);color:#7a4a3e}#btnBuild span{font-size:20px}#btnBuild.on{box-shadow:0 0 0 4px #ffd36e,0 3px 10px rgba(0,0,0,.25)!important}
 body.sleeping #btnBuild,body.downed #btnBuild{display:none!important}
+#btnBuild{display:none!important}/* 建造模式從右上選單開關（鍵盤 H），畫面上不放按鈕 */
 body.building #btnDel{display:flex;animation:popIn .4s var(--spring)}#btnDel.dim{opacity:.45}
 #btnEmote{left:16px;bottom:80px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#fff3c0,#ffd6a0);color:#7a4a3e}
 body.sleeping #btnEmote{display:none!important}
@@ -203,7 +204,7 @@ body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 body.carrying #placeBar{display:flex;animation:popIn .4s var(--spring)}
 #placeBar button{border:3px solid #fff;border-radius:16px;padding:7px 12px;font-weight:900;font-size:13px;background:var(--cream);box-shadow:0 4px 0 rgba(200,140,110,.4)}
 /* ---------- LINE 風取得通知 ---------- */
-#notes{position:fixed;left:10px;bottom:222px;/* 在 Talk、建造鍵上方 */display:flex;flex-direction:column-reverse;gap:7px;z-index:8;pointer-events:none}
+#notes{position:fixed;left:10px;bottom:152px;/* 在 Talk 鍵上方 */display:flex;flex-direction:column-reverse;gap:7px;z-index:8;pointer-events:none}
 .note{width:min(54vw,215px);display:flex;gap:9px;align-items:center;background:rgba(255,255,255,.97);border-radius:18px;padding:8px 12px 8px 8px;box-shadow:0 6px 18px rgba(80,50,40,.22);border:2px solid #f2e4da;
   animation:noteIn .5s var(--spring);transition:transform .35s ease-in,opacity .35s,max-height .35s,margin .35s,padding .35s;max-height:70px;overflow:hidden}
 .note.out{transform:translateX(-120%);opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-top:-7px}
@@ -506,7 +507,7 @@ body.ingame #start{display:none!important}
   #btnEmote{width:50px;height:50px;left:12px;bottom:calc(var(--sl) + 30px + env(safe-area-inset-bottom));font-size:9.5px}
   #btnBuild{width:50px;height:50px;left:12px;bottom:calc(var(--sl) + 90px + env(safe-area-inset-bottom));font-size:9.5px}#btnBuild span{font-size:17px}
   #fpBtn{width:46px;height:46px;right:82px;bottom:calc(var(--sl) + 118px + env(safe-area-inset-bottom));font-size:19px}
-  #notes{bottom:calc(var(--sl) + 150px + env(safe-area-inset-bottom));left:8px;gap:4px}.note{width:auto;max-width:46vw;padding:3px 10px 3px 3px;border-radius:14px;gap:6px;border-width:1.5px}.nav{width:24px;height:24px;font-size:14px;border-width:1.5px}.ntop{display:none}.nmsg{font-size:12px}
+  #notes{bottom:calc(var(--sl) + 92px + env(safe-area-inset-bottom));left:8px;gap:4px}.note{width:auto;max-width:46vw;padding:3px 10px 3px 3px;border-radius:14px;gap:6px;border-width:1.5px}.nav{width:24px;height:24px;font-size:14px;border-width:1.5px}.ntop{display:none}.nmsg{font-size:12px}
   #chatLog{bottom:auto;top:46vh;max-width:56vw}
   #notes .note:nth-last-child(n+4){display:none}
   #placeBar{bottom:calc(var(--sl) + 116px)}#rotSl{bottom:calc(var(--sl) + 166px)}#placeBar button{padding:6px 9px;font-size:12px}
@@ -808,30 +809,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261123x"></script>
-<script src="config.js?v=20261123x"></script>
-<script src="firebase-config.js?v=20261123x"></script>
+<script src="js/three.min.js?v=20261123y"></script>
+<script src="config.js?v=20261123y"></script>
+<script src="firebase-config.js?v=20261123y"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261123x"></script>
-<script src="js/engine.js?v=20261123x"></script>
-<script src="js/audio.js?v=20261123x"></script>
-<script src="js/items.js?v=20261123x"></script>
-<script src="js/critter.js?v=20261123x"></script>
-<script src="js/cave.js?v=20261123x"></script>
-<script src="js/world.js?v=20261123x"></script>
-<script src="js/harbor.js?v=20261123x"></script>
-<script src="js/game.js?v=20261123x"></script>
-<script src="js/ui.js?v=20261123x"></script>
-<script src="js/extra.js?v=20261123x"></script>
-<script src="js/forest.js?v=20261123x"></script>
-<script src="js/net.js?v=20261123x"></script>
-<script src="js/cloud.js?v=20261123x"></script>
-<script src="js/mall.js?v=20261123x"></script>
-<script src="js/skills.js?v=20261123x"></script>
-<script src="js/bars.js?v=20261123x"></script>
-<script src="js/photo.js?v=20261123x"></script>
-<script src="js/party.js?v=20261123x"></script>
-<script src="js/gfx.js?v=20261123x"></script>
-<script src="js/upgrade.js?v=20261123x"></script>
+<script src="js/compat.js?v=20261123y"></script>
+<script src="js/engine.js?v=20261123y"></script>
+<script src="js/audio.js?v=20261123y"></script>
+<script src="js/items.js?v=20261123y"></script>
+<script src="js/critter.js?v=20261123y"></script>
+<script src="js/cave.js?v=20261123y"></script>
+<script src="js/world.js?v=20261123y"></script>
+<script src="js/harbor.js?v=20261123y"></script>
+<script src="js/game.js?v=20261123y"></script>
+<script src="js/ui.js?v=20261123y"></script>
+<script src="js/extra.js?v=20261123y"></script>
+<script src="js/forest.js?v=20261123y"></script>
+<script src="js/net.js?v=20261123y"></script>
+<script src="js/cloud.js?v=20261123y"></script>
+<script src="js/mall.js?v=20261123y"></script>
+<script src="js/skills.js?v=20261123y"></script>
+<script src="js/bars.js?v=20261123y"></script>
+<script src="js/photo.js?v=20261123y"></script>
+<script src="js/party.js?v=20261123y"></script>
+<script src="js/gfx.js?v=20261123y"></script>
+<script src="js/upgrade.js?v=20261123y"></script>
 </body>
 </html>
