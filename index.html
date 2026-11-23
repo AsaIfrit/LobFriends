@@ -584,6 +584,49 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 .mallBal{font-weight:900;font-size:16px;margin:4px 0 10px}.mallAgree{display:block;font-size:12.5px;line-height:1.5;background:#fff3d6;border:2px solid #ffd36e;border-radius:12px;padding:8px 10px;margin:0 0 8px}.mallAgree input{transform:scale(1.3);margin-right:6px;vertical-align:-2px}.mallBal b{font-size:20px}
 .fan.gmOnly{display:none}body.isgm .fan.gmOnly{display:flex}
 #mallOwn button{margin-left:8px}
+/* ===== 珍珠商城（白／粉橘／粉藍） ===== */
+#mall{align-items:center}
+#mall .sheet.mx{width:min(98vw,1000px);height:min(96vh,720px);max-height:none;border-radius:24px;border:3px solid #ffd2c2;padding:0;display:flex;flex-direction:column;overflow:hidden;background:#fff;transform:scale(.92);opacity:0;transition:transform .35s var(--spring),opacity .2s}
+#mall.show .sheet.mx{transform:none;opacity:1}
+.mxTop{display:flex;align-items:center;gap:8px;padding:8px 12px;background:linear-gradient(90deg,#ffb59a,#ffc9d6 45%,#bfe1ff);color:#fff}
+.mxTitle{flex:1;font-size:17px;font-weight:900;text-shadow:0 1px 2px rgba(200,90,70,.45);white-space:nowrap}.mxTitle .hic{width:1.4em;height:1.4em}
+.mxPill{display:flex;align-items:center;gap:5px;background:#fff;border-radius:999px;padding:3px 12px 3px 4px;min-width:84px;box-shadow:0 2px 0 rgba(220,130,110,.25)}
+.mxPill span,.mxPill img{width:24px;height:24px;font-size:18px;line-height:24px;text-align:center;object-fit:contain}.mxPill b{color:#e06a4f;font-size:14px;font-weight:900}.mxPill.pearl b{color:#5a8fd6}
+.mxBody{flex:1;display:flex;min-height:0}
+.mxSide{width:148px;flex:none;display:flex;flex-direction:column;background:linear-gradient(#f2f8ff,#e6f2ff);border-right:2px solid #d6e9ff;padding:8px 6px;gap:4px}
+.mxSearch{display:flex;align-items:center;gap:4px;background:#fff;border:2px solid #cfe3fb;border-radius:999px;padding:3px 8px;font-size:12px}.mxSearch input{border:none;outline:none;width:100%;font:inherit;font-weight:700;color:var(--ink);background:none;min-width:0}
+#mallCats{flex:1;display:flex;flex-direction:column;gap:3px;overflow:auto}
+.mxCat{display:flex;align-items:center;gap:7px;border:none;background:none;text-align:left;padding:8px 10px;border-radius:12px;font:inherit;font-weight:900;font-size:13.5px;color:#5a6f8c;cursor:pointer}
+.mxCat .hic{width:1.3em;height:1.3em}.mxCat i{font-style:normal;width:1.3em;text-align:center}
+.mxCat.on{background:linear-gradient(90deg,#ffab90,#ffc4a8);color:#fff;box-shadow:0 3px 0 #f0937a}
+.mxExit{border:none;border-radius:12px;padding:9px;font:inherit;font-weight:900;color:#fff;background:linear-gradient(#9fd0ff,#7cb8f2);box-shadow:0 3px 0 #5d9ad6;cursor:pointer}
+.mxMain{flex:1;min-width:0;overflow:auto;padding:10px 12px 14px;background:#fffdfb}
+.mxHero{display:flex;gap:10px;height:clamp(120px,28vh,210px)}
+.mxBanner{flex:1.7;border-radius:16px;overflow:hidden;background:linear-gradient(120deg,#ffe3d8,#fff 50%,#dcefff);border:2px solid #ffe0d4;display:flex;align-items:center;justify-content:center;position:relative}
+.mxBanner img.bn{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:opacity .6s}.mxBanner .ph{font-weight:900;color:#e9a08c;font-size:15px;text-align:center}.mxBanner .ph img{width:56px;height:56px;display:block;margin:0 auto 4px}
+.mxPrev{flex:1;border-radius:16px;overflow:hidden;position:relative;border:2px solid #d6e9ff;background:radial-gradient(ellipse at 50% 85%,#ffe7dd 0 28%,transparent 29%),linear-gradient(#e8f4ff,#fff5ef);touch-action:none}
+.mxPrev canvas{width:100%;height:100%;display:block;cursor:grab}
+.mxPrevTag{position:absolute;left:8px;top:7px;font-size:11.5px;font-weight:900;color:#5a8fd6;background:rgba(255,255,255,.85);border-radius:999px;padding:2px 9px;display:none}
+.mxReset{position:absolute;right:7px;top:6px;border:none;border-radius:999px;font:inherit;font-size:11.5px;font-weight:900;padding:3px 10px;background:#fff;color:#e06a4f;box-shadow:0 2px 0 #ffd2c2;display:none;cursor:pointer}
+.mxSec{margin:12px 2px 8px;font-weight:900;font-size:14px;color:#e9876f;display:flex;align-items:center;gap:8px}.mxSec:after{content:"";flex:1;height:2px;background:linear-gradient(90deg,#ffd2c2,#d6e9ff)}
+.mxGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px}
+.mxCard{position:relative;background:#fff;border:2px solid #ffe0d4;border-radius:16px;padding:10px 8px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 #ffeae2;cursor:pointer;transition:transform .15s}
+.mxCard:hover{transform:translateY(-2px)}.mxCard.sel{border-color:#8fc4f5;box-shadow:0 0 0 3px #d6e9ff,0 3px 0 #cfe3fb}
+.mxCard .ib{width:64px;height:64px;border-radius:14px;background:linear-gradient(#f4f9ff,#ffeee7);display:flex;align-items:center;justify-content:center;font-size:38px}.mxCard .ib img{width:56px;height:56px;object-fit:contain}.mxCard .ib svg{width:44px;height:44px}
+.mxCard b{font-size:13px;line-height:1.25;color:var(--ink);min-height:2.5em;display:flex;align-items:center}
+.mxCard .pr{font-size:12.5px;font-weight:900;color:#5a8fd6;display:flex;align-items:center;gap:3px}.mxCard .pr img{width:17px;height:17px}
+.mxCard .buy{margin-top:3px;width:100%;border:none;border-radius:10px;padding:6px 0;font:inherit;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(#ffb59a,#ff977d);box-shadow:0 3px 0 #ec7d63;cursor:pointer}
+.mxCard .buy.cf{background:linear-gradient(#8fc8ff,#6aaef0);box-shadow:0 3px 0 #4f92d6}.mxCard .buy.own{background:#e8eef5;color:#9aa8b8;box-shadow:none;cursor:default}
+.mxTag{position:absolute;left:-3px;top:8px;font-size:10px;font-weight:900;color:#fff;padding:1px 8px 1px 6px;border-radius:0 8px 8px 0;letter-spacing:.5px}.mxTag.NEW{background:#7cbcf5}.mxTag.HOT{background:#ff8f78}
+.mxCard .cnt{position:absolute;right:6px;top:6px;font-size:11px;font-weight:900;color:#e06a4f;background:#fff1ec;border-radius:999px;padding:0 7px}
+.mxDesc{font-size:12.5px;line-height:1.5;color:#8a6f64;background:#f4f9ff;border:2px solid #d6e9ff;border-radius:12px;padding:8px 10px;margin-top:10px}
+.mxEmpty{color:#b0a0a0;font-weight:700;padding:20px;text-align:center}
+#mall .mallAgree{margin:0 0 8px}#mall .chips{margin-bottom:8px}
+@media (max-width:640px){.mxBody{flex-direction:column}.mxSide{width:auto;flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:2px solid #d6e9ff;padding:6px;align-items:center}#mallCats{order:3;flex:1 1 100%}
+ #mallCats{flex-direction:row;overflow-x:auto;overflow-y:hidden}.mxCat{white-space:nowrap;padding:6px 9px;font-size:12.5px}.mxSearch{flex:1}.mxExit{padding:6px 9px;white-space:nowrap;font-size:12px}
+ .mxHero{height:clamp(110px,24vh,170px)}.mxGrid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}}
+@media (max-height:460px){.mxHero{height:118px}.mxTop{padding:4px 10px}.mxCard .ib{width:48px;height:48px;font-size:30px}.mxCard .ib img{width:42px;height:42px}}
+
 </style>
 </head>
 <body>
@@ -658,15 +701,16 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div class="tabs"><button class="tab on" data-tab="tool">🪓 工具</button><button class="tab" data-tab="weapon">⚔️ 武器</button><button class="tab" data-tab="block">🧱 方塊</button><button class="tab" data-tab="furn">🪑 家具</button></div>
   <div class="grid" id="craftGrid"></div><button class="qb lav close" data-close="craft">關閉</button></div></div>
 
-<div class="panel" id="mall"><div class="sheet"><div class="grab"></div>
-  <h2><img class="hic" src="img/items/pearl.png" alt="珍珠"> 珍珠商城</h2><div class="sub">珍珠只能用來購買商城商品，不能換回現金。購買前請先閱讀<a href="terms.html" target="_blank">服務條款</a>。</div>
-  <div class="mallBal"><img class="hic" src="img/items/pearl.png" alt="珍珠"> 珍珠 <b id="mallPearls">－</b></div>
-  <label class="mallAgree"><input type="checkbox" id="mallAgree"> 我已閱讀並同意<a href="terms.html" target="_blank">服務條款與儲值說明</a>，並<b>同意付款完成後立即提供珍珠</b>。我了解珍珠屬於非以有形媒介提供之數位內容，提供後<b>不適用 7 天鑑賞期（無法以此理由退款）</b>。</label>
-  <div class="clab">儲值珍珠</div><div class="chips" id="mallPay"><button class="chip on" data-pm="ecpay">綠界（信用卡／ATM／超商）</button><button class="chip" data-pm="paypal">PayPal（海外玩家）</button></div>
-  <div class="grid" id="mallPacks"></div>
-  <div class="clab">用珍珠購買</div><div class="grid" id="mallItems"></div>
-  <div class="clab">我的商城道具</div><div id="mallOwn" class="sub">－</div>
-  <button class="qb lav close" data-close="mall">關閉</button></div></div>
+<div class="panel" id="mall"><div class="sheet mx">
+  <div class="mxTop"><b class="mxTitle"><img class="hic" src="img/items/pearl.png" alt=""> 珍珠商城</b><span class="mxPill"><span>🪙</span><b id="mallCoins">0</b></span><span class="mxPill pearl"><img src="img/items/pearl.png" alt="珍珠"><b id="mallPearls">－</b></span></div>
+  <div class="mxBody">
+    <nav class="mxSide"><label class="mxSearch"><span>🔍</span><input id="mallQ" type="search" placeholder="搜尋商品" autocomplete="off"></label><div id="mallCats"></div><button class="mxExit" data-close="mall">‹ 離開商城</button></nav>
+    <div class="mxMain" id="mallMain">
+      <div class="mxHero"><div class="mxBanner" id="mallBanner"></div><div class="mxPrev"><canvas id="mallCv"></canvas><div class="mxPrevTag" id="mallTry"></div><button class="mxReset" id="mallReset">還原</button></div></div>
+      <div class="mxSec" id="mallSecT"></div>
+      <div id="mallPage"></div>
+    </div>
+  </div></div></div>
 <div class="panel" id="shop"><div class="sheet"><div class="grab"></div>
   <h2 id="shopTitle"></h2><div class="sub" id="shopSub"></div>
   <div class="tabs" id="shopTabs"></div>
@@ -809,30 +853,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261124d"></script>
-<script src="config.js?v=20261124d"></script>
-<script src="firebase-config.js?v=20261124d"></script>
+<script src="js/three.min.js?v=20261124f"></script>
+<script src="config.js?v=20261124f"></script>
+<script src="firebase-config.js?v=20261124f"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261124d"></script>
-<script src="js/engine.js?v=20261124d"></script>
-<script src="js/audio.js?v=20261124d"></script>
-<script src="js/items.js?v=20261124d"></script>
-<script src="js/critter.js?v=20261124d"></script>
-<script src="js/cave.js?v=20261124d"></script>
-<script src="js/world.js?v=20261124d"></script>
-<script src="js/harbor.js?v=20261124d"></script>
-<script src="js/game.js?v=20261124d"></script>
-<script src="js/ui.js?v=20261124d"></script>
-<script src="js/extra.js?v=20261124d"></script>
-<script src="js/forest.js?v=20261124d"></script>
-<script src="js/net.js?v=20261124d"></script>
-<script src="js/cloud.js?v=20261124d"></script>
-<script src="js/mall.js?v=20261124d"></script>
-<script src="js/skills.js?v=20261124d"></script>
-<script src="js/bars.js?v=20261124d"></script>
-<script src="js/photo.js?v=20261124d"></script>
-<script src="js/party.js?v=20261124d"></script>
-<script src="js/gfx.js?v=20261124d"></script>
-<script src="js/upgrade.js?v=20261124d"></script>
+<script src="js/compat.js?v=20261124f"></script>
+<script src="js/engine.js?v=20261124f"></script>
+<script src="js/audio.js?v=20261124f"></script>
+<script src="js/items.js?v=20261124f"></script>
+<script src="js/critter.js?v=20261124f"></script>
+<script src="js/cave.js?v=20261124f"></script>
+<script src="js/world.js?v=20261124f"></script>
+<script src="js/harbor.js?v=20261124f"></script>
+<script src="js/game.js?v=20261124f"></script>
+<script src="js/ui.js?v=20261124f"></script>
+<script src="js/extra.js?v=20261124f"></script>
+<script src="js/forest.js?v=20261124f"></script>
+<script src="js/net.js?v=20261124f"></script>
+<script src="js/cloud.js?v=20261124f"></script>
+<script src="js/mall.js?v=20261124f"></script>
+<script src="js/skills.js?v=20261124f"></script>
+<script src="js/bars.js?v=20261124f"></script>
+<script src="js/photo.js?v=20261124f"></script>
+<script src="js/party.js?v=20261124f"></script>
+<script src="js/gfx.js?v=20261124f"></script>
+<script src="js/upgrade.js?v=20261124f"></script>
 </body>
 </html>
