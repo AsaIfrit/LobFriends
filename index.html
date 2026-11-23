@@ -24,7 +24,7 @@ body.sleeping #spdTag{display:inline-block}
 @keyframes wob{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) scale(1.1)}}
 #statBox{display:flex;flex-direction:column;gap:3px;align-self:flex-start}
 .lvrow{display:flex;align-items:center;gap:6px}
-#lvBadge{width:30px;height:30px;border-radius:50%;background:linear-gradient(160deg,#ffd36e,#ffa94d);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 2px 0 rgba(200,120,40,.4);text-shadow:0 1px 0 rgba(150,80,20,.5)}
+#lvBadge{width:30px;height:30px;border-radius:50%;background:#ffbc5c;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 2px 0 rgba(200,120,40,.4);text-shadow:0 1px 0 rgba(150,80,20,.5)}
 .xpwrap{display:flex;flex-direction:column;gap:1px}
 .xpwrap small{font-size:10px;opacity:.75}
 .stat{display:flex;align-items:center;gap:5px;font-size:12px}
@@ -35,14 +35,14 @@ body.sleeping #spdTag{display:inline-block}
 .bar.hit{animation:barShake .22s linear}.bar.hit>div:not(.ghost){animation:barFlash .2s ease-out}
 @keyframes barShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}45%{transform:translateX(3px)}70%{transform:translateX(-2px)}}
 @keyframes barFlash{0%{filter:brightness(2.4) saturate(.2)}100%{filter:none}}
-.bar.warn>#hpFill,.bar.warn>.pbHp{background:linear-gradient(90deg,#ffa95a,#ffd08a)!important}
-.bar.danger>#hpFill,.bar.danger>.pbHp{background:linear-gradient(90deg,#ff4f6a,#ff8a9a)!important;animation:barPulse .8s ease-in-out infinite}
-.bar.danger>#enFill,.bar.danger>.pbEn{background:linear-gradient(90deg,#ffa95a,#ffd08a)!important}
+.bar.warn>#hpFill,.bar.warn>.pbHp{background:#ffbe74!important}
+.bar.danger>#hpFill,.bar.danger>.pbHp{background:#ff6f84!important;animation:barPulse .8s ease-in-out infinite}
+.bar.danger>#enFill,.bar.danger>.pbEn{background:#ffbe74!important}
 @keyframes barPulse{50%{filter:brightness(1.35)}}
 /* 角色腳下的小血條 */
 #plyBars{position:fixed;z-index:3;display:none;flex-direction:column;gap:2px;transform:translateX(-50%);pointer-events:none}
 #plyBars .bar.pb{border-width:1.5px;border-color:rgba(255,255,255,.85);background:rgba(60,40,50,.45);box-shadow:0 1px 3px rgba(0,0,0,.25)}
-#plyBars .pbHp{background:linear-gradient(90deg,#ff8fb0,#ffc0d4)}#plyBars .pbEn{background:linear-gradient(90deg,#9f8ff0,#cfc4ff)}
+#plyBars .pbHp{background:#ffaac4}#plyBars .pbEn{background:#b9acf8}
 #plyBars.pb-s .bar.pb{width:40px;height:4px}#plyBars.pb-m .bar.pb{width:58px;height:6px}#plyBars.pb-l .bar.pb{width:84px;height:8px}
 #plyBars.pb-off{display:none!important}
 /* 篝火長按提示（在篝火上方）＋互動鍵上的進度圈 */
@@ -52,9 +52,9 @@ body.sleeping #spdTag{display:inline-block}
 #holdTip.on .ht{color:#ffd08a}
 #btnAct.holding::after{content:'';position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(#ffb040 var(--hold,0deg),transparent 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));pointer-events:none}
 .sNum{font-size:11px;font-weight:900;white-space:nowrap;min-width:44px;font-variant-numeric:tabular-nums}.sNum.low{color:#e0607a}
-#hpFill{background:linear-gradient(90deg,#ff8fb0,#ffc0d4)}
-#enFill{background:linear-gradient(90deg,#9f8ff0,#cfc4ff)}
-#xpFill{background:linear-gradient(90deg,#7fe0b0,#c4f7dc)}
+#hpFill{background:#ffaac4}
+#enFill{background:#b9acf8}
+#xpFill{background:#a5edc8}
 .bar.glow{box-shadow:0 0 0 3px rgba(127,224,176,.6)}
 #coinPill{align-self:flex-start;font-size:15px;display:flex;align-items:center;gap:4px}
 #heart{display:inline-block;animation:beat 1.1s ease-in-out infinite}
@@ -74,7 +74,7 @@ body.sleeping #spdTag{display:inline-block}
 #fab{position:absolute;right:216px;top:6px;width:52px;height:52px;border-radius:50%;border:3px solid #fff;background:var(--cream);box-shadow:0 4px 0 rgba(200,140,110,.45);padding:0;z-index:2;transition:background .35s,transform .15s}
 #fab span{position:absolute;left:14px;width:18px;height:3.5px;border-radius:3px;background:var(--ink);transition:transform .45s var(--spring),opacity .25s,top .3s var(--soft),background .3s}
 #fab span:nth-child(1){top:16px}#fab span:nth-child(2){top:22.5px}#fab span:nth-child(3){top:29px}
-#fab.open{background:linear-gradient(140deg,#ff9ec7,#b9a6f2);transform:rotate(180deg)}
+#fab.open{background:#d8a2df;transform:rotate(180deg)}
 #fab.open span{background:#fff;top:22.5px}
 #fab.open span:nth-child(1){transform:rotate(45deg)}#fab.open span:nth-child(2){opacity:0;transform:scaleX(0)}#fab.open span:nth-child(3){transform:rotate(-45deg)}
 #fab i{position:absolute;right:-3px;top:-3px;width:14px;height:14px;border-radius:50%;background:#ff6f8f;border:2px solid #fff;display:none}
@@ -99,18 +99,18 @@ body.sleeping #spdTag{display:inline-block}
 #petReveal .nm{font-size:22px;font-weight:900;color:#e0607a;margin-top:4px}
 #petReveal .ms{font-size:14px;font-weight:800;color:#7a4a5a;margin:6px 0 12px;line-height:1.6}
 @keyframes prBounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.06)}}
-#btnDel{right:200px;bottom:66px;width:64px;height:64px;font-size:11px;background:linear-gradient(160deg,#ffd6c8,#ff9e7a);color:#fff;display:none}
-#btnMove{right:270px;bottom:66px;width:58px;height:58px;font-size:11px;background:linear-gradient(160deg,#d8ecff,#9ac8f2);color:#fff;display:none}#btnMove span,#btnDel span{font-size:20px}
+#btnDel{right:200px;bottom:66px;width:64px;height:64px;font-size:11px;background:#ffb79d;color:#fff;display:none}
+#btnMove{right:270px;bottom:66px;width:58px;height:58px;font-size:11px;background:#b6d8f8;color:#fff;display:none}#btnMove span,#btnDel span{font-size:20px}
 body.building #btnMove{display:flex;animation:popIn .4s var(--spring)}#btnMove.dim{opacity:.45}
 body.deco #btnAct.noplace{display:none!important}
-/* 建造模式開關：左下角 Talk 上方 */#btnBuild{left:16px;bottom:152px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#ffe9c8,#ffc98a);color:#7a4a3e}#btnBuild span{font-size:20px}#btnBuild.on{box-shadow:0 0 0 4px #ffd36e,0 3px 10px rgba(0,0,0,.25)!important}
+/* 建造模式開關：左下角 Talk 上方 */#btnBuild{left:16px;bottom:152px;width:60px;height:60px;font-size:11px;background:#ffd7a6;color:#7a4a3e}#btnBuild span{font-size:20px}#btnBuild.on{box-shadow:0 0 0 4px #ffd36e,0 3px 10px rgba(0,0,0,.25)!important}
 body.sleeping #btnBuild,body.downed #btnBuild{display:none!important}
 #btnBuild{display:none!important}/* 建造模式從右上選單開關（鍵盤 H），畫面上不放按鈕 */
 body.building #btnDel{display:flex;animation:popIn .4s var(--spring)}#btnDel.dim{opacity:.45}
-#btnEmote{left:16px;bottom:80px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#fff3c0,#ffd6a0);color:#7a4a3e}
+#btnEmote{left:16px;bottom:80px;width:60px;height:60px;font-size:11px;background:#ffe3ae;color:#7a4a3e}
 body.sleeping #btnEmote{display:none!important}
-#fpBtn{right:100px;bottom:182px;width:52px;height:52px;font-size:22px;background:linear-gradient(160deg,#fff3c0,#ffd36e);color:#5a3a2a;display:none}#fpBtn.on{color:#fff}
-body.canfp #fpBtn{display:flex;animation:popIn .4s var(--spring)}#fpBtn.on{background:linear-gradient(160deg,#ffb3c8,#ff8fb0)}
+#fpBtn{right:100px;bottom:182px;width:52px;height:52px;font-size:22px;background:#ffe193;color:#5a3a2a;display:none}#fpBtn.on{color:#fff}
+body.canfp #fpBtn{display:flex;animation:popIn .4s var(--spring)}#fpBtn.on{background:#ff9fbb}
 #xhair{position:fixed;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px rgba(120,80,60,.45);pointer-events:none;z-index:4;display:none}
 body.fp #xhair{display:block}
 body.building #btnAtk{display:none!important}
@@ -124,9 +124,9 @@ body.building #btnAtk{display:none!important}
 #gOv.on{display:flex;animation:gOvIn .2s ease-out}#gOv.out{animation:gOvOut .3s ease-in forwards}
 @keyframes gOvIn{from{opacity:0}}@keyframes gOvOut{to{opacity:0}}
 #gOv .gCap{position:absolute;width:128px;height:160px;transform:translateY(-120vh);animation:gCapDrop .38s cubic-bezier(.5,0,.75,0) forwards}
-#gOv .gTop{position:absolute;left:0;right:0;top:0;height:52%;border-radius:64px 64px 14px 14px/70px 70px 14px 14px;background:linear-gradient(160deg,#ffffff,#eae4ee);box-shadow:inset -10px -8px 0 rgba(0,0,0,.07),inset 12px 10px 0 rgba(255,255,255,.6)}
-#gOv.hat .gBot{background:linear-gradient(160deg,#ffb36a,#ff8a3a)}
-#gOv .gBot{position:absolute;left:0;right:0;bottom:0;height:50%;border-radius:14px 14px 64px 64px/14px 14px 70px 70px;background:linear-gradient(160deg,#ffb36a,#ff8a3a);box-shadow:inset -10px -10px 0 rgba(0,0,0,.08),inset 10px 6px 0 rgba(255,255,255,.25)}
+#gOv .gTop{position:absolute;left:0;right:0;top:0;height:52%;border-radius:64px 64px 14px 14px/70px 70px 14px 14px;background:#f3f0f6;box-shadow:inset -10px -8px 0 rgba(0,0,0,.07),inset 12px 10px 0 rgba(255,255,255,.6)}
+#gOv.hat .gBot{background:#ff9c50}
+#gOv .gBot{position:absolute;left:0;right:0;bottom:0;height:50%;border-radius:14px 14px 64px 64px/14px 14px 70px 70px;background:#ff9c50;box-shadow:inset -10px -10px 0 rgba(0,0,0,.08),inset 10px 6px 0 rgba(255,255,255,.25)}
 #gOv .gBand{position:absolute;left:2px;right:2px;top:calc(50% - 3px);height:6px;border-radius:3px;background:rgba(120,70,100,.35)}
 #gOv .gCrack{position:absolute;inset:0;width:100%;height:100%;opacity:0}#gOv .gCrack path{fill:none;stroke:#ffd84a;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px #ffe680);stroke-dasharray:120;stroke-dashoffset:120}
 #gOv.land .gCap{animation:gCapLand .16s ease-out forwards}
@@ -158,7 +158,7 @@ body.building #btnAtk{display:none!important}
 #gList{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:22px;margin:4px 0 10px}
 #partyBox{position:relative;pointer-events:auto;align-self:flex-start;display:none;background:rgba(255,250,244,.92);border:3px solid #fff;border-radius:16px;padding:6px 9px;box-shadow:0 4px 0 rgba(200,140,110,.3);min-width:150px}
 #partyBox.on{display:block;animation:popIn .4s var(--spring)}#partyBox h4{margin:0 0 3px;font-size:12px;color:#7a4a3e;display:flex;justify-content:space-between;align-items:center}
-#partyBox .pm{font-size:11.5px;font-weight:900;color:#6b4a3e;margin:3px 0}#partyBox .pm i{display:block;height:6px;border-radius:4px;background:#f2dcd4;overflow:hidden;margin-top:2px}#partyBox .pm i b{display:block;height:100%;background:linear-gradient(90deg,#ff8fa3,#ff6f8f)}
+#partyBox .pm{font-size:11.5px;font-weight:900;color:#6b4a3e;margin:3px 0}#partyBox .pm i{display:block;height:6px;border-radius:4px;background:#f2dcd4;overflow:hidden;margin-top:2px}#partyBox .pm i b{display:block;height:100%;background:#ff7d98}
 #partyBox .pm.dn{opacity:.6}#ptLeave{border:2px solid #fff;border-radius:10px;background:#ffd6d6;font-size:10px;font-weight:900;padding:1px 6px;color:#8a3a3a}
 #invBox{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:40;display:none;background:var(--cream);border:3px solid #fff;border-radius:20px;padding:10px 14px;box-shadow:0 6px 0 rgba(200,140,110,.35);text-align:center;font-weight:900;color:#6b4a3e}
 #invBox.on{display:block;animation:popIn .45s var(--spring)}#invBox div{display:flex;gap:8px;justify-content:center;margin-top:8px}
@@ -166,13 +166,13 @@ body.building #btnAtk{display:none!important}
 #downBox.on{display:block;animation:popIn .45s var(--spring)}#downBox p{margin:4px 0 10px;font-size:13px;opacity:.9}#downBox div{display:flex;gap:8px;justify-content:center}
 body.downed #btnAtk,body.downed #btnAct,body.downed #btnJump,body.downed #joyBase{display:none!important}
 #castBar{position:fixed;left:50%;bottom:190px;transform:translateX(-50%);z-index:19;display:none;width:220px;background:rgba(255,250,244,.95);border:3px solid #fff;border-radius:16px;padding:5px 10px;text-align:center;font-weight:900;font-size:12.5px;color:#6b4a3e;box-shadow:0 4px 0 rgba(200,140,110,.3)}
-#castBar.on{display:block}#castBar i{display:block;height:9px;border-radius:6px;background:#f2dcd4;overflow:hidden;margin-top:4px}#castFill{display:block;height:100%;width:0;background:linear-gradient(90deg,#c8b4ff,#ffd36e)}
-#skillBar .sk{position:fixed;width:54px;height:54px;border-radius:50%;border:3px solid #fff;background:linear-gradient(160deg,#fff7ea,#ffd9bc);box-shadow:0 4px 0 rgba(150,90,70,.25),0 6px 14px rgba(150,90,70,.15);z-index:4;font-size:24px;padding:0;display:flex;align-items:center;justify-content:center;touch-action:none;transition:transform .12s}
+#castBar.on{display:block}#castBar i{display:block;height:9px;border-radius:6px;background:#f2dcd4;overflow:hidden;margin-top:4px}#castFill{display:block;height:100%;width:0;background:#e6c5af}
+#skillBar .sk{position:fixed;width:54px;height:54px;border-radius:50%;border:3px solid #fff;background:#ffe6d1;box-shadow:0 4px 0 rgba(150,90,70,.25),0 6px 14px rgba(150,90,70,.15);z-index:4;font-size:24px;padding:0;display:flex;align-items:center;justify-content:center;touch-action:none;transition:transform .12s}
 #skillBar .sk:active{transform:scale(.9)}#skillBar .sk span{position:relative;z-index:1}
 #skillBar .sk u{position:absolute;right:-5px;bottom:-5px;z-index:2;font-size:10.5px;font-weight:900;text-decoration:none;background:#6b4a3e;color:#fff;border-radius:7px;padding:1px 5px}
 #skillBar .sk i{position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:2}
 #skillBar .sk b{position:absolute;z-index:3;font-size:17px;font-weight:900;color:#fff;text-shadow:0 1px 3px #3a2030}
-#skillBar .sk.on{background:linear-gradient(160deg,#fff6b0,#ffc94a);box-shadow:0 0 0 3px #ffd36e,0 4px 0 rgba(150,90,70,.25)}
+#skillBar .sk.on{background:#ffdd78;box-shadow:0 0 0 3px #ffd36e,0 4px 0 rgba(150,90,70,.25)}
 #skillBar .sk.dim span{opacity:.55}
 body:not(.ingame) #skillBar,body.sleeping #skillBar,body.downed #skillBar,body.carrying #skillBar,body.building #skillBar{display:none}
 @media (pointer:coarse){#skillBar .sk u{display:none}}
@@ -181,20 +181,20 @@ body:not(.ingame) #skillBar,body.sleeping #skillBar,body.downed #skillBar,body.c
 .tcls{border:2.5px solid #f6a5b5;border-radius:12px;background:#fff;padding:5px 2px 4px;text-align:center;cursor:pointer;font-weight:900;color:#6b4a3e;font-size:18px;line-height:1.1;transition:transform .15s}
 .tcls b{display:block;font-size:13px;margin-top:1px}.tcls small{display:block;font-size:10px;color:#a08070;margin-top:1px}
 .tcls.nov{width:96px;margin:0 auto}.trow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.tcls.on{background:linear-gradient(180deg,#ffe3ee,#fff);box-shadow:0 0 0 3px #ff9ec7;transform:translateY(-2px)}
-.tcls.lock{opacity:.55;filter:grayscale(.6)}.tcls.full{border-color:#ffc94a;background:linear-gradient(180deg,#fff4c8,#fff)}
+.tcls.on{background:#fff2f7;box-shadow:0 0 0 3px #ff9ec7;transform:translateY(-2px)}
+.tcls.lock{opacity:.55;filter:grayscale(.6)}.tcls.full{border-color:#ffc94a;background:#fffae6}
 #tDesc{font-size:12px;font-weight:800;color:#8a6a5a;text-align:center;margin:2px 0 8px;line-height:1.5}
 .ttag{display:inline-block;font-size:10.5px;font-weight:900;background:#f3ecff;color:#6a5a9a;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:1px}
 #tEq{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#fff;border:2.5px solid #fbe3d8;border-radius:14px;padding:6px 10px;margin:4px 0 8px;font-size:13px}
-.teqs{background:linear-gradient(160deg,#fff6b0,#ffd36e);border-radius:10px;padding:3px 8px;font-weight:900;font-size:12.5px;cursor:pointer}.teqs.empty{background:#f2ebe6;color:#b8a090;cursor:default}
-.teq{float:right;border:2px solid #ff9ec7;background:#fff;color:#c0507a;border-radius:10px;font-weight:900;font-size:11.5px;padding:2px 9px;cursor:pointer}.teq.on{background:linear-gradient(160deg,#fff6b0,#ffd36e);border-color:#ffc94a;color:#7a5a20}
+.teqs{background:#ffe38c;border-radius:10px;padding:3px 8px;font-weight:900;font-size:12.5px;cursor:pointer}.teqs.empty{background:#f2ebe6;color:#b8a090;cursor:default}
+.teq{float:right;border:2px solid #ff9ec7;background:#fff;color:#c0507a;border-radius:10px;font-weight:900;font-size:11.5px;padding:2px 9px;cursor:pointer}.teq.on{background:#ffe38c;border-color:#ffc94a;color:#7a5a20}
 .ttag.act{background:#ffe3ee;color:#c0507a}.ttag.req{background:#fff1d8;color:#a0702a}
 #revBar{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);z-index:19;display:none;width:240px;background:rgba(255,250,244,.95);border:3px solid #fff;border-radius:16px;padding:6px 10px;text-align:center;font-weight:900;font-size:12.5px;color:#6b4a3e;box-shadow:0 4px 0 rgba(200,140,110,.3)}
-#revBar.on{display:block}#revBar i{display:block;height:10px;border-radius:6px;background:#f2dcd4;overflow:hidden;margin-top:4px}#revFill{display:block;height:100%;width:0;background:linear-gradient(90deg,#9ff0c8,#ff9ec7)}
+#revBar.on{display:block}#revBar i{display:block;height:10px;border-radius:6px;background:#f2dcd4;overflow:hidden;margin-top:4px}#revFill{display:block;height:100%;width:0;background:#d4c3c7}
 #bossBar{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:7;display:none;width:min(60vw,420px);text-align:center;font-weight:900;color:#fff;text-shadow:0 2px 0 #8a2a4a}
-#bossBar.on{display:block;animation:popIn .5s var(--spring)}#bossBar i{display:block;height:14px;border-radius:8px;background:rgba(60,30,50,.6);border:2px solid #fff;overflow:hidden;margin-top:3px}#bossFill{display:block;height:100%;background:linear-gradient(90deg,#ff6f9f,#ffb36e)}
+#bossBar.on{display:block;animation:popIn .5s var(--spring)}#bossBar i{display:block;height:14px;border-radius:8px;background:rgba(60,30,50,.6);border:2px solid #fff;overflow:hidden;margin-top:3px}#bossFill{display:block;height:100%;background:#ff9484}
 #bossBar small{font-size:11px}
-#decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:linear-gradient(140deg,#ffd36e,#ffb38a);color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35);cursor:pointer;pointer-events:auto;touch-action:manipulation}
+#decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:#ffc17d;color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35);cursor:pointer;pointer-events:auto;touch-action:manipulation}
 body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 @media (max-width:560px){#decoTag{top:calc(max(10px,env(safe-area-inset-top)) + 150px);font-size:12px;padding:3px 12px}}/* 手機直向：放在左上資訊下面，不擋選單 */
 /* 擺放中按鈕 */
@@ -209,7 +209,7 @@ body.carrying #placeBar{display:flex;animation:popIn .4s var(--spring)}
   animation:noteIn .5s var(--spring);transition:transform .35s ease-in,opacity .35s,max-height .35s,margin .35s,padding .35s;max-height:70px;overflow:hidden}
 .note.out{transform:translateX(-120%);opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-top:-7px}
 @keyframes noteIn{0%{transform:translateX(-120%) scale(.9)}100%{transform:none}}
-.nav{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:linear-gradient(160deg,#c8f0d4,#8fdcb4);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid #fff;box-shadow:0 2px 0 rgba(90,170,130,.35)}
+.nav{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#a9e5c2;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid #fff;box-shadow:0 2px 0 rgba(90,170,130,.35)}
 .nbody{flex:1;min-width:0}
 .ntop{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
 .ntop b{font-size:12.5px;color:#4a8a64}.ntop small{font-size:10px;opacity:.55}
@@ -243,12 +243,12 @@ body:not(.ingame) #chatLog{display:none}
 @keyframes tin{0%{opacity:0;transform:translateY(14px) scale(.6)}12%{opacity:1;transform:scale(1.08)}20%{transform:scale(1)}82%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
 .btn{position:fixed;border-radius:50%;border:3px solid #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;box-shadow:0 5px 0 rgba(150,90,70,.25),0 8px 18px rgba(150,90,70,.18);touch-action:none;padding:0;transition:transform .12s;z-index:4}
 .btn span{line-height:1.05}
-#btnAtk{right:16px;bottom:74px;width:90px;height:90px;font-size:13px;background:linear-gradient(160deg,#ffb79a,#ff8f73);color:#fff}
+#btnAtk{right:16px;bottom:74px;width:90px;height:90px;font-size:13px;background:#ffa185;color:#fff}
 #btnAtk span{font-size:30px}
-#btnAct{right:114px;bottom:66px;width:72px;height:72px;font-size:12px;background:linear-gradient(160deg,#d4f5dd,#9adbb2)}
+#btnAct{right:114px;bottom:66px;width:72px;height:72px;font-size:12px;background:#b4e7c5}
 #btnAct span{font-size:24px}
 #btnAct.dim{filter:saturate(.3);opacity:.75}
-#btnJump{right:30px;bottom:176px;width:56px;height:56px;font-size:22px;background:linear-gradient(160deg,#e2d8ff,#b9a6f2);color:#fff}
+#btnJump{right:30px;bottom:176px;width:56px;height:56px;font-size:22px;background:#cbbcf8;color:#fff}
 #hotbar{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);display:flex;gap:5px;padding:5px;background:rgba(255,250,243,.9);border:2.5px solid var(--line);border-radius:18px;max-width:94vw;overflow-x:auto;z-index:4;box-shadow:0 4px 0 rgba(200,140,110,.3)}
 #hotbar:empty{display:none}
 .rc .qrow{display:flex;gap:4px;align-items:center;justify-content:center;flex-wrap:wrap}.rc input.qty{width:54px;padding:5px 4px;border:2px solid #f3d3c4;border-radius:10px;font:inherit;font-weight:900;text-align:center;color:#6b4a3e;background:#fffaf3}
@@ -270,7 +270,7 @@ body.sleeping #btnAtk,body.sleeping #btnAct,body.sleeping #btnJump,body.sleeping
 #sleepUI{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);display:none;flex-direction:column;align-items:center;gap:10px;z-index:6}
 body.sleeping #sleepUI{display:flex}
 #sleepUI .tag{background:rgba(70,50,110,.75);color:#fff;border-radius:16px;padding:5px 14px;font-weight:900;font-size:14px}
-#wakeBtn{position:static;width:auto;height:auto;border-radius:30px;padding:14px 34px;font-size:20px;background:linear-gradient(160deg,#ffe39a,#ffbf5a);color:#fff;flex-direction:row;gap:6px}
+#wakeBtn{position:static;width:auto;height:auto;border-radius:30px;padding:14px 34px;font-size:20px;background:#ffcf77;color:#fff;flex-direction:row;gap:6px}
 .press{scale:.84}.fan.press{scale:none}/* 選單按鈕本身就有 translate，獨立的 scale 會把位移一起縮小、按鈕往旁邊跑；選單按鈕改用下面那條 transform 縮放 *//* 用獨立的 scale，不會蓋掉按鈕原本的位移（手機上角色外型按鈕按下會跳走） */
 #topR.open .fan.press{transform:translate(var(--tx),var(--ty)) scale(.86)!important}
 #topR.open .fan.fboing{animation:fboing .45s var(--spring)}
@@ -291,10 +291,10 @@ body.sleeping #sleepUI{display:flex}
 .zz{position:fixed;pointer-events:none;z-index:7;font-weight:900;color:#e8e0ff;text-shadow:0 2px 0 #8a6fd0;animation:zz 2.2s forwards}
 @keyframes zz{0%{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(40px,-90px) scale(1.4) rotate(15deg)}}
 #joyBase{position:fixed;width:112px;height:112px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.8);display:none;pointer-events:none;transform:translate(-50%,-50%);z-index:4}
-#joyKnob{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;background:linear-gradient(160deg,#fff,#ffd9c8);box-shadow:0 3px 0 rgba(240,150,110,.6)}
+#joyKnob{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;background:#ffeae1;box-shadow:0 3px 0 rgba(240,150,110,.6)}
 #flash{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(255,90,130,.45));opacity:0;pointer-events:none;transition:opacity .3s;z-index:2}
 #vig{position:fixed;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,transparent 42%,rgba(40,20,70,.8) 100%);z-index:2}
-#fade{position:fixed;inset:0;background:linear-gradient(#5a3e6e,#9a6a8a);opacity:0;pointer-events:none;transition:opacity .8s;display:flex;align-items:center;justify-content:center;color:#fff3fa;font-size:28px;font-weight:900;z-index:40}
+#fade{position:fixed;inset:0;background:#7d567d;opacity:0;pointer-events:none;transition:opacity .8s;display:flex;align-items:center;justify-content:center;color:#fff3fa;font-size:28px;font-weight:900;z-index:40}
 /* ---------- 升級：圓形展開 ---------- */
 #lvUp{--cx:50%;--cy:50%;position:fixed;inset:0;z-index:45;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:radial-gradient(circle at center,rgba(255,240,200,.92),rgba(255,180,210,.88) 55%,rgba(185,166,242,.85));clip-path:circle(0px at var(--cx) var(--cy));transition:clip-path .6s cubic-bezier(.5,0,.2,1)}
@@ -327,18 +327,18 @@ body.sleeping #sleepUI{display:flex}
 .qc{background:#fff;border:2.5px solid #fbe3d8;border-radius:18px;padding:11px;margin-bottom:10px}
 .qc b{font-size:16px}.qc p{margin:4px 0 8px;font-size:13px}
 .qc .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;gap:8px}
-.qb{border:3px solid #fff;border-radius:16px;padding:8px 16px;font-weight:900;font-size:14px;background:linear-gradient(160deg,#a8ecc8,#7fd4a8);color:#fff;box-shadow:0 4px 0 rgba(90,170,130,.45);transition:transform .12s;white-space:nowrap}
-.qb.claim{background:linear-gradient(160deg,#ffd98a,#ffbf5a);box-shadow:0 4px 0 rgba(220,150,60,.45)}
-.qb.pink{background:linear-gradient(160deg,#ffb79a,#ff8f73);box-shadow:0 4px 0 rgba(220,110,80,.45)}
+.qb{border:3px solid #fff;border-radius:16px;padding:8px 16px;font-weight:900;font-size:14px;background:#91dfb6;color:#fff;box-shadow:0 4px 0 rgba(90,170,130,.45);transition:transform .12s;white-space:nowrap}
+.qb.claim{background:#ffcb70;box-shadow:0 4px 0 rgba(220,150,60,.45)}
+.qb.pink{background:#ffa185;box-shadow:0 4px 0 rgba(220,110,80,.45)}
 #stList .strow{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #f6e4da;border-radius:16px;padding:7px 8px;margin:6px 0}
 #stList .sti{font-size:24px;width:30px;text-align:center}#stList .stn{flex:1;min-width:0}#stList .stn b{display:block;font-size:14.5px}#stList .stn small{display:block;font-size:10.5px;opacity:.7;line-height:1.3}
-#stList .stc{display:flex;align-items:center;gap:3px}#stList .stc button{width:30px;height:30px;border-radius:50%;border:2px solid #fff;font-weight:900;font-size:15px;padding:0;background:linear-gradient(160deg,#ffd0c0,#ffa78f);color:#fff;box-shadow:0 2px 0 rgba(220,110,80,.4)}
-#stList .stc button.x10{font-size:10px;background:linear-gradient(160deg,#e2d8ff,#b9a6f2);box-shadow:0 2px 0 rgba(130,100,200,.4)}#stList .stc button:disabled{opacity:.35}
+#stList .stc{display:flex;align-items:center;gap:3px}#stList .stc button{width:30px;height:30px;border-radius:50%;border:2px solid #fff;font-weight:900;font-size:15px;padding:0;background:#ffb9a5;color:#fff;box-shadow:0 2px 0 rgba(220,110,80,.4)}
+#stList .stc button.x10{font-size:10px;background:#cbbcf8;box-shadow:0 2px 0 rgba(130,100,200,.4)}#stList .stc button:disabled{opacity:.35}
 #stList .stv{min-width:34px;text-align:center;font-weight:900;font-size:17px}#stList .stv.chg{color:#ff6f8f}
 #stDer{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;background:#fff8f2;border:2px dashed #f2d6c8;border-radius:16px;padding:9px 12px;margin:8px 0;font-size:12.5px}
 #stDer div{display:flex;justify-content:space-between;gap:6px}#stDer span{opacity:.75}#stDer b.up{color:#2fae6a}#stDer b.dn{color:#e0607a}#stDer .full{grid-column:1/3}
 .stBtns{display:flex;gap:6px;justify-content:center;margin:6px 0 4px}.stBtns .qb{padding:7px 12px;font-size:13px}
-.qb.lav{background:linear-gradient(160deg,#e2d8ff,#b9a6f2);box-shadow:0 4px 0 rgba(130,100,200,.4)}
+.qb.lav{background:#cbbcf8;box-shadow:0 4px 0 rgba(130,100,200,.4)}
 .qb[disabled]{background:#ece0da;box-shadow:none;color:#a58c84}
 .close{width:100%;margin-top:6px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:6px}
@@ -388,24 +388,24 @@ body.sleeping #sleepUI{display:flex}
 .tab{flex:1;border:2.5px solid #fbe3d8;background:#fff;border-radius:14px;padding:6px;font-weight:900;font-size:13px;transition:transform .15s var(--spring)}
 .tab.on{background:#fff0e8;border-color:#ff9f80;transform:translateY(-2px)}
 /* 天賦 */
-#spInfo{display:inline-block;background:linear-gradient(160deg,#ffd36e,#ffa94d);color:#fff;border-radius:12px;padding:2px 10px;font-weight:900}
+#spInfo{display:inline-block;background:#ffbc5c;color:#fff;border-radius:12px;padding:2px 10px;font-weight:900}
 .tbranch{background:#fff;border:2.5px solid #fbe3d8;border-radius:18px;padding:8px 10px;margin-bottom:8px}
 .tbranch .th{font-weight:900;font-size:14px;margin-bottom:6px}
 .tnodes{display:flex;gap:6px;align-items:stretch}
 .tnode{flex:1;border:2.5px solid #eee0d8;border-radius:14px;padding:6px 4px;background:#fdf8f4;font-size:11px;text-align:center;position:relative;transition:transform .2s var(--spring)}
 .tnode b{display:block;font-size:12.5px;margin-bottom:2px}
-.tnode.got{background:linear-gradient(160deg,#fff4c8,#ffe08a);border-color:#ffc94a}
+.tnode.got{background:#ffe9a6;border-color:#ffc94a}
 .tnode.can{border-color:#ff9f80;background:#fff0e8;cursor:pointer;animation:canPulse 1.2s ease-in-out infinite}
 @keyframes canPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,143,115,.4)}50%{box-shadow:0 0 0 5px rgba(255,143,115,0)}}
 .tnode.lock{opacity:.5}
 .tbranch .th{display:flex;align-items:center;flex-wrap:wrap;gap:4px}.tbranch .tlv{margin-left:auto;font-size:12px;color:#c0705a;background:#fff0e8;border-radius:10px;padding:1px 8px}
-.tpips{display:flex;gap:3px;margin:2px 0 6px}.tpips i{flex:1;height:7px;border-radius:4px;background:#f3e6de}.tpips i.on{background:linear-gradient(90deg,#ffc94a,#ff9f80)}.tpips i.mk{box-shadow:0 0 0 1.5px #c9a0ff inset}.tpips i.on.mk{box-shadow:0 0 0 1.5px #a070f0 inset}
+.tpips{display:flex;gap:3px;margin:2px 0 6px}.tpips i{flex:1;height:7px;border-radius:4px;background:#f3e6de}.tpips i.on{background:#ffb268}.tpips i.mk{box-shadow:0 0 0 1.5px #c9a0ff inset}.tpips i.on.mk{box-shadow:0 0 0 1.5px #a070f0 inset}
 .tinfo{font-size:12px;line-height:1.45}.tinfo em{font-style:normal;font-size:10.5px;font-weight:900;color:#fff;background:#d8b8a8;border-radius:8px;padding:0 6px;margin-right:5px}.tnext em{background:#ff9f80}.tnext.max{color:#c08a20;font-weight:900}.tinfo>div{margin:2px 0}
 .tnode.tup{margin-top:6px;padding:6px;font-size:13px;font-weight:900}
 /* 對話 */
 #dlg{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(94vw,520px);box-sizing:border-box;background:var(--cream);border:3px solid var(--line);border-radius:22px;padding:14px 16px 12px;z-index:31;display:none;box-shadow:0 6px 0 rgba(200,140,110,.4),0 12px 30px rgba(100,50,40,.25);animation:dlgIn .4s var(--spring)}
 @keyframes dlgIn{0%{transform:translate(-50%,40px) scale(.8);opacity:0}100%{transform:translateX(-50%);opacity:1}}
-#dlgName{position:absolute;top:-16px;left:16px;background:linear-gradient(160deg,#ffb79a,#ff8f73);color:#fff;border:3px solid #fff;border-radius:14px;padding:2px 12px;font-weight:900;font-size:14px}
+#dlgName{position:absolute;top:-16px;left:16px;background:#ffa185;color:#fff;border:3px solid #fff;border-radius:14px;padding:2px 12px;font-weight:900;font-size:14px}
 #dlgTxt{font-weight:700;font-size:16px;line-height:1.55;min-height:48px}
 #dlgOpts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 #dlgOpts .qb{padding:6px 12px;font-size:13px;opacity:0;transform:translateY(10px);animation:stgIn .4s var(--spring) forwards;animation-delay:calc(var(--i)*60ms)}
@@ -438,7 +438,7 @@ body.sleeping #sleepUI{display:flex}
 input[type=range]{width:100%;accent-color:#ff8f73;height:22px}
 #cName{width:100%;box-sizing:border-box;border:2.5px solid #fbe3d8;border-radius:14px;padding:7px 10px;font-family:inherit;font-weight:900;font-size:15px;color:var(--ink);background:#fff}
 .crow2{display:flex;gap:8px;margin-top:14px}.crow2 .qb{flex:1;padding:11px}
-#reveal{position:fixed;inset:0;z-index:50;pointer-events:none;background:linear-gradient(160deg,#ffd0b8,#c8b8ff);clip-path:circle(0px at var(--cx,50%) var(--cy,50%));transition:clip-path .55s cubic-bezier(.6,0,.2,1)}
+#reveal{position:fixed;inset:0;z-index:50;pointer-events:none;background:#e1c3df;clip-path:circle(0px at var(--cx,50%) var(--cy,50%));transition:clip-path .55s cubic-bezier(.6,0,.2,1)}
 #reveal.on{clip-path:circle(150vmax at var(--cx,50%) var(--cy,50%))}
 
 /* ===== 標題畫面 ===== */
@@ -482,7 +482,7 @@ body.ingame #start{display:none!important}
 .bs u,.slot u{position:absolute;left:3px;top:0;font-size:9px;font-weight:900;text-decoration:none;opacity:.55}
 .dragGhost{position:fixed;left:0;top:0;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:32px;pointer-events:none;z-index:80;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
 .slot.empty{background:rgba(255,255,255,.55);border-style:dashed}
-.slot.bagBtn{background:linear-gradient(160deg,#ffe9c8,#ffd09a);margin-left:4px}
+.slot.bagBtn{background:#ffdbaf;margin-left:4px}
 /* ===== 快捷欄、選單（L 形） ===== */
 #hotbar{flex-wrap:nowrap;overflow:visible;bottom:max(8px,env(safe-area-inset-bottom))}
 .slot{width:var(--sl,44px);height:var(--sl,44px);font-size:calc(var(--sl,44px)*0.52)}
@@ -551,7 +551,7 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
 @media (max-width:560px){.sheet{max-height:86vh;padding:8px 12px 14px}.sheet h2{font-size:19px}.sheet .sub{font-size:12px;margin-bottom:8px}.drawer .sheet{max-height:none}}
 @media (max-height:500px) and (orientation:landscape){.sheet{max-height:94vh;width:min(94vw,760px);padding:6px 14px 10px}.sheet h2{font-size:18px}.sheet .sub{font-size:11.5px;margin-bottom:6px}.grab{margin-bottom:4px}.drawer .sheet{max-height:none;width:min(60vw,460px)}}
 .tname{cursor:pointer;border-bottom:1.5px dashed rgba(122,74,52,.35)}.tname small{font-size:11px;opacity:.6;margin-left:2px}.tall{margin:6px 0 2px;padding:7px 9px;border-radius:12px;background:rgba(255,246,234,.85);font-size:12px;line-height:1.55}.tall div{opacity:.62;padding:2px 0}.tall div.got{opacity:1}.tall em{font-style:normal;font-weight:800;color:#e0607a;margin-right:6px}
-#xpBoost{display:none;align-items:center;gap:4px;font-size:12px;font-weight:800;color:#b8742a;background:linear-gradient(160deg,#fff8d8,#ffe7a0);animation:xpbGlow 2s ease-in-out infinite}#xpBoost b{font-variant-numeric:tabular-nums;color:#8a4a1a}@keyframes xpbGlow{50%{box-shadow:0 0 0 3px rgba(255,211,110,.45)}}
+#xpBoost{display:none;align-items:center;gap:4px;font-size:12px;font-weight:800;color:#b8742a;background:#ffefb9;animation:xpbGlow 2s ease-in-out infinite}#xpBoost b{font-variant-numeric:tabular-nums;color:#8a4a1a}@keyframes xpbGlow{50%{box-shadow:0 0 0 3px rgba(255,211,110,.45)}}
 #bagTabs,#gmTabs{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}#bagTabs::-webkit-scrollbar,#gmTabs::-webkit-scrollbar{display:none}#bagTabs .tab,#gmTabs .tab{flex:0 0 auto;white-space:nowrap;writing-mode:horizontal-tb}
 </style>
 <style>
@@ -588,35 +588,35 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 #mall{align-items:center}
 #mall .sheet.mx{width:min(98vw,1000px);height:min(96vh,720px);max-height:none;border-radius:24px;border:3px solid #ffd2c2;padding:0;display:flex;flex-direction:column;overflow:hidden;background:#fff;transform:scale(.92);opacity:0;transition:transform .35s var(--spring),opacity .2s}
 #mall.show .sheet.mx{transform:none;opacity:1}
-.mxTop{display:flex;align-items:center;gap:8px;padding:8px 12px;background:linear-gradient(90deg,#ffb59a,#ffc9d6 45%,#bfe1ff);color:#fff}
+.mxTop{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#ff9f85;color:#fff}
 .mxTitle{flex:1;font-size:17px;font-weight:900;text-shadow:0 1px 2px rgba(200,90,70,.45);white-space:nowrap}.mxTitle .hic{width:1.4em;height:1.4em}
 .mxPill{display:flex;align-items:center;gap:5px;background:#fff;border-radius:999px;padding:3px 12px 3px 4px;min-width:84px;box-shadow:0 2px 0 rgba(220,130,110,.25)}
 .mxPill span,.mxPill img{width:24px;height:24px;font-size:18px;line-height:24px;text-align:center;object-fit:contain}.mxPill b{color:#e06a4f;font-size:14px;font-weight:900}.mxPill.pearl b{color:#5a8fd6}
 .mxBody{flex:1;display:flex;min-height:0}
-.mxSide{width:148px;flex:none;display:flex;flex-direction:column;background:linear-gradient(#f2f8ff,#e6f2ff);border-right:2px solid #d6e9ff;padding:8px 6px;gap:4px}
+.mxSide{width:148px;flex:none;display:flex;flex-direction:column;background:#ebf5ff;border-right:2px solid #d6e9ff;padding:8px 6px;gap:4px}
 .mxSearch{display:flex;align-items:center;gap:4px;background:#fff;border:2px solid #cfe3fb;border-radius:999px;padding:3px 8px;font-size:12px}.mxSearch input{border:none;outline:none;width:100%;font:inherit;font-weight:700;color:var(--ink);background:none;min-width:0}
 #mallCats{flex:1;display:flex;flex-direction:column;gap:3px;overflow:auto}
 .mxCat{display:flex;align-items:center;gap:7px;border:none;background:none;text-align:left;padding:8px 10px;border-radius:12px;font:inherit;font-weight:900;font-size:13.5px;color:#5a6f8c;cursor:pointer}
 .mxCat .hic{width:1.3em;height:1.3em}.mxCat i{font-style:normal;width:1.3em;text-align:center}
-.mxCat.on{background:linear-gradient(90deg,#ffab90,#ffc4a8);color:#fff;box-shadow:0 3px 0 #f0937a}
-.mxExit{border:none;border-radius:12px;padding:9px;font:inherit;font-weight:900;color:#fff;background:linear-gradient(#9fd0ff,#7cb8f2);box-shadow:0 3px 0 #5d9ad6;cursor:pointer}
+.mxCat.on{background:#ffb99d;color:#fff;box-shadow:0 3px 0 #f0937a}
+.mxExit{border:none;border-radius:12px;padding:9px;font:inherit;font-weight:900;color:#fff;background:#8cc3f8;box-shadow:0 3px 0 #5d9ad6;cursor:pointer}
 .mxMain{flex:1;min-width:0;overflow:auto;padding:10px 12px 14px;background:#fffdfb}
 .mxHero{display:flex;gap:10px;height:clamp(120px,28vh,210px)}
-.mxBanner{flex:1.7;border-radius:16px;overflow:hidden;background:linear-gradient(120deg,#ffe3d8,#fff 50%,#dcefff);border:2px solid #ffe0d4;display:flex;align-items:center;justify-content:center;position:relative}
+.mxBanner{flex:1.7;border-radius:16px;overflow:hidden;background:#fff3ee;border:2px solid #ffe0d4;display:flex;align-items:center;justify-content:center;position:relative}
 .mxBanner img.bn{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:opacity .6s}.mxBanner .ph{font-weight:900;color:#e9a08c;font-size:15px;text-align:center}.mxBanner .ph img{width:56px;height:56px;display:block;margin:0 auto 4px}
-.mxPrev{flex:1;border-radius:16px;overflow:hidden;position:relative;border:2px solid #d6e9ff;background:radial-gradient(ellipse at 50% 85%,#ffe7dd 0 28%,transparent 29%),linear-gradient(#e8f4ff,#fff5ef);touch-action:none}
+.mxPrev{flex:1;border-radius:16px;overflow:hidden;position:relative;border:2px solid #d6e9ff;background:radial-gradient(ellipse at 50% 85%,#ffe7dd 0 28%,transparent 29%),#f5f5f6;touch-action:none}
 .mxPrev canvas{width:100%;height:100%;display:block;cursor:grab}
 .mxPrevTag{position:absolute;left:8px;top:7px;font-size:11.5px;font-weight:900;color:#5a8fd6;background:rgba(255,255,255,.85);border-radius:999px;padding:2px 9px;display:none}
 .mxHint{position:absolute;left:0;right:0;bottom:5px;text-align:center;font-size:10.5px;font-weight:800;color:#9ab4d4;pointer-events:none}.mxReset{position:absolute;right:7px;top:6px;border:none;border-radius:999px;font:inherit;font-size:11.5px;font-weight:900;padding:3px 10px;background:#fff;color:#e06a4f;box-shadow:0 2px 0 #ffd2c2;display:none;cursor:pointer}
-.mxSec{margin:12px 2px 8px;font-weight:900;font-size:14px;color:#e9876f;display:flex;align-items:center;gap:8px}.mxSec:after{content:"";flex:1;height:2px;background:linear-gradient(90deg,#ffd2c2,#d6e9ff)}
+.mxSec{margin:12px 2px 8px;font-weight:900;font-size:14px;color:#e9876f;display:flex;align-items:center;gap:8px}.mxSec:after{content:"";flex:1;height:2px;background:#e8dfe4}
 .mxGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px}
 .mxCard{position:relative;background:#fff;border:2px solid #ffe0d4;border-radius:16px;padding:10px 8px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 #ffeae2;cursor:pointer;transition:transform .15s}
 .mxCard:hover{transform:translateY(-2px)}.mxCard.sel{border-color:#8fc4f5;box-shadow:0 0 0 3px #d6e9ff,0 3px 0 #cfe3fb}
-.mxCard .ib{width:64px;height:64px;border-radius:14px;background:linear-gradient(#f4f9ff,#ffeee7);display:flex;align-items:center;justify-content:center;font-size:38px}.mxCard .ib img{width:56px;height:56px;object-fit:contain}.mxCard .ib svg{width:44px;height:44px}
+.mxCard .ib{width:64px;height:64px;border-radius:14px;background:#faf3f2;display:flex;align-items:center;justify-content:center;font-size:38px}.mxCard .ib img{width:56px;height:56px;object-fit:contain}.mxCard .ib svg{width:44px;height:44px}
 .mxCard b{font-size:13px;line-height:1.25;color:var(--ink);min-height:2.5em;display:flex;align-items:center}
 .mxCard .pr{font-size:12.5px;font-weight:900;color:#5a8fd6;display:flex;align-items:center;gap:3px}.mxCard .pr img{width:17px;height:17px}
-.mxCard .buy{margin-top:3px;width:100%;border:none;border-radius:10px;padding:6px 0;font:inherit;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(#ffb59a,#ff977d);box-shadow:0 3px 0 #ec7d63;cursor:pointer}
-.mxCard .buy.cf{background:linear-gradient(#8fc8ff,#6aaef0);box-shadow:0 3px 0 #4f92d6}.mxCard .buy.own{background:#e8eef5;color:#9aa8b8;box-shadow:none;cursor:default}
+.mxCard .buy{margin-top:3px;width:100%;border:none;border-radius:10px;padding:6px 0;font:inherit;font-weight:900;font-size:13px;color:#fff;background:#ffa48a;box-shadow:0 3px 0 #ec7d63;cursor:pointer}
+.mxCard .buy.cf{background:#7bbaf7;box-shadow:0 3px 0 #4f92d6}.mxCard .buy.own{background:#e8eef5;color:#9aa8b8;box-shadow:none;cursor:default}
 .mxTag{position:absolute;left:-3px;top:8px;font-size:10px;font-weight:900;color:#fff;padding:1px 8px 1px 6px;border-radius:0 8px 8px 0;letter-spacing:.5px}.mxTag.NEW{background:#7cbcf5}.mxTag.HOT{background:#ff8f78}
 .mxCard .cnt{position:absolute;right:6px;top:6px;font-size:11px;font-weight:900;color:#e06a4f;background:#fff1ec;border-radius:999px;padding:0 7px}
 .mxDesc{font-size:12.5px;line-height:1.5;color:#8a6f64;background:#f4f9ff;border:2px solid #d6e9ff;border-radius:12px;padding:8px 10px;margin-top:10px}
@@ -627,6 +627,20 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
  .mxHero{height:clamp(110px,24vh,170px)}.mxGrid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}}
 @media (max-height:460px){.mxHero{height:118px}.mxTop{padding:4px 10px}.mxCard .ib{width:48px;height:48px;font-size:30px}.mxCard .ib img{width:42px;height:42px}}
 
+/* ===== 介面精修（去除「模板感」）：純色、不用彩色表情符號當圖示、間距統一 8 的倍數、用深淺而不是大小做強弱、卡片不再厚邊＋厚影 ===== */
+.lic{width:1.15em;height:1.15em;display:block;margin:auto}.btn .lic{width:26px;height:26px}.fan .lic{width:24px;height:24px;color:#8a5a48}body.darkui .fan .lic{color:#fff}
+:root{--ink:#5c4338;--ink2:#9a8176;--line:#f0dcd0;--r:14px}
+.sheet{border-width:2px;border-radius:20px 20px 0 0;padding:12px 16px 16px}.drawer .sheet{border-width:2px;border-radius:0 20px 20px 0}
+.sheet h2{font-size:18px;margin:0 0 4px;letter-spacing:.02em}.sheet .sub{color:var(--ink2);font-weight:700}
+.clab{font-size:12.5px;margin:16px 0 8px;color:var(--ink2);letter-spacing:.04em}.sl .clab{margin:8px 0 0;opacity:1}
+.chips{gap:8px}.grid{gap:8px}
+.qb{border:none;border-radius:12px;padding:8px 16px;box-shadow:0 2px 0 rgba(0,0,0,.12)}.qb.claim,.qb.pink,.qb.lav{box-shadow:0 2px 0 rgba(0,0,0,.12)}.qb:active{transform:translateY(1px)}
+.chip{border-width:2px;border-radius:10px}.tab{border-width:2px;border-radius:10px}
+.card{border-width:2px;border-radius:var(--r);box-shadow:0 2px 0 rgba(120,80,60,.14)}
+.btn{border-width:2px;box-shadow:0 3px 0 rgba(120,80,60,.2)}.fan{border-width:2px;box-shadow:0 2px 0 rgba(120,80,60,.22)}
+.mxCard{border-radius:12px;box-shadow:none;border-color:#f3e4dc}.mxCard .buy{border-radius:8px;box-shadow:none}.mxCat.on{box-shadow:none}.mxExit{box-shadow:none}.mxPill{box-shadow:none}
+#mall .sheet.mx{border-width:2px;border-radius:16px}.mxSide{background:#f3f8fd}.mxSec{color:var(--ink2);font-size:12.5px;letter-spacing:.06em}.mxSec:after{background:#f0e4dc;height:1px}
+.mxTitle{text-shadow:none}.mxCard .ib{background:#f8f4f1;border-radius:10px}.mxDesc{border-width:1px}
 </style>
 </head>
 <body>
@@ -639,6 +653,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 #boot .t span{display:inline-block;animation:bootWave 1.2s ease-in-out infinite;animation-delay:calc(var(--i)*.08s)}
 @keyframes bootHop{0%,100%{transform:translateY(0) scale(1.06,.92)}15%{transform:translateY(0) scale(.95,1.06)}50%{transform:translateY(-14px) scale(1,1)}85%{transform:translateY(0) scale(1.04,.95)}}
 @keyframes bootWave{0%,60%,100%{transform:translateY(0);opacity:1}30%{transform:translateY(-7px);opacity:.75}}
+
 </style>
 <svg viewBox="0 0 100 108" fill="#fff" aria-hidden="true"><path d="M22 10C28 22 31 35 29 45C27 55 9 57 6 46C4 35 13 22 22 10Z"/><path d="M78 10C72 22 69 35 71 45C73 55 91 57 94 46C96 35 87 22 78 10Z"/><ellipse cx="50" cy="24" rx="7" ry="8"/><circle cx="50" cy="60" r="36"/><ellipse cx="13.5" cy="68" rx="6" ry="8.5"/><ellipse cx="86.5" cy="68" rx="6" ry="8.5"/><ellipse cx="36" cy="97" rx="8.5" ry="6.5"/><ellipse cx="64" cy="97" rx="8.5" ry="6.5"/></svg>
 <div class="t"><span style="--i:0">L</span><span style="--i:1">o</span><span style="--i:2">a</span><span style="--i:3">d</span><span style="--i:4">i</span><span style="--i:5">n</span><span style="--i:6">g</span><span style="--i:7">.</span><span style="--i:8">.</span><span style="--i:9">.</span></div></div>
@@ -659,18 +674,18 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 </div>
 <div id="topR"><canvas id="mini" width="208" height="208"></canvas>
   <button id="fab"><span></span><span></span><span></span><i></i></button>
-  <button class="fan" data-f="craft" style="--i:0"><span>🔨</span><b>合成</b></button>
-  <button class="fan" data-f="tal" style="--i:1"><span>⭐</span><b>天賦</b><em class="dotS" id="spDot">0</em></button>
-  <button class="fan" data-f="stat" style="--i:2"><span>💪</span><b>素質</b><em class="dotS" id="stDot">0</em></button>
-  <button class="fan" data-f="bag" style="--i:3"><span>🎒</span><b>背包</b></button>
-  <button class="fan" data-f="pet" style="--i:4"><span>🐾</span><b>寵物</b></button>
-  <button class="fan" data-f="deco" style="--i:5"><span>🧱</span><b id="decoLbl">建造</b></button>
-  <button class="fan" data-f="dex" style="--i:6"><span>📖</span><b>圖鑑</b></button>
-  <button class="fan" data-f="beauty" style="--i:7"><span>💄</span><b>美容</b></button>
-  <button class="fan" data-f="photo" style="--i:8"><span>📷</span><b>拍照</b></button>
-  <button class="fan" data-f="full" style="--i:9"><span>⛶</span><b>全螢幕</b></button>
+  <button class="fan" data-f="craft" style="--i:0"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-3 3-6-6z"/><path d="M11.5 9.5L4 17l3 3 7.5-7.5"/></svg></span><b>合成</b></button>
+  <button class="fan" data-f="tal" style="--i:1"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8 6.8 19.6l1-5.8-4.3-4.1 5.9-.8z"/></svg></span><b>天賦</b><em class="dotS" id="spDot">0</em></button>
+  <button class="fan" data-f="stat" style="--i:2"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11M12 20V4M19 20v-6"/></svg></span><b>素質</b><em class="dotS" id="stDot">0</em></button>
+  <button class="fan" data-f="bag" style="--i:3"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12l1 11H5z"/><path d="M9 9V7a3 3 0 016 0v2"/></svg></span><b>背包</b></button>
+  <button class="fan" data-f="pet" style="--i:4"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="10" r="1.6"/><circle cx="12" cy="7.5" r="1.6"/><circle cx="17" cy="10" r="1.6"/><path d="M8 17c0-2.5 2-4 4-4s4 1.5 4 4c0 1.5-1.5 2-4 2s-4-.5-4-2z"/></svg></span><b>寵物</b></button>
+  <button class="fan" data-f="deco" style="--i:5"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></span><b id="decoLbl">建造</b></button>
+  <button class="fan" data-f="dex" style="--i:6"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg></span><b>圖鑑</b></button>
+  <button class="fan" data-f="beauty" style="--i:7"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8 8H6v-6z"/><path d="M11 7l6 6"/></svg></span><b>美容</b></button>
+  <button class="fan" data-f="photo" style="--i:8"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3.5L9 6h6l1.5 2H20v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg></span><b>拍照</b></button>
+  <button class="fan" data-f="full" style="--i:9"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></span><b>全螢幕</b></button>
   <button class="fan" data-f="mall" style="--i:11"><span class="pimg"><img class="hic" src="img/items/pearl.png" alt="" draggable="false"></span><b>商城</b></button>
-  <button class="fan" data-f="set" style="--i:10"><span>⚙️</span><b>設置</b></button>
+  <button class="fan" data-f="set" style="--i:10"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></span><b>設置</b></button>
 </div>
 <div id="decoTag">🧱 建造模式中・點擊關閉</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
@@ -678,13 +693,13 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div id="social"><div class="sbox"><div class="chT">💬 對話紀錄</div><div id="chatHist"></div><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
 <div id="joyBase"><div id="joyKnob"></div></div>
 <div id="hotbar"></div>
-<button class="btn game" id="btnJump"><span>⤴</span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><svg viewBox="0 0 24 24" width="58%" height="58%" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><circle cx="12" cy="7.2" r="4.2"/><path d="M4.5 21.5v-5.2a4.8 4.8 0 0 1 4.8-4.8h5.4a4.8 4.8 0 0 1 4.8 4.8v5.2z"/></svg></button><div id="invBox"><span id="invTxt"></span><div><button class="qb pink" id="invYes">接受</button><button class="qb lav" id="invNo">拒絕</button></div></div>
+<button class="btn game" id="btnJump"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-7 4-11 11-11"/><path d="M12 5l4.5 3-3 4.5"/></svg></span></button><button class="btn game" id="fpBtn" title="切換第一人稱 (V)"><svg viewBox="0 0 24 24" width="58%" height="58%" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><circle cx="12" cy="7.2" r="4.2"/><path d="M4.5 21.5v-5.2a4.8 4.8 0 0 1 4.8-4.8h5.4a4.8 4.8 0 0 1 4.8 4.8v5.2z"/></svg></button><div id="invBox"><span id="invTxt"></span><div><button class="qb pink" id="invYes">接受</button><button class="qb lav" id="invNo">拒絕</button></div></div>
 <div id="downBox">💫 你倒下了<p>等待隊友來救助，或是直接返回重生點</p><div><button class="qb" disabled>⏳ 等待救援中…</button><button class="qb pink" id="downHome">返回重生點</button></div></div>
 <div id="skillBar"></div><div id="castBar"><span id="castTxt"></span><i><b id="castFill"></b></i></div><div id="revBar"><span id="revTxt"></span><i><b id="revFill"></b></i></div>
 <div id="bossBar">👑 果凍王 <small id="bossHp"></small><i><b id="bossFill"></b></i></div>
-<div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>💬</span>Talk</button><button class="btn game" id="btnDel"><span>🔨</span>拆</button><button class="btn game" id="btnMove"><span>✋</span>搬動</button><button class="btn game" id="btnBuild" title="建造模式 (H)"><span>🧱</span>建造</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
-<button class="btn game" id="btnAct"><span id="actIcon">🤚</span><b id="actTxt">互動</b></button>
-<button class="btn game" id="btnAtk"><span id="atkIcon">⚔️</span><b>攻擊</b></button>
+<div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg></span>Talk</button><button class="btn game" id="btnDel"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-3 3-6-6z"/><path d="M11.5 9.5L4 17l3 3 7.5-7.5"/></svg></span>拆</button><button class="btn game" id="btnMove"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg></span>搬動</button><button class="btn game" id="btnBuild" title="建造模式 (H)"><span>🧱</span>建造</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
+<button class="btn game" id="btnAct"><span id="actIcon"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12V6.5a1.5 1.5 0 013 0V11m0-5.5V5a1.5 1.5 0 013 0v6m0-4.5a1.5 1.5 0 013 0V15a5 5 0 01-5 5h-1.5a5 5 0 01-4.3-2.5L5 13.5a1.5 1.5 0 012.6-1.4z"/></svg></span><b id="actTxt">互動</b></button>
+<button class="btn game" id="btnAtk"><span id="atkIcon"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 4l-9.5 9.5M19 4h-4l-7 7 4 4 7-7zM6 14l4 4M4.5 19.5L8 16"/></svg></span><b>攻擊</b></button>
 <div id="sleepUI"><div class="tag">💤 睡覺中・時間 ×5 流動</div><button class="btn" id="wakeBtn"><span>☀️</span>起床</button></div>
 <div id="fade"></div>
 <div id="lvUp"><div class="rays"></div><div class="t1">LEVEL UP!</div><div class="t2" id="lvNum">Lv.2</div><div class="t3">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div>
@@ -693,12 +708,12 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div id="dlg"><div id="dlgName"></div><div id="dlgTxt"></div><div id="dlgOpts"></div><div id="dlgNext">▼</div></div>
 
 <div class="panel" id="board"><div class="sheet"><div class="grab"></div>
-  <h2>📋 村子告示板</h2><div class="sub">委託可以重複接取，完成後回來領獎勵喔！</div>
+  <h2>村子告示板</h2><div class="sub">委託可以重複接取，完成後回來領獎勵喔！</div>
   <div id="qlist"></div><button class="qb lav close" data-close="board">關閉</button></div></div>
 
 <div class="panel" id="craft"><div class="sheet"><div class="grab"></div>
-  <h2>🔨 合成</h2><div class="sub" id="craftSub"></div>
-  <div class="tabs"><button class="tab on" data-tab="tool">🪓 工具</button><button class="tab" data-tab="weapon">⚔️ 武器</button><button class="tab" data-tab="block">🧱 方塊</button><button class="tab" data-tab="furn">🪑 家具</button></div>
+  <h2>合成</h2><div class="sub" id="craftSub"></div>
+  <div class="tabs"><button class="tab on" data-tab="tool">工具</button><button class="tab" data-tab="weapon">武器</button><button class="tab" data-tab="block">方塊</button><button class="tab" data-tab="furn">家具</button></div>
   <div class="grid" id="craftGrid"></div><button class="qb lav close" data-close="craft">關閉</button></div></div>
 
 <div class="panel" id="mall"><div class="sheet mx">
@@ -717,17 +732,17 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div class="grid" id="shopGrid"></div><button class="qb lav close" data-close="shop">關閉</button></div></div>
 
 <div class="panel drawer" id="stats"><div class="sheet">
-  <h2>📊 素質</h2><div class="sub">每升 1 級得到 1 點（與天賦分開）。可以隨時自由加減，按「確認套用」才會生效。剩餘 <b id="stLeft">0</b> 點</div>
+  <h2>素質</h2><div class="sub">每升 1 級得到 1 點（與天賦分開）。可以隨時自由加減，按「確認套用」才會生效。剩餘 <b id="stLeft">0</b> 點</div>
   <div id="stList"></div><div id="stDer"></div>
   <div class="stBtns"><button class="qb lav" id="stReset">全部歸零</button><button class="qb" id="stUndo">復原</button><button class="qb pink" id="stOk">確認套用</button></div>
   <button class="qb lav close" data-close="stats">關閉</button></div></div>
 
 <div class="panel drawer" id="talent"><div class="sheet">
-  <h2>⭐ 天賦</h2><div class="sub">升級可以拿到技能點數。剩餘 <span id="spInfo">0</span> 點</div>
+  <h2>天賦</h2><div class="sub">升級可以拿到技能點數。剩餘 <span id="spInfo">0</span> 點</div>
   <div id="tList"></div><button class="qb lav close" data-close="talent">關閉</button></div></div>
 
 <div class="panel" id="creator"><div class="sheet"><div class="grab"></div>
-  <h2>🎨 打造你的角色</h2>
+  <h2>角色外觀</h2>
   <div class="sub" style="margin-bottom:4px">拖曳右邊畫面可以轉動角色</div>
   <div class="clab">名字</div><input id="cName" maxlength="8">
   <details class="cfold"><summary>🎨 身體顏色</summary><div class="clab">身體</div><div class="sw" id="swBody"></div>
@@ -764,21 +779,21 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 </div>
 
 <div class="panel" id="gacha"><div class="sheet"><div class="grab"></div>
-  <h2 id="gTitle">🥚 寵物轉蛋機</h2><div class="sub" id="gSub"></div>
+  <h2 id="gTitle">寵物轉蛋機</h2><div class="sub" id="gSub"></div>
   <div id="gList"></div>
   <div id="gStage"><div id="gMach">🎰</div><div id="gEgg">🥚</div></div>
   <div id="gRes"></div>
   <button class="qb pink" id="gBtn" style="font-size:16px;padding:12px 22px;margin:0 auto;display:block">抽一次 🪙100</button>
   <button class="qb lav close" data-close="gacha">關閉</button></div></div>
 <div class="panel" id="pets"><div class="sheet"><div class="grab"></div>
-  <h2>🐾 寵物小屋</h2><div class="sub" id="petSub"></div><div id="petList"></div>
+  <h2>寵物小屋</h2><div class="sub" id="petSub"></div><div id="petList"></div>
   <button class="qb lav close" data-close="pets">關閉</button></div></div>
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
-  <h2>🌐 線上玩家</h2><div class="sub" id="plSub"></div><div id="plList"></div>
+  <h2>線上玩家</h2><div class="sub" id="plSub"></div><div id="plList"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
-<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpKick" style="display:none;background:#ffb4a6;color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="gift"><div class="sheet"><div class="grab"></div>
-  <h2>🎁 送禮</h2><div class="sub" id="giftSub"></div>
+  <h2>送禮</h2><div class="sub" id="giftSub"></div>
   <div class="giftCoin"><span>🪙 送金幣</span><input type="number" id="giftCoin" min="1" step="1" placeholder="數量" inputmode="numeric"><button class="qb pink" id="giftCoinBtn">送出</button></div>
   <div class="clab">點一下想送的道具（裝備中的不能送）</div><div id="giftGrid"></div>
   <button class="qb lav close" data-close="gift">關閉</button></div></div>
@@ -788,7 +803,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div id="kickOv"><div class="card2"><div style="font-size:52px">🚪</div><h3>你已被 GM 請下線</h3><p>進度已經自動存檔了。<br>重新整理網頁就能再進入遊戲。</p><button class="qb pink" id="kickReload">🔄 重新整理</button></div></div>
 <div id="petChoice"><div class="card2"><h3 id="pcName"></h3><div class="pcb"><button class="qb pink" id="pcInvite">🐾 邀請</button><button class="qb" id="pcStore">📦 收納</button><button class="qb lav" id="pcCancel">取消</button></div></div></div>
 <div class="panel" id="dex"><div class="sheet"><div class="grab"></div>
-  <h2>📖 圖鑑</h2><div class="sub" id="dexSub"></div>
+  <h2>圖鑑</h2><div class="sub" id="dexSub"></div>
   <div class="tabs" id="dexTabs"></div>
   <div class="grid" id="dexGrid"></div><button class="qb lav close" data-close="dex">關閉</button></div></div>
 <button id="phBack" title="叫回介面（Esc）">📷</button>
@@ -798,50 +813,50 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div class="phRow"><button class="qb pink" id="phClean">🙈 隱藏介面</button><button class="qb lav" id="phEnd">結束拍照（Esc）</button></div>
   <div class="sub" style="font-size:11px">隱藏介面後，按 Esc 或左上角的 📷 就會回來；結束後時間會恢復</div></div>
 <div class="panel" id="settings"><div class="sheet"><div class="grab"></div>
-  <h2>⚙️ 設置</h2>
-  <div class="tabs setTabs" id="setTabs"><button class="tab on" data-sp="snd">🔊 聲音</button><button class="tab" data-sp="gfx">🖼️ 畫面</button><button class="tab" data-sp="ctl">🎮 操作</button><button class="tab" data-sp="net">🌐 線上</button><button class="tab" data-sp="sav">💾 存檔</button></div>
+  <h2>設置</h2>
+  <div class="tabs setTabs" id="setTabs"><button class="tab on" data-sp="snd">聲音</button><button class="tab" data-sp="gfx">畫面</button><button class="tab" data-sp="ctl">操作</button><button class="tab" data-sp="net">線上</button><button class="tab" data-sp="sav">存檔</button></div>
   <div class="setPg on" data-sp="snd">
   <div class="clab">主音量 <span id="vMv"></span></div><input type="range" id="vM" min="0" max="1" step="0.05">
 <div class="clab">背景音樂 <span id="vBv"></span></div><input type="range" id="vB" min="0" max="1" step="0.05">
 <div class="clab">音效 <span id="vSv"></span></div><input type="range" id="vS" min="0" max="1" step="0.05">
   </div>
   <div class="setPg" data-sp="gfx">
-  <div class="clab">🖼️ 畫質預設（自動：依你的裝置選最適合的畫質，第一次進遊戲會測幾秒後固定）</div><div class="chips" id="gfxChips"><button class="chip" data-gq="auto">自動</button><button class="chip" data-gq="low">低</button><button class="chip" data-gq="mob">手機</button><button class="chip" data-gq="mid">標準</button><button class="chip" data-gq="high">高</button><button class="chip" data-gq="custom">自訂</button><button class="chip" id="gfxRedetect">🔄 重新偵測</button></div><div class="sub" id="gfxStat" style="font-size:11px;margin:4px 0"></div><details class="gfxMore"><summary class="clab" style="cursor:pointer">🔧 細部調整（點開；改任何一項會切到「自訂」）</summary><div id="gfxRows"></div></details>
-  <div class="clab">🔋 幀數上限（手機發燙或耗電時選 30；自動＝手機 60、電腦不限制）</div><div class="chips" id="fpsChips"><button class="chip" data-fc="auto">自動</button><button class="chip" data-fc="30">30</button><button class="chip" data-fc="60">60</button><button class="chip" data-fc="0">不限制</button></div>
-  <div class="clab">🔍 介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
-  <div class="clab">❤️ 角色腳下顯示血條／精神條</div><div class="chips" id="pbarChips"><button class="chip" data-pb="off">關閉</button><button class="chip" data-pb="s">小</button><button class="chip" data-pb="m">中</button><button class="chip" data-pb="l">大</button></div>
-  <div class="clab">🏷️ 其他玩家的名稱</div><div class="chips" id="nameChips"><button class="chip" data-nm="all">全部顯示</button><button class="chip" data-nm="party">只顯示隊友</button><button class="chip" data-nm="none">全部隱藏</button></div>
-  <div class="clab">🖍️ 光影風格</div><div class="chips" id="celChips"><button class="chip" data-cel="0">柔和（預設）</button><button class="chip" data-cel="1">賽璐璐（明暗分界清楚）</button></div>
-  <div class="clab">🎨 介面配色</div><div class="chips" id="uiThChips"><button class="chip" data-th="dark">深色（半透明黑）</button><button class="chip" data-th="light">淺色（舊版）</button></div>
-  <div class="clab">🏷️ NPC 的名稱</div><div class="chips" id="npcNameChips"><button class="chip" data-nn="on">顯示</button><button class="chip" data-nn="off">隱藏</button></div>
+  <div class="clab">畫質預設（自動：依你的裝置選最適合的畫質，第一次進遊戲會測幾秒後固定）</div><div class="chips" id="gfxChips"><button class="chip" data-gq="auto">自動</button><button class="chip" data-gq="low">低</button><button class="chip" data-gq="mob">手機</button><button class="chip" data-gq="mid">標準</button><button class="chip" data-gq="high">高</button><button class="chip" data-gq="custom">自訂</button><button class="chip" id="gfxRedetect">重新偵測</button></div><div class="sub" id="gfxStat" style="font-size:11px;margin:4px 0"></div><details class="gfxMore"><summary class="clab" style="cursor:pointer">細部調整（點開；改任何一項會切到「自訂」）</summary><div id="gfxRows"></div></details>
+  <div class="clab">幀數上限（手機發燙或耗電時選 30；自動＝手機 60、電腦不限制）</div><div class="chips" id="fpsChips"><button class="chip" data-fc="auto">自動</button><button class="chip" data-fc="30">30</button><button class="chip" data-fc="60">60</button><button class="chip" data-fc="0">不限制</button></div>
+  <div class="clab">介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
+  <div class="clab">角色腳下顯示血條／精神條</div><div class="chips" id="pbarChips"><button class="chip" data-pb="off">關閉</button><button class="chip" data-pb="s">小</button><button class="chip" data-pb="m">中</button><button class="chip" data-pb="l">大</button></div>
+  <div class="clab">其他玩家的名稱</div><div class="chips" id="nameChips"><button class="chip" data-nm="all">全部顯示</button><button class="chip" data-nm="party">只顯示隊友</button><button class="chip" data-nm="none">全部隱藏</button></div>
+  <div class="clab">光影風格</div><div class="chips" id="celChips"><button class="chip" data-cel="0">柔和（預設）</button><button class="chip" data-cel="1">賽璐璐（明暗分界清楚）</button></div>
+  <div class="clab">介面配色</div><div class="chips" id="uiThChips"><button class="chip" data-th="dark">深色（半透明黑）</button><button class="chip" data-th="light">淺色（舊版）</button></div>
+  <div class="clab">NPC 的名稱</div><div class="chips" id="npcNameChips"><button class="chip" data-nn="on">顯示</button><button class="chip" data-nn="off">隱藏</button></div>
   <div class="crow2" style="margin-top:8px"><button class="qb lav" id="setFs">⛶ 全螢幕</button></div>
   </div>
   <div class="setPg" data-sp="ctl">
-  <div id="cmWrap"><div class="clab">🖱️ 第三人稱操作方式（電腦版）</div><div class="chips" id="cmChips"><button class="chip" data-cm="classic">傳統模式</button><button class="chip" data-cm="action">動作模式</button></div><div class="sub" style="margin:2px 0 8px;font-size:11px">傳統：拖曳滑鼠轉視角、點一下攻擊。動作：像第一人稱一樣鎖定滑鼠，移動滑鼠就轉視角，按住左鍵連續攻擊（Esc／Alt 放開滑鼠）</div></div>
-  <div class="clab">🎥 鏡頭跟隨（單手操作）</div><div class="chips" id="acChips"><button class="chip" data-ac="0">手動轉鏡頭（預設）</button><button class="chip" data-ac="1">自動跟著角色正面</button></div><div class="sub" style="margin:2px 0 8px;font-size:11px">開啟後，走路時鏡頭會慢慢轉到角色背後，只用搖桿就能轉彎前進；手指拖曳畫面時暫停跟隨</div>
-  <div class="clab">🏃 跑步方式</div><div class="chips" id="runChips"><button class="chip" data-rm="hold">長按跑步鍵</button><button class="chip" data-rm="toggle">按一下就跑（停下才結束）</button></div>
+  <div id="cmWrap"><div class="clab">第三人稱操作方式（電腦版）</div><div class="chips" id="cmChips"><button class="chip" data-cm="classic">傳統模式</button><button class="chip" data-cm="action">動作模式</button></div><div class="sub" style="margin:2px 0 8px;font-size:11px">傳統：拖曳滑鼠轉視角、點一下攻擊。動作：像第一人稱一樣鎖定滑鼠，移動滑鼠就轉視角，按住左鍵連續攻擊（Esc／Alt 放開滑鼠）</div></div>
+  <div class="clab">鏡頭跟隨（單手操作）</div><div class="chips" id="acChips"><button class="chip" data-ac="0">手動轉鏡頭（預設）</button><button class="chip" data-ac="1">自動跟著角色正面</button></div><div class="sub" style="margin:2px 0 8px;font-size:11px">開啟後，走路時鏡頭會慢慢轉到角色背後，只用搖桿就能轉彎前進；手指拖曳畫面時暫停跟隨</div>
+  <div class="clab">跑步方式</div><div class="chips" id="runChips"><button class="chip" data-rm="hold">長按跑步鍵</button><button class="chip" data-rm="toggle">按一下就跑（停下才結束）</button></div>
 <div class="sub" style="margin:2px 0 8px;font-size:11px">手機搖桿推到底也適用：「按一下」模式推到底一次後就會一直跑，放開搖桿才停下</div>
-  <div id="kbWrap"><div class="clab" style="display:flex;justify-content:space-between;align-items:center">⌨️ 快捷鍵設定 <button class="qb" id="kbReset" style="padding:3px 10px;font-size:12px">恢復預設</button></div><div class="sub" style="margin:0 0 4px">點按鈕後按下想要的鍵盤按鍵或滑鼠右鍵／中鍵（Esc 取消）。重複的按鍵會自動互換。</div><div id="kbList"></div></div>
+  <div id="kbWrap"><div class="clab" style="display:flex;justify-content:space-between;align-items:center">快捷鍵設定 <button class="qb" id="kbReset" style="padding:3px 10px;font-size:12px">恢復預設</button></div><div class="sub" style="margin:0 0 4px">點按鈕後按下想要的鍵盤按鍵或滑鼠右鍵／中鍵（Esc 取消）。重複的按鍵會自動互換。</div><div id="kbList"></div></div>
   </div>
   <div class="setPg" data-sp="net">
-  <div id="chWrap" style="display:none"><div class="clab">🌐 線上頻道（同頻道的人才看得到彼此）</div><div class="chips" id="chChips"></div><div class="clab">⚡ 效能模式（覺得卡的時候可以調整）</div><div class="sub" style="margin:2px 0 4px">顯示附近的玩家</div><div class="chips" id="perfNear"><button class="chip" data-pn="0">全部</button><button class="chip" data-pn="10">最近 10 位</button><button class="chip" data-pn="5">最近 5 位</button></div><div class="sub" style="margin:6px 0 4px">別人的攻擊特效</div><div class="chips" id="perfFx"><button class="chip" data-pf="1">顯示</button><button class="chip" data-pf="0">關閉</button></div><div class="chips" style="margin-top:6px"><button class="chip" id="perfLeast">🔀 切換到人最少的分流</button></div></div>
+  <div id="chWrap" style="display:none"><div class="clab">線上頻道（同頻道的人才看得到彼此）</div><div class="chips" id="chChips"></div><div class="clab">效能模式（覺得卡的時候可以調整）</div><div class="sub" style="margin:2px 0 4px">顯示附近的玩家</div><div class="chips" id="perfNear"><button class="chip" data-pn="0">全部</button><button class="chip" data-pn="10">最近 10 位</button><button class="chip" data-pn="5">最近 5 位</button></div><div class="sub" style="margin:6px 0 4px">別人的攻擊特效</div><div class="chips" id="perfFx"><button class="chip" data-pf="1">顯示</button><button class="chip" data-pf="0">關閉</button></div><div class="chips" style="margin-top:6px"><button class="chip" id="perfLeast">切換到人最少的分流</button></div></div>
   <div class="sub" id="netNone" style="margin:8px 0">目前沒有連上線上伺服器。</div>
   </div>
   <div class="setPg" data-sp="sav">
-  <div id="cloudWrap" style="display:none"><div class="clab">☁️ 雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
+  <div id="cloudWrap" style="display:none"><div class="clab">雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
   <div class="crow2" style="margin-top:6px"><button class="qb" id="setSave">💾 立即存檔</button><button class="qb lav" id="bkBtn">🕘 還原備份</button></div><div class="sub" style="margin:2px 0 6px;font-size:11px">遊玩時每 20 分鐘自動備份一次，本機和雲端各保留最近 3 份</div>
-  <button class="qb" id="gmBtn" style="display:none;width:100%;margin:6px 0;background:linear-gradient(160deg,#ffd98a,#ff9f5a)">🛠️ GM 倉庫（所有道具）</button>
+  <button class="qb" id="gmBtn" style="display:none;width:100%;margin:6px 0;background:#ffb970">🛠️ GM 倉庫（所有道具）</button>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
   </div>
   <button class="qb lav close" data-close="settings">關閉</button></div></div>
 
 <div class="panel" id="gmStore"><div class="sheet"><div class="grab"></div>
-  <h2>🛠️ GM 倉庫</h2><div class="sub">點一下就會放進背包。數量：<span class="chips" id="gmAmt" style="display:inline-flex;gap:4px"></span></div>
+  <h2>GM 倉庫</h2><div class="sub">點一下就會放進背包。數量：<span class="chips" id="gmAmt" style="display:inline-flex;gap:4px"></span></div>
   <div class="tabs" id="gmTabs"></div><div id="gmGrid"></div><div id="gmInfo" class="sub"></div>
   <button class="qb lav close" data-close="gmStore">關閉</button></div></div>
 
 <div class="panel" id="bag"><div class="sheet"><div class="grab"></div>
-  <h2>🎒 背包</h2>
+  <h2>背包</h2>
   <div class="tabs" id="bagTabs"></div>
   <div id="bagGrid"></div>
   <div id="bagInfo" class="sub"></div>
@@ -849,35 +864,35 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="bag">關閉</button></div></div>
 
 <div class="panel" id="iosFs"><div class="sheet"><div class="grab"></div>
-  <h2>📱 iPhone 全螢幕</h2>
+  <h2>iPhone 全螢幕</h2>
   <p style="font-size:14px;line-height:1.7">iPhone 的 Safari 不支援網頁直接全螢幕。請用 Safari 打開遊戲網址，點下方 <b>分享按鈕 ⬆️</b> →「<b>加入主畫面</b>」，之後從主畫面的 🦞 圖示開啟，就會是全螢幕喔！</p>
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261124s"></script>
-<script src="config.js?v=20261124s"></script>
-<script src="firebase-config.js?v=20261124s"></script>
+<script src="js/three.min.js?v=20261124t"></script>
+<script src="config.js?v=20261124t"></script>
+<script src="firebase-config.js?v=20261124t"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261124s"></script>
-<script src="js/engine.js?v=20261124s"></script>
-<script src="js/audio.js?v=20261124s"></script>
-<script src="js/items.js?v=20261124s"></script>
-<script src="js/critter.js?v=20261124s"></script>
-<script src="js/cave.js?v=20261124s"></script>
-<script src="js/world.js?v=20261124s"></script>
-<script src="js/harbor.js?v=20261124s"></script>
-<script src="js/game.js?v=20261124s"></script>
-<script src="js/ui.js?v=20261124s"></script>
-<script src="js/extra.js?v=20261124s"></script>
-<script src="js/forest.js?v=20261124s"></script>
-<script src="js/net.js?v=20261124s"></script>
-<script src="js/cloud.js?v=20261124s"></script>
-<script src="js/mall.js?v=20261124s"></script>
-<script src="js/skills.js?v=20261124s"></script>
-<script src="js/bars.js?v=20261124s"></script>
-<script src="js/photo.js?v=20261124s"></script>
-<script src="js/party.js?v=20261124s"></script>
-<script src="js/gfx.js?v=20261124s"></script>
-<script src="js/upgrade.js?v=20261124s"></script>
+<script src="js/compat.js?v=20261124t"></script>
+<script src="js/engine.js?v=20261124t"></script>
+<script src="js/audio.js?v=20261124t"></script>
+<script src="js/items.js?v=20261124t"></script>
+<script src="js/critter.js?v=20261124t"></script>
+<script src="js/cave.js?v=20261124t"></script>
+<script src="js/world.js?v=20261124t"></script>
+<script src="js/harbor.js?v=20261124t"></script>
+<script src="js/game.js?v=20261124t"></script>
+<script src="js/ui.js?v=20261124t"></script>
+<script src="js/extra.js?v=20261124t"></script>
+<script src="js/forest.js?v=20261124t"></script>
+<script src="js/net.js?v=20261124t"></script>
+<script src="js/cloud.js?v=20261124t"></script>
+<script src="js/mall.js?v=20261124t"></script>
+<script src="js/skills.js?v=20261124t"></script>
+<script src="js/bars.js?v=20261124t"></script>
+<script src="js/photo.js?v=20261124t"></script>
+<script src="js/party.js?v=20261124t"></script>
+<script src="js/gfx.js?v=20261124t"></script>
+<script src="js/upgrade.js?v=20261124t"></script>
 </body>
 </html>
