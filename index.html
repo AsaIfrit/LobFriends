@@ -100,6 +100,11 @@ body.sleeping #spdTag{display:inline-block}
 #petReveal .ms{font-size:14px;font-weight:800;color:#7a4a5a;margin:6px 0 12px;line-height:1.6}
 @keyframes prBounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.06)}}
 #btnDel{right:200px;bottom:66px;width:64px;height:64px;font-size:11px;background:linear-gradient(160deg,#ffd6c8,#ff9e7a);color:#fff;display:none}
+#btnMove{right:270px;bottom:66px;width:58px;height:58px;font-size:11px;background:linear-gradient(160deg,#d8ecff,#9ac8f2);color:#fff;display:none}#btnMove span,#btnDel span{font-size:20px}
+body.building #btnMove{display:flex;animation:popIn .4s var(--spring)}#btnMove.dim{opacity:.45}
+body.deco #btnAct.noplace{display:none!important}
+/* 建造模式開關：左下角 Talk 上方 */#btnBuild{left:16px;bottom:152px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#ffe9c8,#ffc98a);color:#7a4a3e}#btnBuild span{font-size:20px}#btnBuild.on{box-shadow:0 0 0 4px #ffd36e,0 3px 10px rgba(0,0,0,.25)!important}
+body.sleeping #btnBuild,body.downed #btnBuild{display:none!important}
 body.building #btnDel{display:flex;animation:popIn .4s var(--spring)}#btnDel.dim{opacity:.45}
 #btnEmote{left:16px;bottom:80px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#fff3c0,#ffd6a0);color:#7a4a3e}
 body.sleeping #btnEmote{display:none!important}
@@ -190,6 +195,7 @@ body:not(.ingame) #skillBar,body.sleeping #skillBar,body.downed #skillBar,body.c
 #bossBar small{font-size:11px}
 #decoTag{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:none;background:linear-gradient(140deg,#ffd36e,#ffb38a);color:#fff;border:3px solid #fff;border-radius:18px;padding:4px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,120,60,.35);cursor:pointer;pointer-events:auto;touch-action:manipulation}
 body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
+@media (max-width:560px){#decoTag{top:calc(max(10px,env(safe-area-inset-top)) + 150px);font-size:12px;padding:3px 12px}}/* 手機直向：放在左上資訊下面，不擋選單 */
 /* 擺放中按鈕 */
 #rotSl{position:fixed;left:50%;bottom:calc(var(--sl,44px) + 76px);z-index:6;display:none;align-items:center;gap:8px;transform:translateX(-50%);background:rgba(255,250,243,.95);border:3px solid #fff;border-radius:18px;padding:6px 12px;box-shadow:0 4px 0 rgba(200,140,110,.4)}
 #rotSl.on{display:flex}#rotSl input{width:min(56vw,240px);accent-color:#ff9ec7}#rotSl b{min-width:40px;text-align:right;font-weight:900;font-size:13px;color:var(--ink)}
@@ -197,7 +203,7 @@ body.deco #decoTag{display:block;animation:popIn .45s var(--spring)}
 body.carrying #placeBar{display:flex;animation:popIn .4s var(--spring)}
 #placeBar button{border:3px solid #fff;border-radius:16px;padding:7px 12px;font-weight:900;font-size:13px;background:var(--cream);box-shadow:0 4px 0 rgba(200,140,110,.4)}
 /* ---------- LINE 風取得通知 ---------- */
-#notes{position:fixed;left:10px;bottom:152px;/* 在 Talk 鍵（bottom 80＋高 60）上方 */display:flex;flex-direction:column-reverse;gap:7px;z-index:8;pointer-events:none}
+#notes{position:fixed;left:10px;bottom:222px;/* 在 Talk、建造鍵上方 */display:flex;flex-direction:column-reverse;gap:7px;z-index:8;pointer-events:none}
 .note{width:min(54vw,215px);display:flex;gap:9px;align-items:center;background:rgba(255,255,255,.97);border-radius:18px;padding:8px 12px 8px 8px;box-shadow:0 6px 18px rgba(80,50,40,.22);border:2px solid #f2e4da;
   animation:noteIn .5s var(--spring);transition:transform .35s ease-in,opacity .35s,max-height .35s,margin .35s,padding .35s;max-height:70px;overflow:hidden}
 .note.out{transform:translateX(-120%);opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-top:-7px}
@@ -498,8 +504,9 @@ body.ingame #start{display:none!important}
   #btnJump{width:48px;height:48px;right:24px;bottom:calc(var(--sl) + 116px + env(safe-area-inset-bottom));font-size:19px}
   #btnDel{width:54px;height:54px;right:160px;bottom:calc(var(--sl) + 28px + env(safe-area-inset-bottom));font-size:10px}
   #btnEmote{width:50px;height:50px;left:12px;bottom:calc(var(--sl) + 30px + env(safe-area-inset-bottom));font-size:9.5px}
+  #btnBuild{width:50px;height:50px;left:12px;bottom:calc(var(--sl) + 90px + env(safe-area-inset-bottom));font-size:9.5px}#btnBuild span{font-size:17px}
   #fpBtn{width:46px;height:46px;right:82px;bottom:calc(var(--sl) + 118px + env(safe-area-inset-bottom));font-size:19px}
-  #notes{bottom:calc(var(--sl) + 92px + env(safe-area-inset-bottom));left:8px;gap:4px}.note{width:auto;max-width:46vw;padding:3px 10px 3px 3px;border-radius:14px;gap:6px;border-width:1.5px}.nav{width:24px;height:24px;font-size:14px;border-width:1.5px}.ntop{display:none}.nmsg{font-size:12px}
+  #notes{bottom:calc(var(--sl) + 150px + env(safe-area-inset-bottom));left:8px;gap:4px}.note{width:auto;max-width:46vw;padding:3px 10px 3px 3px;border-radius:14px;gap:6px;border-width:1.5px}.nav{width:24px;height:24px;font-size:14px;border-width:1.5px}.ntop{display:none}.nmsg{font-size:12px}
   #chatLog{bottom:auto;top:46vh;max-width:56vw}
   #notes .note:nth-last-child(n+4){display:none}
   #placeBar{bottom:calc(var(--sl) + 116px)}#rotSl{bottom:calc(var(--sl) + 166px)}#placeBar button{padding:6px 9px;font-size:12px}
@@ -514,6 +521,7 @@ body.ingame #start{display:none!important}
   #hotbar{left:max(70px,calc(env(safe-area-inset-left) + 66px));transform:none;bottom:max(6px,env(safe-area-inset-bottom));gap:3px;padding:3px;border-radius:14px;border-width:2px}
   .slot{border-radius:10px;border-width:2px}.slot i{font-size:9.5px}
   #btnEmote{left:max(10px,env(safe-area-inset-left));bottom:8px;width:50px;height:50px;font-size:9px}
+  #btnBuild{left:max(10px,env(safe-area-inset-left));bottom:66px;width:50px;height:50px;font-size:9px}#btnBuild span{font-size:16px}
   #btnAtk{width:66px;height:66px;right:max(12px,env(safe-area-inset-right));bottom:12px;font-size:10.5px}#btnAtk span{font-size:22px}
   #btnAct{width:52px;height:52px;right:calc(max(12px,env(safe-area-inset-right)) + 76px);bottom:10px;font-size:9.5px}#btnAct span{font-size:18px}
   #btnJump{width:46px;height:46px;right:calc(max(12px,env(safe-area-inset-right)) + 10px);bottom:88px;font-size:18px}
@@ -609,14 +617,14 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="fan" data-f="stat" style="--i:2"><span>💪</span><b>素質</b><em class="dotS" id="stDot">0</em></button>
   <button class="fan" data-f="bag" style="--i:3"><span>🎒</span><b>背包</b></button>
   <button class="fan" data-f="pet" style="--i:4"><span>🐾</span><b>寵物</b></button>
-  <button class="fan" data-f="deco" style="--i:5"><span>🪑</span><b id="decoLbl">布置</b></button>
+  <button class="fan" data-f="deco" style="--i:5"><span>🧱</span><b id="decoLbl">建造</b></button>
   <button class="fan" data-f="dex" style="--i:6"><span>📖</span><b>圖鑑</b></button>
   <button class="fan" data-f="beauty" style="--i:7"><span>💄</span><b>美容</b></button>
   <button class="fan" data-f="photo" style="--i:8"><span>📷</span><b>拍照</b></button>
   <button class="fan" data-f="full" style="--i:9"><span>⛶</span><b>全螢幕</b></button>
   <button class="fan" data-f="set" style="--i:10"><span>⚙️</span><b>設置</b></button>
 </div>
-<div id="decoTag">🛋️ 點擊關閉布置模式</div>
+<div id="decoTag">🧱 建造模式中・點擊關閉</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
 <div id="visitBar"><span id="visitTxt"></span><button class="qb pink" id="visitEnd">結束參觀</button></div><div id="toast"></div><div id="notes"></div><div id="chatLog"></div>
 <div id="social"><div class="sbox"><div class="chT">💬 對話紀錄</div><div id="chatHist"></div><div id="emoBar"></div><form id="chatForm"><input id="chatIn" maxlength="24" placeholder="說點什麼…（Enter 送出）" autocomplete="off"><button class="qb pink" type="submit">送出</button></form></div></div>
@@ -626,7 +634,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div id="downBox">💫 你倒下了<p>等待隊友來救助，或是直接返回重生點</p><div><button class="qb" disabled>⏳ 等待救援中…</button><button class="qb pink" id="downHome">返回重生點</button></div></div>
 <div id="skillBar"></div><div id="castBar"><span id="castTxt"></span><i><b id="castFill"></b></i></div><div id="revBar"><span id="revTxt"></span><i><b id="revFill"></b></i></div>
 <div id="bossBar">👑 果凍王 <small id="bossHp"></small><i><b id="bossFill"></b></i></div>
-<div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>💬</span>Talk</button><button class="btn game" id="btnDel"><span>🔨</span>拆方塊</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
+<div id="xhair"></div><button class="btn game" id="btnEmote" title="表情／聊天 (Enter)"><span>💬</span>Talk</button><button class="btn game" id="btnDel"><span>🔨</span>拆</button><button class="btn game" id="btnMove"><span>✋</span>搬動</button><button class="btn game" id="btnBuild" title="建造模式 (F)"><span>🧱</span>建造</button><div id="lvPop"><div class="a">LEVEL UP!</div><div class="b" id="lvPopN">Lv.2</div><div class="c">技能點數 +1 ⭐ 點右上 ☰ 學天賦</div></div><div id="petReveal"><div class="card"><div class="pe" id="prE">🐱</div><div class="nm" id="prN"></div><div class="ms" id="prM"></div><button class="qb pink" id="prOk">好耶！</button></div></div>
 <button class="btn game" id="btnAct"><span id="actIcon">🤚</span><b id="actTxt">互動</b></button>
 <button class="btn game" id="btnAtk"><span id="atkIcon">⚔️</span><b>攻擊</b></button>
 <div id="sleepUI"><div class="tag">💤 睡覺中・時間 ×5 流動</div><button class="btn" id="wakeBtn"><span>☀️</span>起床</button></div>
@@ -787,29 +795,29 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261123m"></script>
-<script src="config.js?v=20261123m"></script>
-<script src="firebase-config.js?v=20261123m"></script>
+<script src="js/three.min.js?v=20261123n"></script>
+<script src="config.js?v=20261123n"></script>
+<script src="firebase-config.js?v=20261123n"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261123m"></script>
-<script src="js/engine.js?v=20261123m"></script>
-<script src="js/audio.js?v=20261123m"></script>
-<script src="js/items.js?v=20261123m"></script>
-<script src="js/critter.js?v=20261123m"></script>
-<script src="js/cave.js?v=20261123m"></script>
-<script src="js/world.js?v=20261123m"></script>
-<script src="js/harbor.js?v=20261123m"></script>
-<script src="js/game.js?v=20261123m"></script>
-<script src="js/ui.js?v=20261123m"></script>
-<script src="js/extra.js?v=20261123m"></script>
-<script src="js/forest.js?v=20261123m"></script>
-<script src="js/net.js?v=20261123m"></script>
-<script src="js/cloud.js?v=20261123m"></script>
-<script src="js/skills.js?v=20261123m"></script>
-<script src="js/bars.js?v=20261123m"></script>
-<script src="js/photo.js?v=20261123m"></script>
-<script src="js/party.js?v=20261123m"></script>
-<script src="js/gfx.js?v=20261123m"></script>
-<script src="js/upgrade.js?v=20261123m"></script>
+<script src="js/compat.js?v=20261123n"></script>
+<script src="js/engine.js?v=20261123n"></script>
+<script src="js/audio.js?v=20261123n"></script>
+<script src="js/items.js?v=20261123n"></script>
+<script src="js/critter.js?v=20261123n"></script>
+<script src="js/cave.js?v=20261123n"></script>
+<script src="js/world.js?v=20261123n"></script>
+<script src="js/harbor.js?v=20261123n"></script>
+<script src="js/game.js?v=20261123n"></script>
+<script src="js/ui.js?v=20261123n"></script>
+<script src="js/extra.js?v=20261123n"></script>
+<script src="js/forest.js?v=20261123n"></script>
+<script src="js/net.js?v=20261123n"></script>
+<script src="js/cloud.js?v=20261123n"></script>
+<script src="js/skills.js?v=20261123n"></script>
+<script src="js/bars.js?v=20261123n"></script>
+<script src="js/photo.js?v=20261123n"></script>
+<script src="js/party.js?v=20261123n"></script>
+<script src="js/gfx.js?v=20261123n"></script>
+<script src="js/upgrade.js?v=20261123n"></script>
 </body>
 </html>
