@@ -154,7 +154,7 @@ body.building #btnAtk{display:none!important}
 @keyframes gCrack{0%,100%{transform:rotate(0)}30%{transform:rotate(-14deg)}70%{transform:rotate(14deg)}}
 #gRes{min-height:58px;text-align:center;font-weight:900;color:#7a4a5a;font-size:17px}
 #gRes .pet{font-size:64px;display:block;animation:popIn .6s var(--spring)}
-#gList img{width:40px;height:40px;object-fit:contain}#gList span.own{opacity:1}#gList span.no{opacity:.35;filter:grayscale(.6)}#petReveal .pe img{width:150px;height:150px;object-fit:contain}.hic{width:1.5em;height:1.5em;object-fit:contain;vertical-align:middle;pointer-events:none}.bi.eq{box-shadow:0 0 0 3px #ffd36e inset}
+#gList img{width:40px;height:40px;object-fit:contain}#gList span.own{opacity:1}#gList span.no{opacity:.35;filter:grayscale(.6)}#petReveal .pe img{width:150px;height:150px;object-fit:contain}.hic{width:1.5em;height:1.5em;object-fit:contain;vertical-align:middle;pointer-events:none}.mallIc{width:52px;height:52px;object-fit:contain;display:block;margin:0 auto 2px}.fan>span.pimg .hic{width:1.25em;height:1.25em}.bi.eq{box-shadow:0 0 0 3px #ffd36e inset}
 #gList{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:22px;margin:4px 0 10px}
 #partyBox{position:relative;pointer-events:auto;align-self:flex-start;display:none;background:rgba(255,250,244,.92);border:3px solid #fff;border-radius:16px;padding:6px 9px;box-shadow:0 4px 0 rgba(200,140,110,.3);min-width:150px}
 #partyBox.on{display:block;animation:popIn .4s var(--spring)}#partyBox h4{margin:0 0 3px;font-size:12px;color:#7a4a3e;display:flex;justify-content:space-between;align-items:center}
@@ -558,7 +558,7 @@ body.uiz-auto .sheet>*{zoom:var(--uiz-auto,1)}.drawer .sheet{padding-bottom:calc
 /* ===== 深色介面（設置→畫面可切回舊版淺色）：遊戲按鈕、左上角、快捷欄改 50% 黑底白字，按鈕圖示用白色剪影 ===== */
 body.darkui .btn,body.darkui #fab,body.darkui .fan,body.darkui #skillBar .sk{background:rgba(0,0,0,.5)!important;color:#fff!important;border-color:#fff!important;box-shadow:0 3px 10px rgba(0,0,0,.2)!important}
 body.darkui .btn b,body.darkui .fan b{color:#fff}
-body.darkui .btn span,body.darkui .fan>span,body.darkui #skillBar .sk span,body.darkui .btn svg,body.darkui .slot.bagBtn>span{filter:brightness(0) invert(1)}
+body.darkui .btn span,body.darkui .fan>span:not(.pimg),body.darkui #skillBar .sk span,body.darkui .btn svg,body.darkui .slot.bagBtn>span{filter:brightness(0) invert(1)}
 body.darkui #fab span{background:#fff!important}
 body.darkui #fpBtn.on,body.darkui #skillBar .sk.on{box-shadow:0 0 0 3px #ffd36e,0 3px 10px rgba(0,0,0,.2)!important}
 body.darkui #btnAct.dim{filter:none;opacity:.6}
@@ -610,7 +610,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
     <div class="stat"><span id="heart">💗</span><div class="bar"><div id="hpFill"></div></div><span class="sNum" id="hpTxt"></span></div>
     <div class="stat"><span>⚡</span><div class="bar"><div id="enFill"></div></div><span class="sNum" id="enTxt"></span></div>
   </div>
-  <div style="display:flex;gap:6px;align-self:flex-start"><div class="card" id="coinPill">🪙 <b id="coins">0</b></div><div class="card" id="xpBoost" title="經驗值雙倍（只在線上時倒數）">🎫 ×2 <b>30:00</b></div><div class="card" id="netBadge"><i></i><span id="netTxt">連線中…</span></div></div>
+  <div style="display:flex;gap:6px;align-self:flex-start"><div class="card" id="coinPill">🪙 <b id="coins">0</b></div><div class="card" id="xpBoost" title="經驗值雙倍（只在線上時倒數）"><img class="hic" src="img/items/exp2.png" alt=""> ×2 <b>30:00</b></div><div class="card" id="netBadge"><i></i><span id="netTxt">連線中…</span></div></div>
   <div class="card" id="qdrop"><div class="qh">📜 委託 <span id="qCount"></span><span class="chev">▾</span></div><div id="qlistMini"></div></div>
   <div id="partyBox"><h4><span>🤝 隊伍</span><button id="ptLeave">離開</button></h4><div id="ptList"></div></div>
 </div>
@@ -626,7 +626,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="fan" data-f="beauty" style="--i:7"><span>💄</span><b>美容</b></button>
   <button class="fan" data-f="photo" style="--i:8"><span>📷</span><b>拍照</b></button>
   <button class="fan" data-f="full" style="--i:9"><span>⛶</span><b>全螢幕</b></button>
-  <button class="fan" data-f="mall" style="--i:11"><span>💎</span><b>商城</b></button>
+  <button class="fan" data-f="mall" style="--i:11"><span class="pimg"><img class="hic" src="img/items/pearl.png" alt="" draggable="false"></span><b>商城</b></button>
   <button class="fan" data-f="set" style="--i:10"><span>⚙️</span><b>設置</b></button>
 </div>
 <div id="decoTag">🧱 建造模式中・點擊關閉</div>
@@ -659,8 +659,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div class="grid" id="craftGrid"></div><button class="qb lav close" data-close="craft">關閉</button></div></div>
 
 <div class="panel" id="mall"><div class="sheet"><div class="grab"></div>
-  <h2>💎 珍珠商城</h2><div class="sub">珍珠只能用來購買商城商品，不能換回現金。購買前請先閱讀<a href="terms.html" target="_blank">服務條款</a>。</div>
-  <div class="mallBal">💎 珍珠 <b id="mallPearls">－</b></div>
+  <h2><img class="hic" src="img/items/pearl.png" alt="珍珠"> 珍珠商城</h2><div class="sub">珍珠只能用來購買商城商品，不能換回現金。購買前請先閱讀<a href="terms.html" target="_blank">服務條款</a>。</div>
+  <div class="mallBal"><img class="hic" src="img/items/pearl.png" alt="珍珠"> 珍珠 <b id="mallPearls">－</b></div>
   <label class="mallAgree"><input type="checkbox" id="mallAgree"> 我已閱讀並同意<a href="terms.html" target="_blank">服務條款與儲值說明</a>，並<b>同意付款完成後立即提供珍珠</b>。我了解珍珠屬於非以有形媒介提供之數位內容，提供後<b>不適用 7 天鑑賞期（無法以此理由退款）</b>。</label>
   <div class="clab">儲值珍珠</div><div class="chips" id="mallPay"><button class="chip on" data-pm="ecpay">綠界（信用卡／ATM／超商）</button><button class="chip" data-pm="paypal">PayPal（海外玩家）</button></div>
   <div class="grid" id="mallPacks"></div>
@@ -809,30 +809,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261124b"></script>
-<script src="config.js?v=20261124b"></script>
-<script src="firebase-config.js?v=20261124b"></script>
+<script src="js/three.min.js?v=20261124c"></script>
+<script src="config.js?v=20261124c"></script>
+<script src="firebase-config.js?v=20261124c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261124b"></script>
-<script src="js/engine.js?v=20261124b"></script>
-<script src="js/audio.js?v=20261124b"></script>
-<script src="js/items.js?v=20261124b"></script>
-<script src="js/critter.js?v=20261124b"></script>
-<script src="js/cave.js?v=20261124b"></script>
-<script src="js/world.js?v=20261124b"></script>
-<script src="js/harbor.js?v=20261124b"></script>
-<script src="js/game.js?v=20261124b"></script>
-<script src="js/ui.js?v=20261124b"></script>
-<script src="js/extra.js?v=20261124b"></script>
-<script src="js/forest.js?v=20261124b"></script>
-<script src="js/net.js?v=20261124b"></script>
-<script src="js/cloud.js?v=20261124b"></script>
-<script src="js/mall.js?v=20261124b"></script>
-<script src="js/skills.js?v=20261124b"></script>
-<script src="js/bars.js?v=20261124b"></script>
-<script src="js/photo.js?v=20261124b"></script>
-<script src="js/party.js?v=20261124b"></script>
-<script src="js/gfx.js?v=20261124b"></script>
-<script src="js/upgrade.js?v=20261124b"></script>
+<script src="js/compat.js?v=20261124c"></script>
+<script src="js/engine.js?v=20261124c"></script>
+<script src="js/audio.js?v=20261124c"></script>
+<script src="js/items.js?v=20261124c"></script>
+<script src="js/critter.js?v=20261124c"></script>
+<script src="js/cave.js?v=20261124c"></script>
+<script src="js/world.js?v=20261124c"></script>
+<script src="js/harbor.js?v=20261124c"></script>
+<script src="js/game.js?v=20261124c"></script>
+<script src="js/ui.js?v=20261124c"></script>
+<script src="js/extra.js?v=20261124c"></script>
+<script src="js/forest.js?v=20261124c"></script>
+<script src="js/net.js?v=20261124c"></script>
+<script src="js/cloud.js?v=20261124c"></script>
+<script src="js/mall.js?v=20261124c"></script>
+<script src="js/skills.js?v=20261124c"></script>
+<script src="js/bars.js?v=20261124c"></script>
+<script src="js/photo.js?v=20261124c"></script>
+<script src="js/party.js?v=20261124c"></script>
+<script src="js/gfx.js?v=20261124c"></script>
+<script src="js/upgrade.js?v=20261124c"></script>
 </body>
 </html>
