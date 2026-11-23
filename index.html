@@ -222,7 +222,7 @@ body:not(.ingame) #notes{display:none}
 #netBadge{display:none;align-items:center;gap:5px;font-size:12.5px;pointer-events:auto;cursor:pointer}
 #netBadge i{width:9px;height:9px;border-radius:50%;background:#5fd38a;box-shadow:0 0 0 3px rgba(95,211,138,.25);animation:beat 1.6s infinite}
 #netBadge.off i{background:#c8b8b0;box-shadow:none;animation:none}
-#visitBar{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translate(-50%,-140%);z-index:30;display:flex;align-items:center;gap:8px;background:var(--cream);border:3px solid var(--line);border-radius:18px;padding:6px 8px 6px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,140,110,.4);transition:transform .35s var(--spring);max-width:94vw}#visitBar.on{transform:translate(-50%,0)}#visitBar .qb{padding:5px 12px;font-size:13px}body:not(.ingame) #visitBar{display:none}
+#visitBar{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top));transform:translate(-50%,-140%);z-index:30;display:flex;align-items:center;gap:8px;background:var(--cream);border:3px solid var(--line);border-radius:18px;padding:6px 8px 6px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 0 rgba(200,140,110,.4);transition:transform .35s var(--spring);max-width:94vw}#visitBar:not(.on){transform:translate(-50%,calc(-100% - max(10px,env(safe-area-inset-top)) - 12px));visibility:hidden;transition:transform .35s var(--spring),visibility 0s .35s}/* 手機有瀏海時 -140% 收不乾淨，會露出一截 */#visitBar.on{transform:translate(-50%,0)}#visitBar .qb{padding:5px 12px;font-size:13px}body:not(.ingame) #visitBar{display:none}
 #chatLog{position:fixed;left:10px;bottom:300px;display:flex;flex-direction:column;gap:4px;z-index:7;pointer-events:none;max-width:60vw}
 #chatLog div{background:rgba(70,45,40,.7);color:#fff;border-radius:12px;padding:3px 10px;font-size:13px;font-weight:700;animation:noteIn .4s var(--spring);transition:opacity .4s}
 #chatLog div.out{opacity:0}#chatLog b{color:#ffd9a0;margin-right:2px}
@@ -869,30 +869,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261124v"></script>
-<script src="config.js?v=20261124v"></script>
-<script src="firebase-config.js?v=20261124v"></script>
+<script src="js/three.min.js?v=20261124w"></script>
+<script src="config.js?v=20261124w"></script>
+<script src="firebase-config.js?v=20261124w"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261124v"></script>
-<script src="js/engine.js?v=20261124v"></script>
-<script src="js/audio.js?v=20261124v"></script>
-<script src="js/items.js?v=20261124v"></script>
-<script src="js/critter.js?v=20261124v"></script>
-<script src="js/cave.js?v=20261124v"></script>
-<script src="js/world.js?v=20261124v"></script>
-<script src="js/harbor.js?v=20261124v"></script>
-<script src="js/game.js?v=20261124v"></script>
-<script src="js/ui.js?v=20261124v"></script>
-<script src="js/extra.js?v=20261124v"></script>
-<script src="js/forest.js?v=20261124v"></script>
-<script src="js/net.js?v=20261124v"></script>
-<script src="js/cloud.js?v=20261124v"></script>
-<script src="js/mall.js?v=20261124v"></script>
-<script src="js/skills.js?v=20261124v"></script>
-<script src="js/bars.js?v=20261124v"></script>
-<script src="js/photo.js?v=20261124v"></script>
-<script src="js/party.js?v=20261124v"></script>
-<script src="js/gfx.js?v=20261124v"></script>
-<script src="js/upgrade.js?v=20261124v"></script>
+<script src="js/compat.js?v=20261124w"></script>
+<script src="js/engine.js?v=20261124w"></script>
+<script src="js/audio.js?v=20261124w"></script>
+<script src="js/items.js?v=20261124w"></script>
+<script src="js/critter.js?v=20261124w"></script>
+<script src="js/cave.js?v=20261124w"></script>
+<script src="js/world.js?v=20261124w"></script>
+<script src="js/harbor.js?v=20261124w"></script>
+<script src="js/game.js?v=20261124w"></script>
+<script src="js/ui.js?v=20261124w"></script>
+<script src="js/extra.js?v=20261124w"></script>
+<script src="js/forest.js?v=20261124w"></script>
+<script src="js/net.js?v=20261124w"></script>
+<script src="js/cloud.js?v=20261124w"></script>
+<script src="js/mall.js?v=20261124w"></script>
+<script src="js/skills.js?v=20261124w"></script>
+<script src="js/bars.js?v=20261124w"></script>
+<script src="js/photo.js?v=20261124w"></script>
+<script src="js/party.js?v=20261124w"></script>
+<script src="js/gfx.js?v=20261124w"></script>
+<script src="js/upgrade.js?v=20261124w"></script>
 </body>
 </html>
