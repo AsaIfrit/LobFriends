@@ -383,7 +383,7 @@ body.sleeping #sleepUI{display:flex}
 .rc{background:#fff;border:2.5px solid #fbe3d8;border-radius:18px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
 .rc .ic{font-size:30px;line-height:1.1}.rc .nm{font-weight:900;font-size:14px}.rc .ds{font-size:11px;opacity:.75;min-height:15px}
 .rc .cost{font-size:12px;font-weight:900}.rc .cost .no{color:#ff6f6f}.rc .qb{padding:5px 12px;font-size:13px}
-.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;padding-top:3px}/* 選中的分頁會往上浮 2px，可捲動的分頁列要留空間才不會被切掉 */
 .setTabs{overflow-x:auto;scrollbar-width:none}.setTabs .tab{flex:0 0 auto}.setPg{display:none;min-height:180px}.setPg.on{display:block}
 .tab{flex:1;border:2.5px solid #fbe3d8;background:#fff;border-radius:14px;padding:6px;font-weight:900;font-size:13px;transition:transform .15s var(--spring)}
 .tab.on{background:#fff0e8;border-color:#ff9f80;transform:translateY(-2px)}
@@ -869,30 +869,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261124t"></script>
-<script src="config.js?v=20261124t"></script>
-<script src="firebase-config.js?v=20261124t"></script>
+<script src="js/three.min.js?v=20261124u"></script>
+<script src="config.js?v=20261124u"></script>
+<script src="firebase-config.js?v=20261124u"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261124t"></script>
-<script src="js/engine.js?v=20261124t"></script>
-<script src="js/audio.js?v=20261124t"></script>
-<script src="js/items.js?v=20261124t"></script>
-<script src="js/critter.js?v=20261124t"></script>
-<script src="js/cave.js?v=20261124t"></script>
-<script src="js/world.js?v=20261124t"></script>
-<script src="js/harbor.js?v=20261124t"></script>
-<script src="js/game.js?v=20261124t"></script>
-<script src="js/ui.js?v=20261124t"></script>
-<script src="js/extra.js?v=20261124t"></script>
-<script src="js/forest.js?v=20261124t"></script>
-<script src="js/net.js?v=20261124t"></script>
-<script src="js/cloud.js?v=20261124t"></script>
-<script src="js/mall.js?v=20261124t"></script>
-<script src="js/skills.js?v=20261124t"></script>
-<script src="js/bars.js?v=20261124t"></script>
-<script src="js/photo.js?v=20261124t"></script>
-<script src="js/party.js?v=20261124t"></script>
-<script src="js/gfx.js?v=20261124t"></script>
-<script src="js/upgrade.js?v=20261124t"></script>
+<script src="js/compat.js?v=20261124u"></script>
+<script src="js/engine.js?v=20261124u"></script>
+<script src="js/audio.js?v=20261124u"></script>
+<script src="js/items.js?v=20261124u"></script>
+<script src="js/critter.js?v=20261124u"></script>
+<script src="js/cave.js?v=20261124u"></script>
+<script src="js/world.js?v=20261124u"></script>
+<script src="js/harbor.js?v=20261124u"></script>
+<script src="js/game.js?v=20261124u"></script>
+<script src="js/ui.js?v=20261124u"></script>
+<script src="js/extra.js?v=20261124u"></script>
+<script src="js/forest.js?v=20261124u"></script>
+<script src="js/net.js?v=20261124u"></script>
+<script src="js/cloud.js?v=20261124u"></script>
+<script src="js/mall.js?v=20261124u"></script>
+<script src="js/skills.js?v=20261124u"></script>
+<script src="js/bars.js?v=20261124u"></script>
+<script src="js/photo.js?v=20261124u"></script>
+<script src="js/party.js?v=20261124u"></script>
+<script src="js/gfx.js?v=20261124u"></script>
+<script src="js/upgrade.js?v=20261124u"></script>
 </body>
 </html>
