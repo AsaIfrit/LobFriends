@@ -607,7 +607,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 .mxPrev{flex:1;border-radius:16px;overflow:hidden;position:relative;border:2px solid #d6e9ff;background:radial-gradient(ellipse at 50% 85%,#ffe7dd 0 28%,transparent 29%),linear-gradient(#e8f4ff,#fff5ef);touch-action:none}
 .mxPrev canvas{width:100%;height:100%;display:block;cursor:grab}
 .mxPrevTag{position:absolute;left:8px;top:7px;font-size:11.5px;font-weight:900;color:#5a8fd6;background:rgba(255,255,255,.85);border-radius:999px;padding:2px 9px;display:none}
-.mxReset{position:absolute;right:7px;top:6px;border:none;border-radius:999px;font:inherit;font-size:11.5px;font-weight:900;padding:3px 10px;background:#fff;color:#e06a4f;box-shadow:0 2px 0 #ffd2c2;display:none;cursor:pointer}
+.mxHint{position:absolute;left:0;right:0;bottom:5px;text-align:center;font-size:10.5px;font-weight:800;color:#9ab4d4;pointer-events:none}.mxReset{position:absolute;right:7px;top:6px;border:none;border-radius:999px;font:inherit;font-size:11.5px;font-weight:900;padding:3px 10px;background:#fff;color:#e06a4f;box-shadow:0 2px 0 #ffd2c2;display:none;cursor:pointer}
 .mxSec{margin:12px 2px 8px;font-weight:900;font-size:14px;color:#e9876f;display:flex;align-items:center;gap:8px}.mxSec:after{content:"";flex:1;height:2px;background:linear-gradient(90deg,#ffd2c2,#d6e9ff)}
 .mxGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px}
 .mxCard{position:relative;background:#fff;border:2px solid #ffe0d4;border-radius:16px;padding:10px 8px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 #ffeae2;cursor:pointer;transition:transform .15s}
@@ -706,7 +706,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div class="mxBody">
     <nav class="mxSide"><label class="mxSearch"><span>🔍</span><input id="mallQ" type="search" placeholder="搜尋商品" autocomplete="off"></label><div id="mallCats"></div><button class="mxExit" data-close="mall">‹ 離開商城</button></nav>
     <div class="mxMain" id="mallMain">
-      <div class="mxHero"><div class="mxBanner" id="mallBanner"></div><div class="mxPrev"><canvas id="mallCv"></canvas><div class="mxPrevTag" id="mallTry"></div><button class="mxReset" id="mallReset">還原</button></div></div>
+      <div class="mxHero"><div class="mxBanner" id="mallBanner"></div><div class="mxPrev"><canvas id="mallCv"></canvas><div class="mxPrevTag" id="mallTry"></div><button class="mxReset" id="mallReset">還原</button><div class="mxHint">拖曳旋轉・滾輪／雙指縮放</div></div></div>
       <div class="mxSec" id="mallSecT"></div>
       <div id="mallPage"></div>
     </div>
@@ -853,30 +853,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261124f"></script>
-<script src="config.js?v=20261124f"></script>
-<script src="firebase-config.js?v=20261124f"></script>
+<script src="js/three.min.js?v=20261124g"></script>
+<script src="config.js?v=20261124g"></script>
+<script src="firebase-config.js?v=20261124g"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261124f"></script>
-<script src="js/engine.js?v=20261124f"></script>
-<script src="js/audio.js?v=20261124f"></script>
-<script src="js/items.js?v=20261124f"></script>
-<script src="js/critter.js?v=20261124f"></script>
-<script src="js/cave.js?v=20261124f"></script>
-<script src="js/world.js?v=20261124f"></script>
-<script src="js/harbor.js?v=20261124f"></script>
-<script src="js/game.js?v=20261124f"></script>
-<script src="js/ui.js?v=20261124f"></script>
-<script src="js/extra.js?v=20261124f"></script>
-<script src="js/forest.js?v=20261124f"></script>
-<script src="js/net.js?v=20261124f"></script>
-<script src="js/cloud.js?v=20261124f"></script>
-<script src="js/mall.js?v=20261124f"></script>
-<script src="js/skills.js?v=20261124f"></script>
-<script src="js/bars.js?v=20261124f"></script>
-<script src="js/photo.js?v=20261124f"></script>
-<script src="js/party.js?v=20261124f"></script>
-<script src="js/gfx.js?v=20261124f"></script>
-<script src="js/upgrade.js?v=20261124f"></script>
+<script src="js/compat.js?v=20261124g"></script>
+<script src="js/engine.js?v=20261124g"></script>
+<script src="js/audio.js?v=20261124g"></script>
+<script src="js/items.js?v=20261124g"></script>
+<script src="js/critter.js?v=20261124g"></script>
+<script src="js/cave.js?v=20261124g"></script>
+<script src="js/world.js?v=20261124g"></script>
+<script src="js/harbor.js?v=20261124g"></script>
+<script src="js/game.js?v=20261124g"></script>
+<script src="js/ui.js?v=20261124g"></script>
+<script src="js/extra.js?v=20261124g"></script>
+<script src="js/forest.js?v=20261124g"></script>
+<script src="js/net.js?v=20261124g"></script>
+<script src="js/cloud.js?v=20261124g"></script>
+<script src="js/mall.js?v=20261124g"></script>
+<script src="js/skills.js?v=20261124g"></script>
+<script src="js/bars.js?v=20261124g"></script>
+<script src="js/photo.js?v=20261124g"></script>
+<script src="js/party.js?v=20261124g"></script>
+<script src="js/gfx.js?v=20261124g"></script>
+<script src="js/upgrade.js?v=20261124g"></script>
 </body>
 </html>
