@@ -649,6 +649,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 .hic.iic,span.pimg .hic.iic,.mxTitle .hic.iic,.mxCat .hic.iic{width:1.05em;height:1.05em}
 #btnRot{width:58px;height:58px;font-size:11px;background:linear-gradient(160deg,#e2d8ff,#b9a6f2);color:#fff;display:none}#btnRot span{font-size:20px}body.building.wallheld #btnRot{display:flex;animation:popIn .4s var(--spring)}
 .bagFoot{display:flex;gap:8px;align-items:stretch}.bagFoot .close{flex:1;margin:0}#bagTrash{width:54px;border:2px solid #e8d4c4;border-radius:14px;background:#fff;color:#a87a6a;display:flex;align-items:center;justify-content:center;cursor:pointer}#bagTrash.hov,#bagTrash.on{background:#ffd6d6;border-color:#ff8f8f;color:#d94a4a}.bi.del{outline:3px solid #ff8f8f;background:#ffecec}
+.chips button.cur{box-shadow:0 0 0 2px #7ad0a0 inset}.chips button.cur::after{content:' ●';color:#3aa86a;font-size:.8em}#plChWrap{margin:4px 0 8px}
 </style>
 </head>
 <body>
@@ -797,7 +798,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <h2>寵物小屋</h2><div class="sub" id="petSub"></div><div id="petList"></div>
   <button class="qb lav close" data-close="pets">關閉</button></div></div>
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
-  <h2>線上玩家</h2><div class="sub" id="plSub"></div><div id="plList"></div>
+  <h2>線上玩家</h2><div class="sub" id="plSub"></div><div id="plChWrap" style="display:none"><div class="clab">切換頻道（同頻道的人才看得到彼此）</div><div class="chips" id="plCh"></div></div><div id="plList"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
 <div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="gift"><div class="sheet"><div class="grab"></div>
@@ -877,32 +878,32 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261126w"></script>
-<script src="config.js?v=20261126w"></script>
-<script src="firebase-config.js?v=20261126w"></script>
+<script src="js/three.min.js?v=20261126x"></script>
+<script src="config.js?v=20261126x"></script>
+<script src="firebase-config.js?v=20261126x"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261126w"></script>
-<script src="js/engine.js?v=20261126w"></script>
-<script src="js/audio.js?v=20261126w"></script>
-<script src="js/items.js?v=20261126w"></script>
-<script src="js/critter.js?v=20261126w"></script>
-<script src="js/mats.js?v=20261126w"></script>
-<script src="js/cave.js?v=20261126w"></script>
-<script src="js/world.js?v=20261126w"></script>
-<script src="js/harbor.js?v=20261126w"></script>
-<script src="js/game.js?v=20261126w"></script>
-<script src="js/ui.js?v=20261126w"></script>
-<script src="js/extra.js?v=20261126w"></script>
-<script src="js/forest.js?v=20261126w"></script>
-<script src="js/net.js?v=20261126w"></script>
-<script src="js/cloud.js?v=20261126w"></script>
-<script src="js/mall.js?v=20261126w"></script>
-<script src="js/skills.js?v=20261126w"></script>
-<script src="js/bars.js?v=20261126w"></script>
-<script src="js/photo.js?v=20261126w"></script>
-<script src="js/party.js?v=20261126w"></script>
-<script src="js/gfx.js?v=20261126w"></script>
-<script src="js/upgrade.js?v=20261126w"></script>
-<script src="js/perf.js?v=20261126w"></script>
+<script src="js/compat.js?v=20261126x"></script>
+<script src="js/engine.js?v=20261126x"></script>
+<script src="js/audio.js?v=20261126x"></script>
+<script src="js/items.js?v=20261126x"></script>
+<script src="js/critter.js?v=20261126x"></script>
+<script src="js/mats.js?v=20261126x"></script>
+<script src="js/cave.js?v=20261126x"></script>
+<script src="js/world.js?v=20261126x"></script>
+<script src="js/harbor.js?v=20261126x"></script>
+<script src="js/game.js?v=20261126x"></script>
+<script src="js/ui.js?v=20261126x"></script>
+<script src="js/extra.js?v=20261126x"></script>
+<script src="js/forest.js?v=20261126x"></script>
+<script src="js/net.js?v=20261126x"></script>
+<script src="js/cloud.js?v=20261126x"></script>
+<script src="js/mall.js?v=20261126x"></script>
+<script src="js/skills.js?v=20261126x"></script>
+<script src="js/bars.js?v=20261126x"></script>
+<script src="js/photo.js?v=20261126x"></script>
+<script src="js/party.js?v=20261126x"></script>
+<script src="js/gfx.js?v=20261126x"></script>
+<script src="js/upgrade.js?v=20261126x"></script>
+<script src="js/perf.js?v=20261126x"></script>
 </body>
 </html>
