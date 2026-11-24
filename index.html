@@ -645,6 +645,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 /* 左上角狀態圖示（線條／實心） */#timeIco,#heart,#boltIco,#qIco{display:inline-flex;width:1.25em;height:1.25em;vertical-align:-0.2em}#timeIco .lic,#heart .lic,#boltIco .lic,#qIco .lic{width:100%;height:100%}#qIco{margin-right:6px}.ti.sun{color:#ffc23d}.ti.dusk{color:#ff9a5a}.ti.moon{color:#c9b8ff}#heart{color:#ff7fa6}#boltIco{color:#a99bff}#qIco{color:#e8b25a}body.darkui #qIco{color:#ffd88a}
 
 /* 夜晚畫面上方的冷色月光 */#moonSky{position:fixed;left:0;right:0;top:0;height:55vh;pointer-events:none;z-index:1;opacity:0;background:radial-gradient(120% 90% at 70% -10%,rgba(150,180,255,.32),rgba(120,150,240,.12) 45%,transparent 75%);mix-blend-mode:screen}
+#phBack{align-items:center;justify-content:center;padding:0}#phBack svg{display:block}
 </style>
 </head>
 <body>
@@ -810,12 +811,12 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <h2>圖鑑</h2><div class="sub" id="dexSub"></div>
   <div class="tabs" id="dexTabs"></div>
   <div class="grid" id="dexGrid"></div><button class="qb lav close" data-close="dex">關閉</button></div></div>
-<button id="phBack" title="叫回介面（Esc）">📷</button>
-<div id="photoBar"><div class="phRow"><b>📷 拍照模式</b><span class="sub">拖曳轉鏡頭・滾輪／雙指縮放</span></div>
+<button id="phBack" title="叫回介面（Esc）"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h3l1.6-2.3h6.8L17 8.5h3a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.5" r="3.4"/></svg></button>
+<div id="photoBar"><div class="phRow"><b>拍照模式</b><span class="sub">拖曳轉鏡頭・滾輪／雙指縮放</span></div>
   <div class="phRow"><span>🕒 時間 <b id="phTv">12:00</b></span><input type="range" id="phTime" min="0" max="1439" step="5"></div>
   <div class="chips" id="phChips"><button class="chip" data-ph="pl">隱藏玩家</button><button class="chip" data-ph="npc">隱藏 NPC</button><button class="chip" data-ph="mon">隱藏敵人</button><button class="chip" data-ph="me">隱藏自己</button></div>
   <div class="phRow"><button class="qb pink" id="phClean">🙈 隱藏介面</button><button class="qb lav" id="phEnd">結束拍照（Esc）</button></div>
-  <div class="sub" style="font-size:11px">隱藏介面後，按 Esc 或左上角的 📷 就會回來；結束後時間會恢復</div></div>
+  <div class="sub" style="font-size:11px">隱藏介面後，按 Esc 或左上角的相機按鈕就會回來；結束後時間會恢復</div></div>
 <div class="panel" id="settings"><div class="sheet"><div class="grab"></div>
   <h2>設置</h2>
   <div class="tabs setTabs" id="setTabs"><button class="tab on" data-sp="snd">聲音</button><button class="tab" data-sp="gfx">畫面</button><button class="tab" data-sp="ctl">操作</button><button class="tab" data-sp="net">線上</button><button class="tab" data-sp="sav">存檔</button></div>
@@ -873,31 +874,31 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261125s"></script>
-<script src="config.js?v=20261125s"></script>
-<script src="firebase-config.js?v=20261125s"></script>
+<script src="js/three.min.js?v=20261125t"></script>
+<script src="config.js?v=20261125t"></script>
+<script src="firebase-config.js?v=20261125t"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261125s"></script>
-<script src="js/engine.js?v=20261125s"></script>
-<script src="js/audio.js?v=20261125s"></script>
-<script src="js/items.js?v=20261125s"></script>
-<script src="js/critter.js?v=20261125s"></script>
-<script src="js/mats.js?v=20261125s"></script>
-<script src="js/cave.js?v=20261125s"></script>
-<script src="js/world.js?v=20261125s"></script>
-<script src="js/harbor.js?v=20261125s"></script>
-<script src="js/game.js?v=20261125s"></script>
-<script src="js/ui.js?v=20261125s"></script>
-<script src="js/extra.js?v=20261125s"></script>
-<script src="js/forest.js?v=20261125s"></script>
-<script src="js/net.js?v=20261125s"></script>
-<script src="js/cloud.js?v=20261125s"></script>
-<script src="js/mall.js?v=20261125s"></script>
-<script src="js/skills.js?v=20261125s"></script>
-<script src="js/bars.js?v=20261125s"></script>
-<script src="js/photo.js?v=20261125s"></script>
-<script src="js/party.js?v=20261125s"></script>
-<script src="js/gfx.js?v=20261125s"></script>
-<script src="js/upgrade.js?v=20261125s"></script>
+<script src="js/compat.js?v=20261125t"></script>
+<script src="js/engine.js?v=20261125t"></script>
+<script src="js/audio.js?v=20261125t"></script>
+<script src="js/items.js?v=20261125t"></script>
+<script src="js/critter.js?v=20261125t"></script>
+<script src="js/mats.js?v=20261125t"></script>
+<script src="js/cave.js?v=20261125t"></script>
+<script src="js/world.js?v=20261125t"></script>
+<script src="js/harbor.js?v=20261125t"></script>
+<script src="js/game.js?v=20261125t"></script>
+<script src="js/ui.js?v=20261125t"></script>
+<script src="js/extra.js?v=20261125t"></script>
+<script src="js/forest.js?v=20261125t"></script>
+<script src="js/net.js?v=20261125t"></script>
+<script src="js/cloud.js?v=20261125t"></script>
+<script src="js/mall.js?v=20261125t"></script>
+<script src="js/skills.js?v=20261125t"></script>
+<script src="js/bars.js?v=20261125t"></script>
+<script src="js/photo.js?v=20261125t"></script>
+<script src="js/party.js?v=20261125t"></script>
+<script src="js/gfx.js?v=20261125t"></script>
+<script src="js/upgrade.js?v=20261125t"></script>
 </body>
 </html>
