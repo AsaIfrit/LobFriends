@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
+<script>/* 錯誤回報：遊戲出錯時在畫面底部顯示錯誤訊息（方便截圖回報），點一下關閉 */(function(){var shown=0;function show(m){if(shown>4)return;shown++;var d=document.getElementById('errBox');if(!d){d=document.createElement('div');d.id='errBox';d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:rgba(160,30,40,.92);color:#fff;font:12px/1.4 monospace;padding:8px 10px;border-radius:10px;max-height:40vh;overflow:auto;white-space:pre-wrap;word-break:break-all';d.onclick=function(){d.remove();};(document.body||document.documentElement).appendChild(d);d.textContent='⚠️ 遊戲發生錯誤（請截圖回報，點一下關閉）\n';}d.textContent+='\n'+m;}
+window.addEventListener('error',function(e){if(e&&e.target&&e.target!==window&&(e.target.src||e.target.href)){var u=e.target.src||e.target.href||'';if(/\/js\/[^\/]+\.js/.test(u)&&u.indexOf(location.host)>=0)show('載入失敗：'+u.split('/').pop());return;}var f=(e.filename||'').split('/').pop();show((e.message||'錯誤')+'  @ '+f+':'+(e.lineno||0)+':'+(e.colno||0));},true);
+window.addEventListener('unhandledrejection',function(e){var r=e.reason;var m=r&&(r.message||String(r))||'';if(/fetch|network|Failed to fetch|Load failed|AbortError/i.test(m))return;show('Promise：'+m);});})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="龍蝦好友會"><meta name="theme-color" content="#7ec8f8">
@@ -880,32 +883,32 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261127d"></script>
-<script src="config.js?v=20261127d"></script>
-<script src="firebase-config.js?v=20261127d"></script>
+<script src="js/three.min.js?v=20261127e"></script>
+<script src="config.js?v=20261127e"></script>
+<script src="firebase-config.js?v=20261127e"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261127d"></script>
-<script src="js/engine.js?v=20261127d"></script>
-<script src="js/audio.js?v=20261127d"></script>
-<script src="js/items.js?v=20261127d"></script>
-<script src="js/critter.js?v=20261127d"></script>
-<script src="js/mats.js?v=20261127d"></script>
-<script src="js/cave.js?v=20261127d"></script>
-<script src="js/world.js?v=20261127d"></script>
-<script src="js/harbor.js?v=20261127d"></script>
-<script src="js/game.js?v=20261127d"></script>
-<script src="js/ui.js?v=20261127d"></script>
-<script src="js/extra.js?v=20261127d"></script>
-<script src="js/forest.js?v=20261127d"></script>
-<script src="js/net.js?v=20261127d"></script>
-<script src="js/cloud.js?v=20261127d"></script>
-<script src="js/mall.js?v=20261127d"></script>
-<script src="js/skills.js?v=20261127d"></script>
-<script src="js/bars.js?v=20261127d"></script>
-<script src="js/photo.js?v=20261127d"></script>
-<script src="js/party.js?v=20261127d"></script>
-<script src="js/gfx.js?v=20261127d"></script>
-<script src="js/upgrade.js?v=20261127d"></script>
-<script src="js/perf.js?v=20261127d"></script>
+<script src="js/compat.js?v=20261127e"></script>
+<script src="js/engine.js?v=20261127e"></script>
+<script src="js/audio.js?v=20261127e"></script>
+<script src="js/items.js?v=20261127e"></script>
+<script src="js/critter.js?v=20261127e"></script>
+<script src="js/mats.js?v=20261127e"></script>
+<script src="js/cave.js?v=20261127e"></script>
+<script src="js/world.js?v=20261127e"></script>
+<script src="js/harbor.js?v=20261127e"></script>
+<script src="js/game.js?v=20261127e"></script>
+<script src="js/ui.js?v=20261127e"></script>
+<script src="js/extra.js?v=20261127e"></script>
+<script src="js/forest.js?v=20261127e"></script>
+<script src="js/net.js?v=20261127e"></script>
+<script src="js/cloud.js?v=20261127e"></script>
+<script src="js/mall.js?v=20261127e"></script>
+<script src="js/skills.js?v=20261127e"></script>
+<script src="js/bars.js?v=20261127e"></script>
+<script src="js/photo.js?v=20261127e"></script>
+<script src="js/party.js?v=20261127e"></script>
+<script src="js/gfx.js?v=20261127e"></script>
+<script src="js/upgrade.js?v=20261127e"></script>
+<script src="js/perf.js?v=20261127e"></script>
 </body>
 </html>
