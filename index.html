@@ -104,7 +104,7 @@ body.sleeping #spdTag{display:inline-block}
 @keyframes prBounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.06)}}
 #btnDel{right:200px;bottom:66px;width:64px;height:64px;font-size:11px;background:linear-gradient(160deg,#ffd6c8,#ff9e7a);color:#fff;display:none}
 #btnMove{right:270px;bottom:66px;width:58px;height:58px;font-size:11px;background:linear-gradient(160deg,#d8ecff,#9ac8f2);color:#fff;display:none}#btnMove span,#btnDel span{font-size:20px}
-body.building #btnMove{display:flex;animation:popIn .4s var(--spring)}#btnMove.dim{opacity:.45}
+/* 搬動已併入「拆」 */#btnMove.dim{opacity:.45}
 body.deco #btnAct.noplace{display:none!important}
 /* 建造模式開關：左下角 Talk 上方 */#btnBuild{left:16px;bottom:152px;width:60px;height:60px;font-size:11px;background:linear-gradient(160deg,#ffe9c8,#ffc98a);color:#7a4a3e}#btnBuild span{font-size:20px}#btnBuild.on{box-shadow:0 0 0 4px #ffd36e,0 3px 10px rgba(0,0,0,.25)!important}
 body.sleeping #btnBuild,body.downed #btnBuild{display:none!important}
@@ -840,6 +840,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div class="clab">介面大小（面板內容太多看不完時可以調小）</div><div class="chips" id="uizChips"><button class="chip" data-uz="auto">自動</button><button class="chip" data-uz="0.8">小</button><button class="chip" data-uz="0.9">中</button><button class="chip" data-uz="1">大</button></div>
   <div class="clab">角色腳下顯示血條／精神條</div><div class="chips" id="pbarChips"><button class="chip" data-pb="off">關閉</button><button class="chip" data-pb="s">小</button><button class="chip" data-pb="m">中</button><button class="chip" data-pb="l">大</button></div>
   <div class="clab">其他玩家的名稱</div><div class="chips" id="nameChips"><button class="chip" data-nm="all">全部顯示</button><button class="chip" data-nm="party">只顯示隊友</button><button class="chip" data-nm="none">全部隱藏</button></div>
+  <div class="clab">捲筒世界（遠處地面往下彎）</div><div class="chips" id="bendChips"><button class="chip" data-bend="0">關</button><button class="chip" data-bend="1">弱</button><button class="chip" data-bend="2">中（預設）</button><button class="chip" data-bend="3">強</button></div>
   <div class="clab">光影風格</div><div class="chips" id="celChips"><button class="chip" data-cel="0">柔和（預設）</button><button class="chip" data-cel="1">賽璐璐（明暗分界清楚）</button></div>
   <div class="clab">介面配色</div><div class="chips" id="uiThChips"><button class="chip" data-th="dark">深色（半透明黑）</button><button class="chip" data-th="light">淺色（舊版）</button></div>
   <div class="clab">NPC 的名稱</div><div class="chips" id="npcNameChips"><button class="chip" data-nn="on">顯示</button><button class="chip" data-nn="off">隱藏</button></div>
@@ -883,32 +884,32 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261127i"></script>
-<script src="config.js?v=20261127i"></script>
-<script src="firebase-config.js?v=20261127i"></script>
+<script src="js/three.min.js?v=20261127k"></script>
+<script src="config.js?v=20261127k"></script>
+<script src="firebase-config.js?v=20261127k"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261127i"></script>
-<script src="js/engine.js?v=20261127i"></script>
-<script src="js/audio.js?v=20261127i"></script>
-<script src="js/items.js?v=20261127i"></script>
-<script src="js/critter.js?v=20261127i"></script>
-<script src="js/mats.js?v=20261127i"></script>
-<script src="js/cave.js?v=20261127i"></script>
-<script src="js/world.js?v=20261127i"></script>
-<script src="js/harbor.js?v=20261127i"></script>
-<script src="js/game.js?v=20261127i"></script>
-<script src="js/ui.js?v=20261127i"></script>
-<script src="js/extra.js?v=20261127i"></script>
-<script src="js/forest.js?v=20261127i"></script>
-<script src="js/net.js?v=20261127i"></script>
-<script src="js/cloud.js?v=20261127i"></script>
-<script src="js/mall.js?v=20261127i"></script>
-<script src="js/skills.js?v=20261127i"></script>
-<script src="js/bars.js?v=20261127i"></script>
-<script src="js/photo.js?v=20261127i"></script>
-<script src="js/party.js?v=20261127i"></script>
-<script src="js/gfx.js?v=20261127i"></script>
-<script src="js/upgrade.js?v=20261127i"></script>
-<script src="js/perf.js?v=20261127i"></script>
+<script src="js/compat.js?v=20261127k"></script>
+<script src="js/engine.js?v=20261127k"></script>
+<script src="js/audio.js?v=20261127k"></script>
+<script src="js/items.js?v=20261127k"></script>
+<script src="js/critter.js?v=20261127k"></script>
+<script src="js/mats.js?v=20261127k"></script>
+<script src="js/cave.js?v=20261127k"></script>
+<script src="js/world.js?v=20261127k"></script>
+<script src="js/harbor.js?v=20261127k"></script>
+<script src="js/game.js?v=20261127k"></script>
+<script src="js/ui.js?v=20261127k"></script>
+<script src="js/extra.js?v=20261127k"></script>
+<script src="js/forest.js?v=20261127k"></script>
+<script src="js/net.js?v=20261127k"></script>
+<script src="js/cloud.js?v=20261127k"></script>
+<script src="js/mall.js?v=20261127k"></script>
+<script src="js/skills.js?v=20261127k"></script>
+<script src="js/bars.js?v=20261127k"></script>
+<script src="js/photo.js?v=20261127k"></script>
+<script src="js/party.js?v=20261127k"></script>
+<script src="js/gfx.js?v=20261127k"></script>
+<script src="js/upgrade.js?v=20261127k"></script>
+<script src="js/perf.js?v=20261127k"></script>
 </body>
 </html>
