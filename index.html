@@ -643,6 +643,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 .mxTitle{text-shadow:none}.mxCard .ib{background:#f8f4f1;border-radius:10px}.mxDesc{border-width:1px}
 
 /* 左上角狀態圖示（線條／實心） */#timeIco,#heart,#boltIco,#qIco{display:inline-flex;width:1.25em;height:1.25em;vertical-align:-0.2em}#timeIco .lic,#heart .lic,#boltIco .lic,#qIco .lic{width:100%;height:100%}#qIco{margin-right:6px}.ti.sun{color:#ffc23d}.ti.dusk{color:#ff9a5a}.ti.moon{color:#c9b8ff}#heart{color:#ff7fa6}#boltIco{color:#a99bff}#qIco{color:#e8b25a}body.darkui #qIco{color:#ffd88a}
+
+/* 夜晚畫面上方的冷色月光 */#moonSky{position:fixed;left:0;right:0;top:0;height:55vh;pointer-events:none;z-index:1;opacity:0;background:radial-gradient(120% 90% at 70% -10%,rgba(150,180,255,.32),rgba(120,150,240,.12) 45%,transparent 75%);mix-blend-mode:screen}
 </style>
 </head>
 <body>
@@ -660,7 +662,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <svg viewBox="0 0 100 108" fill="#fff" aria-hidden="true"><path d="M22 10C28 22 31 35 29 45C27 55 9 57 6 46C4 35 13 22 22 10Z"/><path d="M78 10C72 22 69 35 71 45C73 55 91 57 94 46C96 35 87 22 78 10Z"/><ellipse cx="50" cy="24" rx="7" ry="8"/><circle cx="50" cy="60" r="36"/><ellipse cx="13.5" cy="68" rx="6" ry="8.5"/><ellipse cx="86.5" cy="68" rx="6" ry="8.5"/><ellipse cx="36" cy="97" rx="8.5" ry="6.5"/><ellipse cx="64" cy="97" rx="8.5" ry="6.5"/></svg>
 <div class="t"><span style="--i:0">L</span><span style="--i:1">o</span><span style="--i:2">a</span><span style="--i:3">d</span><span style="--i:4">i</span><span style="--i:5">n</span><span style="--i:6">g</span><span style="--i:7">.</span><span style="--i:8">.</span><span style="--i:9">.</span></div></div>
 <script>/* 最多等 20 秒，避免出錯時一直卡在載入畫面 */window.bootDone=function(){const b=document.getElementById('boot');if(!b||b.classList.contains('out'))return;b.classList.add('out');setTimeout(()=>b.remove(),700);};setTimeout(window.bootDone,20000);</script>
-<canvas id="c"></canvas>
+<canvas id="c"></canvas><div id="moonSky"></div>
 <div id="vig"></div>
 <div id="flash"></div>
 <div id="hud">
@@ -871,30 +873,30 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261125e"></script>
-<script src="config.js?v=20261125e"></script>
-<script src="firebase-config.js?v=20261125e"></script>
+<script src="js/three.min.js?v=20261125f"></script>
+<script src="config.js?v=20261125f"></script>
+<script src="firebase-config.js?v=20261125f"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261125e"></script>
-<script src="js/engine.js?v=20261125e"></script>
-<script src="js/audio.js?v=20261125e"></script>
-<script src="js/items.js?v=20261125e"></script>
-<script src="js/critter.js?v=20261125e"></script>
-<script src="js/cave.js?v=20261125e"></script>
-<script src="js/world.js?v=20261125e"></script>
-<script src="js/harbor.js?v=20261125e"></script>
-<script src="js/game.js?v=20261125e"></script>
-<script src="js/ui.js?v=20261125e"></script>
-<script src="js/extra.js?v=20261125e"></script>
-<script src="js/forest.js?v=20261125e"></script>
-<script src="js/net.js?v=20261125e"></script>
-<script src="js/cloud.js?v=20261125e"></script>
-<script src="js/mall.js?v=20261125e"></script>
-<script src="js/skills.js?v=20261125e"></script>
-<script src="js/bars.js?v=20261125e"></script>
-<script src="js/photo.js?v=20261125e"></script>
-<script src="js/party.js?v=20261125e"></script>
-<script src="js/gfx.js?v=20261125e"></script>
-<script src="js/upgrade.js?v=20261125e"></script>
+<script src="js/compat.js?v=20261125f"></script>
+<script src="js/engine.js?v=20261125f"></script>
+<script src="js/audio.js?v=20261125f"></script>
+<script src="js/items.js?v=20261125f"></script>
+<script src="js/critter.js?v=20261125f"></script>
+<script src="js/cave.js?v=20261125f"></script>
+<script src="js/world.js?v=20261125f"></script>
+<script src="js/harbor.js?v=20261125f"></script>
+<script src="js/game.js?v=20261125f"></script>
+<script src="js/ui.js?v=20261125f"></script>
+<script src="js/extra.js?v=20261125f"></script>
+<script src="js/forest.js?v=20261125f"></script>
+<script src="js/net.js?v=20261125f"></script>
+<script src="js/cloud.js?v=20261125f"></script>
+<script src="js/mall.js?v=20261125f"></script>
+<script src="js/skills.js?v=20261125f"></script>
+<script src="js/bars.js?v=20261125f"></script>
+<script src="js/photo.js?v=20261125f"></script>
+<script src="js/party.js?v=20261125f"></script>
+<script src="js/gfx.js?v=20261125f"></script>
+<script src="js/upgrade.js?v=20261125f"></script>
 </body>
 </html>
