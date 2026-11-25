@@ -363,7 +363,7 @@ body.sleeping #sleepUI{display:flex}
 .plr{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:2.5px solid #fbe3d8;border-radius:14px;padding:8px 12px;font-weight:900;font-size:14px}.plr.me{border-color:#bfd27f;background:#fff4f8}.plr small{font-size:11.5px;opacity:.7;white-space:nowrap}
 #plChoice{position:fixed;inset:0;z-index:30;display:none;align-items:flex-end;justify-content:center;padding-bottom:calc(var(--sl,44px) + 120px);pointer-events:none}
 #plChoice.on{display:flex}#plChoice .card2{pointer-events:auto;background:#fffaf4;border:3px solid #fff;border-radius:22px;padding:12px 16px;box-shadow:0 6px 0 rgba(149,169,82,.3),0 10px 30px rgba(127,152,44,.2);text-align:center;animation:popIn .4s var(--spring)}
-#plChoice h3{margin:0 0 8px;font-size:16px}#plChoice .pcb{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}#plChoice .card2,#petChoice .card2{max-width:calc(100vw - 24px);box-sizing:border-box}#plChoice .qb{padding:8px 14px;font-size:14px}#plChoice .qb:disabled{opacity:.45}
+#plChoice h3{margin:0 0 8px;font-size:16px}#pcpTabs{justify-content:center;margin-bottom:8px}#pcpTabs .tab{flex:0 0 auto;padding:4px 16px}#plChoice .pcb{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}#plChoice .card2,#petChoice .card2{max-width:calc(100vw - 24px);box-sizing:border-box}#plChoice .qb{padding:8px 14px;font-size:14px}#plChoice .qb:disabled{opacity:.45}
 .giftCoin{display:flex;align-items:center;gap:8px;background:#fff;border:2.5px solid #ffe3a0;border-radius:14px;padding:6px 10px;margin:4px 0 8px;font-weight:900;font-size:14px}
 .giftCoin input{flex:1;min-width:0;border:2px solid #f2e0d4;border-radius:10px;padding:6px 8px;font-size:15px;font-weight:800}.giftCoin .qb{padding:6px 14px}
 #giftGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;max-height:42vh;overflow:auto;margin-bottom:8px}
@@ -842,7 +842,11 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="players">關閉</button></div></div>
 <div id="loginBox"><div class="card2"><h3 style="margin:0 0 4px">每日登入獎勵</h3><div class="sub" style="margin:0 0 8px">每天早上 5 點更新，漏簽也會接著領喔！</div><div id="lbGrid"></div><div style="display:flex;gap:8px;margin-top:10px"><button class="qb pink" id="lbGet" style="flex:1">領取</button><button class="qb lav" id="lbClose">之後再說</button></div></div></div>
 <div id="dmBox"><div class="card2"><div class="dmHead"><b id="dmName"></b><small id="dmSt"></small><button class="qb lav" id="dmClose">關閉</button></div><div id="dmHist"></div><form id="dmForm"><input id="dmIn" maxlength="60" placeholder="輸入訊息…" autocomplete="off"><button class="qb pink">送出</button></form></div></div>
-<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpFriend">加好友</button><button class="qb" id="pcpGuild">邀請入會</button><button class="qb" id="pcpTrade">交易</button><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button><button class="qb" id="pcpMute" style="display:none;background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="display:none;background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#b0c764);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="tabs" id="pcpTabs"><button class="tab on" data-pt="a">互動</button><button class="tab" data-pt="m">更多</button><button class="tab" data-pt="g" id="pcpTabGM" style="display:none">GM</button></div>
+<div class="pcb" data-pp="a"><button class="qb pink" id="pcpInvite">邀請組隊</button><button class="qb" id="pcpGift">送禮</button><button class="qb" id="pcpVisit">參觀造物</button><button class="qb" id="pcpFriend">加好友</button><button class="qb" id="pcpGuild">邀請入會</button><button class="qb" id="pcpTrade">交易</button></div>
+<div class="pcb" data-pp="m" style="display:none"><div class="sub" style="width:100%;margin:0 0 2px">不想再看到對方，或對方有不當行為時使用</div><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button></div>
+<div class="pcb" data-pp="g" style="display:none"><div class="sub" style="width:100%;margin:0 0 2px">GM 管理（按下後還會再確認一次）</div><button class="qb" id="pcpMute" style="background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="background:linear-gradient(160deg,#ffd0c8,#b0c764);color:#fff">請下線</button></div>
+<div class="pcb" style="margin-top:8px"><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="trade"><div class="sheet"><div class="grab"></div>
   <h2>交易</h2><div class="sub" id="trSub"></div>
   <div class="trCols"><div class="trCol"><div class="clab">你給</div><div class="trCoin">🪙 <input type="number" id="trCoin" min="0" step="1" placeholder="金幣" inputmode="numeric"></div><div id="trMine" class="trList"></div><div id="trMineLock" class="trLock"></div></div>
@@ -936,38 +940,38 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261129c"></script>
-<script src="config.js?v=20261129c"></script>
-<script src="firebase-config.js?v=20261129c"></script>
+<script src="js/three.min.js?v=20261129d"></script>
+<script src="config.js?v=20261129d"></script>
+<script src="firebase-config.js?v=20261129d"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261129c"></script>
-<script src="js/models.js?v=20261129c"></script>
-<script src="js/models_mist.js?v=20261129c"></script>
-<script src="js/engine.js?v=20261129c"></script>
-<script src="js/audio.js?v=20261129c"></script>
-<script src="js/items.js?v=20261129c"></script>
-<script src="js/critter.js?v=20261129c"></script>
-<script src="js/mats.js?v=20261129c"></script>
-<script src="js/cave.js?v=20261129c"></script>
-<script src="js/world.js?v=20261129c"></script>
-<script src="js/harbor.js?v=20261129c"></script>
-<script src="js/game.js?v=20261129c"></script>
-<script src="js/ui.js?v=20261129c"></script>
-<script src="js/extra.js?v=20261129c"></script>
-<script src="js/forest.js?v=20261129c"></script>
-<script src="js/net.js?v=20261129c"></script>
-<script src="js/cloud.js?v=20261129c"></script>
-<script src="js/mall.js?v=20261129c"></script>
-<script src="js/skills.js?v=20261129c"></script>
-<script src="js/bars.js?v=20261129c"></script>
-<script src="js/photo.js?v=20261129c"></script>
-<script src="js/social.js?v=20261129c"></script>
-<script src="js/daily.js?v=20261129c"></script>
-<script src="js/guild.js?v=20261129c"></script>
-<script src="js/trade.js?v=20261129c"></script>
-<script src="js/party.js?v=20261129c"></script>
-<script src="js/gfx.js?v=20261129c"></script>
-<script src="js/upgrade.js?v=20261129c"></script>
-<script src="js/perf.js?v=20261129c"></script>
+<script src="js/compat.js?v=20261129d"></script>
+<script src="js/models.js?v=20261129d"></script>
+<script src="js/models_mist.js?v=20261129d"></script>
+<script src="js/engine.js?v=20261129d"></script>
+<script src="js/audio.js?v=20261129d"></script>
+<script src="js/items.js?v=20261129d"></script>
+<script src="js/critter.js?v=20261129d"></script>
+<script src="js/mats.js?v=20261129d"></script>
+<script src="js/cave.js?v=20261129d"></script>
+<script src="js/world.js?v=20261129d"></script>
+<script src="js/harbor.js?v=20261129d"></script>
+<script src="js/game.js?v=20261129d"></script>
+<script src="js/ui.js?v=20261129d"></script>
+<script src="js/extra.js?v=20261129d"></script>
+<script src="js/forest.js?v=20261129d"></script>
+<script src="js/net.js?v=20261129d"></script>
+<script src="js/cloud.js?v=20261129d"></script>
+<script src="js/mall.js?v=20261129d"></script>
+<script src="js/skills.js?v=20261129d"></script>
+<script src="js/bars.js?v=20261129d"></script>
+<script src="js/photo.js?v=20261129d"></script>
+<script src="js/social.js?v=20261129d"></script>
+<script src="js/daily.js?v=20261129d"></script>
+<script src="js/guild.js?v=20261129d"></script>
+<script src="js/trade.js?v=20261129d"></script>
+<script src="js/party.js?v=20261129d"></script>
+<script src="js/gfx.js?v=20261129d"></script>
+<script src="js/upgrade.js?v=20261129d"></script>
+<script src="js/perf.js?v=20261129d"></script>
 </body>
 </html>
