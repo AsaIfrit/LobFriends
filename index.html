@@ -805,7 +805,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
   <h2>線上玩家</h2><div class="sub" id="plSub"></div><div id="plChWrap" style="display:none"><div class="clab">切換頻道（同頻道的人才看得到彼此）</div><div class="chips" id="plCh"></div></div><div id="plList"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
-<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button><button class="qb" id="pcpMute" style="display:none;background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="display:none;background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="gift"><div class="sheet"><div class="grab"></div>
   <h2>送禮</h2><div class="sub" id="giftSub"></div>
   <div class="giftCoin"><span>🪙 送金幣</span><input type="number" id="giftCoin" min="1" step="1" placeholder="數量" inputmode="numeric"><button class="qb pink" id="giftCoinBtn">送出</button></div>
@@ -861,6 +861,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div id="cloudWrap" style="display:none"><div class="clab">雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
   <div class="crow2" style="margin-top:6px"><button class="qb" id="setSave">💾 立即存檔</button><button class="qb lav" id="bkBtn">🕘 還原備份</button></div><div class="sub" style="margin:2px 0 6px;font-size:11px">遊玩時每 20 分鐘自動備份一次，本機和雲端各保留最近 3 份</div>
   <button class="qb" id="gmBtn" style="display:none;width:100%;margin:6px 0;background:linear-gradient(160deg,#ffd98a,#ff9f5a)">🛠️ GM 倉庫（所有道具）</button>
+  <button class="qb" id="gmRepBtn" style="display:none;width:100%;margin:0 0 6px;background:linear-gradient(160deg,#ffe1a8,#ffb35a)">檢舉與處分</button>
+  <button class="qb" id="blockListBtn" style="width:100%;margin:0 0 6px">封鎖名單</button>
   <button class="qb" id="gmFlagBtn" style="display:none;width:100%;margin:0 0 6px;background:linear-gradient(160deg,#ffc2c2,#ff8f8f)">異常存檔紀錄</button>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
   </div>
@@ -889,34 +891,34 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261128a"></script>
-<script src="config.js?v=20261128a"></script>
-<script src="firebase-config.js?v=20261128a"></script>
+<script src="js/three.min.js?v=20261128b"></script>
+<script src="config.js?v=20261128b"></script>
+<script src="firebase-config.js?v=20261128b"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261128a"></script>
-<script src="js/models.js?v=20261128a"></script>
-<script src="js/models_mist.js?v=20261128a"></script>
-<script src="js/engine.js?v=20261128a"></script>
-<script src="js/audio.js?v=20261128a"></script>
-<script src="js/items.js?v=20261128a"></script>
-<script src="js/critter.js?v=20261128a"></script>
-<script src="js/mats.js?v=20261128a"></script>
-<script src="js/cave.js?v=20261128a"></script>
-<script src="js/world.js?v=20261128a"></script>
-<script src="js/harbor.js?v=20261128a"></script>
-<script src="js/game.js?v=20261128a"></script>
-<script src="js/ui.js?v=20261128a"></script>
-<script src="js/extra.js?v=20261128a"></script>
-<script src="js/forest.js?v=20261128a"></script>
-<script src="js/net.js?v=20261128a"></script>
-<script src="js/cloud.js?v=20261128a"></script>
-<script src="js/mall.js?v=20261128a"></script>
-<script src="js/skills.js?v=20261128a"></script>
-<script src="js/bars.js?v=20261128a"></script>
-<script src="js/photo.js?v=20261128a"></script>
-<script src="js/party.js?v=20261128a"></script>
-<script src="js/gfx.js?v=20261128a"></script>
-<script src="js/upgrade.js?v=20261128a"></script>
-<script src="js/perf.js?v=20261128a"></script>
+<script src="js/compat.js?v=20261128b"></script>
+<script src="js/models.js?v=20261128b"></script>
+<script src="js/models_mist.js?v=20261128b"></script>
+<script src="js/engine.js?v=20261128b"></script>
+<script src="js/audio.js?v=20261128b"></script>
+<script src="js/items.js?v=20261128b"></script>
+<script src="js/critter.js?v=20261128b"></script>
+<script src="js/mats.js?v=20261128b"></script>
+<script src="js/cave.js?v=20261128b"></script>
+<script src="js/world.js?v=20261128b"></script>
+<script src="js/harbor.js?v=20261128b"></script>
+<script src="js/game.js?v=20261128b"></script>
+<script src="js/ui.js?v=20261128b"></script>
+<script src="js/extra.js?v=20261128b"></script>
+<script src="js/forest.js?v=20261128b"></script>
+<script src="js/net.js?v=20261128b"></script>
+<script src="js/cloud.js?v=20261128b"></script>
+<script src="js/mall.js?v=20261128b"></script>
+<script src="js/skills.js?v=20261128b"></script>
+<script src="js/bars.js?v=20261128b"></script>
+<script src="js/photo.js?v=20261128b"></script>
+<script src="js/party.js?v=20261128b"></script>
+<script src="js/gfx.js?v=20261128b"></script>
+<script src="js/upgrade.js?v=20261128b"></script>
+<script src="js/perf.js?v=20261128b"></script>
 </body>
 </html>
