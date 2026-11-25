@@ -372,6 +372,11 @@ body.sleeping #sleepUI{display:flex}
 .trList{display:flex;flex-direction:column;gap:4px;min-height:60px;max-height:26vh;overflow:auto}.trI{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;background:#fff8f2;border-radius:10px;padding:2px 6px;cursor:pointer}.trI .ic{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:18px}.trI .ic img{width:22px;height:22px}
 .trCoin{display:flex;align-items:center;gap:4px;margin:2px 0 4px}.trCoin input{width:100%;min-width:0;border:2px solid #f2d4c2;border-radius:10px;padding:3px 6px;font:inherit}.trLock{font-size:12px;font-weight:900;color:#4cae7a;min-height:16px;margin-top:3px}
 #trBag{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;max-height:24vh;overflow:auto;margin-bottom:8px}.trBtns{display:flex;gap:8px}.trBtns .qb{flex:1}
+#hubTabs{margin-bottom:8px}#hubTabs button{position:relative}.tdot{position:absolute;right:2px;top:2px;width:8px;height:8px;border-radius:50%;background:#ff6f8f;display:none}.tdot.on{display:block}
+.hubList{display:flex;flex-direction:column;gap:6px;max-height:48vh;overflow:auto;margin-bottom:8px}.frRow{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #f6e4da;border-radius:14px;padding:6px 8px}.frRow .nm{flex:1;min-width:0}.frRow .nm b{display:block;font-size:14px}.frRow .nm small{font-size:11.5px;opacity:.7}.frRow .qb{padding:4px 10px;font-size:12px}.frRow .onl{width:9px;height:9px;border-radius:50%;background:#cbbdb6;flex:none}.frRow .onl.y{background:#4cd08a}.frRow .un{background:#ff6f8f;color:#fff;border-radius:8px;font-size:10px;padding:0 5px;margin-left:4px}
+#dmBox{position:fixed;inset:0;z-index:46;display:none;align-items:center;justify-content:center;background:rgba(90,50,40,.3)}#dmBox.on{display:flex}#dmBox .card2{width:min(92vw,420px);display:flex;flex-direction:column;gap:6px;background:var(--cream);border:3px solid var(--line);border-radius:22px;padding:10px 12px;box-shadow:0 8px 30px rgba(100,50,40,.25);color:var(--ink)}.dmHead{display:flex;align-items:center;gap:6px}.dmHead b{font-size:16px}.dmHead small{flex:1;opacity:.6;font-size:12px}.dmHead .qb{padding:4px 12px;font-size:12px}
+#dmHist{height:min(46vh,320px);overflow:auto;background:#fff;border:2px solid #f6e4da;border-radius:14px;padding:6px 8px;display:flex;flex-direction:column;gap:4px;touch-action:pan-y}.dmM{max-width:80%;padding:4px 10px;border-radius:12px;font-size:13.5px;line-height:1.4;word-break:break-all;background:#fff1e8;align-self:flex-start}.dmM.me{background:#ffd9c8;align-self:flex-end}.dmM small{display:block;font-size:10px;opacity:.5}
+#dmForm{display:flex;gap:6px}#dmForm input{flex:1;min-width:0;border:2px solid #f2d4c2;border-radius:12px;padding:6px 10px;font:inherit}
 #giftConfirm{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;background:rgba(255,240,246,.35)}#giftConfirm.on{display:flex}
 #giftConfirm .card2{background:#fffaf4;border:4px solid #fff;border-radius:24px;padding:16px 20px;text-align:center;box-shadow:0 8px 0 rgba(220,140,160,.3);animation:popIn .45s var(--spring);min-width:min(240px,calc(100vw - 40px));max-width:calc(100vw - 24px);box-sizing:border-box}
 #giftConfirm .gci{font-size:46px;line-height:1.1}#giftConfirm .gci img{width:56px;height:56px}#giftConfirm p{font-weight:900;font-size:15px;margin:6px 0 10px}
@@ -695,15 +700,14 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="fan" data-f="craft" style="--i:0"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-3 3-6-6z"/><path d="M11.5 9.5L4 17l3 3 7.5-7.5"/></svg></span><b>合成</b></button>
   <button class="fan" data-f="tal" style="--i:1"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8 6.8 19.6l1-5.8-4.3-4.1 5.9-.8z"/></svg></span><b>天賦</b><em class="dotS" id="spDot">0</em></button>
   <button class="fan" data-f="stat" style="--i:2"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11M12 20V4M19 20v-6"/></svg></span><b>素質</b><em class="dotS" id="stDot">0</em></button>
-  <button class="fan" data-f="bag" style="--i:3"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12l1 11H5z"/><path d="M9 9V7a3 3 0 016 0v2"/></svg></span><b>背包</b></button>
+  <button class="fan" data-f="soc" style="--i:3"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c2.6-.3 4.4 1.3 5 4.3"/></svg></span><b>社交</b><i class="dotS" id="socDot"></i></button>
   <button class="fan" data-f="pet" style="--i:4"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="10" r="1.6"/><circle cx="12" cy="7.5" r="1.6"/><circle cx="17" cy="10" r="1.6"/><path d="M8 17c0-2.5 2-4 4-4s4 1.5 4 4c0 1.5-1.5 2-4 2s-4-.5-4-2z"/></svg></span><b>寵物</b></button>
   <button class="fan" data-f="deco" style="--i:5"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></span><b id="decoLbl">建造</b></button>
   <button class="fan" data-f="dex" style="--i:6"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg></span><b>圖鑑</b></button>
   <button class="fan" data-f="beauty" style="--i:7"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-8 8H6v-6z"/><path d="M11 7l6 6"/></svg></span><b>美容</b></button>
   <button class="fan" data-f="photo" style="--i:8"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3.5L9 6h6l1.5 2H20v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg></span><b>拍照</b></button>
-  <button class="fan" data-f="full" style="--i:9"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></span><b>全螢幕</b></button>
-  <button class="fan" data-f="mall" style="--i:11"><span class="pimg"><img class="hic" src="img/items/pearl.png" alt="" draggable="false"></span><b>商城</b></button>
-  <button class="fan" data-f="set" style="--i:10"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></span><b>設置</b></button>
+  <button class="fan" data-f="mall" style="--i:10"><span class="pimg"><img class="hic" src="img/items/pearl.png" alt="" draggable="false"></span><b>商城</b></button>
+  <button class="fan" data-f="set" style="--i:9"><span><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></span><b>設置</b></button>
 </div>
 <div id="decoTag">🧱 建造模式中・點擊關閉</div>
 <div id="rotSl"><input type="range" id="rotIn" min="0" max="359" step="1"><b id="rotVal">0°</b></div><div id="placeBar"><button id="pRot">↻ 旋轉</button><button id="pStore">📦 收起</button><button id="pCancel">✕ 取消</button></div>
@@ -807,9 +811,14 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <h2>寵物小屋</h2><div class="sub" id="petSub"></div><div id="petList"></div>
   <button class="qb lav close" data-close="pets">關閉</button></div></div>
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
-  <h2>線上玩家</h2><div class="sub" id="plSub"></div><div id="plChWrap" style="display:none"><div class="clab">切換頻道（同頻道的人才看得到彼此）</div><div class="chips" id="plCh"></div></div><div id="plList"></div>
+  <h2>社交</h2><div class="tabs" id="hubTabs"><button data-ht="on" class="on">線上玩家</button><button data-ht="fr">好友<i class="tdot" id="frDot"></i></button><button data-ht="mail">信箱<i class="tdot" id="mailDot"></i></button><button data-ht="guild">公會</button></div>
+  <div id="hubOn"><div class="sub" id="plSub"></div><div id="plChWrap" style="display:none"><div class="clab">切換頻道（同頻道的人才看得到彼此）</div><div class="chips" id="plCh"></div></div><div id="plList"></div></div>
+  <div id="hubFr" style="display:none"><div class="sub" id="frSub">點線上玩家 →「加好友」就能送出好友邀請。</div><div id="frReq"></div><div id="frList" class="hubList"></div></div>
+  <div id="hubMail" style="display:none"><div class="sub" style="text-align:center;padding:20px 0">信箱即將推出</div></div>
+  <div id="hubGuild" style="display:none"><div class="sub" style="text-align:center;padding:20px 0">公會即將推出</div></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
-<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpTrade">交易</button><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button><button class="qb" id="pcpMute" style="display:none;background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="display:none;background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div id="dmBox"><div class="card2"><div class="dmHead"><b id="dmName"></b><small id="dmSt"></small><button class="qb lav" id="dmClose">關閉</button></div><div id="dmHist"></div><form id="dmForm"><input id="dmIn" maxlength="60" placeholder="輸入訊息…" autocomplete="off"><button class="qb pink">送出</button></form></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpFriend">加好友</button><button class="qb" id="pcpTrade">交易</button><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button><button class="qb" id="pcpMute" style="display:none;background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="display:none;background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="trade"><div class="sheet"><div class="grab"></div>
   <h2>交易</h2><div class="sub" id="trSub"></div>
   <div class="trCols"><div class="trCol"><div class="clab">你給</div><div class="trCoin">🪙 <input type="number" id="trCoin" min="0" step="1" placeholder="金幣" inputmode="numeric"></div><div id="trMine" class="trList"></div><div id="trMineLock" class="trLock"></div></div>
@@ -901,35 +910,36 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261128g"></script>
-<script src="config.js?v=20261128g"></script>
-<script src="firebase-config.js?v=20261128g"></script>
+<script src="js/three.min.js?v=20261128h"></script>
+<script src="config.js?v=20261128h"></script>
+<script src="firebase-config.js?v=20261128h"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261128g"></script>
-<script src="js/models.js?v=20261128g"></script>
-<script src="js/models_mist.js?v=20261128g"></script>
-<script src="js/engine.js?v=20261128g"></script>
-<script src="js/audio.js?v=20261128g"></script>
-<script src="js/items.js?v=20261128g"></script>
-<script src="js/critter.js?v=20261128g"></script>
-<script src="js/mats.js?v=20261128g"></script>
-<script src="js/cave.js?v=20261128g"></script>
-<script src="js/world.js?v=20261128g"></script>
-<script src="js/harbor.js?v=20261128g"></script>
-<script src="js/game.js?v=20261128g"></script>
-<script src="js/ui.js?v=20261128g"></script>
-<script src="js/extra.js?v=20261128g"></script>
-<script src="js/forest.js?v=20261128g"></script>
-<script src="js/net.js?v=20261128g"></script>
-<script src="js/cloud.js?v=20261128g"></script>
-<script src="js/mall.js?v=20261128g"></script>
-<script src="js/skills.js?v=20261128g"></script>
-<script src="js/bars.js?v=20261128g"></script>
-<script src="js/photo.js?v=20261128g"></script>
-<script src="js/trade.js?v=20261128g"></script>
-<script src="js/party.js?v=20261128g"></script>
-<script src="js/gfx.js?v=20261128g"></script>
-<script src="js/upgrade.js?v=20261128g"></script>
-<script src="js/perf.js?v=20261128g"></script>
+<script src="js/compat.js?v=20261128h"></script>
+<script src="js/models.js?v=20261128h"></script>
+<script src="js/models_mist.js?v=20261128h"></script>
+<script src="js/engine.js?v=20261128h"></script>
+<script src="js/audio.js?v=20261128h"></script>
+<script src="js/items.js?v=20261128h"></script>
+<script src="js/critter.js?v=20261128h"></script>
+<script src="js/mats.js?v=20261128h"></script>
+<script src="js/cave.js?v=20261128h"></script>
+<script src="js/world.js?v=20261128h"></script>
+<script src="js/harbor.js?v=20261128h"></script>
+<script src="js/game.js?v=20261128h"></script>
+<script src="js/ui.js?v=20261128h"></script>
+<script src="js/extra.js?v=20261128h"></script>
+<script src="js/forest.js?v=20261128h"></script>
+<script src="js/net.js?v=20261128h"></script>
+<script src="js/cloud.js?v=20261128h"></script>
+<script src="js/mall.js?v=20261128h"></script>
+<script src="js/skills.js?v=20261128h"></script>
+<script src="js/bars.js?v=20261128h"></script>
+<script src="js/photo.js?v=20261128h"></script>
+<script src="js/social.js?v=20261128h"></script>
+<script src="js/trade.js?v=20261128h"></script>
+<script src="js/party.js?v=20261128h"></script>
+<script src="js/gfx.js?v=20261128h"></script>
+<script src="js/upgrade.js?v=20261128h"></script>
+<script src="js/perf.js?v=20261128h"></script>
 </body>
 </html>
