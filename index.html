@@ -368,6 +368,10 @@ body.sleeping #sleepUI{display:flex}
 .giftCoin input{flex:1;min-width:0;border:2px solid #f2e0d4;border-radius:10px;padding:6px 8px;font-size:15px;font-weight:800}.giftCoin .qb{padding:6px 14px}
 #giftGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;max-height:42vh;overflow:auto;margin-bottom:8px}
 #giftGrid .bi{position:relative}#giftGrid .bi.eqx{opacity:.45;filter:grayscale(.6)}#giftGrid .eqt{position:absolute;z-index:2;left:50%;bottom:2px;transform:translateX(-50%);font-size:9px;font-style:normal;background:#b9a6f2;color:#fff;border-radius:6px;padding:0 4px;white-space:nowrap}
+.trCols{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}.trCol{background:#fff;border:2px solid #f6e4da;border-radius:14px;padding:6px 8px;min-width:0}
+.trList{display:flex;flex-direction:column;gap:4px;min-height:60px;max-height:26vh;overflow:auto}.trI{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;background:#fff8f2;border-radius:10px;padding:2px 6px;cursor:pointer}.trI .ic{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:18px}.trI .ic img{width:22px;height:22px}
+.trCoin{display:flex;align-items:center;gap:4px;margin:2px 0 4px}.trCoin input{width:100%;min-width:0;border:2px solid #f2d4c2;border-radius:10px;padding:3px 6px;font:inherit}.trLock{font-size:12px;font-weight:900;color:#4cae7a;min-height:16px;margin-top:3px}
+#trBag{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;max-height:24vh;overflow:auto;margin-bottom:8px}.trBtns{display:flex;gap:8px}.trBtns .qb{flex:1}
 #giftConfirm{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;background:rgba(255,240,246,.35)}#giftConfirm.on{display:flex}
 #giftConfirm .card2{background:#fffaf4;border:4px solid #fff;border-radius:24px;padding:16px 20px;text-align:center;box-shadow:0 8px 0 rgba(220,140,160,.3);animation:popIn .45s var(--spring);min-width:min(240px,calc(100vw - 40px));max-width:calc(100vw - 24px);box-sizing:border-box}
 #giftConfirm .gci{font-size:46px;line-height:1.1}#giftConfirm .gci img{width:56px;height:56px}#giftConfirm p{font-weight:900;font-size:15px;margin:6px 0 10px}
@@ -805,7 +809,13 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div class="panel" id="players"><div class="sheet"><div class="grab"></div>
   <h2>線上玩家</h2><div class="sub" id="plSub"></div><div id="plChWrap" style="display:none"><div class="clab">切換頻道（同頻道的人才看得到彼此）</div><div class="chips" id="plCh"></div></div><div id="plList"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
-<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button><button class="qb" id="pcpMute" style="display:none;background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="display:none;background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpTrade">交易</button><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button><button class="qb" id="pcpMute" style="display:none;background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="display:none;background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#ff9e8a);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
+<div class="panel" id="trade"><div class="sheet"><div class="grab"></div>
+  <h2>交易</h2><div class="sub" id="trSub"></div>
+  <div class="trCols"><div class="trCol"><div class="clab">你給</div><div class="trCoin">🪙 <input type="number" id="trCoin" min="0" step="1" placeholder="金幣" inputmode="numeric"></div><div id="trMine" class="trList"></div><div id="trMineLock" class="trLock"></div></div>
+  <div class="trCol"><div class="clab" id="trThemT">對方給你</div><div id="trTheirs" class="trList"></div><div id="trTheirLock" class="trLock"></div></div></div>
+  <div class="clab">點背包的道具放進交易（點「你給」裡的道具可以拿回來）</div><div id="trBag"></div>
+  <div class="trBtns"><button class="qb pink" id="trOk">確認交易</button><button class="qb lav" id="trCancel">取消交易</button></div></div></div>
 <div class="panel" id="gift"><div class="sheet"><div class="grab"></div>
   <h2>送禮</h2><div class="sub" id="giftSub"></div>
   <div class="giftCoin"><span>🪙 送金幣</span><input type="number" id="giftCoin" min="1" step="1" placeholder="數量" inputmode="numeric"><button class="qb pink" id="giftCoinBtn">送出</button></div>
@@ -891,34 +901,35 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261128d"></script>
-<script src="config.js?v=20261128d"></script>
-<script src="firebase-config.js?v=20261128d"></script>
+<script src="js/three.min.js?v=20261128e"></script>
+<script src="config.js?v=20261128e"></script>
+<script src="firebase-config.js?v=20261128e"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261128d"></script>
-<script src="js/models.js?v=20261128d"></script>
-<script src="js/models_mist.js?v=20261128d"></script>
-<script src="js/engine.js?v=20261128d"></script>
-<script src="js/audio.js?v=20261128d"></script>
-<script src="js/items.js?v=20261128d"></script>
-<script src="js/critter.js?v=20261128d"></script>
-<script src="js/mats.js?v=20261128d"></script>
-<script src="js/cave.js?v=20261128d"></script>
-<script src="js/world.js?v=20261128d"></script>
-<script src="js/harbor.js?v=20261128d"></script>
-<script src="js/game.js?v=20261128d"></script>
-<script src="js/ui.js?v=20261128d"></script>
-<script src="js/extra.js?v=20261128d"></script>
-<script src="js/forest.js?v=20261128d"></script>
-<script src="js/net.js?v=20261128d"></script>
-<script src="js/cloud.js?v=20261128d"></script>
-<script src="js/mall.js?v=20261128d"></script>
-<script src="js/skills.js?v=20261128d"></script>
-<script src="js/bars.js?v=20261128d"></script>
-<script src="js/photo.js?v=20261128d"></script>
-<script src="js/party.js?v=20261128d"></script>
-<script src="js/gfx.js?v=20261128d"></script>
-<script src="js/upgrade.js?v=20261128d"></script>
-<script src="js/perf.js?v=20261128d"></script>
+<script src="js/compat.js?v=20261128e"></script>
+<script src="js/models.js?v=20261128e"></script>
+<script src="js/models_mist.js?v=20261128e"></script>
+<script src="js/engine.js?v=20261128e"></script>
+<script src="js/audio.js?v=20261128e"></script>
+<script src="js/items.js?v=20261128e"></script>
+<script src="js/critter.js?v=20261128e"></script>
+<script src="js/mats.js?v=20261128e"></script>
+<script src="js/cave.js?v=20261128e"></script>
+<script src="js/world.js?v=20261128e"></script>
+<script src="js/harbor.js?v=20261128e"></script>
+<script src="js/game.js?v=20261128e"></script>
+<script src="js/ui.js?v=20261128e"></script>
+<script src="js/extra.js?v=20261128e"></script>
+<script src="js/forest.js?v=20261128e"></script>
+<script src="js/net.js?v=20261128e"></script>
+<script src="js/cloud.js?v=20261128e"></script>
+<script src="js/mall.js?v=20261128e"></script>
+<script src="js/skills.js?v=20261128e"></script>
+<script src="js/bars.js?v=20261128e"></script>
+<script src="js/photo.js?v=20261128e"></script>
+<script src="js/trade.js?v=20261128e"></script>
+<script src="js/party.js?v=20261128e"></script>
+<script src="js/gfx.js?v=20261128e"></script>
+<script src="js/upgrade.js?v=20261128e"></script>
+<script src="js/perf.js?v=20261128e"></script>
 </body>
 </html>
