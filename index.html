@@ -770,23 +770,23 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <h2>角色外觀</h2>
   <div class="sub" style="margin-bottom:4px">拖曳右邊畫面可以轉動角色</div>
   <div class="clab">名字</div><input id="cName" maxlength="8">
-  <details class="cfold"><summary>🎨 身體顏色</summary><div class="clab">身體</div><div class="sw" id="swBody"></div>
+  <details class="cfold"><summary>身體顏色</summary><div class="clab">身體</div><div class="sw" id="swBody"></div>
     <div class="clab">手</div><div class="sw" id="swHand"></div>
     <div class="clab">腳</div><div class="sw" id="swFoot"></div>
     <div class="sl" data-g="limb"></div>
     <div class="clab" id="labAcc">頭部特徵的顏色</div><div class="sw" id="swAcc"></div></details>
   <details class="cfold"><summary id="sumEar">頭部特徵</summary><div id="earWrap"><div class="clab">樣式</div><div class="chips" id="chEars"></div></div><div id="feat2Wrap"><div class="clab">花心／斑點的顏色</div><div class="sw" id="swFeat2"></div></div>
     <div class="clab" id="labEarSl">頭部特徵的大小／位置</div><div class="sl" data-g="ear"></div></details>
-  <details class="cfold"><summary>🐾 尾巴</summary><div class="chips" id="chTail"></div><div class="sl" data-g="tail"></div></details>
-  <details class="cfold"><summary>👀 眼睛</summary><div class="chips" id="chEyes"></div><div class="clab">眼睛顏色</div><div class="sw" id="swEye"></div><div class="sl" data-g="eye"></div></details>
-  <details class="cfold"><summary>〰️ 眉毛</summary><div class="chips" id="chBrow"></div><div class="sl" data-g="brow"></div></details>
-  <details class="cfold"><summary>✨ 睫毛</summary><div class="chips" id="chLash"></div><div class="sl" data-g="lash"></div></details>
-  <details class="cfold"><summary>👄 嘴巴</summary><div class="chips" id="chMouth"></div><div class="clab">嘴巴顏色</div><div class="sw" id="swMouth"></div><div class="sl" data-g="mouth"></div></details>
-  <details class="cfold"><summary>💋 嘴唇</summary><div class="chips" id="chLip"></div><div class="sl" data-g="lip"></div></details>
-  <details class="cfold"><summary>🎀 飾品</summary><div id="hatNone" class="sub">目前沒有戴飾品。在背包點一下帽子就能戴上，再回來調整喔</div>
-    <div id="hatAdjWrap"><div class="clab" id="hatAdjName"></div><div class="sl" data-g="hat"></div><button class="qb lav" id="hatReset" style="margin-top:6px">↺ 恢復預設</button></div></details>
-  <details class="cfold"><summary>🌸 腮紅</summary><div class="chips" id="chBlush"></div><div class="clab">腮紅顏色</div><div class="sw" id="swBlush"></div><div class="sl" data-g="blush"></div></details>
-  <div class="crow2"><button class="qb lav" id="cRand">🎲 隨機</button><button class="qb pink" id="cDone">出發！✨</button></div>
+  <details class="cfold"><summary>尾巴</summary><div class="chips" id="chTail"></div><div class="sl" data-g="tail"></div></details>
+  <details class="cfold"><summary>眼睛</summary><div class="chips" id="chEyes"></div><div class="clab">眼睛顏色</div><div class="sw" id="swEye"></div><div class="sl" data-g="eye"></div></details>
+  <details class="cfold"><summary>眉毛</summary><div class="chips" id="chBrow"></div><div class="sl" data-g="brow"></div></details>
+  <details class="cfold"><summary>睫毛</summary><div class="chips" id="chLash"></div><div class="sl" data-g="lash"></div></details>
+  <details class="cfold"><summary>嘴巴</summary><div class="chips" id="chMouth"></div><div class="clab">嘴巴顏色</div><div class="sw" id="swMouth"></div><div class="sl" data-g="mouth"></div></details>
+  <details class="cfold"><summary>嘴唇</summary><div class="chips" id="chLip"></div><div class="sl" data-g="lip"></div></details>
+  <details class="cfold"><summary>飾品</summary><div id="hatNone" class="sub">目前沒有戴飾品。在背包點一下帽子就能戴上，再回來調整喔</div>
+    <div id="hatAdjWrap"><div class="clab" id="hatAdjName"></div><div class="sl" data-g="hat"></div><button class="qb lav" id="hatReset" style="margin-top:6px">恢復預設</button></div></details>
+  <details class="cfold"><summary>腮紅</summary><div class="chips" id="chBlush"></div><div class="clab">腮紅顏色</div><div class="sw" id="swBlush"></div><div class="sl" data-g="blush"></div></details>
+  <div class="crow2"><button class="qb lav" id="cRand">隨機</button><button class="qb pink" id="cDone">出發！</button></div>
 </div></div>
 
 <div id="cloudDlg"><div class="card2"><h3 id="cdTitle"></h3><p id="cdMsg"></p><div><button class="qb pink" id="cdA"></button><button class="qb lav" id="cdB"></button></div></div></div>
@@ -914,37 +914,37 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261128m"></script>
-<script src="config.js?v=20261128m"></script>
-<script src="firebase-config.js?v=20261128m"></script>
+<script src="js/three.min.js?v=20261128n"></script>
+<script src="config.js?v=20261128n"></script>
+<script src="firebase-config.js?v=20261128n"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261128m"></script>
-<script src="js/models.js?v=20261128m"></script>
-<script src="js/models_mist.js?v=20261128m"></script>
-<script src="js/engine.js?v=20261128m"></script>
-<script src="js/audio.js?v=20261128m"></script>
-<script src="js/items.js?v=20261128m"></script>
-<script src="js/critter.js?v=20261128m"></script>
-<script src="js/mats.js?v=20261128m"></script>
-<script src="js/cave.js?v=20261128m"></script>
-<script src="js/world.js?v=20261128m"></script>
-<script src="js/harbor.js?v=20261128m"></script>
-<script src="js/game.js?v=20261128m"></script>
-<script src="js/ui.js?v=20261128m"></script>
-<script src="js/extra.js?v=20261128m"></script>
-<script src="js/forest.js?v=20261128m"></script>
-<script src="js/net.js?v=20261128m"></script>
-<script src="js/cloud.js?v=20261128m"></script>
-<script src="js/mall.js?v=20261128m"></script>
-<script src="js/skills.js?v=20261128m"></script>
-<script src="js/bars.js?v=20261128m"></script>
-<script src="js/photo.js?v=20261128m"></script>
-<script src="js/social.js?v=20261128m"></script>
-<script src="js/guild.js?v=20261128m"></script>
-<script src="js/trade.js?v=20261128m"></script>
-<script src="js/party.js?v=20261128m"></script>
-<script src="js/gfx.js?v=20261128m"></script>
-<script src="js/upgrade.js?v=20261128m"></script>
-<script src="js/perf.js?v=20261128m"></script>
+<script src="js/compat.js?v=20261128n"></script>
+<script src="js/models.js?v=20261128n"></script>
+<script src="js/models_mist.js?v=20261128n"></script>
+<script src="js/engine.js?v=20261128n"></script>
+<script src="js/audio.js?v=20261128n"></script>
+<script src="js/items.js?v=20261128n"></script>
+<script src="js/critter.js?v=20261128n"></script>
+<script src="js/mats.js?v=20261128n"></script>
+<script src="js/cave.js?v=20261128n"></script>
+<script src="js/world.js?v=20261128n"></script>
+<script src="js/harbor.js?v=20261128n"></script>
+<script src="js/game.js?v=20261128n"></script>
+<script src="js/ui.js?v=20261128n"></script>
+<script src="js/extra.js?v=20261128n"></script>
+<script src="js/forest.js?v=20261128n"></script>
+<script src="js/net.js?v=20261128n"></script>
+<script src="js/cloud.js?v=20261128n"></script>
+<script src="js/mall.js?v=20261128n"></script>
+<script src="js/skills.js?v=20261128n"></script>
+<script src="js/bars.js?v=20261128n"></script>
+<script src="js/photo.js?v=20261128n"></script>
+<script src="js/social.js?v=20261128n"></script>
+<script src="js/guild.js?v=20261128n"></script>
+<script src="js/trade.js?v=20261128n"></script>
+<script src="js/party.js?v=20261128n"></script>
+<script src="js/gfx.js?v=20261128n"></script>
+<script src="js/upgrade.js?v=20261128n"></script>
+<script src="js/perf.js?v=20261128n"></script>
 </body>
 </html>
