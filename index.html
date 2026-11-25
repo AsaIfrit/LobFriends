@@ -372,9 +372,11 @@ body.sleeping #sleepUI{display:flex}
 .trList{display:flex;flex-direction:column;gap:4px;min-height:60px;max-height:26vh;overflow:auto}.trI{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;background:#fff8f2;border-radius:10px;padding:2px 6px;cursor:pointer}.trI .ic{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:18px}.trI .ic img{width:22px;height:22px}
 .trCoin{display:flex;align-items:center;gap:4px;margin:2px 0 4px}.trCoin input{width:100%;min-width:0;border:2px solid #f2d4c2;border-radius:10px;padding:3px 6px;font:inherit}.trLock{font-size:12px;font-weight:900;color:#4cae7a;min-height:16px;margin-top:3px}
 #trBag{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;max-height:24vh;overflow:auto;margin-bottom:8px}.trBtns{display:flex;gap:8px}.trBtns .qb{flex:1}
-#hubTabs{margin-bottom:8px}#hubTabs button{position:relative}.tdot{position:absolute;right:2px;top:2px;width:8px;height:8px;border-radius:50%;background:#ff6f8f;display:none}.tdot.on{display:block}
+#hubTabs{margin-bottom:8px}#hubTabs button,#bdTabs button{position:relative}.tdot{position:absolute;right:2px;top:2px;width:8px;height:8px;border-radius:50%;background:#ff6f8f;display:none}.tdot.on{display:block}
 .gIcon{width:56px;height:56px;border-radius:14px;background:#fff6ee;border:2px dashed #f2d4c2;display:flex;align-items:center;justify-content:center;font-size:12px;color:#c9a99a;overflow:hidden;flex:none}.gIcon img{width:100%;height:100%;object-fit:cover}.gHead{display:flex;gap:10px;align-items:center}.gcNew{display:flex;gap:10px;align-items:center;margin-bottom:4px}.gcNew input{border:2px solid #f2d4c2;border-radius:12px;padding:6px 10px;font:inherit;min-width:0}
 .gChat{background:#fff;border:2px solid #f6e4da;border-radius:14px;padding:6px;margin-bottom:6px}#gHist{height:120px;overflow:auto;display:flex;flex-direction:column;gap:2px;font-size:13px;touch-action:pan-y}#gHist .gm b{color:#94aa49}#gForm{display:flex;gap:6px;margin-top:4px}#gForm input{flex:1;min-width:0;border:2px solid #f2d4c2;border-radius:12px;padding:5px 10px;font:inherit}
+#loginBox{position:fixed;inset:0;z-index:46;display:none;align-items:center;justify-content:center;background:rgba(90,50,40,.3)}#loginBox.on{display:flex}#loginBox .card2{width:min(92vw,440px);background:var(--cream);border:3px solid var(--line);border-radius:22px;padding:12px 14px;text-align:center;color:var(--ink)}#lbGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.lbC{background:#fff;border:2px solid #f6e4da;border-radius:12px;padding:4px 2px;font-size:11px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:2px}.lbC img{width:30px;height:30px;object-fit:contain}.lbC.got{opacity:.45}.lbC.now{border-color:#a9c259;background:#f3f8e6;transform:translateY(-3px)}
+.dyRow{background:#fff;border:2px solid #f6e4da;border-radius:14px;padding:6px 10px}.dyRow .dh{display:flex;align-items:center;gap:6px}.dyRow .dh b{flex:1}.dyRow i.bar2{display:block;height:8px;border-radius:5px;background:#f2e6de;overflow:hidden;margin:4px 0}.dyRow i.bar2 s{display:block;height:100%;background:linear-gradient(90deg,#a9c259,#7092be)}.dyRow .qb{padding:3px 12px;font-size:12px}
 .mlRow{background:#fff;border:2px solid #f6e4da;border-radius:14px;padding:6px 10px}.mlRow.new{border-color:#bbcf77}.mlRow .mh{display:flex;align-items:center;gap:6px}.mlRow .mh b{flex:1;font-size:13.5px}.mlRow .mh small{font-size:11px;opacity:.6}.mlRow .mt{font-size:13px;margin:3px 0;white-space:pre-wrap;word-break:break-all}.mlRow .ma{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.mlRow .att{display:inline-flex;align-items:center;gap:3px;background:#fff6e0;border-radius:10px;padding:1px 8px;font-size:12.5px;font-weight:800}.mlRow .att img{width:18px;height:18px}.mlRow .qb{padding:3px 10px;font-size:12px}.mlRow .kd{font-size:10.5px;font-weight:900;color:#fff;border-radius:7px;padding:0 6px}
 .hubList{display:flex;flex-direction:column;gap:6px;max-height:48vh;overflow:auto;margin-bottom:8px}.frRow{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #f6e4da;border-radius:14px;padding:6px 8px}.frRow .nm{flex:1;min-width:0}.frRow .nm b{display:block;font-size:14px}.frRow .nm small{font-size:11.5px;opacity:.7}.frRow .qb{padding:4px 10px;font-size:12px}.frRow .onl{width:9px;height:9px;border-radius:50%;background:#cbbdb6;flex:none}.frRow .onl.y{background:#4cd08a}.frRow .un{background:#ff6f8f;color:#fff;border-radius:8px;font-size:10px;padding:0 5px;margin-left:4px}
 #dmBox{position:fixed;inset:0;z-index:46;display:none;align-items:center;justify-content:center;background:rgba(90,50,40,.3)}#dmBox.on{display:flex}#dmBox .card2{width:min(92vw,420px);display:flex;flex-direction:column;gap:6px;background:var(--cream);border:3px solid var(--line);border-radius:22px;padding:10px 12px;box-shadow:0 8px 30px rgba(100,50,40,.25);color:var(--ink)}.dmHead{display:flex;align-items:center;gap:6px}.dmHead b{font-size:16px}.dmHead small{flex:1;opacity:.6;font-size:12px}.dmHead .qb{padding:4px 12px;font-size:12px}
@@ -733,8 +735,9 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div id="dlg"><div id="dlgName"></div><div id="dlgTxt"></div><div id="dlgOpts"></div><div id="dlgNext">▼</div></div>
 
 <div class="panel" id="board"><div class="sheet"><div class="grab"></div>
-  <h2>村子告示板</h2><div class="sub">委託可以重複接取，完成後回來領獎勵喔！</div>
-  <div id="qlist"></div><button class="qb lav close" data-close="board">關閉</button></div></div>
+  <h2>村子告示板</h2><div class="tabs" id="bdTabs"><button class="tab on" data-bd="q">委託</button><button class="tab" data-bd="d">每日委託<i class="tdot" id="dyDot"></i></button></div>
+  <div id="bdQ"><div class="sub">委託可以重複接取，完成後回來領獎勵喔！</div><div id="qlist"></div></div>
+  <div id="bdD" style="display:none"><div class="sub" id="dySub"></div><div id="dyList" class="hubList"></div></div><button class="qb lav close" data-close="board">關閉</button></div></div>
 
 <div class="panel" id="craft"><div class="sheet"><div class="grab"></div>
   <h2>合成</h2><div class="sub" id="craftSub"></div>
@@ -820,6 +823,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div id="hubMail" style="display:none"><div class="sub" id="mailSub">禮物、好友留言、系統獎勵都會寄到這裡。</div><div class="crow2" style="display:flex;gap:6px;margin-bottom:6px"><button class="qb pink" id="mailAll" style="flex:1">全部領取</button><button class="qb" id="mailGM" style="display:none;flex:1">寄系統信（GM）</button></div><div id="mailList" class="hubList"></div></div>
   <div id="hubGuild" style="display:none"></div>
   <button class="qb lav close" data-close="players">關閉</button></div></div>
+<div id="loginBox"><div class="card2"><h3 style="margin:0 0 4px">每日登入獎勵</h3><div class="sub" style="margin:0 0 8px">每天早上 5 點更新，漏簽也會接著領喔！</div><div id="lbGrid"></div><div style="display:flex;gap:8px;margin-top:10px"><button class="qb pink" id="lbGet" style="flex:1">領取</button><button class="qb lav" id="lbClose">之後再說</button></div></div></div>
 <div id="dmBox"><div class="card2"><div class="dmHead"><b id="dmName"></b><small id="dmSt"></small><button class="qb lav" id="dmClose">關閉</button></div><div id="dmHist"></div><form id="dmForm"><input id="dmIn" maxlength="60" placeholder="輸入訊息…" autocomplete="off"><button class="qb pink">送出</button></form></div></div>
 <div id="plChoice" class="choice"><div class="card2"><h3 id="pcpName"></h3><div class="pcb"><button class="qb pink" id="pcpInvite">🤝 邀請</button><button class="qb" id="pcpGift">🎁 送禮</button><button class="qb" id="pcpVisit">👀 參觀造物</button><button class="qb" id="pcpFriend">加好友</button><button class="qb" id="pcpGuild">邀請入會</button><button class="qb" id="pcpTrade">交易</button><button class="qb" id="pcpBlock">封鎖</button><button class="qb" id="pcpReport">檢舉</button><button class="qb" id="pcpMute" style="display:none;background:linear-gradient(160deg,#ffe1a8,#ffb35a);color:#fff">禁言 24 小時</button><button class="qb" id="pcpBan" style="display:none;background:linear-gradient(160deg,#ff9e9e,#e05050);color:#fff">封號</button><button class="qb" id="pcpKick" style="display:none;background:linear-gradient(160deg,#ffd0c8,#b0c764);color:#fff">🚪 請下線</button><button class="qb lav" id="pcpCancel">取消</button></div></div></div>
 <div class="panel" id="trade"><div class="sheet"><div class="grab"></div>
@@ -914,37 +918,38 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261128n"></script>
-<script src="config.js?v=20261128n"></script>
-<script src="firebase-config.js?v=20261128n"></script>
+<script src="js/three.min.js?v=20261128p"></script>
+<script src="config.js?v=20261128p"></script>
+<script src="firebase-config.js?v=20261128p"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261128n"></script>
-<script src="js/models.js?v=20261128n"></script>
-<script src="js/models_mist.js?v=20261128n"></script>
-<script src="js/engine.js?v=20261128n"></script>
-<script src="js/audio.js?v=20261128n"></script>
-<script src="js/items.js?v=20261128n"></script>
-<script src="js/critter.js?v=20261128n"></script>
-<script src="js/mats.js?v=20261128n"></script>
-<script src="js/cave.js?v=20261128n"></script>
-<script src="js/world.js?v=20261128n"></script>
-<script src="js/harbor.js?v=20261128n"></script>
-<script src="js/game.js?v=20261128n"></script>
-<script src="js/ui.js?v=20261128n"></script>
-<script src="js/extra.js?v=20261128n"></script>
-<script src="js/forest.js?v=20261128n"></script>
-<script src="js/net.js?v=20261128n"></script>
-<script src="js/cloud.js?v=20261128n"></script>
-<script src="js/mall.js?v=20261128n"></script>
-<script src="js/skills.js?v=20261128n"></script>
-<script src="js/bars.js?v=20261128n"></script>
-<script src="js/photo.js?v=20261128n"></script>
-<script src="js/social.js?v=20261128n"></script>
-<script src="js/guild.js?v=20261128n"></script>
-<script src="js/trade.js?v=20261128n"></script>
-<script src="js/party.js?v=20261128n"></script>
-<script src="js/gfx.js?v=20261128n"></script>
-<script src="js/upgrade.js?v=20261128n"></script>
-<script src="js/perf.js?v=20261128n"></script>
+<script src="js/compat.js?v=20261128p"></script>
+<script src="js/models.js?v=20261128p"></script>
+<script src="js/models_mist.js?v=20261128p"></script>
+<script src="js/engine.js?v=20261128p"></script>
+<script src="js/audio.js?v=20261128p"></script>
+<script src="js/items.js?v=20261128p"></script>
+<script src="js/critter.js?v=20261128p"></script>
+<script src="js/mats.js?v=20261128p"></script>
+<script src="js/cave.js?v=20261128p"></script>
+<script src="js/world.js?v=20261128p"></script>
+<script src="js/harbor.js?v=20261128p"></script>
+<script src="js/game.js?v=20261128p"></script>
+<script src="js/ui.js?v=20261128p"></script>
+<script src="js/extra.js?v=20261128p"></script>
+<script src="js/forest.js?v=20261128p"></script>
+<script src="js/net.js?v=20261128p"></script>
+<script src="js/cloud.js?v=20261128p"></script>
+<script src="js/mall.js?v=20261128p"></script>
+<script src="js/skills.js?v=20261128p"></script>
+<script src="js/bars.js?v=20261128p"></script>
+<script src="js/photo.js?v=20261128p"></script>
+<script src="js/social.js?v=20261128p"></script>
+<script src="js/daily.js?v=20261128p"></script>
+<script src="js/guild.js?v=20261128p"></script>
+<script src="js/trade.js?v=20261128p"></script>
+<script src="js/party.js?v=20261128p"></script>
+<script src="js/gfx.js?v=20261128p"></script>
+<script src="js/upgrade.js?v=20261128p"></script>
+<script src="js/perf.js?v=20261128p"></script>
 </body>
 </html>
