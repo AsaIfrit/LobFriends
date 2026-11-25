@@ -861,10 +861,15 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div id="cloudWrap" style="display:none"><div class="clab">雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
   <div class="crow2" style="margin-top:6px"><button class="qb" id="setSave">💾 立即存檔</button><button class="qb lav" id="bkBtn">🕘 還原備份</button></div><div class="sub" style="margin:2px 0 6px;font-size:11px">遊玩時每 20 分鐘自動備份一次，本機和雲端各保留最近 3 份</div>
   <button class="qb" id="gmBtn" style="display:none;width:100%;margin:6px 0;background:linear-gradient(160deg,#ffd98a,#ff9f5a)">🛠️ GM 倉庫（所有道具）</button>
+  <button class="qb" id="gmFlagBtn" style="display:none;width:100%;margin:0 0 6px;background:linear-gradient(160deg,#ffc2c2,#ff8f8f)">異常存檔紀錄</button>
   <button class="qb" id="resetBtn" style="width:100%;margin-top:10px;background:#ece0da;color:#8a6e66;box-shadow:none">重新開始（清除存檔）</button>
   </div>
   <button class="qb lav close" data-close="settings">關閉</button></div></div>
 
+<div class="panel" id="gmFlags"><div class="sheet"><div class="grab"></div>
+  <h2>異常存檔紀錄</h2><div class="sub">被伺服器擋下來的存檔（進度增加太快）。一個玩家最多保留最近 20 筆。</div>
+  <div id="gmFlagList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+  <button class="qb lav close" data-close="gmFlags">關閉</button></div></div>
 <div class="panel" id="gmStore"><div class="sheet"><div class="grab"></div>
   <h2>GM 倉庫</h2><div class="sub">點一下就會放進背包。數量：<span class="chips" id="gmAmt" style="display:inline-flex;gap:4px"></span></div>
   <div class="tabs" id="gmTabs"></div><div id="gmGrid"></div><div id="gmInfo" class="sub"></div>
@@ -884,34 +889,34 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261127u"></script>
-<script src="config.js?v=20261127u"></script>
-<script src="firebase-config.js?v=20261127u"></script>
+<script src="js/three.min.js?v=20261127v"></script>
+<script src="config.js?v=20261127v"></script>
+<script src="firebase-config.js?v=20261127v"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261127u"></script>
-<script src="js/models.js?v=20261127u"></script>
-<script src="js/models_mist.js?v=20261127u"></script>
-<script src="js/engine.js?v=20261127u"></script>
-<script src="js/audio.js?v=20261127u"></script>
-<script src="js/items.js?v=20261127u"></script>
-<script src="js/critter.js?v=20261127u"></script>
-<script src="js/mats.js?v=20261127u"></script>
-<script src="js/cave.js?v=20261127u"></script>
-<script src="js/world.js?v=20261127u"></script>
-<script src="js/harbor.js?v=20261127u"></script>
-<script src="js/game.js?v=20261127u"></script>
-<script src="js/ui.js?v=20261127u"></script>
-<script src="js/extra.js?v=20261127u"></script>
-<script src="js/forest.js?v=20261127u"></script>
-<script src="js/net.js?v=20261127u"></script>
-<script src="js/cloud.js?v=20261127u"></script>
-<script src="js/mall.js?v=20261127u"></script>
-<script src="js/skills.js?v=20261127u"></script>
-<script src="js/bars.js?v=20261127u"></script>
-<script src="js/photo.js?v=20261127u"></script>
-<script src="js/party.js?v=20261127u"></script>
-<script src="js/gfx.js?v=20261127u"></script>
-<script src="js/upgrade.js?v=20261127u"></script>
-<script src="js/perf.js?v=20261127u"></script>
+<script src="js/compat.js?v=20261127v"></script>
+<script src="js/models.js?v=20261127v"></script>
+<script src="js/models_mist.js?v=20261127v"></script>
+<script src="js/engine.js?v=20261127v"></script>
+<script src="js/audio.js?v=20261127v"></script>
+<script src="js/items.js?v=20261127v"></script>
+<script src="js/critter.js?v=20261127v"></script>
+<script src="js/mats.js?v=20261127v"></script>
+<script src="js/cave.js?v=20261127v"></script>
+<script src="js/world.js?v=20261127v"></script>
+<script src="js/harbor.js?v=20261127v"></script>
+<script src="js/game.js?v=20261127v"></script>
+<script src="js/ui.js?v=20261127v"></script>
+<script src="js/extra.js?v=20261127v"></script>
+<script src="js/forest.js?v=20261127v"></script>
+<script src="js/net.js?v=20261127v"></script>
+<script src="js/cloud.js?v=20261127v"></script>
+<script src="js/mall.js?v=20261127v"></script>
+<script src="js/skills.js?v=20261127v"></script>
+<script src="js/bars.js?v=20261127v"></script>
+<script src="js/photo.js?v=20261127v"></script>
+<script src="js/party.js?v=20261127v"></script>
+<script src="js/gfx.js?v=20261127v"></script>
+<script src="js/upgrade.js?v=20261127v"></script>
+<script src="js/perf.js?v=20261127v"></script>
 </body>
 </html>
