@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta name="lf-ver" content="20261204h"><script>window.JSV={"js/audio.js":"8cce9a5aed","js/bars.js":"6c7cecf8cc","js/cave.js":"776ec771a4","js/cloud.js":"6671cbf9eb","js/compat.js":"dda2aaf27c","js/critter.js":"49bab42832","js/daily.js":"6505f74f1a","js/engine.js":"ca3d3f2150","js/extra.js":"03391c5a5f","js/forest.js":"d55a5c63f4","js/game.js":"a55b45b4ea","js/gfield.js":"5d8f9b85a4","js/gfx.js":"2953920ec1","js/gsta.js":"e79b6a5bee","js/guild.js":"b0f2d0cefe","js/harbor.js":"36e7bde781","js/interior.js":"3ee32db4e0","js/items.js":"0c88f09f4a","js/leakdog.js":"7f76c1884f","js/mall.js":"eb695e91a1","js/maps.js":"a5e6b68641","js/mats.js":"bda78d74d1","js/models.js":"e5ede3d400","js/models_furn.js":"66630f4ced","js/models_gs.js":"6f2b5cf76d","js/models_lod.js":"cdfb659e9b","js/models_mist.js":"7c10a8d00a","js/models_mon.js":"dfe285bd8a","js/models_mv.js":"0d4bce458b","js/models_mv_core.js":"98aef008f4","js/mushvil.js":"74db4f261b","js/net.js":"e6570f85ca","js/party.js":"472a6d10b7","js/perf.js":"fd597f26e4","js/photo.js":"4138e790bf","js/skills.js":"3a60943610","js/social.js":"96e7a7d79e","js/three.min.js":"212dfd8fc1","js/trade.js":"6d18214631","js/ui.js":"a1ab82f566","js/upgrade.js":"c5bae8d8b2","js/world.js":"9f195a49dd"};</script>
+<head><meta name="lf-ver" content="20261204i"><script>window.JSV={"js/audio.js":"8cce9a5aed","js/bars.js":"6c7cecf8cc","js/cave.js":"776ec771a4","js/cloud.js":"6671cbf9eb","js/compat.js":"dda2aaf27c","js/critter.js":"49bab42832","js/daily.js":"6505f74f1a","js/engine.js":"ca3d3f2150","js/extra.js":"03391c5a5f","js/forest.js":"e5bf21b7e3","js/game.js":"7a724be785","js/gfield.js":"9b14dbbe76","js/gfx.js":"2953920ec1","js/gsta.js":"e79b6a5bee","js/guild.js":"b0f2d0cefe","js/harbor.js":"36e7bde781","js/interior.js":"3ee32db4e0","js/items.js":"0c88f09f4a","js/leakdog.js":"df320600d3","js/mall.js":"eb695e91a1","js/maps.js":"a5e6b68641","js/mats.js":"bda78d74d1","js/models.js":"e5ede3d400","js/models_furn.js":"66630f4ced","js/models_gs.js":"6f2b5cf76d","js/models_lod.js":"cdfb659e9b","js/models_mist.js":"7c10a8d00a","js/models_mon.js":"dfe285bd8a","js/models_mv.js":"0d4bce458b","js/models_mv_core.js":"98aef008f4","js/monlv.js":"187d4bad90","js/mushvil.js":"74db4f261b","js/net.js":"e6570f85ca","js/party.js":"e2e9bd3ddb","js/perf.js":"fd597f26e4","js/photo.js":"4138e790bf","js/skills.js":"3a60943610","js/social.js":"96e7a7d79e","js/three.min.js":"212dfd8fc1","js/trade.js":"6d18214631","js/ui.js":"a1ab82f566","js/upgrade.js":"c5bae8d8b2","js/world.js":"9f195a49dd"};</script>
 <script>/* 錯誤回報：遊戲出錯時在畫面底部顯示錯誤訊息（方便截圖回報），點一下關閉 */(function(){var shown=0;function show(m){if(shown>4)return;shown++;var d=document.getElementById('errBox');if(!d){d=document.createElement('div');d.id='errBox';d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:rgba(160,30,40,.92);color:#fff;font:12px/1.4 monospace;padding:8px 10px;border-radius:10px;max-height:40vh;overflow:auto;white-space:pre-wrap;word-break:break-all';d.onclick=function(){d.remove();};(document.body||document.documentElement).appendChild(d);d.textContent='⚠️ 遊戲發生錯誤（請截圖回報，點一下關閉）\n';}d.textContent+='\n'+m;}
 window.addEventListener('error',function(e){if(e&&e.target&&e.target!==window&&(e.target.src||e.target.href)){var u=e.target.src||e.target.href||'';if(/\/js\/[^\/]+\.js/.test(u)&&u.indexOf(location.host)>=0)show('載入失敗：'+u.split('/').pop());return;}var f=(e.filename||'').split('/').pop();show((e.message||'錯誤')+'  @ '+f+':'+(e.lineno||0)+':'+(e.colno||0));},true);
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;var m=r&&(r.message||String(r))||'';if(/fetch|network|Failed to fetch|Load failed|AbortError/i.test(m))return;show('Promise：'+m);});})();</script>
@@ -696,7 +696,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <body>
 <!-- 讀取畫面（開場、進到還沒載好的地圖都用這個）：黑底，右下角是一跳一跳的角色剪影＋呼吸的 Loading 文字，下面一條圓角的讀取進度條。
      loadShow()／loadSet(0~1)／loadHide()；開場：程式檔一個個載完往前推，著色器編譯完（bootDone）到 100% 才淡出 -->
-<div id="boot" data-n="41"><style>
+<div id="boot" data-n="42"><style>
 #boot{position:fixed;inset:0;z-index:9999;background:#000;transition:opacity .5s;font-family:"Zen Maru Gothic",system-ui,sans-serif}
 #boot.out{opacity:0;pointer-events:none}#boot.gone{display:none}
 #boot .ld{position:absolute;right:max(26px,env(safe-area-inset-right));bottom:max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:10px}
@@ -968,8 +968,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="js/three.min.js?v=212dfd8fc1"></script>
-<script src="config.js?v=20261204h"></script>
-<script src="firebase-config.js?v=20261204h"></script>
+<script src="config.js?v=20261204i"></script>
+<script src="firebase-config.js?v=20261204i"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/compat.js?v=dda2aaf27c"></script>
 <script src="js/models.js?v=e5ede3d400"></script>
@@ -981,17 +981,18 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <script src="js/engine.js?v=ca3d3f2150"></script>
 <script src="js/audio.js?v=8cce9a5aed"></script>
 <script src="js/items.js?v=0c88f09f4a"></script>
+<script src="js/monlv.js?v=187d4bad90"></script>
 <script src="js/critter.js?v=49bab42832"></script>
 <script src="js/mats.js?v=bda78d74d1"></script>
 <script src="js/cave.js?v=776ec771a4"></script>
 <script src="js/world.js?v=9f195a49dd"></script>
 <script src="js/harbor.js?v=36e7bde781"></script>
-<script src="js/game.js?v=a55b45b4ea"></script>
+<script src="js/game.js?v=7a724be785"></script>
 <script src="js/ui.js?v=a1ab82f566"></script>
 <script src="js/extra.js?v=03391c5a5f"></script>
-<script src="js/forest.js?v=d55a5c63f4"></script>
-<script src="js/gfield.js?v=5d8f9b85a4"></script>
-<script src="js/leakdog.js?v=7f76c1884f"></script>
+<script src="js/forest.js?v=e5bf21b7e3"></script>
+<script src="js/gfield.js?v=9b14dbbe76"></script>
+<script src="js/leakdog.js?v=df320600d3"></script>
 
 <script src="js/net.js?v=e6570f85ca"></script>
 <script src="js/cloud.js?v=6671cbf9eb"></script>
@@ -1003,7 +1004,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <script src="js/daily.js?v=6505f74f1a"></script>
 <script src="js/guild.js?v=b0f2d0cefe"></script>
 <script src="js/trade.js?v=6d18214631"></script>
-<script src="js/party.js?v=472a6d10b7"></script>
+<script src="js/party.js?v=e2e9bd3ddb"></script>
 <script src="js/gfx.js?v=2953920ec1"></script>
 <script src="js/upgrade.js?v=c5bae8d8b2"></script>
 <script src="js/perf.js?v=fd597f26e4"></script>
