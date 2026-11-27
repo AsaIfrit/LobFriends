@@ -474,6 +474,7 @@ body.sleeping #sleepUI{display:flex}
 .chips button{border:2.5px solid #fbe3d8;background:#fff;border-radius:14px;padding:5px 11px;font-weight:900;font-size:13px;transition:transform .2s var(--spring)}
 .chips button.on{border-color:#a7c24f;background:#fff0e8;transform:translateY(-2px)}
 input[type=range]{width:100%;accent-color:#a7c24f;height:22px}
+#lookTxt{width:100%;box-sizing:border-box;height:96px;margin-top:6px;border:2.5px solid #fbe3d8;border-radius:14px;padding:7px 10px;font-family:monospace;font-size:11px;color:var(--ink);background:#fff;resize:vertical;word-break:break-all}
 #cName{width:100%;box-sizing:border-box;border:2.5px solid #fbe3d8;border-radius:14px;padding:7px 10px;font-family:inherit;font-weight:900;font-size:15px;color:var(--ink);background:#fff}
 .crow2{display:flex;gap:8px;margin-top:14px}.crow2 .qb{flex:1;padding:11px}
 #reveal{position:fixed;inset:0;z-index:50;pointer-events:none;background:linear-gradient(160deg,#ffd0b8,#83a4cf);clip-path:circle(0px at var(--cx,50%) var(--cy,50%));transition:clip-path .55s cubic-bezier(.6,0,.2,1)}
@@ -811,6 +812,9 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
     <div id="hatAdjWrap"><div class="clab" id="hatAdjName"></div><div class="sl" data-g="hat"></div><button class="qb lav" id="hatReset" style="margin-top:6px">恢復預設</button></div></details>
   <details class="cfold"><summary>腮紅</summary><div class="chips" id="chBlush"></div><div class="clab">腮紅顏色</div><div class="sw" id="swBlush"></div><div class="sl" data-g="blush"></div></details>
   <div class="crow2"><button class="qb lav" id="cRand">隨機</button><button class="qb pink" id="cDone">出發！</button></div>
+  <details class="cfold" id="lookIO"><summary>外型資料（輸出／讀入）</summary><div class="sub">輸出：把目前角色所有部位的樣式、大小、位置、角度、顏色存成一段文字，可以複製給別人或拿去做 NPC。讀入：貼上外型資料後按「套用」。</div>
+    <textarea id="lookTxt" spellcheck="false"></textarea>
+    <div class="crow2"><button class="qb" id="lookOut">輸出並複製</button><button class="qb lav" id="lookIn">套用</button></div></details>
 </div></div>
 
 <div id="cloudDlg"><div class="card2"><h3 id="cdTitle"></h3><p id="cdMsg"></p><div><button class="qb pink" id="cdA"></button><button class="qb lav" id="cdB"></button></div></div></div>
