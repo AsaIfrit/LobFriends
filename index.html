@@ -694,20 +694,34 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 </style>
 </head>
 <body>
-<!-- 開場載入畫面：黑底、白色角色剪影（一跳一跳）＋ Loading... 文字；資源和著色器都準備好才淡出 -->
-<div id="boot"><style>
-#boot{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;gap:18px;transition:opacity .6s;font-family:"Zen Maru Gothic",system-ui,sans-serif}
-#boot.out{opacity:0;pointer-events:none}
-#boot svg{width:74px;height:80px;transform-origin:50% 100%;animation:bootHop .9s cubic-bezier(.3,.7,.4,1) infinite}
-#boot .t{color:#fff;font-size:26px;font-weight:900;letter-spacing:2px;display:flex}
-#boot .t span{display:inline-block;animation:bootWave 1.2s ease-in-out infinite;animation-delay:calc(var(--i)*.08s)}
-@keyframes bootHop{0%,100%{transform:translateY(0) scale(1.06,.92)}15%{transform:translateY(0) scale(.95,1.06)}50%{transform:translateY(-14px) scale(1,1)}85%{transform:translateY(0) scale(1.04,.95)}}
-@keyframes bootWave{0%,60%,100%{transform:translateY(0);opacity:1}30%{transform:translateY(-7px);opacity:.75}}
-
+<!-- 讀取畫面（開場、進到還沒載好的地圖都用這個）：黑底，右下角是一跳一跳的角色剪影＋呼吸的 Loading 文字，下面一條圓角的讀取進度條。
+     loadShow()／loadSet(0~1)／loadHide()；開場：程式檔一個個載完往前推，著色器編譯完（bootDone）到 100% 才淡出 -->
+<div id="boot" data-n="38"><style>
+#boot{position:fixed;inset:0;z-index:9999;background:#000;transition:opacity .5s;font-family:"Zen Maru Gothic",system-ui,sans-serif}
+#boot.out{opacity:0;pointer-events:none}#boot.gone{display:none}
+#boot .ld{position:absolute;right:max(26px,env(safe-area-inset-right));bottom:max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#boot .row{display:flex;align-items:flex-end;gap:12px}
+#boot svg{width:40px;height:44px;transform-origin:50% 100%;animation:bootHop .9s cubic-bezier(.3,.7,.4,1) infinite}
+#boot .t{color:#fff;font-size:22px;font-weight:900;letter-spacing:2px;line-height:1;padding-bottom:4px;animation:bootBreath 2s ease-in-out infinite}
+#boot .t i{font-style:normal;display:inline-block;width:1.6em;text-align:left}
+#boot .bar{width:230px;height:12px;border-radius:999px;background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);overflow:hidden}
+#boot .bar b{display:block;height:100%;width:2%;border-radius:999px;background:linear-gradient(90deg,#a9c259,#d8ec9a);box-shadow:0 0 10px rgba(169,194,89,.55)}
+@keyframes bootHop{0%,100%{transform:translateY(0) scale(1.06,.92)}15%{transform:translateY(0) scale(.95,1.06)}50%{transform:translateY(-12px) scale(1,1)}85%{transform:translateY(0) scale(1.04,.95)}}
+@keyframes bootBreath{0%,100%{opacity:.35}50%{opacity:1}}
 </style>
-<svg viewBox="0 0 100 108" fill="#fff" aria-hidden="true"><path d="M22 10C28 22 31 35 29 45C27 55 9 57 6 46C4 35 13 22 22 10Z"/><path d="M78 10C72 22 69 35 71 45C73 55 91 57 94 46C96 35 87 22 78 10Z"/><ellipse cx="50" cy="24" rx="7" ry="8"/><circle cx="50" cy="60" r="36"/><ellipse cx="13.5" cy="68" rx="6" ry="8.5"/><ellipse cx="86.5" cy="68" rx="6" ry="8.5"/><ellipse cx="36" cy="97" rx="8.5" ry="6.5"/><ellipse cx="64" cy="97" rx="8.5" ry="6.5"/></svg>
-<div class="t"><span style="--i:0">L</span><span style="--i:1">o</span><span style="--i:2">a</span><span style="--i:3">d</span><span style="--i:4">i</span><span style="--i:5">n</span><span style="--i:6">g</span><span style="--i:7">.</span><span style="--i:8">.</span><span style="--i:9">.</span></div></div>
-<script>/* 最多等 20 秒，避免出錯時一直卡在載入畫面 */window.bootDone=function(){const b=document.getElementById('boot');if(!b||b.classList.contains('out'))return;b.classList.add('out');setTimeout(()=>b.remove(),700);};setTimeout(window.bootDone,20000);</script>
+<div class="ld"><div class="row"><svg viewBox="0 0 100 108" fill="#fff" aria-hidden="true"><path d="M22 10C28 22 31 35 29 45C27 55 9 57 6 46C4 35 13 22 22 10Z"/><path d="M78 10C72 22 69 35 71 45C73 55 91 57 94 46C96 35 87 22 78 10Z"/><ellipse cx="50" cy="24" rx="7" ry="8"/><circle cx="50" cy="60" r="36"/><ellipse cx="13.5" cy="68" rx="6" ry="8.5"/><ellipse cx="86.5" cy="68" rx="6" ry="8.5"/><ellipse cx="36" cy="97" rx="8.5" ry="6.5"/><ellipse cx="64" cy="97" rx="8.5" ry="6.5"/></svg>
+<div class="t">Loading<i></i></div></div><div class="bar"><b></b></div></div></div>
+<script>(function(){const b=document.getElementById('boot'),fill=b.querySelector('.bar b'),dots=b.querySelector('.t i');const L=window.LOADER={on:true,t:0,v:0,raf:0,boot:true};
+  /* 進度條：實際寬度慢慢追上目標（不會一格一格跳） */
+  const tick=()=>{if(!L.on){L.raf=0;return;}L.v+=(Math.min(1,L.t)-L.v)*0.12;fill.style.width=(Math.max(0.02,L.v)*100).toFixed(1)+'%';dots.textContent='.'.repeat(1+((performance.now()/450)|0)%3);L.raf=requestAnimationFrame(tick);};
+  window.loadSet=p=>{if(p>L.t)L.t=Math.min(1,p);};
+  window.loadShow=()=>{L.on=true;L.t=0;L.v=0;fill.style.width='2%';b.classList.remove('gone','out');if(!L.raf)L.raf=requestAnimationFrame(tick);};
+  window.loadHide=()=>{if(!L.on)return;L.t=1;setTimeout(()=>{L.on=false;b.classList.add('out');setTimeout(()=>{if(!L.on)b.classList.add('gone');},550);},300);};
+  L.raf=requestAnimationFrame(tick);
+  /* 開場：每載完一個程式檔往前推（共 data-n 個），全部載完 90%，著色器編譯完（bootDone）才 100% 淡出；最多等 20 秒 */
+  let n=0,tot=+b.dataset.n||40;document.addEventListener('load',e=>{if(e.target&&e.target.tagName==='SCRIPT'&&L.boot){n++;loadSet(0.9*n/tot);}},true);
+  document.addEventListener('DOMContentLoaded',()=>{tot=document.querySelectorAll('script[src]').length||tot;loadSet(0.9*n/tot);});
+  window.bootDone=function(){if(!L.boot)return;L.boot=false;loadHide();};setTimeout(window.bootDone,20000);})();</script>
 <canvas id="c"></canvas><div id="moonSky"></div>
 <div id="vig"></div>
 <div id="flash"></div>
@@ -916,6 +930,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <div id="cloudWrap" style="display:none"><div class="clab">雲端存檔（Google 帳號）</div><div class="sub" id="cloudStat" style="margin:2px 0 6px"></div><div class="crow2"><button class="qb pink" id="cloudIn">🔑 Google 登入</button><button class="qb" id="cloudUp">☁️ 立即上傳</button><button class="qb lav" id="cloudOut">登出</button></div></div>
   <div class="crow2" style="margin-top:6px"><button class="qb" id="setSave">💾 立即存檔</button><button class="qb lav" id="bkBtn">🕘 還原備份</button></div><div class="sub" style="margin:2px 0 6px;font-size:11px">遊玩時每 20 分鐘自動備份一次，本機和雲端各保留最近 3 份</div>
   <button class="qb" id="gmBtn" style="display:none;width:100%;margin:6px 0;background:linear-gradient(160deg,#ffd98a,#a2c23a)">🛠️ GM 倉庫（所有道具）</button>
+  <button class="qb" id="gmTpBtn" style="display:none;width:100%;margin:0 0 6px;background:linear-gradient(160deg,#bfe0ff,#7092be);color:#fff">GM 傳送（任何地圖）</button>
   <button class="qb" id="gmRepBtn" style="display:none;width:100%;margin:0 0 6px;background:linear-gradient(160deg,#ffe1a8,#ffb35a)">檢舉與處分</button>
   <button class="qb" id="gmIconBtn" style="display:none;width:100%;margin:0 0 6px;background:linear-gradient(160deg,#d8c8ff,#a88cff);color:#fff">公會圖示審核</button>
   <button class="qb" id="gmDailyBtn" style="display:none;width:100%;margin:0 0 6px;background:linear-gradient(160deg,#c8e6a0,#7092be);color:#fff">測試每日登入（重置今天）</button>
@@ -929,6 +944,10 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <h2>異常存檔紀錄</h2><div class="sub">被伺服器擋下來的存檔（進度增加太快）。一個玩家最多保留最近 20 筆。</div>
   <div id="gmFlagList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
   <button class="qb lav close" data-close="gmFlags">關閉</button></div></div>
+<div class="panel" id="gmTp"><div class="sheet"><div class="grab"></div>
+  <h2>GM 傳送</h2><div class="sub">點一下直接傳送到那張地圖（不受開放限制）。</div>
+  <div id="gmTpList" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0"></div>
+  <button class="qb lav close" data-close="gmTp">關閉</button></div></div>
 <div class="panel" id="gmStore"><div class="sheet"><div class="grab"></div>
   <h2>GM 倉庫</h2><div class="sub">點一下就會放進背包。數量：<span class="chips" id="gmAmt" style="display:inline-flex;gap:4px"></span></div>
   <div class="tabs" id="gmTabs"></div><div id="gmGrid"></div><div id="gmInfo" class="sub"></div>
@@ -948,44 +967,44 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <p style="font-size:12px;opacity:.7">（在 claude.ai 裡無法加入主畫面，等遊戲放到 GitHub Pages 後就能使用）</p>
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
-<script src="js/three.min.js?v=20261203k"></script>
-<script src="config.js?v=20261203k"></script>
-<script src="firebase-config.js?v=20261203k"></script>
+<script src="js/three.min.js?v=20261203l"></script>
+<script src="config.js?v=20261203l"></script>
+<script src="firebase-config.js?v=20261203l"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/compat.js?v=20261203k"></script>
-<script src="js/models.js?v=20261203k"></script>
-<script src="js/models_furn.js?v=20261203k"></script>
-<script src="js/models_mist.js?v=20261203k"></script>
-<script src="js/models_mv_core.js?v=20261203k"></script>
-<script src="js/models_lod.js?v=20261203k"></script>
-<script src="js/engine.js?v=20261203k"></script>
-<script src="js/audio.js?v=20261203k"></script>
-<script src="js/items.js?v=20261203k"></script>
-<script src="js/critter.js?v=20261203k"></script>
-<script src="js/mats.js?v=20261203k"></script>
-<script src="js/cave.js?v=20261203k"></script>
-<script src="js/world.js?v=20261203k"></script>
-<script src="js/harbor.js?v=20261203k"></script>
-<script src="js/game.js?v=20261203k"></script>
-<script src="js/ui.js?v=20261203k"></script>
-<script src="js/extra.js?v=20261203k"></script>
-<script src="js/forest.js?v=20261203k"></script>
+<script src="js/compat.js?v=20261203l"></script>
+<script src="js/models.js?v=20261203l"></script>
+<script src="js/models_furn.js?v=20261203l"></script>
+<script src="js/models_mist.js?v=20261203l"></script>
+<script src="js/models_mv_core.js?v=20261203l"></script>
+<script src="js/models_lod.js?v=20261203l"></script>
+<script src="js/engine.js?v=20261203l"></script>
+<script src="js/audio.js?v=20261203l"></script>
+<script src="js/items.js?v=20261203l"></script>
+<script src="js/critter.js?v=20261203l"></script>
+<script src="js/mats.js?v=20261203l"></script>
+<script src="js/cave.js?v=20261203l"></script>
+<script src="js/world.js?v=20261203l"></script>
+<script src="js/harbor.js?v=20261203l"></script>
+<script src="js/game.js?v=20261203l"></script>
+<script src="js/ui.js?v=20261203l"></script>
+<script src="js/extra.js?v=20261203l"></script>
+<script src="js/forest.js?v=20261203l"></script>
 
-<script src="js/net.js?v=20261203k"></script>
-<script src="js/cloud.js?v=20261203k"></script>
-<script src="js/mall.js?v=20261203k"></script>
-<script src="js/skills.js?v=20261203k"></script>
-<script src="js/bars.js?v=20261203k"></script>
-<script src="js/photo.js?v=20261203k"></script>
-<script src="js/social.js?v=20261203k"></script>
-<script src="js/daily.js?v=20261203k"></script>
-<script src="js/guild.js?v=20261203k"></script>
-<script src="js/trade.js?v=20261203k"></script>
-<script src="js/party.js?v=20261203k"></script>
-<script src="js/gfx.js?v=20261203k"></script>
-<script src="js/upgrade.js?v=20261203k"></script>
-<script src="js/perf.js?v=20261203k"></script>
-<script src="js/maps.js?v=20261203k"></script>
-<script src="js/interior.js?v=20261203k"></script>
+<script src="js/net.js?v=20261203l"></script>
+<script src="js/cloud.js?v=20261203l"></script>
+<script src="js/mall.js?v=20261203l"></script>
+<script src="js/skills.js?v=20261203l"></script>
+<script src="js/bars.js?v=20261203l"></script>
+<script src="js/photo.js?v=20261203l"></script>
+<script src="js/social.js?v=20261203l"></script>
+<script src="js/daily.js?v=20261203l"></script>
+<script src="js/guild.js?v=20261203l"></script>
+<script src="js/trade.js?v=20261203l"></script>
+<script src="js/party.js?v=20261203l"></script>
+<script src="js/gfx.js?v=20261203l"></script>
+<script src="js/upgrade.js?v=20261203l"></script>
+<script src="js/perf.js?v=20261203l"></script>
+<script src="js/maps.js?v=20261203l"></script>
+<script src="js/interior.js?v=20261203l"></script>
 </body>
 </html>
