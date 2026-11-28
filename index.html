@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta name="lf-ver" content="20261205z"><script>window.JSV={"js/audio.js":"ececf928e7","js/bars.js":"8260952620","js/cave.js":"76239ff7ae","js/cloud.js":"9c73bb52ef","js/compat.js":"69e7ff7c78","js/critter.js":"643019489f","js/daily.js":"85533c0f33","js/engine.js":"be3611f540","js/extra.js":"076fe4aeca","js/forest.js":"44fbcadf37","js/game.js":"df3c95cdc9","js/gfield.js":"f03c5ac683","js/gfx.js":"551170e461","js/gsta.js":"8e6bedf2cd","js/guild.js":"6932325442","js/harbor.js":"33017b3e03","js/interior.js":"656cae6243","js/items.js":"031e16b662","js/leakdog.js":"6fdee36e3a","js/mall.js":"c01f957a95","js/maps.js":"be1fe1fc1f","js/mats.js":"2324258d5e","js/models.js":"493c0cabf9","js/models_acc.js":"e80fbf08ee","js/models_furn.js":"65eba98ba0","js/models_gs.js":"56d434c07e","js/models_lod.js":"7b983968bf","js/models_mist.js":"d91f1c23f8","js/models_mon.js":"c6ef4e2d3e","js/models_mv.js":"cb31b0f05b","js/models_mv_core.js":"e94d702ed3","js/monlv.js":"9ef2dc0a70","js/mushvil.js":"fb448ea278","js/net.js":"af34c74b5e","js/party.js":"077a707d9b","js/perf.js":"3490432496","js/photo.js":"cfd58c5624","js/skills.js":"7d0ea431cf","js/slots.js":"93ebaaf14e","js/social.js":"7d5426f3db","js/three.min.js":"212dfd8fc1","js/trade.js":"a0e7344896","js/ui.js":"fc2185c3c7","js/upgrade.js":"bf334372f8","js/world.js":"e8836ec64e"};</script>
+<head><meta name="lf-ver" content="20261206a"><script>window.JSV={"js/audio.js":"ececf928e7","js/bars.js":"8260952620","js/bee.js":"fb078b5ac9","js/cave.js":"76239ff7ae","js/cloud.js":"9c73bb52ef","js/compat.js":"69e7ff7c78","js/critter.js":"643019489f","js/daily.js":"85533c0f33","js/engine.js":"be3611f540","js/extra.js":"076fe4aeca","js/forest.js":"ebe733fb67","js/game.js":"0e94f0d65a","js/gfield.js":"9ceddc257f","js/gfx.js":"551170e461","js/gsta.js":"8e6bedf2cd","js/guild.js":"6932325442","js/harbor.js":"33017b3e03","js/interior.js":"656cae6243","js/items.js":"031e16b662","js/leakdog.js":"b60f2b89f6","js/mall.js":"c01f957a95","js/maps.js":"be1fe1fc1f","js/mats.js":"2324258d5e","js/models.js":"493c0cabf9","js/models_acc.js":"e80fbf08ee","js/models_furn.js":"65eba98ba0","js/models_gs.js":"56d434c07e","js/models_lod.js":"7b983968bf","js/models_mist.js":"d91f1c23f8","js/models_mon.js":"c6ef4e2d3e","js/models_mv.js":"cb31b0f05b","js/models_mv_core.js":"e94d702ed3","js/monlv.js":"e776dbec7c","js/mushvil.js":"fb448ea278","js/net.js":"af34c74b5e","js/party.js":"077a707d9b","js/perf.js":"3490432496","js/photo.js":"cfd58c5624","js/skills.js":"1bcd771ba3","js/slots.js":"93ebaaf14e","js/social.js":"7d5426f3db","js/three.min.js":"212dfd8fc1","js/trade.js":"a0e7344896","js/ui.js":"fc2185c3c7","js/upgrade.js":"bf334372f8","js/world.js":"e8836ec64e"};</script>
 <script>/* 錯誤回報：遊戲出錯時在畫面底部顯示錯誤訊息（方便截圖回報），點一下關閉 */(function(){var shown=0;function show(m){if(shown>4)return;shown++;var d=document.getElementById('errBox');if(!d){d=document.createElement('div');d.id='errBox';d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:rgba(160,30,40,.92);color:#fff;font:12px/1.4 monospace;padding:8px 10px;border-radius:10px;max-height:40vh;overflow:auto;white-space:pre-wrap;word-break:break-all';d.onclick=function(){d.remove();};(document.body||document.documentElement).appendChild(d);d.textContent='⚠️ 遊戲發生錯誤（請截圖回報，點一下關閉）\n';}d.textContent+='\n'+m;}
 window.addEventListener('error',function(e){if(e&&e.target&&e.target!==window&&(e.target.src||e.target.href)){var u=e.target.src||e.target.href||'';if(/\/js\/[^\/]+\.js/.test(u)&&u.indexOf(location.host)>=0)show('載入失敗：'+u.split('/').pop());return;}var f=(e.filename||'').split('/').pop();show((e.message||'錯誤')+'  @ '+f+':'+(e.lineno||0)+':'+(e.colno||0));},true);
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;var m=r&&(r.message||String(r))||'';if(/fetch|network|Failed to fetch|Load failed|AbortError/i.test(m))return;show('Promise：'+m);});})();</script>
@@ -1015,8 +1015,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="js/three.min.js?v=212dfd8fc1"></script>
-<script src="config.js?v=20261205z"></script>
-<script src="firebase-config.js?v=20261205z"></script>
+<script src="config.js?v=20261206a"></script>
+<script src="firebase-config.js?v=20261206a"></script>
 <script>/* 連線用自架伺服器（WS_URL）時不需要 Supabase 函式庫：不載入（省掉一個會擋住後面程式的外部下載） */if(!(window.LOBSTER_CONFIG&&LOBSTER_CONFIG.WS_URL))document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');</script>
 <script src="js/compat.js?v=69e7ff7c78"></script>
 <script src="js/models.js?v=493c0cabf9"></script>
@@ -1029,23 +1029,24 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <script src="js/engine.js?v=be3611f540"></script>
 <script src="js/audio.js?v=ececf928e7"></script>
 <script src="js/items.js?v=031e16b662"></script>
-<script src="js/monlv.js?v=9ef2dc0a70"></script>
+<script src="js/monlv.js?v=e776dbec7c"></script>
 <script src="js/critter.js?v=643019489f"></script>
 <script src="js/mats.js?v=2324258d5e"></script>
 <script src="js/cave.js?v=76239ff7ae"></script>
 <script src="js/world.js?v=e8836ec64e"></script>
 <script src="js/harbor.js?v=33017b3e03"></script>
-<script src="js/game.js?v=df3c95cdc9"></script>
+<script src="js/game.js?v=0e94f0d65a"></script>
 <script src="js/ui.js?v=fc2185c3c7"></script>
 <script src="js/extra.js?v=076fe4aeca"></script>
-<script src="js/forest.js?v=44fbcadf37"></script>
-<script src="js/gfield.js?v=f03c5ac683"></script>
-<script src="js/leakdog.js?v=6fdee36e3a"></script>
+<script src="js/forest.js?v=ebe733fb67"></script>
+<script src="js/gfield.js?v=9ceddc257f"></script>
+<script src="js/leakdog.js?v=b60f2b89f6"></script>
+<script src="js/bee.js?v=fb078b5ac9"></script>
 
 <script src="js/net.js?v=af34c74b5e"></script>
 <script src="js/cloud.js?v=9c73bb52ef"></script>
 <script src="js/mall.js?v=c01f957a95"></script>
-<script src="js/skills.js?v=7d0ea431cf"></script>
+<script src="js/skills.js?v=1bcd771ba3"></script>
 <script src="js/bars.js?v=8260952620"></script>
 <script src="js/photo.js?v=cfd58c5624"></script>
 <script src="js/social.js?v=7d5426f3db"></script>
