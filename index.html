@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta name="lf-ver" content="20261204t"><script>window.JSV={"js/audio.js":"d59ae80dd0","js/bars.js":"6c7cecf8cc","js/cave.js":"776ec771a4","js/cloud.js":"2e0176e4ec","js/compat.js":"dda2aaf27c","js/critter.js":"49bab42832","js/daily.js":"6505f74f1a","js/engine.js":"c72a9833a1","js/extra.js":"82b34395d0","js/forest.js":"aa460f258b","js/game.js":"4e0fbf8a59","js/gfield.js":"0881e80f8b","js/gfx.js":"9fe18ff9fc","js/gsta.js":"e79b6a5bee","js/guild.js":"b0f2d0cefe","js/harbor.js":"36e7bde781","js/interior.js":"3ee32db4e0","js/items.js":"39325f2c59","js/leakdog.js":"df320600d3","js/mall.js":"eb695e91a1","js/maps.js":"a5e6b68641","js/mats.js":"bda78d74d1","js/models.js":"e5ede3d400","js/models_furn.js":"66630f4ced","js/models_gs.js":"6f2b5cf76d","js/models_lod.js":"cdfb659e9b","js/models_mist.js":"7c10a8d00a","js/models_mon.js":"dfe285bd8a","js/models_mv.js":"0d4bce458b","js/models_mv_core.js":"98aef008f4","js/monlv.js":"6198aa3f28","js/mushvil.js":"74db4f261b","js/net.js":"a26e6ed487","js/party.js":"e2e9bd3ddb","js/perf.js":"fd597f26e4","js/photo.js":"4138e790bf","js/skills.js":"ae2db4404d","js/slots.js":"4165e290aa","js/social.js":"96e7a7d79e","js/three.min.js":"212dfd8fc1","js/trade.js":"6d18214631","js/ui.js":"e905f2deaf","js/upgrade.js":"c5bae8d8b2","js/world.js":"9f195a49dd"};</script>
+<head><meta name="lf-ver" content="20261204u"><script>window.JSV={"js/audio.js":"d59ae80dd0","js/bars.js":"6c7cecf8cc","js/cave.js":"776ec771a4","js/cloud.js":"2e0176e4ec","js/compat.js":"dda2aaf27c","js/critter.js":"49bab42832","js/daily.js":"6505f74f1a","js/engine.js":"c72a9833a1","js/extra.js":"82b34395d0","js/forest.js":"aa460f258b","js/game.js":"4e0fbf8a59","js/gfield.js":"0881e80f8b","js/gfx.js":"9fe18ff9fc","js/gsta.js":"e79b6a5bee","js/guild.js":"b0f2d0cefe","js/harbor.js":"36e7bde781","js/interior.js":"3ee32db4e0","js/items.js":"39325f2c59","js/leakdog.js":"df320600d3","js/mall.js":"eb695e91a1","js/maps.js":"a5e6b68641","js/mats.js":"bda78d74d1","js/models.js":"e5ede3d400","js/models_furn.js":"66630f4ced","js/models_gs.js":"6f2b5cf76d","js/models_lod.js":"cdfb659e9b","js/models_mist.js":"7c10a8d00a","js/models_mon.js":"dfe285bd8a","js/models_mv.js":"0d4bce458b","js/models_mv_core.js":"98aef008f4","js/monlv.js":"6198aa3f28","js/mushvil.js":"74db4f261b","js/net.js":"a26e6ed487","js/party.js":"e2e9bd3ddb","js/perf.js":"fd597f26e4","js/photo.js":"4138e790bf","js/skills.js":"ae2db4404d","js/slots.js":"2dee625c3f","js/social.js":"96e7a7d79e","js/three.min.js":"212dfd8fc1","js/trade.js":"6d18214631","js/ui.js":"e905f2deaf","js/upgrade.js":"c5bae8d8b2","js/world.js":"9f195a49dd"};</script>
 <script>/* 錯誤回報：遊戲出錯時在畫面底部顯示錯誤訊息（方便截圖回報），點一下關閉 */(function(){var shown=0;function show(m){if(shown>4)return;shown++;var d=document.getElementById('errBox');if(!d){d=document.createElement('div');d.id='errBox';d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:rgba(160,30,40,.92);color:#fff;font:12px/1.4 monospace;padding:8px 10px;border-radius:10px;max-height:40vh;overflow:auto;white-space:pre-wrap;word-break:break-all';d.onclick=function(){d.remove();};(document.body||document.documentElement).appendChild(d);d.textContent='⚠️ 遊戲發生錯誤（請截圖回報，點一下關閉）\n';}d.textContent+='\n'+m;}
 window.addEventListener('error',function(e){if(e&&e.target&&e.target!==window&&(e.target.src||e.target.href)){var u=e.target.src||e.target.href||'';if(/\/js\/[^\/]+\.js/.test(u)&&u.indexOf(location.host)>=0)show('載入失敗：'+u.split('/').pop());return;}var f=(e.filename||'').split('/').pop();show((e.message||'錯誤')+'  @ '+f+':'+(e.lineno||0)+':'+(e.colno||0));},true);
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;var m=r&&(r.message||String(r))||'';if(/fetch|network|Failed to fetch|Load failed|AbortError/i.test(m))return;show('Promise：'+m);});})();</script>
@@ -519,6 +519,8 @@ body.ingame #start{display:none!important}
 .tChPop button{background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:999px;padding:7px 12px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer}.tChPop button.on{background:#8fbf45}
 .tGo{width:100%;font-size:clamp(20px,2.7vw,36px);padding:clamp(13px,1.9vw,24px);border-radius:clamp(12px,1.4vw,18px);letter-spacing:2px}
 .tPick{display:none}body.tpick .tTop,body.tpick .tBot{display:none}body.tpick .tPick{display:block}body.tpick #start .mbtn.side2{display:none}
+.tDel{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);background:rgba(16,22,20,.6);color:#f0d8d0;border:1.5px solid rgba(255,160,150,.55);border-radius:999px;padding:6px 16px;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer}
+body.tdel .tDel{background:#c0453a;color:#fff;border-color:#c0453a}body.tdel .tHint{background:rgba(160,40,30,.75)}
 .tHint{position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 22px);transform:translateX(-50%);color:#fff;font-weight:900;font-size:clamp(13px,1.35vw,17px);letter-spacing:1px;background:rgba(16,22,20,.6);padding:6px 16px;border-radius:999px;white-space:nowrap;text-shadow:0 2px 4px rgba(0,0,0,.5);pointer-events:none}
 .tBack{position:absolute;left:calc(env(safe-area-inset-left) + 18px);top:calc(env(safe-area-inset-top) + 18px);padding:10px 22px;font-size:clamp(14px,1.5vw,20px)}
 #start .mbtn.side2{padding:5px 9px;font-size:11.5px;border-width:2px}
@@ -875,7 +877,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <div id="start">
   <div class="tTop"><button class="tb" id="cloudBtn" style="display:none">Google登入</button><button class="tb" id="setBtn">設定</button></div>
   <div class="tBot"><div class="tCh"><b id="tChTxt">頻道 自動</b><button id="tChBtn">變更</button><div class="tChPop" id="tChPop"><div class="chips" id="tChChips"></div></div></div><button class="tb tGo" id="startBtn">開始遊戲</button></div>
-  <div class="tPick"><div class="tHint" id="tHint">點選角色開始遊戲</div><button class="tb tBack" id="tBack">返回</button></div>
+  <div class="tPick"><div class="tHint" id="tHint">點選角色開始遊戲</div><button class="tb tBack" id="tBack">返回</button><button class="tDel" id="tDel">刪除角色</button></div>
   <button class="mbtn side2" id="fsBtn">⛶ 全螢幕</button>
   <div class="tVer">v1.0</div>
   <div id="tName" style="display:none"></div><div id="splash" style="display:none"></div><button id="lookBtn" style="display:none"></button>
@@ -1005,8 +1007,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="js/three.min.js?v=212dfd8fc1"></script>
-<script src="config.js?v=20261204t"></script>
-<script src="firebase-config.js?v=20261204t"></script>
+<script src="config.js?v=20261204u"></script>
+<script src="firebase-config.js?v=20261204u"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/compat.js?v=dda2aaf27c"></script>
 <script src="js/models.js?v=e5ede3d400"></script>
@@ -1047,6 +1049,6 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 <script src="js/perf.js?v=fd597f26e4"></script>
 <script src="js/maps.js?v=a5e6b68641"></script>
 <script src="js/interior.js?v=3ee32db4e0"></script>
-<script src="js/slots.js?v=4165e290aa"></script>
+<script src="js/slots.js?v=2dee625c3f"></script>
 </body>
 </html>
