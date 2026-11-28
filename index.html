@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta name="lf-ver" content="20261204r"><script>window.JSV={"js/audio.js":"8cce9a5aed","js/bars.js":"6c7cecf8cc","js/cave.js":"776ec771a4","js/cloud.js":"bfbc04725e","js/compat.js":"dda2aaf27c","js/critter.js":"49bab42832","js/daily.js":"6505f74f1a","js/engine.js":"c72a9833a1","js/extra.js":"82b34395d0","js/forest.js":"aa460f258b","js/game.js":"eb9c9187e8","js/gfield.js":"0881e80f8b","js/gfx.js":"2953920ec1","js/gsta.js":"e79b6a5bee","js/guild.js":"b0f2d0cefe","js/harbor.js":"36e7bde781","js/interior.js":"3ee32db4e0","js/items.js":"39325f2c59","js/leakdog.js":"df320600d3","js/mall.js":"eb695e91a1","js/maps.js":"a5e6b68641","js/mats.js":"bda78d74d1","js/models.js":"e5ede3d400","js/models_furn.js":"66630f4ced","js/models_gs.js":"6f2b5cf76d","js/models_lod.js":"cdfb659e9b","js/models_mist.js":"7c10a8d00a","js/models_mon.js":"dfe285bd8a","js/models_mv.js":"0d4bce458b","js/models_mv_core.js":"98aef008f4","js/monlv.js":"6198aa3f28","js/mushvil.js":"74db4f261b","js/net.js":"1c544a8c84","js/party.js":"e2e9bd3ddb","js/perf.js":"fd597f26e4","js/photo.js":"4138e790bf","js/skills.js":"ae2db4404d","js/social.js":"96e7a7d79e","js/three.min.js":"212dfd8fc1","js/trade.js":"6d18214631","js/ui.js":"037dd4bb74","js/upgrade.js":"c5bae8d8b2","js/world.js":"9f195a49dd"};</script>
+<head><meta name="lf-ver" content="20261204s"><script>window.JSV={"js/audio.js":"8cce9a5aed","js/bars.js":"6c7cecf8cc","js/cave.js":"776ec771a4","js/cloud.js":"bfbc04725e","js/compat.js":"dda2aaf27c","js/critter.js":"49bab42832","js/daily.js":"6505f74f1a","js/engine.js":"c72a9833a1","js/extra.js":"82b34395d0","js/forest.js":"aa460f258b","js/game.js":"eb9c9187e8","js/gfield.js":"0881e80f8b","js/gfx.js":"2953920ec1","js/gsta.js":"e79b6a5bee","js/guild.js":"b0f2d0cefe","js/harbor.js":"36e7bde781","js/interior.js":"3ee32db4e0","js/items.js":"39325f2c59","js/leakdog.js":"df320600d3","js/mall.js":"eb695e91a1","js/maps.js":"a5e6b68641","js/mats.js":"bda78d74d1","js/models.js":"e5ede3d400","js/models_furn.js":"66630f4ced","js/models_gs.js":"6f2b5cf76d","js/models_lod.js":"cdfb659e9b","js/models_mist.js":"7c10a8d00a","js/models_mon.js":"dfe285bd8a","js/models_mv.js":"0d4bce458b","js/models_mv_core.js":"98aef008f4","js/monlv.js":"6198aa3f28","js/mushvil.js":"74db4f261b","js/net.js":"1c544a8c84","js/party.js":"e2e9bd3ddb","js/perf.js":"fd597f26e4","js/photo.js":"4138e790bf","js/skills.js":"ae2db4404d","js/social.js":"96e7a7d79e","js/three.min.js":"212dfd8fc1","js/trade.js":"6d18214631","js/ui.js":"037dd4bb74","js/upgrade.js":"c5bae8d8b2","js/world.js":"9f195a49dd"};</script>
 <script>/* 錯誤回報：遊戲出錯時在畫面底部顯示錯誤訊息（方便截圖回報），點一下關閉 */(function(){var shown=0;function show(m){if(shown>4)return;shown++;var d=document.getElementById('errBox');if(!d){d=document.createElement('div');d.id='errBox';d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:rgba(160,30,40,.92);color:#fff;font:12px/1.4 monospace;padding:8px 10px;border-radius:10px;max-height:40vh;overflow:auto;white-space:pre-wrap;word-break:break-all';d.onclick=function(){d.remove();};(document.body||document.documentElement).appendChild(d);d.textContent='⚠️ 遊戲發生錯誤（請截圖回報，點一下關閉）\n';}d.textContent+='\n'+m;}
 window.addEventListener('error',function(e){if(e&&e.target&&e.target!==window&&(e.target.src||e.target.href)){var u=e.target.src||e.target.href||'';if(/\/js\/[^\/]+\.js/.test(u)&&u.indexOf(location.host)>=0)show('載入失敗：'+u.split('/').pop());return;}var f=(e.filename||'').split('/').pop();show((e.message||'錯誤')+'  @ '+f+':'+(e.lineno||0)+':'+(e.colno||0));},true);
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;var m=r&&(r.message||String(r))||'';if(/fetch|network|Failed to fetch|Load failed|AbortError/i.test(m))return;show('Promise：'+m);});})();</script>
@@ -708,7 +708,7 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 @keyframes bootHop{0%,100%{transform:translateY(0) scale(1.06,.92)}15%{transform:translateY(0) scale(.95,1.06)}50%{transform:translateY(-12px) scale(1,1)}85%{transform:translateY(0) scale(1.04,.95)}}
 @keyframes bootBreath{0%,100%{opacity:.35}50%{opacity:1}}
 #boot .st{color:rgba(255,255,255,.75);font-size:13px;font-weight:700;letter-spacing:1px;min-height:18px;text-align:right}
-#boot .tips{position:absolute;left:max(26px,env(safe-area-inset-left));bottom:max(24px,env(safe-area-inset-bottom));max-width:min(420px,calc(100vw - 52px));color:rgba(255,255,255,.88);font-size:13px;line-height:1.65;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:12px 16px}
+#boot .tips{position:absolute;left:max(26px,env(safe-area-inset-left));bottom:max(24px,env(safe-area-inset-bottom));max-width:min(520px,calc(100vw - 52px));color:rgba(255,255,255,.88);font-size:13px;line-height:1.65;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:12px 16px}
 #boot .tips h4{margin:0 0 4px;font-size:15px;color:#d8ec9a;letter-spacing:1px}
 #boot .tips ol{margin:0;padding-left:1.3em}#boot .tips li{margin:1px 0}
 #boot .tips .sw{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:1px;margin:0 2px}
@@ -719,10 +719,10 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
 </style>
 <div class="tips"><h4>自動存檔說明</h4><ol>
 <li>遊戲每 15 秒會自動存到這台裝置。</li>
-<li>登入 Google 後，每 1 分鐘自動同步到雲端；切到別的分頁、縮小視窗或關閉網頁時也會立刻同步。</li>
-<li>左上角時間旁的雲朵是同步狀態：<span class="sw" style="background:#8fd16a"></span>綠色＝已同步、<span class="sw" style="background:#f2c14e"></span>黃色＝同步中、<span class="sw" style="background:#b9b0a8"></span>灰色＝還沒同步。</li>
-<li>要換裝置玩之前，請等雲朵變綠色再關閉；還沒同步就關閉網頁時，瀏覽器會先提醒你。</li>
-<li>每次打開遊戲，會在這個讀取畫面自動登入 Google 並載入雲端最新的進度。</li></ol></div>
+<li>登入 Google 後，每 1 分鐘自動同步到雲端；<br>切到別的分頁、縮小視窗或關閉網頁時也會立刻同步。</li>
+<li>左上角時間旁的雲朵是同步狀態：<br><span class="sw" style="background:#8fd16a"></span>綠色＝已同步、<span class="sw" style="background:#f2c14e"></span>黃色＝同步中、<span class="sw" style="background:#b9b0a8"></span>灰色＝還沒同步。</li>
+<li>要換裝置玩之前，請等雲朵變綠色再關閉；<br>還沒同步就關閉網頁時，瀏覽器會先提醒你。</li>
+<li>每次打開遊戲，會自動登入 Google 並載入雲端最新的進度。</li></ol></div>
 <div class="ld"><div class="row"><svg viewBox="0 0 100 108" fill="#fff" aria-hidden="true"><path d="M22 10C28 22 31 35 29 45C27 55 9 57 6 46C4 35 13 22 22 10Z"/><path d="M78 10C72 22 69 35 71 45C73 55 91 57 94 46C96 35 87 22 78 10Z"/><ellipse cx="50" cy="24" rx="7" ry="8"/><circle cx="50" cy="60" r="36"/><ellipse cx="13.5" cy="68" rx="6" ry="8.5"/><ellipse cx="86.5" cy="68" rx="6" ry="8.5"/><ellipse cx="36" cy="97" rx="8.5" ry="6.5"/><ellipse cx="64" cy="97" rx="8.5" ry="6.5"/></svg>
 <div class="t">Loading<i></i></div></div><div class="bar"><b></b></div><div class="st" id="bootSt"></div></div></div>
 <script>(function(){const b=document.getElementById('boot'),fill=b.querySelector('.bar b'),dots=b.querySelector('.t i');const L=window.LOADER={on:true,t:0,v:0,raf:0,boot:true};
@@ -986,8 +986,8 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="js/three.min.js?v=212dfd8fc1"></script>
-<script src="config.js?v=20261204r"></script>
-<script src="firebase-config.js?v=20261204r"></script>
+<script src="config.js?v=20261204s"></script>
+<script src="firebase-config.js?v=20261204s"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/compat.js?v=dda2aaf27c"></script>
 <script src="js/models.js?v=e5ede3d400"></script>
