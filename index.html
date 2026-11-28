@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta name="lf-ver" content="20261204y"><script>window.JSV={"js/audio.js":"d59ae80dd0","js/bars.js":"6c7cecf8cc","js/cave.js":"776ec771a4","js/cloud.js":"4022451904","js/compat.js":"dda2aaf27c","js/critter.js":"49bab42832","js/daily.js":"6505f74f1a","js/engine.js":"c72a9833a1","js/extra.js":"82b34395d0","js/forest.js":"aa460f258b","js/game.js":"f4b6885400","js/gfield.js":"0881e80f8b","js/gfx.js":"9fe18ff9fc","js/gsta.js":"e79b6a5bee","js/guild.js":"b0f2d0cefe","js/harbor.js":"36e7bde781","js/interior.js":"3ee32db4e0","js/items.js":"39325f2c59","js/leakdog.js":"df320600d3","js/mall.js":"6b79e1b084","js/maps.js":"8299ddb825","js/mats.js":"bda78d74d1","js/models.js":"e5ede3d400","js/models_furn.js":"66630f4ced","js/models_gs.js":"6f2b5cf76d","js/models_lod.js":"cdfb659e9b","js/models_mist.js":"7c10a8d00a","js/models_mon.js":"dfe285bd8a","js/models_mv.js":"0d4bce458b","js/models_mv_core.js":"98aef008f4","js/monlv.js":"6198aa3f28","js/mushvil.js":"74db4f261b","js/net.js":"a26e6ed487","js/party.js":"e2e9bd3ddb","js/perf.js":"fd597f26e4","js/photo.js":"4138e790bf","js/skills.js":"ae2db4404d","js/slots.js":"787f1398d9","js/social.js":"96e7a7d79e","js/three.min.js":"212dfd8fc1","js/trade.js":"6d18214631","js/ui.js":"a0cfcc0cfa","js/upgrade.js":"c5bae8d8b2","js/world.js":"9f195a49dd"};</script>
+<head><meta name="lf-ver" content="20261204z"><script>window.JSV={"js/audio.js":"ececf928e7","js/bars.js":"8260952620","js/cave.js":"76239ff7ae","js/cloud.js":"0c99c0278f","js/compat.js":"69e7ff7c78","js/critter.js":"f0f501a11a","js/daily.js":"85533c0f33","js/engine.js":"fd42303556","js/extra.js":"076fe4aeca","js/forest.js":"32e7f381bb","js/game.js":"984211b046","js/gfield.js":"c53df9f90f","js/gfx.js":"2f0839c9ae","js/gsta.js":"8e6bedf2cd","js/guild.js":"6932325442","js/harbor.js":"33017b3e03","js/interior.js":"656cae6243","js/items.js":"842aece3b7","js/leakdog.js":"59af0942bd","js/mall.js":"0c10652cd7","js/maps.js":"c3e159c970","js/mats.js":"2324258d5e","js/models.js":"493c0cabf9","js/models_furn.js":"65eba98ba0","js/models_gs.js":"56d434c07e","js/models_lod.js":"7b983968bf","js/models_mist.js":"d91f1c23f8","js/models_mon.js":"c6ef4e2d3e","js/models_mv.js":"cb31b0f05b","js/models_mv_core.js":"e94d702ed3","js/monlv.js":"d4363eddbf","js/mushvil.js":"fb448ea278","js/net.js":"00eaa77cfa","js/party.js":"077a707d9b","js/perf.js":"3490432496","js/photo.js":"cfd58c5624","js/skills.js":"7d0ea431cf","js/slots.js":"5f4b5166bb","js/social.js":"7d5426f3db","js/three.min.js":"212dfd8fc1","js/trade.js":"a0e7344896","js/ui.js":"4b23d28467","js/upgrade.js":"bf334372f8","js/world.js":"eb08831e87"};</script>
 <script>/* 錯誤回報：遊戲出錯時在畫面底部顯示錯誤訊息（方便截圖回報），點一下關閉 */(function(){var shown=0;function show(m){if(shown>4)return;shown++;var d=document.getElementById('errBox');if(!d){d=document.createElement('div');d.id='errBox';d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:rgba(160,30,40,.92);color:#fff;font:12px/1.4 monospace;padding:8px 10px;border-radius:10px;max-height:40vh;overflow:auto;white-space:pre-wrap;word-break:break-all';d.onclick=function(){d.remove();};(document.body||document.documentElement).appendChild(d);d.textContent='⚠️ 遊戲發生錯誤（請截圖回報，點一下關閉）\n';}d.textContent+='\n'+m;}
 window.addEventListener('error',function(e){if(e&&e.target&&e.target!==window&&(e.target.src||e.target.href)){var u=e.target.src||e.target.href||'';if(/\/js\/[^\/]+\.js/.test(u)&&u.indexOf(location.host)>=0)show('載入失敗：'+u.split('/').pop());return;}var f=(e.filename||'').split('/').pop();show((e.message||'錯誤')+'  @ '+f+':'+(e.lineno||0)+':'+(e.colno||0));},true);
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;var m=r&&(r.message||String(r))||'';if(/fetch|network|Failed to fetch|Load failed|AbortError/i.test(m))return;show('Promise：'+m);});})();</script>
@@ -1009,48 +1009,49 @@ body.darkui #chatLog div,body.darkui #hbLabel{background:rgba(0,0,0,.5)}
   <button class="qb lav close" data-close="iosFs">知道了</button></div></div>
 
 <script src="js/three.min.js?v=212dfd8fc1"></script>
-<script src="config.js?v=20261204y"></script>
-<script src="firebase-config.js?v=20261204y"></script>
+<script src="config.js?v=20261204z"></script>
+<script src="firebase-config.js?v=20261204z"></script>
 <script>/* 連線用自架伺服器（WS_URL）時不需要 Supabase 函式庫：不載入（省掉一個會擋住後面程式的外部下載） */if(!(window.LOBSTER_CONFIG&&LOBSTER_CONFIG.WS_URL))document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');</script>
-<script src="js/compat.js?v=dda2aaf27c"></script>
-<script src="js/models.js?v=e5ede3d400"></script>
-<script src="js/models_furn.js?v=66630f4ced"></script>
-<script src="js/models_mist.js?v=7c10a8d00a"></script>
-<script src="js/models_mv_core.js?v=98aef008f4"></script>
-<script src="js/models_lod.js?v=cdfb659e9b"></script>
-<script src="js/models_mon.js?v=dfe285bd8a"></script>
-<script src="js/engine.js?v=c72a9833a1"></script>
-<script src="js/audio.js?v=d59ae80dd0"></script>
-<script src="js/items.js?v=39325f2c59"></script>
-<script src="js/monlv.js?v=6198aa3f28"></script>
-<script src="js/critter.js?v=49bab42832"></script>
-<script src="js/mats.js?v=bda78d74d1"></script>
-<script src="js/cave.js?v=776ec771a4"></script>
-<script src="js/world.js?v=9f195a49dd"></script>
-<script src="js/harbor.js?v=36e7bde781"></script>
-<script src="js/game.js?v=f4b6885400"></script>
-<script src="js/ui.js?v=a0cfcc0cfa"></script>
-<script src="js/extra.js?v=82b34395d0"></script>
-<script src="js/forest.js?v=aa460f258b"></script>
-<script src="js/gfield.js?v=0881e80f8b"></script>
-<script src="js/leakdog.js?v=df320600d3"></script>
+<script src="js/compat.js?v=69e7ff7c78"></script>
+<script src="js/models.js?v=493c0cabf9"></script>
+<script src="js/models_furn.js?v=65eba98ba0"></script>
+<script src="js/models_mist.js?v=d91f1c23f8"></script>
+<script src="js/models_mv_core.js?v=e94d702ed3"></script>
+<script src="js/models_lod.js?v=7b983968bf"></script>
+<script src="js/models_mon.js?v=c6ef4e2d3e"></script>
+<script src="js/engine.js?v=fd42303556"></script>
+<script src="js/audio.js?v=ececf928e7"></script>
+<script src="js/items.js?v=842aece3b7"></script>
+<script src="js/monlv.js?v=d4363eddbf"></script>
+<script src="js/critter.js?v=f0f501a11a"></script>
+<script src="js/mats.js?v=2324258d5e"></script>
+<script src="js/cave.js?v=76239ff7ae"></script>
+<script src="js/world.js?v=eb08831e87"></script>
+<script src="js/harbor.js?v=33017b3e03"></script>
+<script src="js/game.js?v=984211b046"></script>
+<script src="js/ui.js?v=4b23d28467"></script>
+<script src="js/extra.js?v=076fe4aeca"></script>
+<script src="js/forest.js?v=32e7f381bb"></script>
+<script src="js/gfield.js?v=c53df9f90f"></script>
+<script src="js/leakdog.js?v=59af0942bd"></script>
 
-<script src="js/net.js?v=a26e6ed487"></script>
-<script src="js/cloud.js?v=4022451904"></script>
-<script src="js/mall.js?v=6b79e1b084"></script>
-<script src="js/skills.js?v=ae2db4404d"></script>
-<script src="js/bars.js?v=6c7cecf8cc"></script>
-<script src="js/photo.js?v=4138e790bf"></script>
-<script src="js/social.js?v=96e7a7d79e"></script>
-<script src="js/daily.js?v=6505f74f1a"></script>
-<script src="js/guild.js?v=b0f2d0cefe"></script>
-<script src="js/trade.js?v=6d18214631"></script>
-<script src="js/party.js?v=e2e9bd3ddb"></script>
-<script src="js/gfx.js?v=9fe18ff9fc"></script>
-<script src="js/upgrade.js?v=c5bae8d8b2"></script>
-<script src="js/perf.js?v=fd597f26e4"></script>
-<script src="js/maps.js?v=8299ddb825"></script>
-<script src="js/interior.js?v=3ee32db4e0"></script>
-<script src="js/slots.js?v=787f1398d9"></script>
+<script src="js/net.js?v=00eaa77cfa"></script>
+<script src="js/cloud.js?v=0c99c0278f"></script>
+<script src="js/mall.js?v=0c10652cd7"></script>
+<script src="js/skills.js?v=7d0ea431cf"></script>
+<script src="js/bars.js?v=8260952620"></script>
+<script src="js/photo.js?v=cfd58c5624"></script>
+<script src="js/social.js?v=7d5426f3db"></script>
+<script src="js/daily.js?v=85533c0f33"></script>
+<script src="js/guild.js?v=6932325442"></script>
+<script src="js/trade.js?v=a0e7344896"></script>
+<script src="js/party.js?v=077a707d9b"></script>
+<script src="js/gfx.js?v=2f0839c9ae"></script>
+<script src="js/upgrade.js?v=bf334372f8"></script>
+<script src="js/perf.js?v=3490432496"></script>
+<script src="js/maps.js?v=c3e159c970"></script>
+<script src="js/interior.js?v=656cae6243"></script>
+<script src="js/slots.js?v=5f4b5166bb"></script>
+<script>/* 離線快取（sw.js）：第二次開遊戲幾乎不用重新下載，更新時只下載有變的檔案 */if('serviceWorker'in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});</script>
 </body>
 </html>
